@@ -88,7 +88,6 @@ class Config:
     MAX_CONTENT_LENGTH = 512 * 1024 * 1024
     ALLOWED_RESOURCE_TYPE = {'pdf', 'video', 'audio', 'excel'}
 
-
     @staticmethod
     def init_app(app):
         pass

@@ -1,11 +1,8 @@
 {% extends 'course/widget_course_base.html' %}
 
 {% block header_ext %}
-    <script src="{{ url_for('static', filename='js/jquery.raty.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
-    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
-    <script src="//cdn.bootcss.com/dropzone/4.3.0/min/dropzone.min.js"></script>
+    <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
+    <link href="http://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet">
 {% endblock %}
 
 
@@ -18,7 +15,7 @@
                     <li role="presentation"><a href="#lists" role="tab" data-toggle="tab">课时列表</a></li>
                     <li role="presentation"><a href="#test" role="tab" data-toggle="tab">课堂测验</a></li>
                     <li role="presentation"><a href="#homework" role="tab" data-toggle="tab">课程作业</a></li>
-                    <li role="presentation"><a href="{{ url_for('group.group_view', gid=course.group_id) }}">课程讨论</a></li>
+                    <li role="presentation"><a href="#discussion" role="tab" data-toggle="tab">课程讨论</a></li>
                     <li role="presentation"><a href="#comment" role="tab" data-toggle="tab">课堂评价</a></li>
                 </ul>
             </div>
@@ -61,6 +58,49 @@
                 <div id="course-homework" role="tabpanel" class="tab-pane markdown-body">
                 </div>
 
+                <div id="course-discussion" role="tabpanel" class="tab-pane">
+                    <div class="form-group clearfix">
+                        <div class="pull-right">
+                            {% if discussion_priority %}
+                                <button class="btn btn-primary" id="discussion-create-btn">创建帖子</button>
+                            {% else %}
+                                <span id="discussion-help-box" style="color: #919191;font-size: 15px">加入群组后方可进行讨论</span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div id="discussion-create-area" class="row" style="display: none">
+                        <div class="panel panel-default" style="background: #f4f4f4">
+                            <div class="panel-body">
+                                <form action="{{ url_for('group.topic_new', gid=course.group.id) }}" method="POST"
+                                      data-parsley-validate="" autocomplete="off">
+                                    <div class="form-group">
+                                        <label>标题</label>
+                                        <input type="text" class="form-control" name='title' required
+                                               data-parsley-required-message="请输入话题标题" data-parsley-maxlength="128"><br/>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label>内容</label>
+                                        <textarea name="content" data-provide="markdown"
+                                                  id="target-editor" rows="20"
+                                                  data-img-upload-url="{{ url_for("markdown_files.images") }}"
+                                                  data-parsley-required-message="请输入话题内容" data-parsley-errors-container=".textarea-errors" required
+                                        ></textarea>
+                                        <div class="textarea-errors"></div>
+                                    </div>
+
+                                    <div class="form-submit text-right">
+                                        <input class='btn btn-primary' id='submit' type='submit'>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="discussion-content"></div>
+                </div>
+
                 <div id="course-comment" role="tabpanel" class="tab-pane">
                     <div id="comment-show-block" class="form-group clearfix">
                         <div class="pull-left" style="margin-left: 10px">
@@ -99,9 +139,28 @@
 
 {% block footer_ext %}
     {{ super() }}
-    <script type="text/javascript" src="{{ url_for('static', filename='js/markdown_latex_support.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.raty.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/ace.js') }}" charset="utf-8"></script>
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
+    <script src="//cdn.bootcss.com/dropzone/4.3.0/min/dropzone.min.js"></script>
+    <script src="http://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script language=javascript src='{{ url_for("static", filename="js/custom_simplemde.js") }}'></script>
     <script>
         $(document).ready(function () {
+            var simplemde = custom_simplemde();
+            simplemde.codemirror.on("update", function () {
+                $("#target-editor")[0].innerHTML = simplemde.value();
+                if (simplemde.value()) {
+                    hide_validate_info(".textarea-errors");
+                }
+                else {
+                    $(".textarea-errors")[0].innerHTML = '<ul class="parsley-errors-list filled" style="color: red;" id="parsley-id-9"><li class="parsley-required">请输入文章内容</li></ul>';
+                }
+            });
+
             var about = $("#course-about");
             about.html(latex_support(about.data('to-render')));
             about.attr('data-to-render', null);
@@ -117,6 +176,7 @@
                 $("#course-about").removeClass('active');
                 $('#course-test').removeClass('active');
                 $('#course-homework').removeClass('active');
+                $('#course-discussion').removeClass('active');
                 $('#course-comment').removeClass('active');
                 $("#course-lists").addClass('active');
                 history.replaceState({}, 'lists', location.href.split("?")[0]+"?tab=lists");
@@ -127,6 +187,7 @@
                 $("#course-lists").removeClass('active');
                 $('#course-test').removeClass('active');
                 $('#course-homework').removeClass('active');
+                $('#course-discussion').removeClass('active');
                 $('#course-comment').removeClass('active');
                 $("#course-about").addClass('active');
                 history.replaceState({}, 'about', location.href.split("?")[0]+"?tab=about");
@@ -137,6 +198,7 @@
                 $("#course-lists").removeClass('active');
                 $("#course-about").removeClass('active');
                 $('#course-homework').removeClass('active');
+                $('#course-discussion').removeClass('active');
                 $('#course-comment').removeClass('active');
                 $('#course-test').addClass('active');
                 history.replaceState({}, 'test', location.href.split("?")[0]+"?tab=test");
@@ -147,23 +209,174 @@
                 $("#course-lists").removeClass('active');
                 $("#course-about").removeClass('active');
                 $("#course-test").removeClass('active');
+                $('#course-discussion').removeClass('active');
                 $('#course-comment').removeClass('active');
                 $('#course-homework').addClass('active');
                 history.replaceState({}, 'homework', location.href.split("?")[0]+"?tab=homework");
             }
-            else if (tab == "comment") {
+            else if (tab == "discussion") {
                 $("#course-content").removeClass('active');
                 $("#course-content li:nth-child(5)").addClass('active');
                 $("#course-lists").removeClass('active');
                 $("#course-about").removeClass('active');
                 $("#course-test").removeClass('active');
+                $('#course-comment').removeClass('active');
                 $('#course-homework').removeClass('active');
+                $('#course-discussion').addClass('active');
+                history.replaceState({}, 'discussion', location.href.split("?")[0]+"?tab=discussion");
+            }
+            else if (tab == "comment") {
+                $("#course-content").removeClass('active');
+                $("#course-content li:nth-child(6)").addClass('active');
+                $("#course-lists").removeClass('active');
+                $("#course-about").removeClass('active');
+                $("#course-test").removeClass('active');
+                $('#course-homework').removeClass('active');
+                $('#course-discussion').removeClass('active');
                 $('#course-comment').addClass('active');
                 history.replaceState({}, 'comment', location.href.split("?")[0]+"?tab=comment");
             }
 
-            $("[href='#about'],[href='#lists'],[href='#test'],[href='#homework'],[href='#comment']").click(function () {
+            $("[href='#about'],[href='#lists'],[href='#test'],[href='#homework'],[href='#comment'],[href='#discussion']").click(function () {
                 history.replaceState({}, $(this).attr("href").substr(1) , location.href.split("?")[0]+"?tab="+$(this).attr("href").substr(1));
+            });
+
+            var topic_status = {};
+
+            /*加载话题内容*/
+            $.ajax({
+                url: location.href,
+                type: "post",
+                data: {
+                    op: "load discussion"
+                },
+                success: function (data) {
+                    if(data["status"] === "success"){
+                        $("#discussion-content").empty().html(data["html"]);
+                        $(".title.gray-darker").each(function () {
+                            $(this).attr("href", "javascript:void(0);");
+                            topic_status[$(this).parent().parent().parent().data("tid")] = "0";
+                        });
+                        $(".title.gray-darker").click(function () {
+                            var obj = $(this).parent().parent().parent();
+                            if (topic_status[obj.data("tid")] === "0"){
+                                $.ajax({
+                                    url: location.href,
+                                    type: "post",
+                                    data: {
+                                        op: "load topic",
+                                        tid: obj.data("tid")
+                                    },
+                                    success: function (data) {
+                                        if(data["status"] === "success"){
+                                            obj.append("<div data-id='topic-detail' style='padding: 15px;margin-top: 10px;display: none;background: #f4f4f4'></div>");
+                                            var temp = obj.find("div[data-id=topic-detail]").eq(0);
+                                            temp.html(data["html"]);
+
+                                            var content = temp.find("div[data-id=topic-content]").eq(0);
+                                            content.html(latex_support(content.data('to-render')));
+                                            content.attr('data-to-render', null);
+
+                                            var reply_content = temp.find("textarea[data-id=reply-content]").eq(0);
+
+                                            temp.find("ul[data-id=post-area]").eq(0).on(
+                                                "click", ".reply-btn",
+                                                function () {
+                                                    <!-- 找到当前回复按钮对应的用户, 也就是说对谁进行回复, 修复 issue 38 -->
+                                                    var pre_div = $(this).parent().prev();
+                                                    var at_user = $(pre_div).find("a.link-grey").text();
+                                                    reply_content.val(reply_content.val() + '@' + at_user + ' ');
+                                                }
+                                            );
+
+                                            temp.find("form").eq(0).submit(function (e) {
+                                                e.preventDefault();
+                                                if (reply_content.val() === "" || reply_content.val() === null || reply_content.val() === "None") {
+                                                    show_invalid_info("#comment-submit-info","#comment-submit-info span","请输入评论内容");
+                                                    return;
+                                                }
+                                                if (reply_content.val().length > 1024) {
+                                                    show_invalid_info("#comment-submit-info","#comment-submit-info span","评论过长，不能超过1024个字");
+                                                    return;
+                                                }
+
+                                                var data = $(this).serialize();
+                                                $.ajax({
+                                                    method: "post",
+                                                    cache: false,
+                                                    url: "/group/topic/" + obj.data("tid") + "/comment/create/",
+                                                    data: data,
+                                                    success: function (post) {
+                                                        <!-- 第一条评论, 这里需要首先清除现有的提示信息 -->
+                                                        if (post.post_cnt === 1) {
+                                                            temp.find("ul[data-id=post-area]").eq(0).empty().html(post.post_html);
+                                                        }
+                                                        else {
+                                                            temp.find("ul[data-id=post-area]").eq(0).append(post.post_html);
+                                                        }
+                                                        temp.find("div[data-id=post-num]").eq(0).html(post.post_cnt + " {{ _('Reply') }}");
+                                                        temp.find("span[data-id=title_post_num]").eq(0).html("<i class='es-icon es-icon-comment'></i>" + post.post_cnt);
+                                                        reply_content.val("");
+                                                    },
+                                                    error: function (post_html) {
+                                                        alert_modal('评论失败, 请稍后重试');
+                                                    }
+                                                });
+                                            });
+
+                                            temp.show("blind", "easeInOutCubic", 600);
+                                            topic_status[obj.data("tid")] = "1"
+                                        }
+                                    }
+                                })
+                            }
+                            else if (topic_status[obj.data("tid")] === "1"){
+                                var temp = obj.find("div[data-id=topic-detail]").eq(0);
+                                temp.hide("blind", "easeInOutCubic", 600);
+                                topic_status[obj.data("tid")] = "2"
+                            }
+                            else if (topic_status[obj.data("tid")] === "2"){
+                                var temp = obj.find("div[data-id=topic-detail]").eq(0);
+                                temp.show("blind", "easeInOutCubic", 600);
+                                topic_status[obj.data("tid")] = "1"
+                            }
+                        });
+                    }
+                    else if(data["status"] === "fail"){
+                        $("#discussion-content").empty().html("<h2 style='text-align: center'> 话题内容为空或者出现其他错误 </h2>");
+                    }
+                },
+                error: function () {
+                    $("#discussion-content").empty().html("<h2 style='text-align: center'> 话题内容为空或者出现其他错误 </h2>");
+                }
+            });
+
+            var discussion_create_area_show = false;
+            $("#discussion-create-btn").click(function () {
+                if(!discussion_create_area_show){
+                    $("#discussion-create-area").show("blind", "easeInOutCubic", 600);
+                    discussion_create_area_show = true;
+                }
+                else{
+                    $("#discussion-create-area").hide("blind", "easeInOutCubic", 600);
+                    discussion_create_area_show = false;
+                }
+            });
+
+            $("#discussion-create-area").find("form").eq(0).submit(function (e) {
+                e.preventDefault();
+                $.ajax({
+                    url: "{{ url_for('group.topic_in_course_new', gid=course.group.id) }}",
+                    type: "post",
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
+                    success: function (data) {
+                        if (data["status"] === "success"){
+                            location.reload();
+                        }
+                    }
+                })
             });
 
             var op = "", btn_text = "";
@@ -246,12 +459,14 @@
                         $('#course-test').removeClass('active');
                         $('#course-homework').removeClass('active');
                         $('#course-comment').removeClass('active');
+                        $("#course-discussion").removeClass('active');
                         $("#course-about").addClass('active');
                     }
                     else if ($(this).attr('href') == '#lists') {
                         $("#course-about").removeClass('active');
                         $('#course-test').removeClass('active');
                         $('#course-homework').removeClass('active');
+                        $("#course-discussion").removeClass('active');
                         $('#course-comment').removeClass('active');
                         $("#course-lists").addClass('active');
                     }
@@ -259,6 +474,7 @@
                         $("#course-lists").removeClass('active');
                         $("#course-about").removeClass('active');
                         $('#course-homework').removeClass('active');
+                        $("#course-discussion").removeClass('active');
                         $('#course-comment').removeClass('active');
                         $('#course-test').addClass('active');
                     }
@@ -266,6 +482,7 @@
                         $("#course-lists").removeClass('active');
                         $("#course-about").removeClass('active');
                         $('#course-test').removeClass('active');
+                        $("#course-discussion").removeClass('active');
                         $('#course-comment').removeClass('active');
                         $('#course-homework').addClass('active');
                         /* 加载作业列表内容 */
@@ -281,11 +498,20 @@
                             }
                         });
                     }
+                    else if ($(this).attr('href') == '#discussion') {
+                        $("#course-lists").removeClass('active');
+                        $("#course-about").removeClass('active');
+                        $('#course-test').removeClass('active');
+                        $('#course-homework').removeClass('active');
+                        $("#course-comment").removeClass('active');
+                        $('#course-discussion').addClass('active');
+                    }
                     else if ($(this).attr('href') == '#comment') {
                         $("#course-lists").removeClass('active');
                         $("#course-about").removeClass('active');
                         $('#course-test').removeClass('active');
                         $('#course-homework').removeClass('active');
+                        $("#course-discussion").removeClass('active');
                         $('#course-comment').addClass('active');
                     }
                 });
@@ -354,11 +580,17 @@
                     if ($('#course-in').hasClass('btn-primary')) {
                         $("#help-box").hide();
                         $("#comment-btn").show();
+
+                        $("#discussion-help-box").hide();
+                        $("#discussion-create-btn").show();
                     }
                     else {
                         $("#help-box").show();
                         $("#comment-edit-block").hide();
                         $("#comment-btn").hide();
+
+                        $("#discussion-help-box").show();
+                        $("#discussion-create-btn").hide();
                     }
                 });
             }

@@ -73,6 +73,25 @@ def topic_new(gid):
         return redirect(url_for('group.topic_view', tid=new_topic.id))
 
 
+@group.route('/<int:gid>/topic_in_course/new/', methods=['GET', 'POST'])
+@login_required
+def topic_in_course_new(gid):
+    cur_group = Group.query.filter_by(id=gid).first_or_404()
+    if request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        new_topic = Topic(current_user.id, title, content, gid)
+        db.session.commit()
+
+        # 更新用户和群组对应的话题
+        current_user.topics.append(new_topic)
+        current_user.topicNum += 1
+        cur_group.topics.append(new_topic)
+        cur_group.topicNum += 1
+        db.session.commit()
+        return jsonify(status='success')
+
+
 @group.route('/topic/<int:tid>/')
 def topic_view(tid):
     cur_topic = Topic.query.filter_by(id=tid).first_or_404()

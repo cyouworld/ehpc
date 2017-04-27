@@ -1,7 +1,7 @@
 {% if latest_topics %}
     <ul class="media-list thread-list">
         {% for t in latest_topics %}
-            <li class="media">
+            <li class="media" data-tid="{{ t.id }}">
                 <div class="media-left">
                     <span class="reply-num">
                         <strong> {{ t.postNum }} </strong> {{ _('replies') }}

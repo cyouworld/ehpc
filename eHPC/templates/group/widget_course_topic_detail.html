@@ -1,0 +1,83 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title list-post-title-in-topic">
+            {{ topic.title }}
+            {% if current_user.id == topic.userID %}
+                <a class="btn btn-success pull-right" href="{{ url_for('group.topic_edit', tid=topic.id) }}">编辑</a>
+            {% endif %}
+        </h2>
+        <div class="list-meta color-gray">
+            <span><i class="es-icon es-icon-time"></i>{{ topic.updatedTime | natural_time }}更新</span>
+            <span><i class="es-icon es-icon-visibility"></i>{{ topic.visitNum }}</span>
+            <span data-id="title_post_num">
+                <i class="es-icon es-icon-comment"></i>{{ topic.postNum }}</span>
+        </div>
+
+    </div>
+    <div class="panel-body clearfix" id="post-action">
+        <div class="markdown-body" data-id="topic-content" data-to-render="{{ topic.content }}"></div>
+    </div>
+</div>
+
+<!--Show the existing replies-->
+<div class="panel panel-default group-post-list">
+    <div class="panel-heading" data-id="post-num">
+        {% if topic.postNum %}
+            {{ topic.postNum }} {{ _('Reply') }}
+        {% else %}
+            <div class="alert alert-info">
+                {{ _('No replies yet!') }}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if topic.postNum %}
+        <ul class="list-group" data-id="post-area">
+            {% for p in topic.posts %}
+                {% with index=loop.index, p=p %}
+                    {% include 'group/widget_post_detail.html' %}
+                {% endwith %}
+            {% endfor %}
+        </ul>
+    {% else %}
+        <ul class="list-group" data-id="post-area">
+        </ul>
+    {% endif %}
+</div>
+<!-- End existing replies -->
+
+<!-- Create new reply -->
+<div class="panel panel-default" id="create_reply">
+    <div class="panel-heading">
+        <p class="panel-title">
+            {{ _('Reply') }}
+        </p>
+    </div>
+    <div class="panel-body">
+        {% if current_user.is_authenticated %}
+            <form>
+                <div class="form-group ">
+                    <label class="sr-only" for="content">{{ _('Content') }}</label>
+                    <textarea class="form-control" data-id="reply-content" name="content"
+                              style="margin: 0px -9px 0px 0px;width:100%;height: 120px;"></textarea>
+                </div>
+
+                <div class="form-submit text-right">
+                    <span id="comment-submit-info" class="hide" style="margin-right: 20px;color: red;">
+                        <i class="es-icon es-icon-warning"></i>&nbsp;
+                        <span></span>
+                    </span>
+                    <button class="btn btn-success" type="submit" id="submit">
+                        {{ _('Submit') }}
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <br>
+            <p class="text-center">你还没有登录，请先<a href="{{ url_for('user.signin', next=request.url) }}"> 登录</a>
+                或<a href="{{ url_for('user.reg', next=request.url) }}"> 注册！</a></p>
+            <br>
+        {% endif %}
+    </div>
+</div>
+<!-- End create new reply-->

@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, jsonify, request, current_app
 from . import course
-from ..models import Course, Material, Paper, Comment, Homework, HomeworkUpload, Apply, HomeworkScore
+from ..models import Course, Material, Paper, Comment, Homework, HomeworkUpload, Apply, HomeworkScore, Topic
 from flask_babel import gettext
 from flask_login import current_user, login_required
 from ..util.file_manage import upload_file, custom_secure_filename
@@ -19,30 +19,56 @@ def index():
     return render_template('course/index.html', title=gettext('Courses'), courses=all_courses)
 
 
-@course.route('/<int:cid>/')
+@course.route('/<int:cid>/', methods=['GET', 'POST'])
 def view(cid):
     c = Course.query.filter_by(id=cid).first()
-    # 指定显示的 Tab 选项卡
-    tab = request.args.get('tab', None)
-    if not tab:
-        tab = "about"
+    if request.method == 'GET':
+        # 指定显示的 Tab 选项卡
+        tab = request.args.get('tab', None)
+        if not tab:
+            tab = "about"
 
-    # 0：未加入课程，不显示其他标签  1：可以显示其他标签  2：等待审核，不显示其他标签
-    status = 1
-    paper_of_course = c.papers.all()
-    if current_user.is_anonymous:
-        status = 0
-    elif not c.public and current_user not in c.users:
-        curr_apply = Apply.query.filter_by(user_id=current_user.id).filter_by(course_id=cid).filter_by(status=0).first()
-        status = 2 if curr_apply else 0
+        # 0：未加入课程，不显示其他标签  1：可以显示其他标签  2：等待审核，不显示其他标签
+        status = 1
+        paper_of_course = c.papers.all()
+        if current_user.is_anonymous:
+            status = 0
+        elif not c.public and current_user not in c.users:
+            curr_apply = Apply.query.filter_by(user_id=current_user.id).filter_by(course_id=cid).filter_by(status=0).first()
+            status = 2 if curr_apply else 0
 
-    return render_template('course/detail.html',
-                           title=c.title,
-                           tab=tab,
-                           course=c,
-                           user=current_user,
-                           papers=paper_of_course,
-                           status=status)
+        discussion_priority = False
+        if current_user in c.group.members:
+            discussion_priority = True
+
+        return render_template('course/detail.html',
+                               title=c.title,
+                               tab=tab,
+                               course=c,
+                               user=current_user,
+                               papers=paper_of_course,
+                               status=status,
+                               discussion_priority=discussion_priority)
+
+    elif request.method == 'POST':
+        op = request.form.get('op', None)
+        if op is not None:
+            if op == 'load discussion':
+                latest_topics = c.group.topics.order_by(Topic.createdTime.desc()).limit(5).all()
+                html = render_template('group/widget_topic_list.html', latest_topics=latest_topics)
+                return jsonify(status='success', html=html)
+            elif op == 'load topic':
+                tid = request.form.get('tid', None)
+                if tid is not None:
+                    cur_topic = Topic.query.filter_by(id=tid).first_or_404()
+                    cur_topic.visitNum += 1
+                    db.session.commit()
+                    return jsonify(status='success', html=render_template('group/widget_course_topic_detail.html',
+                                                                          topic=cur_topic))
+                else:
+                    return jsonify(status='fail')
+        else:
+            return jsonify(status='fail')
 
 
 @course.route('/join/<int:cid>/')
