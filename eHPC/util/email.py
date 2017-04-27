@@ -8,6 +8,7 @@ from flask import render_template
 from flask_mail import Message
 from .. import mail
 
+
 def send_async_email(_app, msg):
     with _app.app_context():
         mail.send(msg)
@@ -15,7 +16,7 @@ def send_async_email(_app, msg):
 
 def send_email(ip, to, subject, template, **kwargs):
     app = current_app._get_current_object()
-    app.logger.info('remote_ip: %s, to: %s' % (ip, to))
+    app.email_logger.info('remote_ip: %s, to: %s' % (ip, to))
     msg = Message(app.config['MAIL_SUBJECT_PREFIX'] + ' ' + subject,
                   sender=app.config['MAIL_SENDER'], recipients=[to])
     msg.html = render_template(template + '.html', **kwargs)
