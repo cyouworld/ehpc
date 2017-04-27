@@ -164,16 +164,8 @@
 {% block footer_ext %}
     <script src="//cdn.bootcss.com/ace/1.2.6/ace.js"></script>
     <script>
-        var editor = ace.edit("editor-source-code");
-        editor.setOptions({
-            useWrapMode: true,
-            highlightActiveLine: true,
-            showPrintMargin: false,
-            theme: 'ace/theme/tomorrow_night',
-            mode: 'ace/mode/c_cpp'
-        });
-    </script>
-    <script>
+        var editor_source_code = ace.edit("editor-source-code");
+        var editor_default_code = ace.edit("editor-default-code");
         var default_options = {
             useWrapMode: true,
             highlightActiveLine: true,
@@ -181,8 +173,8 @@
             theme: 'ace/theme/tomorrow_night',
             mode: 'ace/mode/c_cpp'
         };
-        ace.edit("editor-source-code").setOptions(default_options);
-        ace.edit("editor-default-code").setOptions(default_options);
+        editor_source_code.setOptions(default_options);
+        editor_default_code.setOptions(default_options);
 
         $(function () {
             $("#default-code-btn").click(function () {
