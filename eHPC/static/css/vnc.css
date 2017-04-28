@@ -831,32 +831,30 @@ html, body {
 }
 
 .vnc-right{
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 65%;
-    left: 35%;
+    float: left;
+    position: relative;
     overflow: hidden;
+    width: 65%;
+    height: 100%;
     background: #000000;
 }
 
 .vnc-left{
-    overflow: auto;
-    position: absolute;
-    top: 0;
-    bottom: 0;
+    float: left;
+    overflow-y: auto;
+    overflow-x: hidden;
+    position: relative;
     width: 35%;
-    left: 0;
+    height: 100%;
     background: #f5f8fa;
 }
 
 .vnc-whole{
     overflow: hidden;
     position: absolute;
+    width: 100%;
+    height: 100%;
     left: 0;
-    right: 0;
-    top: 0;
-    bottom: 0;
     background: #000000;
 }
 

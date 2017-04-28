@@ -6,7 +6,7 @@
 {% endblock %}
 
 {% block content %}
-    <div class="vnc-left">
+    <div id="left" class="vnc-left" data-width="">
         <nav class="navbar vnc-left-nav">
             <div class="container-fluid">
                 <a href="{{ url_for('lab.tasks_list', vnc_knowledge_id=vnc_knowledge_id) }}" class="btn btn-green"><span class="glyphicon glyphicon-chevron-left"></span>返回虚拟实验室</a>
@@ -19,14 +19,14 @@
             </div>
             <div class="progress-nums"><span id="cur-task-number">{{ response_vnc_task.vnc_task_num | string }}</span>/{{ vnc_tasks_count | string }}</div>
 
-            <div class="markdown-body" style="border-top: solid 1px #eee">
+            <div class="markdown-body" style="border-top: solid 1px #eee;">
                 <p id="document-title" class="text-center text-xlarge"> {{ response_vnc_task.title }}</p>
                 <div id="document-content" data-to-render="{{ response_vnc_task.content }}"></div>
             </div>
-            <button id="continue" class="btn btn-green btn-block" style="margin-bottom: 10px">继续学习<span class="glyphicon glyphicon-forward"></span></button>
+            <button id="continue" class="btn btn-green btn-block" style="margin-bottom: 10px;">继续学习<span class="glyphicon glyphicon-forward"></span></button>
         </div>
     </div>
-    <div class="vnc-right">
+    <div id="right" class="vnc-right">
         <div id="display" style="display: none"></div>
         <img id="loading-svg" src="{{ url_for('static', filename='images/radio.svg') }}" style="position: absolute;top: 50%;left: 50%;transform: translateX(-50%) translateY(-50%);width: 10%;height: 10%">
     </div>
@@ -139,17 +139,43 @@
         });
     </script>
     <script>
-        var header = $(".vnc-navbar").eq(0), //导航栏
-            footer = $(".content-footer").eq(0), //底部栏
-            content = $(".content-holder").eq(0), //中间内容容器
-            content_left = $(".vnc-left").eq(0), //左侧文档内容容器
-            content_right = $(".vnc-right").eq(0), //右侧文档内容容器
+        var content = $(".content-holder").eq(0), //中间内容容器
+            content_left = $("#left"), //左侧文档内容容器
+            content_right = $("#right").eq(0), //右侧文档内容容器
             clipboard = $("#clipboard"), //剪切板模态框
             pick_resolution = $("#select-resolution"), //分辨率调节模态框
-            guac, //Guacamole类
             hide_document = false, //左侧文档隐藏标识
             browser_fullscreen = false, //浏览器全屏标识
             hide_sidebar = false; //隐藏工具栏标识
+
+        //Guacamole相关变量
+        var guac, //Guacamole类
+            display,
+            mouse,
+            keyboard,
+            sendScaledMouseState;
+
+        content.css("padding", "0");
+
+        content_left.resize(function () {
+            content_right.css("width", (1-$(this).width()/$(this).parent().width() - 5/$(this).parent().width())*100 + "%");
+        });
+
+        content_left.resizable({
+            handles: "e",
+            start: function (event, ui) {
+                $("#display").css("visibility", "hidden");
+            },
+            stop: function (event, ui) {
+                var left_width = ui.size.width/content_left.parent().width()*100 + "%";
+                var right_width = (1 - ui.size.width/content_left.parent().width() - 5/$(this).parent().width())*100 + "%";
+                console.log(left_width, right_width);
+                content_left.css("width", left_width);
+                content_right.css("width", right_width);
+                $("#display").css("visibility", "visible");
+            }
+        });
+
         $(function () {
             $("#toolbar-trigger").click(function () {
                 if(hide_sidebar){
@@ -176,6 +202,7 @@
                     hide_document = true;
                     $("#btn-hide-document-text").text("显示文档");
                     content_left.hide("blind", {direction: "left"}, "normal", function () {
+                        content_right.removeAttr("style");
                         content_right.removeClass("vnc-right");
                         content_right.addClass("vnc-whole");
                         content.removeClass("content-holder");
@@ -194,6 +221,7 @@
                     content.addClass("content-holder");
                     $("#display").css("position", "absolute");
                     $(window).trigger("resize");
+                    content_left.trigger("resize");
                 }
             });
 
@@ -330,7 +358,7 @@
         }
 
         function do_connect_vnc_server(token){
-            var display = document.getElementById("display");
+            display = document.getElementById("display");
             guac = new Guacamole.Client(
                 new Guacamole.HTTPTunnel("http://{{ vnc_url }}/server/tunnel")
             );
@@ -342,7 +370,7 @@
             window.onunload = function () {
                 guac.disconnect();
             };
-            var sendScaledMouseState = function sendScaledMouseState(mouseState) {
+            sendScaledMouseState = function sendScaledMouseState(mouseState) {
                 var scaledState = new Guacamole.Mouse.State(
                     mouseState.x / guac.getDisplay().getScale(),
                     mouseState.y / guac.getDisplay().getScale(),
@@ -353,7 +381,7 @@
                     mouseState.down);
                 guac.sendMouseState(scaledState);
             };
-            var mouse = new Guacamole.Mouse(guac.getDisplay().getElement());
+            mouse = new Guacamole.Mouse(guac.getDisplay().getElement());
             mouse.onmousedown =
                 mouse.onmouseup =
                     mouse.onmousemove = function (mouseState) {
@@ -362,7 +390,7 @@
                         guac.getDisplay().showCursor(true);
                         sendScaledMouseState(mouseState);
                     };
-            var keyboard = new Guacamole.Keyboard(document);
+            keyboard = new Guacamole.Keyboard(document);
             keyboard.onkeydown = function (keysym) {
                 guac.sendKeyEvent(1, keysym);
             };
