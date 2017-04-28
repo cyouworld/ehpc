@@ -26,46 +26,51 @@ class ehpc_client:
         """
         url = self.base_url + url
 
-        # 如果有数据的话，进行编码并封装进request，否则只对url进行处理
+        # 请求数据中带有查询字典或者form表单时，将其封装为 application/x-www-form-urlencoded string类型。
+        # 如果请求数据为 unicode类型（上传的代码），则将其编码为 utf-8, 转为 str 类型。
+        # https://docs.python.org/2/library/urllib.html#urllib.urlencode
         if data:
             try:
                 data = urllib.urlencode(data)
             except TypeError:
-                pass
+                data = data.encode('utf-8')             # Issue 470
 
+            # https://docs.python.org/2/library/urllib2.html#urllib2.Request
+            # Data may be a string specifying additional data to send to the server
             req = urllib2.Request(url, data)
         else:
             req = urllib2.Request(url)
 
-        # 要求登录的话,就要查cookie,没有的话要调用login函数登录并保存cookie数据
+        # 如果需要登录权限，则查看请求中是否需要 cookie 。如果没有cookie，则调用login函数登录并保存cookie数据
         if login:
             if not self.login_cookie:
                 self.login()
 
             req.add_header("Cookie", self.login_cookie)
 
+        # 添加其他头部信息
         for (k, v) in self.headers:
             req.add_header(k, v)
 
-        # 设置方法
+        # 设置请求方法
         if method:
             req.get_method = lambda: method
 
-        # 发送接收请求
+        # 发送请求，请接受返回数据
         try:
             resp = urllib2.urlopen(req)
             self.resp = resp
             rdata = resp.read()
-        # rdata = json.loads((rdata).decode('ascii'))
-        except urllib2.HTTPError, e:
-            rdata = e.fp.read()
+        except urllib2.HTTPError, e:  # HTTPError必须排在URLError的前面
+            print "The server couldn't fulfill the request.  Error code:", e.code
+            rdata = e.read()
+        except urllib2.URLError, e:
+            print "Failed to reach the server. The reason:", e.reason
+            rdata = e.read()
 
-        # rdata = (rdata).decode('ascii')
-        # rdata_reg = re.search('\{.+\}', rdata)
-        # rdata = rdata if rdata_reg is None else rdata_reg.group()
         # 保存数据
         try:
-            rdata = json.loads(rdata.decode('ascii'))
+            rdata = json.loads(rdata.decode('utf-8'))
             self.data = rdata
             self.status = self.data["status"]
             self.status_code = self.data["status_code"]
