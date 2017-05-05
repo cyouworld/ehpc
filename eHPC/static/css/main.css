@@ -3784,7 +3784,7 @@ textarea {
     filter: alpha(opacity=42);
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0.42);
     float: right;
-    width: 315px;
+    width: 300px;
     height: 360px;
     margin: 20px 85px 0px 0px;
     padding-left: 0px;
@@ -3816,6 +3816,7 @@ textarea {
     font-size: 16px;
     font-weight: normal;
     height: 40px;
+    width: 240px;
     line-height: 20px;
     line-height: 40px \9;
     margin: 20px 0 10px 30px;
@@ -3861,7 +3862,7 @@ textarea {
     height: 40px;
     text-align: center;
     margin: 20px 0 10px 30px;
-    width: 255px;
+    width: 240px;
 }
 
 .loginContent .loginInput .loginButton:hover {
