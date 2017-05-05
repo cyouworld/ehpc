@@ -10,6 +10,8 @@ import re
 import os
 from PIL import Image
 from datetime import datetime, timedelta
+
+from eHPC.util.captcha import verify_captcha
 from . import user
 from ..models import User
 from ..util.email import send_email
@@ -35,6 +37,12 @@ def signin():
         if next_url:
             next_url = None if request.args.get('next')[:6] == '/user/' else request.args.get('next')
         _form = request.form
+
+        if not verify_captcha(_form['luotest_response']):
+            message = u'人机识别验证失败'
+            return render_template('user/signin.html', title=gettext('User Sign In'),
+                                   form=_form, message=message)
+
         u = User.query.filter_by(email=_form['email']).first()
         if u and u.verify_password(_form['password']):
             login_user(u)
@@ -62,6 +70,12 @@ def reg():
                                form=None)
     elif request.method == 'POST':
         _form = request.form
+
+        if not verify_captcha(_form['luotest_response']):
+            message_captcha = u'人机识别验证失败'
+            return render_template('user/reg.html', title=gettext('Register Account'),
+                                   form=_form, message_captcha=message_captcha)
+
         username = _form['username']
         email = _form['email']
         password = _form['password']
@@ -132,6 +146,10 @@ def password_reset_request():
         return render_template('user/passwd_reset.html', form=None)
     elif request.method == 'POST':
         _form = request.form
+
+        if not verify_captcha(_form['luotest_response']):
+            return render_template('user/passwd_reset.html', message_captcha=u'人机识别验证失败')
+
         email_addr = _form["email"]
         u = User.query.filter_by(email=email_addr).first()
         message_email = ""

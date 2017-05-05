@@ -4,6 +4,7 @@
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
     <link href="{{ url_for('static', filename='css/problem.css') }}" rel="stylesheet">
+    <script src="//captcha.luosimao.com/static/js/api.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -57,6 +58,9 @@
                                            data-parsley-required-message="请输入您的登录密码"
                                            data-parsley-maxlength="128" required="required">
 							</li>
+                            <li style="width: 255px; margin: 20px 0 10px 30px;">
+                                <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="100%"></div>
+                            </li>
 							<li>
 								<p class="errorbg0" id="indexLoginTips" style="display: none;"></p>
 								<input class="loginButton" type="submit" value="登录" id="indexLoginSubmit">

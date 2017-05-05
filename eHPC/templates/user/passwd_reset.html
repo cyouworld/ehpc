@@ -3,8 +3,11 @@
 {{ _('Reset Password') }}
 {% endblock %}
 
-{% block content %}
+{% block header_ext %}
+    <script src="//captcha.luosimao.com/static/js/api.js"></script>
+{% endblock %}
 
+{% block content %}
 <div class="container">
   <div class="es-section login-section">
   <div class="login-main">
@@ -15,10 +18,15 @@
 			<label class="control-label required" for="email"> {{ _('Please enter your email') }} </label>
             <input class="form-control input-lg" data-widget-cid="widget-2" id="email" name="email" placeholder=example@gmail.com type="text">
             {% if message_email %}
-            <div class="messages col-sm-10"> <p class="text-danger"> {{ message_email }} </p> </div>
+            <div class="messages col-sm-10" style="margin-top: 10px"> <p class="text-danger"> {{ message_email }} </p> </div>
             {% endif %}
         </div>
-
+        <div class="form-group mbl">
+            <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="100%"></div>
+            {% if message_captcha %}
+                <div class="messages col-sm-10" style="margin-top: 10px"> <p class="text-danger"> {{ message_captcha }} </p> </div>
+            {% endif %}
+        </div>
         <div class="form-group mbl">
 	<div class="controls">
             <button class="btn btn-primary btn-lg btn-block">

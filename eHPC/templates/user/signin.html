@@ -2,6 +2,7 @@
 
 {% block header_ext %}
     <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <script src="//captcha.luosimao.com/static/js/api.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -30,10 +31,13 @@
                                    data-parsley-maxlength="128" required="required">
                         </div>
                     </div>
+                    <div class="mbl">
+                        <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="100%"></div>
+                    </div>
                     {% if message %}
-                        <div class="alert alert-danger">{{ message }}</div>
+                        <div class="alert alert-danger mbl">{{ message }}</div>
                     {% endif %}
-                    <div class="form-group mbl">
+                    <div class="form-group mbl" style="margin-top: 20px">
                         <button type="submit" class="btn btn-primary btn-lg btn-block">{{ _('Sign In') }}</button>
                     </div>
                 </form>

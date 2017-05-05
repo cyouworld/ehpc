@@ -2,6 +2,7 @@
 
 {% block header_ext %}
     <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <script src="//captcha.luosimao.com/static/js/api.js"></script>
 {% endblock %}
 
 {% block content %}
@@ -65,9 +66,8 @@
                                    data-com.agilebits.onepassword.user-edited="yes"
                                    data-parsley-required-message="请再次输入确认您的密码"
                                    placeholder="{{ _('At least 6 characters') }}" data-parsley-equalto="#register_password1" data-parsley-length="[6,128]">
-                            <p class="help-block"></p>
                             {% if message_p %}
-                                <p class="help-block"><span class="text-danger"> {{ message_p }}</span></p>
+                                <p class="help-block mbl" style="margin-top: 20px"><span class="text-danger"> {{ message_p }}</span></p>
                             {% endif %}
                         </div>
                     </div>
@@ -151,6 +151,13 @@
                         {% endif %}
                         </div>
                     </div>
+
+                    <div class="mbl">
+                        <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="100%"></div>
+                    </div>
+                    {% if message_captcha %}
+                        <p class="help-block"><span class="text-danger"> {{ message_captcha }}</span></p>
+                    {% endif %}
 
                     <div class="form-group mbl">
                         <button type="submit" id="register-btn" data-submiting-text="{{ _('Submiting...') }}"

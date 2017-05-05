@@ -36,6 +36,16 @@ TH2_MACHINE_NAME = os.environ.get("EHPC_MACHINE")
 TH2_MY_PATH = os.environ.get("EHPC_PATH")
 TH2_MAX_NODE_NUMBER = os.environ.get("EHPC_MAX_NODE_NUMBER")
 
+"""
+luosimao人机验证参数
+文档地址
+https://luosimao.com/docs/api/56
+"""
+CAPTCHA_VERIFY_URL = 'https://captcha.luosimao.com/api/site_verify'
+CAPTCHA_SITE_KEY = '9179b9c905994e6dae98e52778b69c87'
+CAPTCHA_API_KEY = 'e14e661452db57a55918930185270a16'
+
+
 class Config:
     def __init__(self):
         pass
@@ -90,6 +100,8 @@ class Config:
 
     VNC_INSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PRIVATE_URL')
     VNC_OUTSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PUBLIC_URL')
+
+    CAPTCHA_SITE_KEY = CAPTCHA_SITE_KEY
 
     @staticmethod
     def init_app(app):
