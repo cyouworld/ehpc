@@ -8,7 +8,7 @@ from flask import render_template, request, jsonify, abort, current_app, url_for
 from flask_babel import gettext
 from flask_login import login_required, current_user
 
-from eHPC.util.code_process import ehpc_client
+from eHPC.util.code_process import ehpc_client, submit_code
 from . import lab
 from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerHolder, DockerImage
 
@@ -107,50 +107,38 @@ def knowledge(kid):
 
     elif request.method == 'POST':
         if request.form['op'] == 'run':
-            source_code = request.form['code']
+
+            op = request.form['job_op']
+            job_id = request.form['job_id']
             k_num = request.form['k_num']
 
-            myPath = TH2_MY_PATH
+            uid = current_user.id
+            pid = str(kid) + '_' + str(k_num)
 
-            job_filename = "%s_%s_%s.sh" % (str(kid), str(k_num), str(current_user.id))
-            input_filename = "%s_%s_%s.c" % (str(kid), str(k_num), str(current_user.id))
-            output_filename = "%s_%s_%s.o" % (str(kid), str(k_num), str(current_user.id))
+            source_code = ''
+
+            if op == '1':
+                source_code = request.form['code']
 
             cur_challenge = Challenge.query.filter_by(knowledgeId=kid).filter_by(knowledgeNum=k_num).first()
 
             task_number = cur_challenge.task_number
             cpu_number_per_task = cur_challenge.cpu_number_per_task
             node_number = cur_challenge.node_number
+            language = cur_challenge.language
 
-            client = ehpc_client()
-            is_success = [False]
-            is_success[0] = client.login()
-            if not is_success[0]:
-                return jsonify(status="fail", msg="连接超算主机失败!")
+            compile_success = [True]
 
-            is_success[0] = client.upload(myPath, input_filename, source_code)
-            if not is_success[0]:
-                return jsonify(status="fail", msg="上传程序到超算主机失败!")
+            result = submit_code(pid=pid, uid=uid, source_code=source_code,
+                                 task_number=task_number, cpu_number_per_task=cpu_number_per_task, node_number=node_number,
+                                 language=language, op=op, jobid=job_id, compile_success=compile_success)
 
-            compile_out = client.ehpc_compile(is_success, myPath, input_filename, output_filename, cur_challenge.language)
-
-            result = dict()
-            result['compile_success'] = 'true'
-            if is_success[0]:
-                run_out = client.ehpc_run(output_filename, job_filename, myPath,
-                                          task_number, cpu_number_per_task, node_number)
-            else:
-                result['compile_success'] = 'false'
-                run_out = "编译失败，无法运行！"
-
-            result['compile_out'] = compile_out
-            result['run_out'] = run_out
 
             # 代码成功通过编译, 则认为已完成该知识点学习
-            if is_success[0]:
+            if compile_success[0]:
                 increase_progress(kid=kid, k_num=k_num, challenges_count=challenges_count)
 
-            return jsonify(result=result, status='success')
+            return result
         elif request.form['op'] == 'get_source_code':
             cur_challenge = Challenge.query.filter_by(knowledgeId=kid).filter_by(knowledgeNum=request.form['k_num']).first()
             return jsonify(source_code=cur_challenge.source_code, status='success')

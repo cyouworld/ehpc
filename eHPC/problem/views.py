@@ -3,14 +3,15 @@
 # @Author: xuezaigds@gmail.com
 from StringIO import StringIO
 
-from datetime import datetime
+from datetime import datetime, time
 
 from flask import render_template, request, abort, jsonify, send_file
 from flask_babel import gettext
 from flask_login import current_user, login_required
 from sqlalchemy import or_
 
-from eHPC.util.code_process import submit_code
+from config import TH2_MY_PATH, TH2_MAX_NODE_NUMBER
+from eHPC.util.code_process import submit_code, ehpc_client
 from . import problem
 from .. import db
 from ..models import Program, Classify, SubmitProblem, Question, UserQuestion, CodeCache
@@ -148,17 +149,33 @@ def question_view(cid, question_type):
 @problem.route('/<int:pid>/submit/', methods=['POST'])
 @login_required
 def submit(pid):
-    uid = current_user.id
-    problem_id = request.form['problem_id']
-    source_code = request.form['source_code']
-    language = request.form['language']
-    submit_problem = SubmitProblem(uid, problem_id, source_code, language)
-    db.session.add(submit_problem)
-    db.session.commit()
 
-    task_number = request.form['task_number']
-    cpu_number_per_task = request.form['cpu_number_per_task']
-    node_number = request.form['node_number']
+    op = request.form['job_op']
+    jobid = request.form['job_id']
+
+    uid = current_user.id
+    source_code = ''
+    language = ''
+    task_number = 0
+    cpu_number_per_task = 0
+    node_number = 0
+
+    if op == '1':
+        uid = current_user.id
+        problem_id = request.form['problem_id']
+        source_code = request.form['source_code']
+        language = request.form['language']
+        submit_problem = SubmitProblem(uid, problem_id, source_code, language)
+        db.session.add(submit_problem)
+        db.session.commit()
+
+        task_number = request.form['task_number']
+        cpu_number_per_task = request.form['cpu_number_per_task']
+        node_number = request.form['node_number']
+
+    #print op, type(op)
 
     return submit_code(pid=pid, uid=uid, source_code=source_code,
-                       task_number=task_number, cpu_number_per_task=cpu_number_per_task, node_number=node_number, language=language)
+                        task_number=task_number, cpu_number_per_task=cpu_number_per_task, node_number=node_number, language=language, op=op, jobid=jobid)
+
+

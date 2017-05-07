@@ -7,7 +7,6 @@ from flask import jsonify
 import json
 import time
 
-
 # 完成天河2号接口的功能的客户端
 class ehpc_client:
     def __init__(self, base_url=TH2_BASE_URL, headers={}, login_cookie=None, login_data=TH2_LOGIN_DATA):
@@ -24,6 +23,7 @@ class ehpc_client:
 
         返回值为一个字典，即api接口返回的数据。
         """
+
         url = self.base_url + url
 
         # 请求数据中带有查询字典或者form表单时，将其封装为 application/x-www-form-urlencoded string类型。
@@ -247,6 +247,32 @@ class ehpc_client:
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript" : jobscript, "jobfilepath" : jobPath})
         return tmpdata["output"]["jobid"]
 
+    def get_job_status(self, job_id):
+        """
+        获取脚本任务的状态
+
+        :param job_id: 脚本任务的id，提交脚本函数的返回值
+        :return:
+
+        返回值目前有三个，分别为
+        1. 排队中 Pending
+        2. 运行中 Running
+        3. 运行完毕 Finished
+
+        需要注意的是，由于超算slurm系统的缘故，有时超算接口会在运行正常的时候返回Failed，所以在此将其列入Finished状态。
+        """
+
+        tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/" + str(job_id) + "/")
+
+        if tmpdata["output"]["status"][job_id] == "Success" or tmpdata["output"]["status"][job_id] == "Failed":
+            return "Finished"
+        elif tmpdata["output"]["status"][job_id] == "Pending" :
+            return "Pending"
+        elif tmpdata["output"]["status"][job_id] == "Running" :
+            return "Running"
+        else :
+            return "Getting job status fail."
+
     def ehpc_compile(self, is_success, myPath, input_filename, output_filename, language):
         """ 提交代码到天河内部系统编译
 
@@ -293,14 +319,17 @@ class ehpc_client:
             return run_out
 
         time.sleep(5)
-        tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/" + str(jobid) + "/")
+
+        job_status = self.get_job_status(jobid)
+
         # print tmpdata
         while True:
-            if tmpdata["output"]["status"][jobid] == "Success" or tmpdata["output"]["status"][jobid] == "Failed":
+            if job_status == "Finished":
                 break
 
             time.sleep(5)
-            tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/" + str(jobid) + "/")
+            job_status = self.get_job_status(jobid)
+            print job_status
 
         run_output = self.download(myPath, jobid, isjob=True)
         run_out = run_output or "No output."
@@ -311,7 +340,7 @@ class ehpc_client:
         return run_out
 
 
-def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_number, language):
+def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_number, language, op, jobid, compile_success=[False]):
     """ 后台提交从前端获取的代码到天河系统，编译运行并返回结果
     
     @pid: 编程题ID（对于非编程题的代码，可自行赋予ID）,
@@ -324,6 +353,7 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
 
     返回一个字典, 保存此次运行结果。
     """
+
     job_filename = "%s_%s.sh" % (str(pid), str(uid))
     input_filename = "%s_%s.c" % (str(pid), str(uid))
     output_filename = "%s_%s.o" % (str(pid), str(uid))
@@ -335,22 +365,74 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
     if not is_success[0]:
         return jsonify(status="fail", msg="连接超算主机失败!")
 
-    is_success[0] = client.upload(TH2_MY_PATH, input_filename, source_code)
-    if not is_success[0]:
-        return jsonify(status="fail", msg="上传程序到超算主机失败!")
-
-    compile_out = client.ehpc_compile(is_success, TH2_MY_PATH, input_filename, output_filename, language)
-
-    if is_success[0]:
-        run_out = client.ehpc_run(output_filename, job_filename, TH2_MY_PATH, task_number, cpu_number_per_task, node_number)
-    else:
-        run_out = "编译失败，无法运行！"
-
     result = dict()
+
+    if op == "1" :
+        is_success[0] = client.upload(TH2_MY_PATH, input_filename, source_code)
+
+        job_status = "Compiling"
+
+        if not is_success[0]:
+            return jsonify(status="fail", msg="上传程序到超算主机失败!")
+
+        compile_out = client.ehpc_compile(is_success, TH2_MY_PATH, input_filename, output_filename, language)
+
+        compile_success = is_success
+
+        if is_success[0] :
+            result['isSuccess'] = 'true'
+        else :
+            result['isSuccess'] = 'false'
+
+        if is_success[0]:
+            if int(node_number) > TH2_MAX_NODE_NUMBER:
+                partition = "BIGJOB1"
+            else :
+                partition = "nsfc1"
+
+            jobid = client.submit_job(TH2_MY_PATH, job_filename, output_filename, node_number=node_number, task_number=task_number,
+                                      cpu_number_per_task=cpu_number_per_task, partition=partition)
+
+            run_out = "脚本任务排队中，请稍候！"
+        else:
+            run_out = "编译失败，无法运行！"
+
+        result['compile_out'] = compile_out
+        result['run_out'] = run_out
+
+    elif op == "2" :
+        if jobid == "ERROR" or jobid == -1 :
+            run_out = "Upload job file fail."
+            #return run_out
+        else :
+            time.sleep(5)
+
+            job_status = client.get_job_status(jobid)
+
+            # print tmpdata
+            while True:
+                if job_status == "Finished":
+                    break
+
+                time.sleep(5)
+                job_status = client.get_job_status(jobid)
+                #print job_status
+
+            run_output = client.download(TH2_MY_PATH, jobid, isjob=True)
+            run_out = run_output or "No output."
+
+            if run_output is None:
+                run_out = "Request error."
+
+        result['run_out'] = run_out
+
+    elif op == "3" :
+        job_status = client.get_job_status(jobid)
+        result['job_status'] = job_status
+
     result['status'] = 'success'
     result['problem_id'] = pid
-    result['compile_out'] = compile_out
-    result['run_out'] = run_out
+    result['job_id'] = jobid
 
     return jsonify(**result)
 

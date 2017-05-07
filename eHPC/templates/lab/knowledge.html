@@ -162,21 +162,98 @@
                     type: "post",
                     timeout: time_out * 1000, // sets timeout to 20 seconds
                     data: {
+                        job_op : "1",
+                        job_id: 'ERROR',
                         op: "run",
                         code: code,
                         k_num: {{ next_progress - 1 }}
                     },
                     success: function (data) {
-                        if (data["status"] == "success") {
-                            if (data['result']['compile_success'] == 'true') {
-                                terminal.eq(0).text(data['result']['run_out']);
+                        if (data.status == "success") {
+                            var compile_success = data.isSuccess
+                            var job_id = data.job_id;
+                            var sh;
+
+                            if (compile_success == 'true') {
+                                terminal.eq(0).text(data.run_out);
                             }
-                            else if (data['result']['compile_success'] == 'false') {
-                                terminal.eq(0).text(data['result']['compile_out']);
+                            else if (compile_success == 'false') {
+                                terminal.eq(0).text(data.compile_out);
                             }
+
+                            sh = setInterval(function () {
+                                $.ajax({
+                                    type: "post",
+                                    cache: false,
+                                    url: address,
+                                    data: {
+                                        job_op : "3",
+                                        op: "run",
+                                        job_id: job_id,
+                                        k_num: {{ next_progress - 1 }}
+                                    },
+                                    success: function (data) {
+                                        if (data.status === 'success') {
+                                            var job_status = data.job_status;
+
+                                            if (job_status == 'Pending') {
+
+                                            }
+                                            else if (job_status == 'Running') {
+
+                                            }
+                                            else if (job_status == 'Finished') {
+
+                                                //clearInterval(sh);
+                                                $("#loading").modal("hide");
+                                            }
+                                        }
+                                        else {
+                                            terminal.eq(0).text(data.msg);
+                                        }
+                                    },
+                                    error: function (data) {
+                                        terminal.eq(0).text('天河服务器出错或者长时间没有反应, 请稍后重试...');
+                                    }
+                                })
+                            }, 1000);
+
+                            $.ajax({
+                                type: "post",
+                                cache: false,
+                                url: address,
+                                data: {
+                                    job_op : "2",
+                                    op: "run",
+                                    job_id: job_id,
+                                    k_num: {{ next_progress - 1 }}
+                                },
+                                success: function (data) {
+                                    if (data.status === 'success') {
+                                        if (compile_success == 'true') {
+                                            terminal.eq(0).text(data.run_out);
+                                        }
+                                        else if (compile_success == 'false') {
+                                            terminal.eq(0).text(data.compile_out);
+                                        }
+                                    }
+                                    else {
+                                        terminal.eq(0).text(data.msg);
+                                    }
+
+                                    $("#loading").modal("hide");
+                                    clearInterval(sh);
+                                },
+                                error: function (data) {
+                                    terminal.eq(0).text('天河服务器出错或者长时间没有反应, 请稍后重试...');
+                                    $("#loading").modal("hide");
+                                    clearInterval(sh);
+                                }
+                            })
+
                         }
-                        else if (data['status'] == 'fail') {
-                            terminal.eq(0).text(data['msg']);
+                        else {
+                            terminal.eq(0).text(data.msg);
                         }
                         $run.prop('disabled', false);
                         $("#loading").modal("hide");
