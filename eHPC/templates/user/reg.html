@@ -151,14 +151,14 @@
                         {% endif %}
                         </div>
                     </div>
-
+                    {% if config.CAPTCHA %}
                     <div class="mbl">
                         <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="100%"></div>
                     </div>
                     {% if message_captcha %}
-                        <p class="help-block"><span class="text-danger"> {{ message_captcha }}</span></p>
+                    <p class="help-block"><span class="text-danger"> {{ message_captcha }}</span></p>
                     {% endif %}
-
+                    {% endif %}
                     <div class="form-group mbl">
                         <button type="submit" id="register-btn" data-submiting-text="{{ _('Submiting...') }}"
                                 class="btn btn-primary btn-lg btn-block">{{ _('Registration') }}

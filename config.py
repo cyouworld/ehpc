@@ -41,6 +41,7 @@ luosimao人机验证参数
 文档地址
 https://luosimao.com/docs/api/56
 """
+CAPTCHA = True
 CAPTCHA_VERIFY_URL = 'https://captcha.luosimao.com/api/site_verify'
 CAPTCHA_SITE_KEY = '9179b9c905994e6dae98e52778b69c87'
 CAPTCHA_API_KEY = 'e14e661452db57a55918930185270a16'
@@ -87,7 +88,7 @@ class Config:
     MD_UPLOAD_IMG = 'static/upload/md_images/'
     IMAGES_FOLDER = os.path.join(basedir, 'eHPC/', MD_UPLOAD_IMG)
     # 用户头像保存的地址
-    AVATAR_PATH = "static/upload/avatar/"
+    AVATAR_PATH = 'static/upload/avatar/'
     AVATAR_FOLDER = os.path.join(basedir, 'eHPC/', AVATAR_PATH)
 
     MAX_CONTENT_LENGTH = 512 * 1024 * 1024
@@ -96,6 +97,7 @@ class Config:
     VNC_INSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PRIVATE_URL') # 超算内部访问地址
     VNC_OUTSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PUBLIC_URL') # 公网访问地址
 
+    CAPTCHA = CAPTCHA
     CAPTCHA_SITE_KEY = CAPTCHA_SITE_KEY
 
     @staticmethod

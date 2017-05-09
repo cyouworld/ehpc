@@ -37,8 +37,8 @@ def signin():
         if next_url:
             next_url = None if request.args.get('next')[:6] == '/user/' else request.args.get('next')
         _form = request.form
-
-        if not verify_captcha(_form['luotest_response']):
+        resp = _form.get('luotest_response')
+        if not verify_captcha(resp):
             message = u'人机识别验证失败'
             return render_template('user/signin.html', title=gettext('User Sign In'),
                                    form=_form, message=message)
@@ -70,8 +70,8 @@ def reg():
                                form=None)
     elif request.method == 'POST':
         _form = request.form
-
-        if not verify_captcha(_form['luotest_response']):
+        resp = _form.get('luotest_response')
+        if not verify_captcha(resp):
             message_captcha = u'人机识别验证失败'
             return render_template('user/reg.html', title=gettext('Register Account'),
                                    form=_form, message_captcha=message_captcha)
@@ -146,13 +146,13 @@ def password_reset_request():
         return render_template('user/passwd_reset.html', form=None)
     elif request.method == 'POST':
         _form = request.form
-
-        if not verify_captcha(_form['luotest_response']):
+        resp = _form.get('luotest_response')
+        if not verify_captcha(resp):
             return render_template('user/passwd_reset.html', message_captcha=u'人机识别验证失败')
 
         email_addr = _form["email"]
         u = User.query.filter_by(email=email_addr).first()
-        message_email = ""
+        message_email = ''
         if not email_addr:
             message_email = gettext("The email can not be empty")
         elif not u:

@@ -40,7 +40,11 @@
 			 	<div class="loginContent" id="indexLoginContent" style="">
 					<form id="inputLogin" method="post"
                       action="{{ url_for('user.signin', next=request.args.get('next')) }}" data-parsley-validate="">
+                        {% if config.CAPTCHA %}
 						<ul class="loginInput">
+                        {% else %}
+                        <ul class="loginInput" style="height: 300px;">
+                        {% endif %}
 							<li>
 								<span class="logineHPC">登录EasyHPC</span>
 							</li>
@@ -58,9 +62,11 @@
                                            data-parsley-required-message="请输入您的登录密码"
                                            data-parsley-maxlength="128" required="required">
 							</li>
+                            {% if config.CAPTCHA %}
                             <li style="margin: 20px 0 10px 30px;">
                                 <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="240px"></div>
                             </li>
+                            {% endif %}
 							<li>
 								<p class="errorbg0" id="indexLoginTips" style="display: none;"></p>
 								<input class="loginButton" type="submit" value="登录" id="indexLoginSubmit">

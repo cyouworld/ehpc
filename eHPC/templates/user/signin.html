@@ -31,11 +31,13 @@
                                    data-parsley-maxlength="128" required="required">
                         </div>
                     </div>
+                    {% if config.CAPTCHA %}
                     <div class="mbl">
                         <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="100%"></div>
                     </div>
                     {% if message %}
                         <div class="alert alert-danger mbl">{{ message }}</div>
+                    {% endif %}
                     {% endif %}
                     <div class="form-group mbl" style="margin-top: 20px">
                         <button type="submit" class="btn btn-primary btn-lg btn-block">{{ _('Sign In') }}</button>

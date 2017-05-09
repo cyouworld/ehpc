@@ -21,12 +21,14 @@
             <div class="messages col-sm-10" style="margin-top: 10px"> <p class="text-danger"> {{ message_email }} </p> </div>
             {% endif %}
         </div>
+        {% if config.CAPTCHA %}
         <div class="form-group mbl">
             <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="100%"></div>
             {% if message_captcha %}
                 <div class="messages col-sm-10" style="margin-top: 10px"> <p class="text-danger"> {{ message_captcha }} </p> </div>
             {% endif %}
         </div>
+        {% endif %}
         <div class="form-group mbl">
 	<div class="controls">
             <button class="btn btn-primary btn-lg btn-block">
