@@ -25,7 +25,6 @@
             {% endif %}
         }
         var js_material_data = "{{ url_for('static', filename='resource') }}/";
-
         var js_ajax_url = "{{ url_for('course.get_material_src') }}";
     </script>
     <script src="{{ url_for('static', filename='js/course/player.js') }}"></script>

@@ -30,6 +30,9 @@ def dated_url_for(endpoint, **values):
         # pdf.js 用来加载 PDF, 这个特例不需要加查询戳
         if filename == 'js/pdfjs/web/viewer.html':
             pass
+        # 获取课时资源的目录，后面还要再追加具体的地址。
+        elif filename =='resource':
+            pass
         elif filename:
             file_path = os.path.join(app.root_path,
                                      endpoint, filename)

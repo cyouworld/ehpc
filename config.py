@@ -55,26 +55,21 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # If use QQ email, please see http://service.mail.qq.com/cgi-bin/help?id=28 firstly.
-    MAIL_SERVER = 'smtp.exmail.qq.com'
+    # MAIL_SERVER = 'smtp.exmail.qq.com'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
 
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME') or 'easyhpc@nscc-gz.cn'
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
-    # 如果配置了 EHPC_VNC_OUTSIDE_URL, 则公网可以访问， 否则只在超算内部可以访问 VNC
-    VNC_SERVER_URL = os.environ.get('EHPC_VNC_OUTSIDE_URL') or '10.133.100.17:8080'
-    # VNC_SERVER_URL = '114.67.37.197:10008'
-
     MAIL_SUBJECT_PREFIX = 'EasyHPC'
     MAIL_SENDER = '<easyhpc@nscc-gz.cn>'
     # 发送邮件开关， 为True才真正发送邮件，为False不发送邮件。
-    MAIL_IS_ON = False
+    MAIL_IS_ON = os.environ.get('MAIL_IS_ON') or True
 
     BABEL_DEFAULT_LOCALE = 'zh'
     BABEL_DEFAULT_TIMEZONE = 'CST'
 
-    PER_PAGE = 10
     UPLOAD_FOLDER = os.path.join(basedir, 'eHPC/static/upload')
 
     HOMEWORK_UPLOAD_FOLDER = os.path.join(basedir, 'eHPC/static/homework/upload')
@@ -98,8 +93,8 @@ class Config:
     MAX_CONTENT_LENGTH = 512 * 1024 * 1024
     ALLOWED_RESOURCE_TYPE = {'pdf', 'video', 'audio', 'excel'}
 
-    VNC_INSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PRIVATE_URL')
-    VNC_OUTSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PUBLIC_URL')
+    VNC_INSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PRIVATE_URL') # 超算内部访问地址
+    VNC_OUTSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PUBLIC_URL') # 公网访问地址
 
     CAPTCHA_SITE_KEY = CAPTCHA_SITE_KEY
 
