@@ -41,7 +41,7 @@ luosimao人机验证参数
 文档地址
 https://luosimao.com/docs/api/56
 """
-CAPTCHA = True
+CAPTCHA = False if os.environ.get('CAPTCHA') == "False" else True
 CAPTCHA_VERIFY_URL = 'https://captcha.luosimao.com/api/site_verify'
 CAPTCHA_SITE_KEY = '9179b9c905994e6dae98e52778b69c87'
 CAPTCHA_API_KEY = 'e14e661452db57a55918930185270a16'
@@ -56,7 +56,7 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = True
 
     # If use QQ email, please see http://service.mail.qq.com/cgi-bin/help?id=28 firstly.
-    # MAIL_SERVER = 'smtp.exmail.qq.com'
+    MAIL_SERVER = 'smtp.exmail.qq.com'
     MAIL_PORT = 465
     MAIL_USE_SSL = True
 
@@ -65,8 +65,8 @@ class Config:
 
     MAIL_SUBJECT_PREFIX = 'EasyHPC'
     MAIL_SENDER = '<easyhpc@nscc-gz.cn>'
-    # 发送邮件开关， 为True才真正发送邮件，为False不发送邮件。
-    MAIL_IS_ON = os.environ.get('MAIL_IS_ON') or True
+    # 默认开放邮件发送功能，如果环境变量MAIL_IS_ON='False', 则不发送邮件。
+    MAIL_IS_ON = False if os.environ.get('MAIL_IS_ON') == "False" else True
 
     BABEL_DEFAULT_LOCALE = 'zh'
     BABEL_DEFAULT_TIMEZONE = 'CST'
