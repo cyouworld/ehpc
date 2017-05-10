@@ -17,6 +17,7 @@ from ..models import User
 from ..util.email import send_email
 from .. import db
 from ..util.file_manage import get_file_type
+from ..user.authorize import system_login
 
 alphanumeric = re.compile(r'^[0-9a-zA-Z\_]*$')
 email_address = re.compile(r'[a-zA-z0-9]+\@[a-zA-Z0-9]+\.+[a-zA-Z]')
@@ -81,11 +82,11 @@ def reg():
         password = _form['password']
         password2 = _form['password2']
 
-        name = _form['name']
-        gender = _form['gender']
-        phone = _form['phone']
-        university = _form['university']
-        student_id = _form['student_id']
+        name = _form.get('name')
+        gender = _form.get('gender', 1)
+        phone = _form.get('phone')
+        university = _form.get('university')
+        student_id = _form.get('student_id', 0)
 
         message_e, message_u, message_p = "", "", ""
         # Check username is valid or not.
@@ -128,8 +129,30 @@ def reg():
             db.session.commit()
             login_user(reg_user)
 
+            if _form.get('type') == '1':
+                if request.headers.getlist("X-Forwarded-For"):
+                    ip = request.headers.getlist("X-Forwarded-For")[0]
+                else:
+                    ip = request.remote_addr
+
+                send_email(ip, current_app.config['MAIL_USERNAME'], u'教师用户注册提醒', 'user/reg_teacher_email', user=reg_user)
+
             # TODO, Confirm the email.
             return redirect(request.args.get('next') or url_for('main.index'))
+
+
+@system_login
+@user.route('/register/teacher/<int:user_id>/', methods=['GET', 'POST'])
+def reg_teacher(user_id):
+    if request.method == 'GET':
+        u = User.query.filter_by(id=user_id).first_or_404()
+        return render_template('user/reg_teacher.html', user=u)
+    elif request.method == 'POST':
+        if request.form.get('op') == 'approve':
+            u = User.query.filter_by(id=user_id).first_or_404()
+            u.permissions = 2
+            db.session.commit()
+        return redirect(url_for('admin.user'))
 
 
 @user.route('/<int:uid>/')

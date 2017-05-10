@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div id="content-container" class="container">
+        <div class="es-section login-section">
+            <div class="logon-tab clearfix">
+                <a class="active" style="margin-left: 120px;font-size: 20px;"><strong>教师权限审核</strong></a>
+            </div>
+            <div class="login-main">
+                <form class="form-horizontal" id="register-form" method="post">
+                    <div class="form-group mbl">
+                        <label class="control-label col-sm-3 required"
+                               for="register_nickname">{{ _('Username') }}</label>
+                        <div class="col-sm-9" style="margin-top: 10px;">
+                            {{ user.username }}
+                        </div>
+                    </div>
+
+                    <div class="form-group mbl">
+                        <label class="control-label col-sm-3 required"
+                               for="register_mobile">{{ _('Email Address') }}</label>
+                        <div class="col-sm-9" style="margin-top: 10px;">
+                            {{ user.email }}
+                        </div>
+                    </div>
+
+
+                    <div class="form-group mbl">
+                        <label class="control-label col-sm-3 required" for="register_name"> 姓名 </label>
+                        <div class="col-sm-9" style="margin-top: 10px;">
+                            {{ user.name }}
+                        </div>
+                    </div>
+
+
+                    <div class="form-group mbl">
+                        <label class="control-label col-sm-3 required" for="register_phone"> 手机号码 </label>
+                        <div class="col-sm-9" style="margin-top: 10px;">
+                            {{ user.phone }}
+                        </div>
+                    </div>
+
+                    <div class="form-group mbl">
+                        <label class="control-label col-sm-3 required" for="register_university"> 学校 </label>
+                        <div class="col-sm-9" style="margin-top: 10px;">
+                            {{ user.university }}
+                        </div>
+                    </div>
+                </form>
+
+                <form method="post">
+                    <input type="hidden" name="op" value="approve">
+                    <input type="submit" class="btn btn-info btn-lg btn-block" style="margin-top: 40px;" value="同意">
+                </form>
+
+                <form method="post">
+                    <input type="hidden" name="op" value="disapprove">
+                    <input type="submit" class="btn btn-danger btn-lg btn-block" style="margin-top: 10px;" value="拒绝">
+                </form>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+{% endblock %}
