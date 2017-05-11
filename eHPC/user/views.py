@@ -135,7 +135,7 @@ def reg():
                 else:
                     ip = request.remote_addr
 
-                send_email(ip, current_app.config['MAIL_USERNAME'], u'教师用户注册提醒', 'user/reg_teacher_email', user=reg_user)
+                send_email(ip, current_app.config['MAIL_ADMIN_ADDR'], u'教师用户注册提醒', 'user/reg_teacher_email', user=reg_user)
 
             # TODO, Confirm the email.
             return redirect(request.args.get('next') or url_for('main.index'))

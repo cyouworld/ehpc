@@ -67,6 +67,8 @@ class Config:
     MAIL_SENDER = '<easyhpc@nscc-gz.cn>'
     # 默认开放邮件发送功能，如果环境变量MAIL_IS_ON='False', 则不发送邮件。
     MAIL_IS_ON = False if os.environ.get('MAIL_IS_ON') == "False" else True
+    # 教师注册需要给管理员发送邮件，这里是管理员邮箱地址
+    MAIL_ADMIN_ADDR = os.environ.get('EHPC_ADMIN_ADDR') or '503951764@qq.com'
 
     BABEL_DEFAULT_LOCALE = 'zh'
     BABEL_DEFAULT_TIMEZONE = 'CST'
