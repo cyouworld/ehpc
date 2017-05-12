@@ -36,13 +36,13 @@
                             {% if current_user.id | is_join_course(course.id) %}
                                 <div class="join" id="join-course">
                                     <a class="btn btn-danger btn-lg"
-                                       href="{{ url_for('course.exit_out', cid=course.id) }}" id="course-in">
+                                       href="javascript:void(0)" id="course-in" name="exit-course">
                                         退出课堂</a>
                                 </div>
                             {% else %}
                                 <div class="join" id="join-course">
                                     <a class="btn btn-primary btn-lg"
-                                       href="{{ url_for('course.join', cid=course.id) }}" id="course-in">
+                                       href="{{ url_for('course.join', cid=course.id) }}" id="course-in" name="join-course">
                                         加入课程</a>
                                 </div>
                             {% endif %}
@@ -68,7 +68,7 @@
         </div>
     </div>
     {% include "widget/upload_status_modal.html" %}
-
+    {% include "course/widget_course_exit.html" %}
 {% endblock %}
 
 {% block footer_ext %}
@@ -79,27 +79,28 @@
                 $(".join").children("a").text("加入审批中").attr("href", "#");
             }
 
-            $("#join-course a").click(function () {
+            //退出警告框
+            $("#join-course").find("a[name=exit-course]").click(function () {
+                $("#exit-warning").modal("show");
+            });
+
+            $("#exit-confirm").click(function () {
+                $.ajax({
+                    url: '{{ url_for('course.exit_out', cid=course.id) }}',
+                    success: function () {
+                        window.location.reload();
+                    }
+                })
+            });
+            //退出警告框END
+
+            $("#join-course").find("a[name=join-course]").click(function () {
                 $.ajax({
                     url: this.href,
                     success: function (data) {
                         if (data.status == 'success') {
-                            /* 目前状态是已经加入了课程, 所以需要变为退出课堂 */
                             if ($('#course-in').hasClass('btn-primary')) {
-                                $("#course-in").text('退出课程');
-                                $("#course-in").removeClass('btn-primary').addClass('btn-danger');
-                                $("#course-in").attr("href", "{{ url_for('course.exit_out', cid=course.id) }}");
-                                $("#all_students").html(data.users_list);
-                                $("#student-num").empty().html(data.student_num);
-                            }
-
-                            /* 需要加入课程 */
-                            else {
-                                $("#course-in").text('加入课程');
-                                $("#course-in").removeClass('btn-danger').addClass('btn-primary');
-                                $("#course-in").attr("href", "{{ url_for('course.join', cid=course.id) }}");
-                                $("#all_students").html(data.users_list);
-                                $("#student-num").empty().html(data.student_num);
+                                window.location.reload();
                             }
                         }
                         else if (data["status"] == "pending") {
