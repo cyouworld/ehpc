@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+
+{% block header_ext %}
+    <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
+    <link href="//cdn.bootcss.com/bootstrap-select/1.12.1/css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="//cdn.bootcss.com/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    <div id="content-container" class="container">
+        <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
+            <li><a href="/">{{ _('Index') }}</a></li>
+            <li><a href="{{ url_for('machine_apply.index') }}">{{ _('Machine Hour Apply') }}</a></li>
+            {% if op == "create" %}
+                <li class="active"><a href="{{ url_for('machine_apply.machine_apply_create') }}">{{ _('Machine Hour Apply Create') }}</a></li>
+            {% else %}
+                <li class="active"><a href="{{ url_for('machine_apply.machine_apply_edit', apply_id=apply.id) }}">{{ _('Machine Hour Apply Edit') }}</a></li>
+            {% endif %}
+        </ol>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">{% if op == "create" %}{{ _('Machine Hour Apply Create') }}{% else %}{{ _('Machine Hour Apply Edit') }}{% endif %}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form id="machine-apply-create-form" method="post" enctype="application/x-www-form-urlencoded"
+                              action="{{ url_for('machine_apply.machine_apply_create') }}" data-parsley-validate="">
+                            <table class="table table-bordered" cellspacing="0" id="problem">
+                                <tr>
+                                    <td class="text-center text-verticle-center" width="20%" rowspan="4">{{ _('Apply Information') }}</td>
+                                    <td class="text-center" width="20%"></td>
+                                    <td class="text-center" width="20%">{{ _('Applicant Institution') }}</td>
+                                    <td class="text-center" width="20%">{{ _('Phone') }}</td>
+                                    <td class="text-center" width="20%">{{ _('Institution Address') }}</td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center" width="20%">{{ _('Applicant Manager') }}</td>
+                                    <td class="text-center" width="20%">
+                                        <input type="text" name="project-user-institution"
+                                               data-parsley-maxlength="256" data-parsley-required-message="请输入负责人单位" required
+                                               value="{% if apply %}{{ apply.project_user_institution }}{% endif %}">
+                                    </td>
+                                    <td class="text-center" width="20%">
+                                        <input type="text" name="project-user-tel" data-parsley-required-message="请输入负责人联系方式" required
+                                               value="{% if apply %}{{ apply.project_user_tel }}{% endif %}">
+                                    </td>
+                                    <td class="text-center" width="20%">
+                                        <input type="text" name="project-user-address" data-parsley-maxlength="256"
+                                               data-parsley-required-message="请输入负责人通讯地址" required
+                                               value="{% if apply %}{{ apply.project_user_address }}{% endif %}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center" width="20%">{{ _('Applicant people') }}</td>
+                                    <td class="text-center" width="20%">
+                                        <input type="text" name="project-applicant-institution" data-parsley-maxlength="256"
+                                               data-parsley-required-message="请输入申请人单位" required
+                                               value="{% if apply %}{{ apply.project_applicant_institution }}{% endif %}">
+                                    </td>
+                                    <td class="text-center" width="20%">
+                                        <input type="text" name="project-applicant-tel" data-parsley-required-message="请输入申请人联系方式" required
+                                               value="{% if apply %}{{ apply.project_applicant_tel }}{% endif %}">
+                                    </td>
+                                    <td class="text-center" width="20%">
+                                        <input type="text" name="project-applicant-address" data-parsley-maxlength="256"
+                                               data-parsley-required-message="请输入申请人通讯地址" required
+                                               value="{% if apply %}{{ apply.project_applicant_address }}{% endif %}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center" width="20%">{{ _('Project Name') }}</td>
+                                    <td class="text-center" width="20%" colspan="3">
+                                        <input type="text" name="project-name" data-parsley-maxlength="256" data-parsley-required-message="请输入项目名称" required
+                                               value="{% if apply %}{{ apply.project_name }}{% endif %}">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center text-verticle-center" width="20%" rowspan="3">{{ _('Resourse Information') }}</td>
+                                    <td class="text-center" width="20%">{{ _('Supercomputer Institute') }}</td>
+                                    <td class="text-center" width="20%" colspan="3">
+                                        <!--input type="text" name="sc-center"-->
+                                        <select name="sc-center" class="selectpicker" data-width="100%" data-parsley-required-message="请选择超算单位" required
+                                                value="{% if apply %}{{ apply.sc_center }}{% endif %}">
+                                            <option value="0">广州超算中心</option>
+                                            <option value="1">长沙超算中心</option>
+                                            <option value="2">中科院超算中心</option>
+                                            <option value="3">上海超算中心</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-center" width="20%">{{ _('CPU Machine Hours') }}</td>
+                                    <td class="text-center" width="20%" colspan="3">
+                                        <input type="text" name="cpu-hour" data-parsley-required-message="请输入所需CPU核时" required
+                                               value="{% if apply %}{{ apply.CPU_hour }}{% endif %}">
+                                    </td>
+                                </tr>
+                            </table>
+                            <div class="form-submit text-right">
+                                <input class='btn btn-success' id='submit' type='submit'>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script>
+        var op = "{{ op }}";
+        if (op == "edit") {
+            {% if apply %}
+                var data = "{{ apply.sc_center }}";
+                var selected_classifies = [];
+                selected_classifies.push(data);
+                $(".selectpicker").selectpicker('val', selected_classifies);
+            {% endif %}
+        }
+    </script>
+{% endblock %}

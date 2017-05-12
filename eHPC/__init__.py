@@ -65,4 +65,7 @@ def create_app(config_name):
     from .wechat import wechat as wechat_blueprint
     app.register_blueprint(wechat_blueprint, url_prefix='/wechat')
 
+    from .machine_apply import machine_apply as machine_apply_blueprint
+    app.register_blueprint(machine_apply_blueprint, url_prefix='/machine_apply')
+
     return app

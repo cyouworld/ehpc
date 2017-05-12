@@ -59,6 +59,7 @@ class User(UserMixin, db.Model):
     teacher_vnc_knowledge = db.relationship('VNCKnowledge', backref='teacher', lazy='dynamic', cascade="delete, delete-orphan")
 
     vnc_progresses = db.relationship('VNCProgress', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
+    machine_apply = db.relationship("MachineApply", backref='user', lazy='dynamic', cascade="delete, delete-orphan")
 
     @property
     def password(self):
@@ -469,7 +470,7 @@ class Case(db.Model):
 class CaseVersion(db.Model):
     __tablename__ = "case_versions"
 
-    id = db.Column(db.Integer, primary_key=True) 
+    id = db.Column(db.Integer, primary_key=True)
     case_id = db.Column(db.Integer, db.ForeignKey('cases.id'), nullable=False)
     version_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(256), nullable=False)
@@ -587,3 +588,18 @@ class HomeworkScore(db.Model):
 
     user = db.relationship("User", backref='homeworkscore')
 
+
+class MachineApply(db.Model):
+    __tablename__ = "machine_apply"
+    id = db.Column(db.Integer, primary_key=True)
+    project_user_institution = db.Column(db.String(256), nullable=False)    #项目负责人单位
+    project_user_tel = db.Column(db.String(64), nullable=False)    #项目负责人联系方式
+    project_user_address = db.Column(db.String(256), nullable=False)   #项目负责人地址
+    project_applicant_institution = db.Column(db.String(256), nullable=False)    #项目申请人单位
+    project_applicant_tel = db.Column(db.String(64), nullable=False)    #项目申请人联系方式
+    project_applicant_address = db.Column(db.String(256), nullable=False)   #项目申请人地址
+    project_name = db.Column(db.String(512), nullable=False)     #项目名称
+    sc_center = db.Column(db.Integer, nullable=False, default=0)    #超算单位：0-广州超算，1-长沙超算，2-中科院超算，3-上海超算
+    CPU_hour = db.Column(db.Integer, nullable=False)    #CPU核时
+    applying_time = db.Column(db.DateTime, default=datetime.now, nullable=False)    #提交申请的时间
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))

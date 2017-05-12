@@ -4860,3 +4860,14 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
 .result-keep-space{
     white-space: pre-wrap;
 }
+
+#machine-apply-create-form table input {
+    width: 100%;
+    border-radius: 3px;
+    border: 1px solid #ccc;
+    text-align: center;
+}
+
+#machine-apply-create-form table .text-verticle-center {
+    vertical-align: middle;
+}
