@@ -46,7 +46,7 @@
             </button>
         </div>
         <div id="laboratory"  style="background-color: #1D1F21;">
-            <div id="editor" class="editor"></div>
+            <div id="laboratory-editor" class="code-editor" style="min-height: 100%;"></div>
         </div>
         <div id="terminal">
             <pre class="terminal" tabindex="0" style="color: rgb(240, 240, 240);"></pre>
@@ -111,7 +111,7 @@
     <script src="//cdn.bootcss.com/ace/1.2.6/ace.js"></script>
     <script src="//cdn.bootcss.com/ace/1.2.6/theme-tomorrow_night.js"></script>
     <script>
-        var editor = ace.edit("editor");
+        var editor = ace.edit("laboratory-editor");
         editor.setOptions({
             useWrapMode: true,
             highlightActiveLine: true,

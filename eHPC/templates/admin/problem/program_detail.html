@@ -45,7 +45,7 @@
 
                                 <label>参考代码</label>
                                 <div class="row form-group" style="padding: 10px">
-                                    <div id="editor"></div>
+                                    <div id="reference-code-editor" class="code-editor"></div>
                                 </div>
                             </div>
                             <input type="hidden" name="op" value="{{ op }}">
@@ -71,7 +71,7 @@
 {% block footer_ext %}
     <script src="//cdn.bootcss.com/ace/1.2.6/ace.js"></script>
     <script>
-        var editor = ace.edit("editor");
+        var editor = ace.edit("reference-code-editor");
         editor.setOptions({
             useWrapMode: true,
             highlightActiveLine: true,

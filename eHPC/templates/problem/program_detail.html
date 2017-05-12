@@ -112,7 +112,7 @@
             </div>
 
             <div class="row form-group">
-                <div id="editor" style="min-height: 400px;"></div>
+                <div id="user-code-editor" class="code-editor"></div>
             </div>
 
 
@@ -199,7 +199,7 @@
     <script src="//cdn.bootcss.com/ace/1.2.6/theme-tomorrow_night.js"></script>
 
     <script>
-        var editor = ace.edit("editor");
+        var editor = ace.edit("user-code-editor");
         editor.setOptions({
             useWrapMode: true,
             highlightActiveLine: true,

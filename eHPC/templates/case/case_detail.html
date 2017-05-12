@@ -65,7 +65,7 @@
                     <pre id="view-code"><code id="viewer"></code></pre>
                 </div>
                 <div class="panel-body" id="code-editor" style="display: none">
-                    <div id="editor" style="z-index: 0">
+                    <div id="case-code-editor" class="code-editor" style="z-index: 0">
 
                     </div>
                 </div>
@@ -79,7 +79,7 @@
     <script type="text/javascript" src="{{ url_for('static', filename='js/markdown_latex_support.js') }}"></script>
     <script src="//cdn.bootcss.com/ace/1.2.6/ace.js"></script>
     <script>
-        var editor = ace.edit("editor");
+        var editor = ace.edit("case-code-editor");
         editor.setTheme("ace/theme/tomorrow_night");
         var post_to = "{{ url_for('case.show_case', case_id=case.id) }}";
     </script>
