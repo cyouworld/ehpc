@@ -503,7 +503,7 @@ msgstr "申请说明"
 
 #: templates/machine_apply/index.html:25
 msgid "My Machine Hour Applies"
-msgstr "我的所有申请"
+msgstr "我的申请"
 
 #: templates/machine_apply/index.html:31
 msgid "Apply ID"

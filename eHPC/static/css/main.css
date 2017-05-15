@@ -4871,3 +4871,28 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
 #machine-apply-create-form table .text-verticle-center {
     vertical-align: middle;
 }
+
+#machine-apply-create-form .parsley-errors-list {
+    text-align: left !important;
+}
+
+#create-machine-apply {
+    display: block;
+    margin: 50px auto;
+    height: 100px;
+    width: 100px;
+    font-size: 24px;
+    color: #CCC;
+    padding-top: 30px;
+    text-align: center;
+    border: 1px dashed #ccc;
+}
+
+#create-machine-apply:hover {
+    text-decoration: none;
+    border: 1px dashed #4d99bf;
+}
+
+#create-machine-apply .fa {
+    vertical-align: middle;
+}

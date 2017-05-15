@@ -13,7 +13,6 @@
     <div id="content-container" class="container">
         <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
             <li><a href="/">{{ _('Index') }}</a></li>
-            <li><a href="{{ url_for('machine_apply.index') }}">{{ _('Machine Hour Apply') }}</a></li>
             {% if op == "create" %}
                 <li class="active"><a href="{{ url_for('machine_apply.machine_apply_create') }}">{{ _('Machine Hour Apply Create') }}</a></li>
             {% else %}
@@ -25,10 +24,11 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title">{% if op == "create" %}{{ _('Machine Hour Apply Create') }}{% else %}{{ _('Machine Hour Apply Edit') }}{% endif %}</h3>
+                        {% if op == "edit" %}<span class="pull-right">当前申请状态： {% if apply.submit_status == 0 %}未提交{% elif apply.submit_status == 1 %}已提交，等待审批{% elif apply.submit_status == 2 %}审批通过{% endif %}</span>{% endif %}
                     </div>
                     <div class="panel-body">
                         <form id="machine-apply-create-form" method="post" enctype="application/x-www-form-urlencoded"
-                              action="{{ url_for('machine_apply.machine_apply_create') }}" data-parsley-validate="">
+                              action="{% if op == "create" %}{{ url_for('machine_apply.machine_apply_create') }}{% else %}{{ url_for('machine_apply.machine_apply_edit', apply_id=apply.id) }}{% endif %}" data-parsley-validate="">
                             <table class="table table-bordered" cellspacing="0" id="problem">
                                 <tr>
                                     <td class="text-center text-verticle-center" width="20%" rowspan="4">{{ _('Apply Information') }}</td>
@@ -100,7 +100,10 @@
                                     </td>
                                 </tr>
                             </table>
+                            <input id="save-op" type="hidden" name="save-op" value="submit">
                             <div class="form-submit text-right">
+                                <input class='btn btn-info' id='show-info' type='button' value="申请说明" data-toggle="modal" data-target="#InfoModal">
+                                <input class='btn btn-success' id='save-as-draft' type='submit' value="保存草稿">
                                 <input class='btn btn-success' id='submit' type='submit'>
                             </div>
                         </form>
@@ -109,11 +112,33 @@
             </div>
         </div>
     </div>
+
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="InfoModal" tabindex="-1" role="dialog" aria-labelledby="InfoModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="InfoModalLabel">申请说明</h4>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        这里是申请说明
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 {% endblock %}
 
 {% block footer_ext %}
     <script>
         var op = "{{ op }}";
+        var save_satus = "{{ save_status }}";
         if (op == "edit") {
             {% if apply %}
                 var data = "{{ apply.sc_center }}";
@@ -122,5 +147,11 @@
                 $(".selectpicker").selectpicker('val', selected_classifies);
             {% endif %}
         }
+        if (save_satus == "save") {
+            alert_modal("保存草稿成功！");
+        }
+        $("#save-as-draft").click(function() {
+            $("#save-op").val("save-as-draft");
+        });
     </script>
 {% endblock %}

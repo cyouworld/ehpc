@@ -1,4 +1,9 @@
 {% extends 'base.html' %}
+
+{% block header_ext %}
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+{% endblock %}
+
 {% block content %}
 
     <div id="content-container" class="container">
@@ -10,65 +15,24 @@
             <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title">{{ _('Applies Description') }}</h3>
-                    </div>
-                </div>
-
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <span class="pull-right">
-                            <a id="create-machine-apply" href="{{ url_for('machine_apply.machine_apply_create') }}" class="btn btn-info btn-sm">
-                                <span class="fa fa-plus"></span>
-                                新增申请
-                            </a>
-                        </span>
                         <h3 class="panel-title">{{ _('My Machine Hour Applies') }}</h3>
                     </div>
                     <div class="panel-body">
-                        <table class="ui celled table" cellspacing="0" id="problem">
-                            <thead>
-                            <tr>
-                                <th class="text-center" width="10%">{{ _('Apply ID') }}</th>
-                                <th class="text-center" width="30%">{{ _('Project Name') }}</th>
-                                <th class="text-center" width="20%">{{ _('SC Institution') }}</th>
-                                <th class="text-center" width="10%">{{ _('Applying Number of Hours') }}</th>
-                                <th class="text-center" width="15%">{{ _('Applying Time') }}</th>
-                                <th class="text-center" width="15%">{{ _('Operations') }}</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            {% if all_applies.count() == 0 %}
-                                <tr><td colspan="5" class="text-center">暂无任何申请</td></tr>
-                            {% else %}
-                                {% for a in all_applies %}
-                                    <tr>
-                                        <td class="text-center">{{ a.id }}</td>
-                                        <td class="text-center"><a href="{{ url_for('machine_apply.machine_apply_edit', apply_id=a.id) }}">{{ a.project_name }}</a></td>
-                                        <td class="text-center">
-                                            {% if a.sc_center == 0 %}
-                                                广州超算中心
-                                            {% elif a.sc_center == 1 %}
-                                                长沙超算中心
-                                            {% elif a.sc_center == 2 %}
-                                                中科院超算中心
-                                            {% else %}
-                                                上海超算中心
-                                            {% endif %}
-                                        </td>
-                                        <td class="text-center">{{ a.CPU_hour }}</td>
-                                        <td class="text-center">{{ a.applying_time }}</td>
-                                        <td class="text-center">
-                                            <!--span class="divider"> | </span-->
-                                            <a href="{{ url_for('machine_apply.machine_apply_edit', apply_id=a.id) }}" name="change-btn">查看&编辑</a>
-                                        </td>
-                                    </tr>
-                                {% endfor %}
-                            {% endif %}
-                            </tbody>
-                        </table>
+                        <a id="create-machine-apply" href="{{ url_for('machine_apply.machine_apply_create') }}"
+                           data-toggle="tooltip"  title="新增申请">
+                            <span class="fa fa-plus"></span>
+                        </a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script>
+        $(function() {
+            $("[data-toggle='tooltip']").tooltip();
+        });
+    </script>
 {% endblock %}
