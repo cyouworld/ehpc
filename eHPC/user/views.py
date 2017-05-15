@@ -63,6 +63,16 @@ def signout():
     return redirect(request.args.get('next') or request.referrer or url_for('main.index'))
 
 
+# 注册邮箱合法性验证
+@user.route('/register/valid')
+def reg_valid():
+    mail = request.args.get('mail')
+    status = 'success'
+    if User.query.filter_by(email=mail).first():
+        status = 'fail'
+    return jsonify(status=status)
+
+
 @user.route('/register/', methods=['GET', 'POST'])
 def reg():
     if request.method == 'GET':
@@ -136,6 +146,8 @@ def reg():
                     ip = request.remote_addr
 
                 send_email(ip, current_app.config['MAIL_ADMIN_ADDR'], u'教师用户注册提醒', 'user/reg_teacher_email', user=reg_user)
+                return render_template('user/teacher_reg_note.html')
+
 
             # TODO, Confirm the email.
             return redirect(request.args.get('next') or url_for('main.index'))

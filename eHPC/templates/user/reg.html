@@ -18,25 +18,6 @@
                     <div>
                         <div class="form-group mbl">
                             <label class="control-label col-sm-3 required"
-                                   for="register_nickname">{{ _('Username') }}*</label>
-                            <div class="col-sm-9">
-                                <input type="text" id="register_nickname" name="username" required="required"
-                                       class="form-control input-lg" data-url="/register/nickname/check"
-                                       placeholder="{{ _('letters,digits,underscore') }}"
-                                       data-com.agilebits.onepassword.user-edited="yes"
-                                       data-parsley-required-message="用户名不能为空" data-widget-cid="widget-3"
-                                       data-explain=""
-                                       data-parsley-type="alphanum" data-parsley-maxlength="128"
-                                       {% if data %}value="{{ data.username }}"{% endif %}>
-                                <p class="help-block"></p>
-                                {% if message_u %}
-                                    <p class="help-block"><span class="text-danger"> {{ message_u }}</span></p>
-                                {% endif %}
-                            </div>
-                        </div>
-
-                        <div class="form-group mbl">
-                            <label class="control-label col-sm-3 required"
                                    for="register_mobile">{{ _('Email Address') }}*</label>
                             <div class="col-sm-9">
                                 <input type="text" id="register_email" name="email" required="required"
@@ -95,13 +76,36 @@
                                     <input type="radio" name="type" value="1" data-parsley-multiple="type" required
                                            {% if data and data.type == '1' %}checked{% endif %}>教师
                                 </label>
+                                <p id="type_message" class="help-block"></p>
                             </div>
+
                         </div>
 
-                        <a id="next-step" class="btn btn-primary btn-lg btn-block mbl" href="javascript:void(0)">下一步</a>
+                        <a id="next-step" class="btn btn-primary btn-lg btn-block mbl" href="javascript:void(0)">注册</a>
                     </div>
 
+
                     <div style="display: none;">
+                        <h3>提交基本信息</h3>
+                        <p>就要大功告成了，请完善下面的信息并提交，然后就可以使用您的账户了。</p><br>
+                        <div class="form-group mbl">
+                            <label class="control-label col-sm-3 required"
+                                   for="register_nickname"> 用户昵称* </label>
+                            <div class="col-sm-9">
+                                <input type="text" id="register_nickname" name="username" required="required"
+                                       class="form-control input-lg" data-url="/register/nickname/check"
+                                       placeholder="{{ _('letters,digits,underscore') }}"
+                                       data-com.agilebits.onepassword.user-edited="yes"
+                                       data-parsley-required-message="用户昵称不能为空" data-widget-cid="widget-3"
+                                       data-explain=""
+                                       data-parsley-type="alphanum" data-parsley-maxlength="128"
+                                       {% if data %}value="{{ data.username }}"{% endif %}>
+                                <p class="help-block"></p>
+                                {% if message_u %}
+                                    <p class="help-block"><span class="text-danger"> {{ message_u }}</span></p>
+                                {% endif %}
+                            </div>
+                        </div>
                         <div class="form-group mbl">
                             <label class="control-label col-sm-3 required" for="register_name"> 姓名* </label>
                             <div class="col-sm-9">
@@ -115,7 +119,6 @@
                                 {% endif %}
                             </div>
                         </div>
-
                         <div class="form-group mbl">
                             <label class="control-label col-sm-3 required" for="register_gender"> 性别* </label>
                             <div class="col-sm-9">
@@ -190,9 +193,8 @@
                                 <p class="help-block"><span class="text-danger"> {{ message_captcha }}</span></p>
                             {% endif %}
                         {% endif %}
-                        <a id="prev-step" class="btn btn-primary btn-lg btn-block mbl" href="javascript:void(0)">上一步</a>
                         <button type="submit" id="register-btn" data-submiting-text="{{ _('Submiting...') }}"
-                                class="btn btn-primary btn-lg btn-block">{{ _('Registration') }}
+                                class="btn btn-primary btn-lg btn-block">提交信息
                         </button>
                     </div>
                 </form>
@@ -204,28 +206,71 @@
 
 {% block footer_ext %}
     <script type="text/javascript">
+
         $("#next-step").click(function () {
             var form = $("#register-form");
-            if ($("input[name=type]").eq(1).prop("checked")) {
-                form.children().eq(1).children().eq(1).hide();
-                form.children().eq(1).children().eq(4).hide();
-
-                $("#register_student_id").val("0");
-                form.children().eq(1).children().eq(1).find("input").eq(1).prop("checked", true);
-            } else {
-                form.children().eq(1).children().eq(1).show();
-                form.children().eq(1).children().eq(4).show();
-
-                $("#register_student_id").val("");
-                form.children().eq(1).children().eq(1).find("input").eq(1).prop("checked", false);
+            if(first_form_validate()){
+                var mail = $("#register_email").val();
+                $.ajax({
+                    url:'{{ url_for('user.reg_valid') }}?mail='+mail,
+                    success: function(data){
+                        if(data['status']=="success"){
+                            form.children().eq(0).hide();
+                            form.children().eq(1).show();
+                        }
+                        else{
+                            $('#register_email').parent().append('<p class="help-block"><span class="text-danger">该邮箱已被注册，请使用新的邮箱</span></p>');
+                        }
+                     }
+                });
             }
-            form.children().eq(0).hide();
-            form.children().eq(1).show();
+{#            if ($("input[name=type]").eq(1).prop("checked")) {#}
+{#                form.children().eq(1).children().eq(1).hide();#}
+{#                form.children().eq(1).children().eq(4).hide();#}
+{##}
+{#                $("#register_student_id").val("0");#}
+{#                form.children().eq(1).children().eq(1).find("input").eq(1).prop("checked", true);#}
+{#            } else {#}
+{#                form.children().eq(1).children().eq(1).show();#}
+{#                form.children().eq(1).children().eq(4).show();#}
+{##}
+{#                $("#register_student_id").val("");#}
+{#                form.children().eq(1).children().eq(1).find("input").eq(1).prop("checked", false);#}
+{#            }#}
+{#            form.children().eq(0).hide();#}
+{#            form.children().eq(1).show();#}
+{#        });#}
+{#        $("#prev-step").click(function () {#}
+{#            var form = $("#register-form");#}
+{#            form.children().eq(1).hide();#}
+{#            form.children().eq(0).show();#}
         });
-        $("#prev-step").click(function () {
-            var form = $("#register-form");
-            form.children().eq(1).hide();
-            form.children().eq(0).show();
-        });
+
+
+        // 验证第一张表单
+        function first_form_validate(){
+            var status = 1;
+
+            var email_instance = $('#register_email').parsley();
+            email_instance.validate();
+            if(!email_instance.isValid())status=0;
+            var pwd1_instance = $('#register_password1').parsley();
+            pwd1_instance.validate();
+            if(!pwd1_instance.isValid())status=0;
+            var pwd2_instance = $('#register_password2').parsley();
+            pwd2_instance.validate();
+             if(!pwd2_instance.isValid())status=0;
+
+            if($("input[type=radio][name=type]:checked").length == 0)
+            {
+                $("#type_message").html('<span class="text-danger">请选择注册用户类型</span>');
+                status=0;
+            }
+
+            if(status==1)return true;
+            else return false;
+        }
+
+
     </script>
 {% endblock %}

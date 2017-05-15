@@ -1,0 +1,27 @@
+<head>
+    <title>
+        {% block title %}教师注册申请{% endblock %}
+    </title>
+
+    <link href="{{ url_for('static', filename='css/lab.css') }}" rel="stylesheet">
+</head>
+
+{% extends 'base.html' %}
+
+{% block content %}
+
+<div class="page-message-panel container" style="margin-top: 15px">
+
+    <div class="page-message-heading">
+        <h2 class="page-message-title text-center" > 教师注册申请 </h2>
+    </div>>
+
+    <div class="page-message-body">
+        <p class="text-center">
+            我们已经收到你的教师注册请求，等管理员审核通过后，就会给您教师权限。
+        </p>
+    </div>
+
+</div>
+{% endblock %}
+
