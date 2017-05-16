@@ -41,7 +41,8 @@
                                        class="form-control input-lg" data-widget-cid="widget-4" data-explain=""
                                        data-com.agilebits.onepassword.user-edited="yes"
                                        data-parsley-required-message="请设置登录密码"
-                                       placeholder="{{ _('At least 6 characters') }}" data-parsley-length="[6,128]">
+                                       placeholder="{{ _('At least 6 characters') }}" data-parsley-length="[6,128]"
+                                        {% if data %} value="{{ data.password }}" {% endif %}>
                                 <p class="help-block"></p>
                             </div>
                         </div>
@@ -55,7 +56,8 @@
                                        data-com.agilebits.onepassword.user-edited="yes"
                                        data-parsley-required-message="请再次输入确认您的密码"
                                        placeholder="{{ _('At least 6 characters') }}"
-                                       data-parsley-equalto="#register_password1" data-parsley-length="[6,128]">
+                                       data-parsley-equalto="#register_password1" data-parsley-length="[6,128]"
+                                        {% if data %} value="{{ data.password2 }}" {% endif %}>
                                 {% if message_p %}
                                     <p class="help-block mbl" style="margin-top: 20px"><span
                                             class="text-danger"> {{ message_p }}</span></p>
@@ -206,6 +208,10 @@
 
 {% block footer_ext %}
     <script type="text/javascript">
+        {% if data %}
+           $("#register-form").children().eq(0).hide();
+           $("#register-form").children().eq(1).show();
+        {% endif %}
 
         $("#next-step").click(function () {
             var form = $("#register-form");
@@ -224,33 +230,16 @@
                      }
                 });
             }
-{#            if ($("input[name=type]").eq(1).prop("checked")) {#}
-{#                form.children().eq(1).children().eq(1).hide();#}
-{#                form.children().eq(1).children().eq(4).hide();#}
-{##}
-{#                $("#register_student_id").val("0");#}
-{#                form.children().eq(1).children().eq(1).find("input").eq(1).prop("checked", true);#}
-{#            } else {#}
-{#                form.children().eq(1).children().eq(1).show();#}
-{#                form.children().eq(1).children().eq(4).show();#}
-{##}
-{#                $("#register_student_id").val("");#}
-{#                form.children().eq(1).children().eq(1).find("input").eq(1).prop("checked", false);#}
-{#            }#}
-{#            form.children().eq(0).hide();#}
-{#            form.children().eq(1).show();#}
-{#        });#}
-{#        $("#prev-step").click(function () {#}
-{#            var form = $("#register-form");#}
-{#            form.children().eq(1).hide();#}
-{#            form.children().eq(0).show();#}
         });
 
 
         // 验证第一张表单
         function first_form_validate(){
-            var status = 1;
 
+            $('#register_email').parent().children('p:last-child').remove();
+            $("#type_message").html('');
+
+            var status = 1;
             var email_instance = $('#register_email').parsley();
             email_instance.validate();
             if(!email_instance.isValid())status=0;

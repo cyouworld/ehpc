@@ -85,7 +85,7 @@ def reg():
         if not verify_captcha(resp):
             message_captcha = u'人机识别验证失败'
             return render_template('user/reg.html', title=gettext('Register Account'),
-                                   form=_form, message_captcha=message_captcha)
+                                   data=_form, message_captcha=message_captcha)
 
         username = _form['username']
         email = _form['email']
@@ -153,8 +153,8 @@ def reg():
             return redirect(request.args.get('next') or url_for('main.index'))
 
 
-@system_login
 @user.route('/register/teacher/<int:user_id>/', methods=['GET', 'POST'])
+@system_login
 def reg_teacher(user_id):
     if request.method == 'GET':
         u = User.query.filter_by(id=user_id).first_or_404()
