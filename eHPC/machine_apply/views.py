@@ -35,11 +35,13 @@ def machine_apply_create():
                                   project_applicant_institution=request.form['project-applicant-institution'],
                                   project_applicant_tel=request.form['project-applicant-tel'],
                                   project_applicant_address=request.form['project-applicant-address'],
-                                  project_name=request.form['project-name'],
-                                  sc_center=request.form['sc-center'],
-                                  CPU_hour=request.form['cpu-hour'],
+                                  project_name=request.form['project-name'], sc_center=request.form['sc-center'],
                                   user_id=current_user.id)
         db.session.add(curr_apply)
+        db.session.commit()
+        # CPU_hour字段不能置空，若用户未填写则默认为0
+        if request.form['cpu-hour']:
+            curr_apply.CPU_hour = request.form['cpu-hour']
         db.session.commit()
         if request.form['save-op'] == "submit":
             # 若用户点击“提交”按钮， 提交状态改为1，To Do
@@ -61,6 +63,18 @@ def machine_apply_edit(apply_id):
                                title=gettext('Machine Hour Apply Edit'))
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
+        curr_apply.project_user_institution = request.form['project-user-institution']
+        curr_apply.project_user_tel = request.form['project-user-tel']
+        curr_apply.project_user_address = request.form['project-user-address']
+        curr_apply.project_applicant_institution = request.form['project-applicant-institution']
+        curr_apply.project_applicant_tel = request.form['project-applicant-tel']
+        curr_apply.project_applicant_address = request.form['project-applicant-address']
+        curr_apply.project_name = request.form['project-name']
+        curr_apply.sc_center = request.form['sc-center']
+        curr_apply.submit_status = 1
+        if request.form['cpu-hour']:
+            curr_apply.CPU_hour = request.form['cpu-hour']
+        db.session.commit()
         if request.form['save-op'] == "submit":
             # 若用户点击“提交”按钮， 提交状态改为1，To Do
             print "submit"

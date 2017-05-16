@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50716
 File Encoding         : 65001
 
-Date: 2017-05-15 17:03:37
+Date: 2017-05-16 14:00:38
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -26,7 +26,7 @@ CREATE TABLE `alembic_version` (
 -- ----------------------------
 -- Records of alembic_version
 -- ----------------------------
-INSERT INTO `alembic_version` VALUES ('854d37b1e676');
+INSERT INTO `alembic_version` VALUES ('7817e631ed63');
 
 -- ----------------------------
 -- Table structure for apply
@@ -703,27 +703,27 @@ INSERT INTO `lessons` VALUES ('149', '32', 'Time, Clocks and the Ordering of Eve
 DROP TABLE IF EXISTS `machine_apply`;
 CREATE TABLE `machine_apply` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `project_user_institution` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `project_user_tel` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `project_user_address` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `project_applicant_institution` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `project_applicant_tel` varchar(64) COLLATE utf8_unicode_ci NOT NULL,
-  `project_applicant_address` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `project_name` varchar(512) COLLATE utf8_unicode_ci NOT NULL,
-  `sc_center` int(11) NOT NULL,
-  `CPU_hour` int(11) NOT NULL,
+  `project_user_institution` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `project_user_tel` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `project_user_address` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `project_applicant_institution` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `project_applicant_tel` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `project_applicant_address` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `project_name` varchar(512) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `sc_center` int(11) DEFAULT NULL,
+  `CPU_hour` int(11) DEFAULT NULL,
   `applying_time` datetime NOT NULL,
   `user_id` int(11) DEFAULT NULL,
   `submit_status` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `machine_apply_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
 
 -- ----------------------------
 -- Records of machine_apply
 -- ----------------------------
-INSERT INTO `machine_apply` VALUES ('1', '中山大学超算中心', '12345678', '中山大学超算学院', '中山大学数据学院', '87654321', '中山大学数据学院', 'EHPC', '3', '1000', '2017-05-12 16:12:51', '3', '0');
+INSERT INTO `machine_apply` VALUES ('1', '中山大学超算中心', '12345678', '中山大学超算学院', '中山大学数据学院', '87654321', '中山大学数据学院', 'EHPC', '3', '1000', '2017-05-12 16:12:51', '3', '1');
 
 -- ----------------------------
 -- Table structure for materials
