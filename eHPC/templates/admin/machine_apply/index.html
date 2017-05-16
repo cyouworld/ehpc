@@ -1,0 +1,56 @@
+{% extends 'admin/base.html' %}
+
+{% block header_ext %}
+    <link href="https://cdn.bootcss.com/datatables/1.10.13/css/dataTables.bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.bootcss.com/datatables/1.10.13/js/dataTables.bootstrap.min.js"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="content-container">
+        <div class="panel panel-default panel-col">
+            <div class="panel-heading">
+                机时申请管理
+            </div>
+            <div class="panel-body" style="padding: 10px">
+                <table class="table" id="apply-table" style="word-break:break-all;">
+                    <thead>
+                    <tr>
+                        <th>项目名称</th>
+                        <th>负责人单位</th>
+                        <th>申请人单位</th>
+                        <th>申请时间</th>
+                        <th>状态</th>
+                        <th>管理</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tb">
+                    {% for a in applies %}
+                        <tr>
+                            <td>{{ a.project_name }}</td>
+                            <td>{{ a.project_user_institution }}</td>
+                            <td>{{ a.project_applicant_institution }}</td>
+                            <td>{{ a.applying_time }}</td>
+                            <td>{% if a.submit_status == 3 %}已拒绝{% elif a.submit_status == 2 %}已同意{% else %}等待处理{% endif %}</td>
+                            <td><a href="{{ url_for('admin.machine_apply', apply_id=a.id) }}">详情</a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script>
+        $(document).ready(
+            function () {
+                $('#apply-table').DataTable({
+                    language: {
+                        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+                    }
+                });
+            });
+    </script>
+{% endblock %}

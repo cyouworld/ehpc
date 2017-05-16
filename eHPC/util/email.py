@@ -28,3 +28,21 @@ def send_email(ip, to, subject, template, **kwargs):
         return thr
     else:
         return None
+
+
+def send_email_with_attach(ip, to, subject, template, attach_name, attach_path, **kwargs):
+    app = current_app._get_current_object()
+    app.email_logger.info('remote_ip: %s, to: %s' % (ip, to))
+    msg = Message(app.config['MAIL_SUBJECT_PREFIX'] + ' ' + subject,
+                  sender=app.config['MAIL_SENDER'], recipients=[to])
+    msg.html = render_template(template + '.html', **kwargs)
+    with app.open_resource(attach_path) as fp:
+        msg.attach(attach_name, 'application/octet-stream', fp.read())
+
+    # 如果配置文件禁止发送邮件， 这里返回 None
+    if current_app.config['MAIL_IS_ON']:
+        thr = Thread(target=send_async_email, args=[app, msg])
+        thr.start()
+        return thr
+    else:
+        return None

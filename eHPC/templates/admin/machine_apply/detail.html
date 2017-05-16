@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block header_ext %}
+{% endblock %}
+
+{% block content %}
+
+    <div id="content-container" class="container">
+        <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
+            <li><a href="/">首页</a></li>
+            <li><a href="{{ url_for('admin.machine_apply_index') }}">时机申请</a></li>
+            <li class="active"><a href="{{ url_for('admin.machine_apply', apply_id=apply.id) }}">申请详情</a></li>
+        </ol>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">机时申请表</h3>
+                    </div>
+                    <div class="panel-body">
+                        <table class="table table-bordered" cellspacing="0">
+                            <tr>
+                                <td class="text-center" width="20%" rowspan="4" style="vertical-align: middle;"><strong>申请信息</strong></td>
+                                <td class="text-center" width="20%"></td>
+                                <td class="text-center" width="20%"><strong>申请单位名称</strong></td>
+                                <td class="text-center" width="20%"><strong>联系方式</strong></td>
+                                <td class="text-center" width="20%"><strong>单位通信地址</strong></td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" width="20%"><strong>课题负责人</strong></td>
+                                <td class="text-center" width="20%">{{ apply.project_user_institution }}</td>
+                                <td class="text-center" width="20%">{{ apply.project_user_tel }}</td>
+                                <td class="text-center" width="20%">{{ apply.project_user_address }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" width="20%"><strong>申请人</strong></td>
+                                <td class="text-center" width="20%">{{ apply.project_applicant_institution }}</td>
+                                <td class="text-center" width="20%">{{ apply.project_applicant_tel }}</td>
+                                <td class="text-center" width="20%">{{ apply.project_applicant_address }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" width="20%"><strong>项目名称</strong></td>
+                                <td class="text-center" width="20%" colspan="3">{{ apply.project_name }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" width="20%" rowspan="2" style="vertical-align: middle;"><strong>资源信息</strong></td>
+                                <td class="text-center" width="20%"><strong>超算单位</strong></td>
+                                <td class="text-center" width="20%" colspan="3">{{ apply.sc_center }}</td>
+                            </tr>
+                            <tr>
+                                <td class="text-center" width="20%"><strong>CPU核时</strong></td>
+                                <td class="text-center" width="20%" colspan="3">{{ apply.CPU_hour }}</td>
+                            </tr>
+                        </table>
+                        <div class="pull-right">
+                            {% if apply.submit_status == 1 %}
+                            <button data-op="approve" class="btn btn-info">同意申请</button>
+                            <button data-op="disapprove" class="btn btn-danger">拒绝申请</button>
+                            {% elif apply.submit_status == 2 %}
+                                <span style="color: green;margin-right: 20px;"><strong>已通过该申请</strong></span>
+                            {% elif apply.submit_status == 3 %}
+                                <span style="color: red;margin-right: 20px;"><strong>已拒绝该申请</strong></span>
+                            {% endif %}
+                            <button data-op="export" class="btn btn-primary">导出申请</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script type="text/javascript">
+        $(".pull-right > button").click(function () {
+            $.ajax({
+                url: location.href,
+                type: "post",
+                data: {
+                    op: $(this).data("op")
+                },
+                success: function (data) {
+                    if (data["status"] === "success") {
+                        location.href = data["url"];
+                    }
+                }
+            })
+        });
+    </script>
+{% endblock %}

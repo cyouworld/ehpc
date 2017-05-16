@@ -61,6 +61,9 @@ class User(UserMixin, db.Model):
     vnc_progresses = db.relationship('VNCProgress', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
     machine_apply = db.relationship("MachineApply", backref='user', lazy='dynamic', cascade="delete, delete-orphan")
 
+    machine_apply = db.relationship("MachineApply", backref='user', lazy='dynamic', cascade="delete, delete-orphan")
+    machine_account = db.relationship("MachineAccount", uselist=False, backref='user')
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -603,4 +606,17 @@ class MachineApply(db.Model):
     CPU_hour = db.Column(db.Integer, nullable=True, default=0)    #CPU核时，CPU_hour字段不能置空，若用户未填写则默认为0
     applying_time = db.Column(db.DateTime, default=datetime.now, nullable=False)    #提交申请的时间
     submit_status = db.Column(db.Integer, default=0)    #当前申请的提交状态：0-未提交，1-已提交，等待审批，2-审批通过，3-申请被拒绝
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+
+class MachineAccount(db.Model):
+    __tablename__ = "machine_account"
+    id = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(64))
+    password = db.Column(db.String(64))
+    key = db.Column(db.String(256))
+    ip = db.Column(db.String(64))
+    port = db.Column(db.Integer)
+
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))

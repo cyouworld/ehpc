@@ -1,14 +1,16 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import render_template, request, redirect, url_for, abort, jsonify
-from flask_login import login_user, current_user, login_required, logout_user
 from datetime import datetime
-from ..user.authorize import admin_login, system_login, teacher_login
-from ..util.user_manage import is_admin_user, is_teacher_user
-from . import admin
-from ..models import User, Article, Group, Case, CaseVersion, CaseCodeMaterial, Classify
-from .. import db
+
+from flask import render_template, request, redirect, url_for
 from flask_babel import gettext
+from flask_login import login_user, logout_user
+
+from eHPC.util.captcha import verify_captcha
+from . import admin
+from .. import db
+from ..models import User, Article, Group, Case, Classify, MachineApply, Course
+from ..user.authorize import admin_login, system_login, teacher_login
 
 
 @admin.route('/auth/', methods=["GET", "POST"])
@@ -18,6 +20,11 @@ def auth():
 
     elif request.method == "POST":
         _form = request.form
+        resp = _form.get('luotest_response')
+        if not verify_captcha(resp):
+            message = u'人机识别验证失败'
+            return render_template('admin/auth.html', title=gettext("Admin Auth"), message=message)
+
         u = User.query.filter_by(email=_form['email']).first()
         if u and u.verify_password(_form['password']) and u.permissions == 0:
             login_user(u)
@@ -56,5 +63,7 @@ def system():
                            article_cnt=article_cnt,
                            group_cnt=group_cnt,
                            case_cnt=case_cnt,
+                           course_cnt=Course.query.count(),
+                           apply_cnt=MachineApply.query.count(),
                            title=gettext("System Setting"))
 
