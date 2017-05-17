@@ -46,3 +46,13 @@ def teacher_login(func):
         else:
             return redirect(url_for('user.signin', next=request.url))
     return wrap
+
+
+def hpc_login(func):
+    @wraps(func)
+    def wrap(*args, **kwargs):
+        if current_user.is_authenticated and current_user.permissions == 3:
+            return func(*args, **kwargs)
+        else:
+            return redirect(url_for('user.signin', next=request.url))
+    return wrap

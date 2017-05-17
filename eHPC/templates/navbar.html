@@ -49,6 +49,10 @@
                 <li><a href="{{ url_for('admin.teacher') }}">
                     <i class="es-icon es-icon-administrator"></i>切换为老师</a></li>
             {% endif %}
+            {% if current_user.permissions == 3 %}
+                <li><a href="{{ url_for('admin.machine_apply_index') }}">
+                    <i class="es-icon es-icon-administrator"></i>机时管理</a></li>
+            {% endif %}
         {% else %}
             <li>
                 <a href="{{ url_for('user.signin', next=request.path) }}">{{ _('Sign In') }}</a>

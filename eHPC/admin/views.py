@@ -9,7 +9,7 @@ from flask_login import login_user, logout_user
 from eHPC.util.captcha import verify_captcha
 from . import admin
 from .. import db
-from ..models import User, Article, Group, Case, Classify, MachineApply, Course
+from ..models import User, Article, Group, Case, Classify, Course
 from ..user.authorize import admin_login, system_login, teacher_login
 
 
@@ -64,6 +64,5 @@ def system():
                            group_cnt=group_cnt,
                            case_cnt=case_cnt,
                            course_cnt=Course.query.count(),
-                           apply_cnt=MachineApply.query.count(),
                            title=gettext("System Setting"))
 

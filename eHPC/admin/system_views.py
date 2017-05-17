@@ -13,7 +13,7 @@ from . import admin
 from .. import db
 from ..models import User, Classify, Article, Group, Case, CaseVersion, CaseCodeMaterial, Course, MachineApply, \
     MachineAccount
-from ..user.authorize import system_login
+from ..user.authorize import system_login, hpc_login
 from ..util.email import send_email_with_attach
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename
 
@@ -28,7 +28,6 @@ def index():
                            article_cnt=Article.query.count(),
                            group_cnt=Group.query.count(),
                            case_cnt=Case.query.count(),
-                           apply_cnt=MachineApply.query.count(),
                            classify_cnt=Classify.query.count())
 
 
@@ -414,24 +413,22 @@ def case_version_material(case_id, version_id):
                 return jsonify(status='fail')
 
 
-@admin.route('/machine_apply/')
-@system_login
+@admin.route('/hpc/')
+@hpc_login
 def machine_apply_index():
-    return render_template('admin/machine_apply/index.html', applies=MachineApply.query.all())
+    return render_template('admin/hpc/index.html', applies=MachineApply.query.all())
 
 
-@admin.route('/machine_apply/<int:apply_id>/', methods=['GET', 'POST'])
-@system_login
+@admin.route('/hpc/<int:apply_id>/', methods=['GET', 'POST'])
+@hpc_login
 def machine_apply(apply_id):
     if request.method == 'GET':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
-        return render_template('admin/machine_apply/detail.html', apply=curr_apply)
+        return render_template('admin/hpc/detail.html', apply=curr_apply)
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
         op = request.form.get('op')
         if op == 'approve':
-            curr_apply.submit_status = 2
-            db.session.commit()
             return jsonify(status='success', url=url_for('admin.machine_apply_password', apply_id=apply_id))
         elif op == 'disapprove':
             curr_apply.submit_status = 3
@@ -441,8 +438,8 @@ def machine_apply(apply_id):
             return jsonify(status='success', url=url_for('admin.machine_download', apply_id=apply_id))
 
 
-@admin.route('/machine_apply/<int:apply_id>/download/', methods=['GET', 'POST'])
-@system_login
+@admin.route('/hpc/<int:apply_id>/download/', methods=['GET', 'POST'])
+@hpc_login
 def machine_download(apply_id):
     curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
     opt = {
@@ -455,16 +452,16 @@ def machine_download(apply_id):
         'encoding': 'UTF-8'
     }
     path = os.path.join(current_app.config['DOWNLOAD_FOLDER'], 'apply%d.pdf' % apply_id)
-    pdfkit.from_string(render_template('admin/machine_apply/apply_pdf.html', apply=curr_apply), path, options=opt)
+    pdfkit.from_string(render_template('admin/hpc/apply_pdf.html', apply=curr_apply), path, options=opt)
     return send_file(path, as_attachment=True, attachment_filename='apply%d.pdf' % apply_id)
 
 
-@admin.route('/machine_apply/<int:apply_id>/password/', methods=['GET', 'POST'])
-@system_login
+@admin.route('/hpc/<int:apply_id>/password/', methods=['GET', 'POST'])
+@hpc_login
 def machine_apply_password(apply_id):
     if request.method == 'GET':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
-        return render_template('admin/machine_apply/password.html', apply=curr_apply)
+        return render_template('admin/hpc/password.html', apply=curr_apply)
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
 
@@ -492,5 +489,8 @@ def machine_apply_password(apply_id):
         send_email_with_attach(ip, 'milanlanlanlan@sina.com', u'秘钥信息',
                                'admin/machine_apply/apply_email', 'id_rsa', account.key,
                                user=account.user, account=account)
+
+        curr_apply.submit_status = 2
+        db.session.commit()
 
         return redirect(url_for('admin.machine_apply_index'))
