@@ -97,9 +97,6 @@ class Config:
     MAX_CONTENT_LENGTH = 512 * 1024 * 1024
     ALLOWED_RESOURCE_TYPE = {'pdf', 'video', 'audio', 'excel'}
 
-    VNC_INSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PRIVATE_URL') # 超算内部访问地址
-    VNC_OUTSIDE_SERVER_IP = os.environ.get('EHPC_VNC_PUBLIC_URL') # 公网访问地址
-
     CAPTCHA = CAPTCHA
     CAPTCHA_SITE_KEY = CAPTCHA_SITE_KEY
 

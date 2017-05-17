@@ -10,12 +10,14 @@ from flask_login import login_required, current_user
 
 from eHPC.util.code_process import ehpc_client
 from . import lab
-from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask
+from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerHolder, DockerImage
 
+from .vnc_util import is_token_unique, is_reconnection, create_new_image, start_vnc_server
 from .lab_util import get_cur_progress, increase_progress, get_cur_vnc_progress, increase_vnc_progress
 from config import TH2_MY_PATH
 import random, string
-import requests
+import requests, threading
+from .. import db
 
 
 @lab.route('/')
@@ -198,6 +200,7 @@ def vnc_task(vnc_knowledge_id):
             request_vnc_task_number = int(request.args.get('request_vnc_task_number', None))
         except ValueError:
             return abort(404)
+
         except TypeError:
             request_vnc_task_number = cur_vnc_progress
 
@@ -224,79 +227,207 @@ def vnc_task(vnc_knowledge_id):
                                    title=gettext('vnc'),
                                    response_vnc_task=response_vnc_task,
                                    vnc_tasks_count=vnc_tasks_count,
-                                   vnc_knowledge_id=cur_vnc_knowledge.id,
-                                   vnc_url=current_app.config['VNC_OUTSIDE_SERVER_IP'])
+                                   vnc_knowledge_id=cur_vnc_knowledge.id)
         else:
             abort(404)
     elif request.method == 'POST':
         op = request.form.get('op', None)
-        if op is not None:
-            if op == 'connect':
-                status = 'repeated token'
-                token = ''
-                req = None
-                while status == 'repeated token':
-                    try:
-                        token = ''.join(random.sample(string.ascii_letters + string.digits, 32))
-                        req = requests.post("http://" + current_app.config['VNC_INSIDE_SERVER_IP'] + "/server/controller",
-                                            params={"This_is_a_very_secret_token": token,
-                                                    "user_id": current_user.id}, timeout=30)
-                        req.raise_for_status()
-                    except requests.RequestException as e:
-                        print e
-                        return jsonify(status='fail', msg=u'连接远程虚拟机失败，请重试')
-                    else:
-                        status = req.json()['status']
-                        print status
-                if status == 'success':
-                    return jsonify(status='success', token=token)
-                elif status == 'reconnect success':
-                    return jsonify(status='success', token=req.json()['token'])
-                elif status == 'no machine available':
-                    return jsonify(status='fail', msg=u"设备已满，请稍后再试")
-                else:
-                    return jsonify(status='fail', msg=u'服务器内部错误，请联系管理员')
 
-            elif op == 'get vnc lab progress':
-                cur_vnc_knowledge = VNCKnowledge.query.filter_by(id=vnc_knowledge_id).first()
-                if cur_vnc_knowledge is not None:
-                    all_tasks = cur_vnc_knowledge.vnc_tasks.order_by(VNCTask.vnc_task_num).all()
-                    if all_tasks is not None:
-                        cur_vnc_level = get_cur_vnc_progress(vnc_knowledge_id)
-                        return jsonify(status='success', html=render_template('lab/vnc_widget_show_progress.html',
-                                                                              cur_vnc_knowledge=cur_vnc_knowledge,
-                                                                              cur_vnc_level=cur_vnc_level,
-                                                                              all_tasks=all_tasks))
+        if op is None:
+            return jsonify(status='fail')
 
-            elif op == 'next task':
-                vnc_task_num = request.form.get('vnc_task_num', None)
-                if vnc_task_num is not None:
-                    try:
-                        vnc_task_num = int(vnc_task_num)
-                    except TypeError:
-                        return jsonify(status='fail')
+        if op == 'get vnc lab progress':
+            cur_vnc_knowledge = VNCKnowledge.query.filter_by(id=vnc_knowledge_id).first()
 
-                    cur_vnc_knowledge = VNCKnowledge.query.filter_by(id=vnc_knowledge_id).first()
-                    cur_vnc_progress = current_user.vnc_progresses.filter_by(vnc_knowledge_id=vnc_knowledge_id).first()
+            if cur_vnc_knowledge is None:
+                return jsonify(status='fail')
 
-                    if cur_vnc_knowledge is not None and cur_vnc_progress is not None:
-                        vnc_tasks_count = cur_vnc_knowledge.vnc_tasks.count()
-                        increase_vnc_progress(vnc_knowledge_id, vnc_task_num, vnc_tasks_count)
+            all_tasks = cur_vnc_knowledge.vnc_tasks.order_by(VNCTask.vnc_task_num).all()
+            if all_tasks is None:
+                return jsonify(status='fail')
 
-                        if 0 < vnc_task_num <= cur_vnc_progress.have_done:
-                            if vnc_task_num + 1 <= vnc_tasks_count:
-                                response_vnc_task = VNCTask.query.filter_by(vnc_knowledge_id=vnc_knowledge_id).filter_by(vnc_task_num=vnc_task_num + 1).first()
-                                return jsonify(status='success', title=response_vnc_task.title, content=response_vnc_task.content)
-                            else:
-                                return jsonify(status='finish', next=url_for('lab.vnc_task',
-                                                                             vnc_knowledge_id=vnc_knowledge_id,
-                                                                             request_vnc_task_number=vnc_task_num + 1,
-                                                                             _external=True))
-                        else:
-                            return jsonify(status='fail')
-                    else:
-                        return jsonify(status='fail')
-                else:
-                    return jsonify(status='fail')
+            cur_vnc_level = get_cur_vnc_progress(vnc_knowledge_id)
+            return jsonify(status='success', html=render_template('lab/vnc_widget_show_progress.html',
+                                                                  cur_vnc_knowledge=cur_vnc_knowledge,
+                                                                  cur_vnc_level=cur_vnc_level,
+                                                                  all_tasks=all_tasks))
+        elif op == 'next task':
+            vnc_task_num = request.form.get('vnc_task_num', None)
+            if vnc_task_num is None:
+                return jsonify(status='fail')
+
+            try:
+                vnc_task_num = int(vnc_task_num)
+            except TypeError:
+                return jsonify(status='fail')
+
+            cur_vnc_knowledge = VNCKnowledge.query.filter_by(id=vnc_knowledge_id).first()
+            cur_vnc_progress = current_user.vnc_progresses.filter_by(vnc_knowledge_id=vnc_knowledge_id).first()
+
+            if cur_vnc_knowledge is None or cur_vnc_progress is None:
+                return jsonify(status='fail')
+
+            vnc_tasks_count = cur_vnc_knowledge.vnc_tasks.count()
+            increase_vnc_progress(vnc_knowledge_id, vnc_task_num, vnc_tasks_count)
+
+            if not 0 < vnc_task_num <= cur_vnc_progress.have_done:
+                return jsonify(status='fail')
+
+            if vnc_task_num + 1 <= vnc_tasks_count:
+                response_vnc_task = VNCTask.query.filter_by(vnc_knowledge_id=vnc_knowledge_id).filter_by(vnc_task_num=vnc_task_num + 1).first()
+                return jsonify(status='success', title=response_vnc_task.title, content=response_vnc_task.content)
+            else:
+                return jsonify(status='finish', next=url_for('lab.vnc_task',
+                                                             vnc_knowledge_id=vnc_knowledge_id,
+                                                             request_vnc_task_number=vnc_task_num + 1,
+                                                             _external=True))
+
+
+@lab.route('/vnc/ready/', methods=['POST'])
+@login_required
+def vnc_ready_to_connect():
+    while True:
+        token = ''.join(random.sample(string.ascii_letters + string.digits, 32))
+        if not is_token_unique(token):
+            continue
+        break
+
+    result, docker_image = is_reconnection()
+    if result is True:
+        token = docker_image.token
+        return jsonify(status='success',
+                       token=token,
+                       address=docker_image.docker_holder.ip + ':' + str(docker_image.docker_holder.public_port))
+
+    docker_image = current_user.docker_image
+
+    if docker_image is None:
+        result, message, docker_image = create_new_image()
+        print result, message, docker_image
+        if result is False:
+            return jsonify(status='fail', msg=message)
+
+    result, message = start_vnc_server(docker_image, token)
+    if result is False:
+        return jsonify(status='fail', msg=message)
+
+    return jsonify(status='success',
+                   token=token,
+                   address=docker_image.docker_holder.ip + ':' + str(docker_image.docker_holder.public_port))
+
+
+@lab.route('/vnc/resolution/', methods=['POST'])
+@login_required
+def vnc_set_resolution():
+    width = request.form.get('width', None)
+    height = request.form.get('height', None)
+
+    if width is None or height is None:
+        return jsonify(status='fail')
+
+    try:
+        width = int(width)
+        height = int(height)
+        if width < 800 or width > 2560 or height < 600 or height > 1440:
+            return jsonify(status='fail')
+    except ValueError:
+        return jsonify(status='fail')
+    except TypeError:
+        return jsonify(status='fail')
+
+    try:
+        req = requests.post('http://%s:%d/server/handler' % (current_user.docker_image.docker_holder.ip,
+                                                             current_user.docker_image.docker_holder.public_port),
+                            params={"op": "set_resolution", "width": width, "height": height}, timeout=30)
+        req.raise_for_status()
+    except requests.RequestException as e:
+        print e
+        return jsonify(status='fail')
+    else:
+        result = req.json()
+        if result['status'] == DockerImage.STATUS_SET_RESOLUTION_SUCCESSFULLY:
+            return jsonify(status='success')
         else:
             return jsonify(status='fail')
+
+
+@lab.route('/vnc/controller/', methods=['POST'])
+def db_controller():
+    op = request.form.get('op', None)
+    if op is None:
+        return jsonify(status='fail')
+
+    if op == 'find_image':
+        token = request.form.get('token', None)
+
+        if token is None:
+            return jsonify(status='fail')
+
+        if len(token) is not 32:
+            return jsonify(status='fail')
+
+        cur_image = DockerImage.query.filter_by(token=token).first()
+
+        if cur_image is None:
+            return jsonify(status='fail')
+
+        return jsonify(status='success',
+                       docker_holder_ip=cur_image.docker_holder.ip,
+                       image_id=str(cur_image.id),
+                       image_port=cur_image.port,
+                       image_pw=cur_image.password)
+
+    elif op == 'update_information':
+        tunnel_id = request.form.get('tunnel_id', None)
+        image_id = request.form.get('image_id', None)
+
+        if tunnel_id is None or image_id is None:
+            return jsonify(status='fail')
+
+        cur_image = DockerImage.query.filter_by(id=image_id).first()
+
+        if cur_image is None:
+            return jsonify(status='fail')
+
+        cur_image.tunnel_id = tunnel_id
+        cur_image.status = DockerImage.CONNECTED
+        cur_image.last_connect_time = datetime.now()
+
+        cur_image.docker_holder.running_container_count += 1
+
+        db.session.commit()
+        return jsonify(status='success')
+
+    elif op == 'reset_information':
+        tunnel_id = request.form.get('tunnel_id', None)
+
+        if tunnel_id is None:
+            return jsonify(status='fail')
+
+        cur_image = DockerImage.query.filter_by(tunnel_id=tunnel_id).first()
+        if cur_image is None:
+            return jsonify(status='fail')
+
+        cur_image.tunnel_id = None
+        cur_image.status = DockerImage.DISCONNECTED
+        cur_image.token = None
+
+        cur_image.docker_holder.running_container_count -= 1
+        db.session.commit()
+
+        return jsonify(status='success')
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

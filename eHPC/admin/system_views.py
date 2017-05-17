@@ -1,17 +1,18 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 import json
-import shutil
-from datetime import datetime
-
 import os
 import pdfkit
+import requests
+import shutil
+from datetime import datetime
 from flask import render_template, request, redirect, url_for, jsonify, current_app, send_file
 from flask_babel import gettext
 
 from . import admin
 from .. import db
-from ..models import User, Classify, Article, Group, Case, CaseVersion, CaseCodeMaterial, Course, MachineApply, \
+from ..models import DockerHolder, DockerImage
+from ..models import User, Article, Group, Case, CaseVersion, CaseCodeMaterial, Course, MachineApply, \
     MachineAccount
 from ..user.authorize import system_login, hpc_login
 from ..util.email import send_email_with_attach
@@ -28,7 +29,7 @@ def index():
                            article_cnt=Article.query.count(),
                            group_cnt=Group.query.count(),
                            case_cnt=Case.query.count(),
-                           classify_cnt=Classify.query.count())
+                           docker_holder_cnt=DockerHolder.query.count())
 
 
 @admin.route('/users/')
@@ -494,3 +495,83 @@ def machine_apply_password(apply_id):
         db.session.commit()
 
         return redirect(url_for('admin.machine_apply_index'))
+
+
+@admin.route('/dockers/', methods=['GET'])
+@system_login
+def dockers():
+    docker_holders = DockerHolder.query.all()
+    return render_template('admin/docker/index.html', docker_holders=docker_holders)
+
+
+@admin.route('/dockers/<int:docker_holder_id>/images/', methods=['GET', 'POST'])
+@system_login
+def images(docker_holder_id):
+    if request.method == 'GET':
+        docker_holder = DockerHolder.query.filter_by(id=docker_holder_id).first_or_404()
+        docker_images = docker_holder.docker_images.all()
+        more_info = []
+        for di in docker_images:
+            more_info.append(u'<div><strong>最近连接时间: </strong>%s</div>' \
+                             u'<div><strong>今日剩余时间: </strong>%d 小时 %d 分钟</div>' \
+                             u'<div><strong>开放端口: </strong>%d</div>' \
+                             u'<div><strong>连接密钥: </strong>%s</div>' \
+                             u'<div><strong>连接Token: </strong>%s</div>' \
+                             u'<div><strong>连接通道ID: </strong>%s</div>' % \
+                             (di.last_connect_time if di.last_connect_time is not None else u"无",
+                              di.remaining_time_today / 3600, di.remaining_time_today % 3600 / 60,
+                              di.port,
+                              di.password,
+                              di.token if di.token is not None else u"无",
+                              di.tunnel_id if di.tunnel_id is not None else u"无"))
+        return render_template('admin/docker/images.html', docker_images=docker_images, more_info=more_info)
+    elif request.method == 'POST':
+        op = request.form.get('op', None)
+        docker_images_id = request.form.get('docker_images_id', None)
+        if op is None or docker_images_id is None:
+            return jsonify(status='fail')
+
+        docker_holder = DockerHolder.query.filter_by(id=docker_holder_id).first()
+        if docker_holder is None:
+            return jsonify(status='fail')
+
+        docker_images = docker_holder.docker_images.filter_by(id=docker_images_id).first()
+        if docker_images is None:
+            return jsonify(status='fail')
+
+        if op == 'start_image':
+            try:
+                req = requests.post('http://%s:%d/server/handler' % (docker_holder.ip, docker_holder.public_port),
+                                    params={"op": "start_image",
+                                            "image_name": str(docker_images.name)}, timeout=30)
+                req.raise_for_status()
+            except requests.RequestException as e:
+                print e
+                return jsonify(status='fail', msg=u'服务器内部错误，请联系管理员')
+            else:
+                result = req.json()
+                if result['status'] == DockerImage.STATUS_START_IMAGE_SUCCESSFULLY:
+                    docker_images.is_running = True
+                    docker_holder.images_count += 1
+                    db.session.commit()
+                    return jsonify(status='success')
+                else:
+                    return jsonify(status='fail', msg=u'启动镜像失败')
+        elif op == 'stop_image':
+            try:
+                req = requests.post('http://%s:%d/server/handler' % (docker_holder.ip, docker_holder.public_port),
+                                    params={"op": "stop_image",
+                                            "image_name": str(docker_images.name)}, timeout=30)
+                req.raise_for_status()
+            except requests.RequestException as e:
+                print e
+                return jsonify(status='fail', msg=u'服务器内部错误，请联系管理员')
+            else:
+                result = req.json()
+                if result['status'] == DockerImage.STATUS_STOP_IMAGE_SUCCESSFULLY:
+                    docker_images.is_running = False
+                    docker_holder.images_count -= 1
+                    db.session.commit()
+                    return jsonify(status='success')
+                else:
+                    return jsonify(status='fail', msg=u'停止镜像失败')

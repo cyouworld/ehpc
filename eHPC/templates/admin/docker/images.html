@@ -1,0 +1,130 @@
+{% extends 'admin/base.html' %}
+
+{% block header_ext %}
+    <link href="http://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.css" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="content-container">
+        <div class="panel panel-default panel-col">
+            <div class="panel-heading">
+                所有镜像
+            </div>
+
+            <div class="panel-body">
+                <table class="table fixed-table">
+                    <thead>
+                    <tr>
+                        <th width="10%">名称</th>
+                        <th width="10%">所属用户</th>
+                        <th width="20%">主机公网IP</th>
+                        <th width="10%">主机公网端口</th>
+                        <th width="15%">创建时间</th>
+                        <th width="10%">当前状态</th>
+                        <th width="25%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for i in docker_images %}
+                        <tr data-docker-image-id="{{ i.id }}">
+                            <td class="overflow-ellipsis" data-toggle="tooltip">{{ i.name }}</td>
+                            <td>{{ i.user.username }}</td>
+                            <td>{{ i.docker_holder.ip }}</td>
+                            <td>{{ i.docker_holder.public_port }}</td>
+                            <td>{{ i.create_time }}</td>
+                            <td>
+                                {% if i.status == 1 %}
+                                    <span data-name="running" style="color: #7cb342"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;运行中</span>
+                                    <span data-name="stopped" style="color: #ff8280;display: none"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;已停止</span>
+                                {% else %}
+                                    <span data-name="running" style="color: #7cb342;display: none"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;运行中</span>
+                                    <span data-name="stopped" style="color: #ff8280"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;已停止</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a class="btn" style="padding: 0" name="more-info-btn" data-more-info="{{ more_info[loop.index0] }}">详细信息</a>
+                                <span class="divider"> | </span>
+                                <a class="btn" style="padding: 0" name="reset-btn">重置</a>
+                                <span class="divider"> | </span>
+                                <a class="btn {{ "disabled" if i.is_running == 0}}" style="padding: 0" href="javascript:void(0)" name="start-btn">启动</a>
+                                <span class="divider"> | </span>
+                                <a class="btn {{ "disabled" if i.is_running == 1}}" style="padding: 0" href="javascript:void(0)" name="stop-btn">关闭</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% include "admin/widget-del-warning.html" %}
+
+{% endblock %}
+
+{% block footer_ext %}
+    <script src="http://cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        $(function () {
+            $("a[name=more-info-btn]").tooltip({
+                disabled: true,
+                items: "[data-more-info]",
+                show: { effect: "slideDown", delay: 100},
+                hide: { effect: "slideUp"},
+                content: function () {
+                    return $(this).data("more-info")
+                }
+            }).click(function () {
+                $(this).tooltip("open");
+            });
+
+            $("a[name=start-btn]").click(function () {
+                var obj = $(this);
+                $.ajax({
+                    url: location.href,
+                    type: "post",
+                    data: {
+                        op: "start_image",
+                        docker_images_id: obj.parent().parent().data("docker-image-id")
+                    },
+                    success: function (data) {
+                        if(data['status'] === "success"){
+                            obj.addClass("disabled");
+                            obj.parent().find("a[name=stop-btn]").removeClass("disabled");
+                            obj.parent().parent().find("span[data-name=running]").show();
+                            obj.parent().parent().find("span[data-name=stopped]").hide();
+                        }else{
+                            alert_modal(data["msg"])
+                        }
+                    }
+                })
+            });
+
+            $("a[name=stop-btn]").click(function () {
+                var obj = $(this);
+                $.ajax({
+                    url: location.href,
+                    type: "post",
+                    data: {
+                        op: "stop_image",
+                        docker_images_id: obj.parent().parent().data("docker-image-id")
+                    },
+                    success: function (data) {
+                        if(data['status'] === "success"){
+                            obj.addClass("disabled");
+                            obj.parent().find("a[name=start-btn]").removeClass("disabled");
+                            obj.parent().parent().find("span[data-name=stopped]").show();
+                            obj.parent().parent().find("span[data-name=running]").hide();
+                        }else{
+                            alert_modal(data["msg"])
+                        }
+                    }
+                })
+            });
+
+
+        });
+    </script>
+{% endblock %}
+
+{# articles #}

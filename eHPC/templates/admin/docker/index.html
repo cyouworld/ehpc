@@ -1,0 +1,77 @@
+{% extends 'admin/base.html' %}
+
+{% block header_ext %}
+    <link type="text/css" rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.7/semantic.min.css">
+    <link type="text/css" rel="stylesheet" href="//cdn.bootcss.com/datatables/1.10.13/css/dataTables.semanticui.min.css">
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="content-container">
+        <div class="panel panel-default panel-col">
+            <div class="panel-heading">
+                所有主机
+            </div>
+
+            <div class="panel-body">
+                <table id="docker-holders-table" class="table fixed-table">
+                    <thead>
+                    <tr>
+                        <th width="10%">主机名称</th>
+                        <th width="20%">主机地址</th>
+                        <th width="10%">主机开放端口</th>
+                        <th width="10%">主机状态</th>
+                        <th width="15%">当前运行镜像数</th>
+                        <th width="10%">总镜像数</th>
+                        <th width="25%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for d in docker_holders %}
+                        <tr>
+                            <td class="overflow-ellipsis" data-toggle="tooltip">{{ d.name }}</td>
+                            <td>{{ d.ip }}</td>
+                            <td>{{ d.public_port }}</td>
+                            <td>
+                                {% if d.status == 1 %}
+                                    <span style="color: #7cb342"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;运行中</span>
+                                {% else %}
+                                    <span style="color: #ff8280"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;已停止</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ d.running_container_count }}</td>
+                            <td>{{ d.images_count }}</td>
+                            <td>
+                                <a href="{{ url_for("admin.images", docker_holder_id=d.id) }}">管理镜像</a>
+                                <span class="divider"> | </span>
+                                <a href="javascript:void(0)" name="start-btn">启动</a>
+                                <span class="divider"> | </span>
+                                <a href="javascript:void(0)" name="stop-btn">关闭</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% include "admin/widget-del-warning.html" %}
+
+{% endblock %}
+
+{% block footer_ext %}
+    <script src="//cdn.bootcss.com/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.bootcss.com/semantic-ui/2.2.7/semantic.min.js"></script>
+    <script src="//cdn.bootcss.com/datatables/1.10.13/js/dataTables.semanticui.min.js"></script>
+    <script>
+        $(function () {
+                $('#docker-holders-table').DataTable({
+                    language: {
+                        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+                    }
+                });
+        });
+    </script>
+{% endblock %}
+
+{# articles #}

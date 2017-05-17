@@ -1191,6 +1191,111 @@ INSERT INTO `vnc_tasks` VALUES (1,'第一个小任务','# markdown内容1',1,1),
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
+--
+-- Table structure for table `docker_holders`
+--
+
+DROP TABLE IF EXISTS `docker_holders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `docker_holders` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(256) NOT NULL,
+  `ip` varchar(128) NOT NULL,
+  `public_port` int(11) NOT NULL,
+  `status` int(11) DEFAULT 0,
+  `running_container_count` int(11) DEFAULT 0,
+  `images_count` int(11) DEFAULT 0,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `docker_holders`
+--
+
+LOCK TABLES `docker_holders` WRITE;
+/*!40000 ALTER TABLE `docker_holders` DISABLE KEYS */;
+INSERT INTO `docker_holders` (`id`, `name`, `ip`, `public_port`, `status`, `running_container_count`, `images_count`)
+VALUES
+  (1,'docker1','a002.nscc-gz.cn',10287,1,0,2),
+  (2,'docker2','a002.nscc-gz.cn',10288,0,0,0),
+  (3,'docker3','a002.nscc-gz.cn',10289,1,0,0),
+  (4,'docker4','a002.nscc-gz.cn',10290,0,0,0),
+  (5,'docker5','a002.nscc-gz.cn',10291,1,0,0);
+/*!40000 ALTER TABLE `docker_holders` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `docker_images`
+--
+
+DROP TABLE IF EXISTS `docker_images`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `docker_images` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `create_time` datetime NOT NULL,
+  `last_connect_time` datetime DEFAULT NULL,
+  `remaining_time_today` int(11) DEFAULT 14400,
+  `port` int(11) DEFAULT 0,
+  `tunnel_id` varchar(256) DEFAULT NULL,
+  `password` varchar(128) NOT NULL,
+  `status` int(11) DEFAULT 0,
+  `is_running` tinyint(1) DEFAULT 1 NOT NULL,
+  `token` varchar(64) DEFAULT NULL,
+  `name` varchar(64) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `docker_holder_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `docker_holder_id` (`docker_holder_id`),
+  CONSTRAINT `docker_images_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `docker_images_ibfk_2` FOREIGN KEY (`docker_holder_id`) REFERENCES `docker_holders` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `docker_images`
+--
+
+LOCK TABLES `docker_images` WRITE;
+/*!40000 ALTER TABLE `docker_images` DISABLE KEYS */;
+  INSERT INTO `docker_images` (`id`, `create_time`, `last_connect_time`, `remaining_time_today`, `port`, `tunnel_id`, `password`, `status`, `is_running`, `token`, `name`, `user_id`, `docker_holder_id`)
+  VALUES
+    (1,'2017-01-01 10:50:12', '2017-01-01 11:50:42', 14400, 5902,NULL,'abcdefgh',0,1,NULL,'image_3',3,1),
+    (2,'2017-02-01 19:33:45', '2017-02-02 14:34:15', 14400, 5903,NULL,'abcdefgh',0,1,NULL,'image_5',5,1);
+/*!40000 ALTER TABLE `docker_images` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+DROP TRIGGER IF EXISTS `create_new_image`;
+DELIMITER $$
+CREATE TRIGGER `create_new_image`
+BEFORE INSERT ON `docker_images`
+FOR EACH ROW
+  BEGIN
+    DECLARE dhid INT(11);
+
+    UPDATE docker_holders set
+      images_count = images_count + 1
+    where @dhid := id =
+          (
+            SELECT  t1.id
+            FROM (SELECT * from docker_holders) AS t1
+            WHERE t1.images_count = (SELECT MAX(t2.images_count)
+                                     FROM (SELECT * from docker_holders) AS t2
+                                     WHERE t2.images_count < 10) LIMIT 1
+          );
+
+    SET NEW.port = IF(ISNULL(@dhid), 0, 5901 + (SELECT t1.images_count FROM (SELECT * from docker_holders) AS t1 WHERE t1.id = @dhid));
+    SET NEW.docker_holder_id = IF(ISNULL(@dhid), NULL, @dhid);
+  END $$
+
+DELIMITER ;
+
+
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;

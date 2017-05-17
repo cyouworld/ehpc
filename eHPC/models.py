@@ -59,8 +59,11 @@ class User(UserMixin, db.Model):
 
     vnc_progresses = db.relationship('VNCProgress', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
 
+
     machine_apply = db.relationship("MachineApply", backref='user', lazy='dynamic', cascade="delete, delete-orphan")
     machine_account = db.relationship("MachineAccount", uselist=False, backref='user')
+
+    docker_image = db.relationship('DockerImage', uselist=False, backref='user', cascade="delete, delete-orphan")
 
     @property
     def password(self):
@@ -618,3 +621,77 @@ class MachineAccount(db.Model):
     port = db.Column(db.Integer)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+
+
+class DockerHolder(db.Model):
+    STOPPED = 0
+    RUNNING = 1
+
+    def __init__(self, name, ip, public_port):
+        self.name = name
+        self.ip = ip
+        self.public_port = public_port
+        self.status = 0
+        self.running_container_count = 0
+        self.images_count = 0
+
+    __tablename__ = "docker_holders"
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    name = db.Column(db.String(256), nullable=False)
+    ip = db.Column(db.String(128), nullable=False)
+    public_port = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.Integer, default=0)   # 0: 停止 1: 运行
+    running_container_count = db.Column(db.Integer, default=0)
+    images_count = db.Column(db.Integer, default=0)
+
+    docker_images = db.relationship('DockerImage', backref='docker_holder', lazy='dynamic', cascade="delete, delete-orphan")
+
+
+class DockerImage(db.Model):
+    DISCONNECTED = 0
+    READY_TO_CONNECT = 1
+    CONNECTED = 2
+
+    STATUS_CREATE_USER_IMAGE_FAIL = 4001
+    STATUS_CREATE_USER_IMAGE_SUCCESSFULLY = 4002
+    STATUS_START_VNC_SERVER_FAIL = 4003
+    STATUS_START_VNC_SERVER_SUCCESSFULLY = 4004
+    STATUS_SET_RESOLUTION_FAIL = 4005
+    STATUS_SET_RESOLUTION_SUCCESSFULLY = 4006
+    STATUS_START_IMAGE_FAIL = 4007
+    STATUS_START_IMAGE_SUCCESSFULLY = 4008
+    STATUS_STOP_IMAGE_FAIL = 4009
+    STATUS_STOP_IMAGE_SUCCESSFULLY = 4010
+
+    MESSAGE_CREATE_CONTAINER_FAIL = "Failed to create a new container when creating a new user image"
+    MESSAGE_SET_VNC_SERVER_PASSWORD_FAIL = "Failed to set vnc server when creating a new user image"
+    MESSAGE_START_VNC_SERVER_FAIL = "Failed to start the vnc server when starting the vnc server"
+    MESSAGE_STOP_VNC_SERVER_FAIL = "Failed to stop the vnc server when setting resolution"
+    MESSAGE_START_VNC_SERVER_WITH_RESOLUTION_FAIL = \
+        "Failed to start the vnc server with given resolution when setting resolution"
+
+    def __init__(self, password, name):
+        self.last_connect_time = None
+        self.remaining_time_today = 14400
+        self.tunnel_id = None
+        self.password = password
+        self.status = 0
+        self.is_running = True
+        self.token = None
+        self.name = name
+
+    __tablename__ = "docker_images"
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    create_time = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    last_connect_time = db.Column(db.DateTime, default=None)
+    remaining_time_today = db.Column(db.Integer, default=14400)  # 每天4小时
+    port = db.Column(db.Integer, default=0)
+    tunnel_id = db.Column(db.String(256), default=None)
+    password = db.Column(db.String(128), nullable=False)
+    status = db.Column(db.Integer, default=0)  # 0: 未连接, 1: 准备连接, 2: 已连接
+    is_running = db.Column(db.Boolean, default=True)
+    token = db.Column(db.String(64), default=None)
+    name = db.Column(db.String(64), nullable=False)
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    docker_holder_id = db.Column(db.Integer, db.ForeignKey('docker_holders.id'), default=None)

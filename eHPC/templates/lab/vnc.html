@@ -265,17 +265,14 @@
 
         $(function () {//请求连接远程桌面
             $.ajax({
-                url: location.href,
+                url: "{{ url_for("lab.vnc_ready_to_connect") }}",
                 type: "post",
-                data: {
-                    op: "connect"
-                },
                 success: function (data) {
                     if(data['status'] === "success"){
                         $("#loading-svg").hide("drop", {direction: "right"}, 1000, function () {
                             $("#display").show();
-                            do_event_bind(data["token"]);
-                            do_connect_vnc_server(data["token"]);
+                            do_event_bind(data["token"], data["address"]);
+                            do_connect_vnc_server(data["token"], data["address"]);
                         });
                     }
                     else if(data['status'] === 'fail'){
@@ -285,7 +282,7 @@
             });
         });
 
-        function do_event_bind(token) {
+        function do_event_bind(token, address) {
             $("#change-resolution").click(function () {
                 $("#select-resolution").modal({backdrop: 'static', keyboard: false});
             });
@@ -318,12 +315,11 @@
                 $("#loading").modal({backdrop: 'static', keyboard: false});
                 console.log(resolution_width, resolution_height);
                 $.ajax({
-                    url: "http://{{ vnc_url }}/server/vncsetter",
+                    url: "{{ url_for('lab.vnc_set_resolution') }}",
                     type: "post",
                     data: {
                         "width": Math.floor(resolution_width),
-                        "height": Math.floor(resolution_height),
-                        "token": token
+                        "height": Math.floor(resolution_height)
                     },
                     success: function (data) {
                         data = JSON.parse(data);
@@ -331,17 +327,14 @@
                         if(data["status"] === "success"){
                             guac.disconnect();
                             $.ajax({
-                                url: location.href,
+                                url: "{{ url_for("lab.vnc_ready_to_connect") }}",
                                 type: "post",
-                                data: {
-                                    op: "connect"
-                                },
                                 success: function (data) {
                                     if(data['status'] === "success"){
                                         $("#display").empty();
                                         do_event_unbind();
-                                        do_event_bind(data["token"]);
-                                        do_connect_vnc_server(data["token"]);
+                                        do_event_bind(data["token"], address);
+                                        do_connect_vnc_server(data["token"], address);
                                     }
                                     else if(data['status'] === 'fail'){
                                         alert_modal(data['msg']);
@@ -357,10 +350,10 @@
             });
         }
 
-        function do_connect_vnc_server(token){
+        function do_connect_vnc_server(token, address){
             display = document.getElementById("display");
             guac = new Guacamole.Client(
-                new Guacamole.HTTPTunnel("http://{{ vnc_url }}/server/tunnel")
+                new Guacamole.HTTPTunnel("http://" + address + "/server/tunnel")
             );
             display.appendChild(guac.getDisplay().getElement());
             guac.onerror = function (error) {
