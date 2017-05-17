@@ -4918,12 +4918,12 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     border-bottom-left-radius: 15px;
 }
 
-#apply-submit-status .submit-status:nth-child(4) {
+#apply-submit-status .submit-status:nth-child(3) {
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
 }
 
-#apply-submit-status .submit-status:nth-child(n+1):nth-child(-n+3) {
+#apply-submit-status .submit-status:nth-child(n+1):nth-child(-n+2) {
     border-right-width: 5px;
 }
 
