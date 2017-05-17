@@ -486,8 +486,8 @@ def machine_apply_password(apply_id):
         else:
             ip = request.remote_addr
 
-        send_email_with_attach(ip, 'milanlanlanlan@sina.com', u'秘钥信息',
-                               'admin/machine_apply/apply_email', 'id_rsa', account.key,
+        send_email_with_attach(ip, curr_apply.user.email, u'秘钥信息',
+                               'admin/hpc/apply_email', 'id_rsa', account.key,
                                user=account.user, account=account)
 
         curr_apply.submit_status = 2
