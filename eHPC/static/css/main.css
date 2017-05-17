@@ -4883,7 +4883,7 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     width: 100px;
     font-size: 24px;
     color: #CCC;
-    padding-top: 30px;
+    padding-top: 32px;
     text-align: center;
     border: 1px dashed #ccc;
 }
@@ -4895,4 +4895,40 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
 
 #create-machine-apply .fa {
     vertical-align: middle;
+}
+
+#apply-submit-status {
+    display: inline-block;
+    height: 30px;
+}
+
+#apply-submit-status .submit-status{
+    display: inline-block;
+    height: 100%;
+    width: 100px;
+    border: 1px solid #ccc;
+    font-size: 14px;
+    text-align: center;
+    padding-top: 5px;
+    color: #aaa;
+}
+
+#apply-submit-status .submit-status:nth-child(1) {
+    border-top-left-radius: 15px;
+    border-bottom-left-radius: 15px;
+}
+
+#apply-submit-status .submit-status:nth-child(4) {
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 15px;
+}
+
+#apply-submit-status .submit-status:nth-child(n+1):nth-child(-n+3) {
+    border-right-width: 5px;
+}
+
+#apply-submit-status .submit-status.active {
+    box-sizing: border-box;
+    background-color: rgb(70,195,123);
+    color: #fff;
 }

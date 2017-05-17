@@ -42,13 +42,12 @@ def machine_apply_create():
         # CPU_hour字段不能置空，若用户未填写则默认为0
         if request.form['cpu-hour']:
             curr_apply.CPU_hour = request.form['cpu-hour']
-        db.session.commit()
         if request.form['save-op'] == "submit":
-            # 若用户点击“提交”按钮， 提交状态改为1，To Do
-            print "submit"
+            # 若用户点击“提交”按钮， 提交状态改为1
+            curr_apply.submit_status = 1
         else:
-            # 若用户点击“保存草稿”按钮， To Do
-            print "save-as-draft"
+            curr_apply.submit_status = 0
+        db.session.commit()
         return redirect(url_for('machine_apply.machine_apply_edit', apply_id=curr_apply.id))
 
 
@@ -74,17 +73,18 @@ def machine_apply_edit(apply_id):
         curr_apply.submit_status = 1
         if request.form['cpu-hour']:
             curr_apply.CPU_hour = request.form['cpu-hour']
-        db.session.commit()
         if request.form['save-op'] == "submit":
-            # 若用户点击“提交”按钮， 提交状态改为1，To Do
-            print "submit"
+            # 若用户点击“提交”按钮， 提交状态改为1
+            curr_apply.submit_status = 1
+            db.session.commit()
             return render_template('machine_apply/create.html',
                                    apply=curr_apply,
                                    op="edit",
                                    title=gettext('Machine Hour Apply Edit'))
         else:
-            # 若用户点击“保存草稿”按钮， To Do
-            print "save-as-draft"
+            # 若用户点击“保存草稿”按钮
+            curr_apply.submit_status = 0
+            db.session.commit()
             return render_template('machine_apply/create.html',
                                    apply=curr_apply,
                                    op="edit",
