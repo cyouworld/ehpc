@@ -13,6 +13,8 @@ def admin_login(func):
     def wrap(*args, **kwargs):
         if current_user.is_authenticated and (current_user.permissions == 0 or current_user.permissions == 2):
             return func(*args, **kwargs)
+        if current_user.is_authenticated and not (current_user.permissions == 0 or current_user.permissions == 2):
+            return redirect(url_for('main.index'))
         else:
             return redirect(url_for('admin.auth', next=request.url))
     return wrap
@@ -23,6 +25,8 @@ def student_login(func):
     def wrap(*args, **kwargs):
         if current_user.is_authenticated and current_user.permissions == 1:
             return func(*args, **kwargs)
+        elif current_user.is_authenticated and current_user.permissions != 1:
+            return redirect(url_for('main.index'))
         else:
             return redirect(url_for('user.signin', next=request.url))
     return wrap
@@ -33,6 +37,8 @@ def system_login(func):
     def wrap(*args, **kwargs):
         if current_user.is_authenticated and current_user.permissions == 0:
             return func(*args, **kwargs)
+        elif current_user.is_authenticated and current_user.permissions != 0:
+            return redirect(url_for('main.index'))
         else:
             return redirect(url_for('admin.auth', next=request.url))
     return wrap
@@ -43,6 +49,8 @@ def teacher_login(func):
     def wrap(*args, **kwargs):
         if current_user.is_authenticated and current_user.permissions == 2:
             return func(*args, **kwargs)
+        elif current_user.is_authenticated and current_user.permissions != 2:
+            return redirect(url_for('main.index'))
         else:
             return redirect(url_for('user.signin', next=request.url))
     return wrap
@@ -53,6 +61,8 @@ def hpc_login(func):
     def wrap(*args, **kwargs):
         if current_user.is_authenticated and current_user.permissions == 3:
             return func(*args, **kwargs)
+        elif current_user.is_authenticated and current_user.permissions != 3:
+            return redirect(url_for('main.index'))
         else:
             return redirect(url_for('user.signin', next=request.url))
     return wrap
