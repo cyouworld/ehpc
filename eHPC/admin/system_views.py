@@ -49,6 +49,20 @@ def user_edit(uid):
                                title=gettext('User Edit'))
 
 
+@admin.route('/add/teacher/<int:user_id>/', methods=['GET', 'POST'])
+@system_login
+def reg_teacher(user_id):
+    if request.method == 'GET':
+        u = User.query.filter_by(id=user_id).first_or_404()
+        return render_template('user/reg_teacher.html', user=u)
+    elif request.method == 'POST':
+        if request.form.get('op') == 'approve':
+            u = User.query.filter_by(id=user_id).first_or_404()
+            u.permissions = 2
+            db.session.commit()
+        return redirect(url_for('admin.user'))
+
+
 @admin.route('/courses/', methods=['GET', 'POST'])
 @system_login
 def course_manage():

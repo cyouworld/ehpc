@@ -13,7 +13,7 @@
                 <a class="active">{{ _('Registration') }}</a>
             </div>
             <div class="login-main">
-                <form class="form-horizontal" id="register-form" method="post" action="" data-widget-cid="widget-1"
+                <form class="form-horizontal" id="register-form" method="post" action="{{ url_for("user.reg") }}" data-widget-cid="widget-1"
                       data-parsley-validate="">
                     <div>
                         <div class="form-group mbl">
@@ -88,8 +88,10 @@
 
 
                     <div style="display: none;">
-                        <h3>提交基本信息</h3>
-                        <p>就要大功告成了，请完善下面的信息并提交，然后就可以使用您的账户了。</p><br>
+                        <div>
+                            <h3>提交基本信息</h3>
+                            <p>就要大功告成了，请完善下面的信息并提交，然后就可以使用您的账户了。</p><br>
+                        </div>
                         <div class="form-group mbl">
                             <label class="control-label col-sm-3 required"
                                    for="register_nickname"> 用户昵称* </label>
@@ -132,7 +134,7 @@
                                 </label>
                                 <label class="checkbox-inline">
                                     <input type="radio" name="gender" value="1" data-parsley-multiple="gender" required
-                                           {% if data and data.gender.gender == '1' %}checked{% endif %}>女
+                                           {% if data and data.gender == '1' %}checked{% endif %}>女
                                 </label>
                                 <div id="checkbox-errors"></div>
                                 <p class="help-block"></p>
@@ -209,9 +211,14 @@
 {% block footer_ext %}
     <script type="text/javascript">
         {% if data %}
-           $("#register-form").children().eq(0).hide();
-           $("#register-form").children().eq(1).show();
+            $("#register-form").children().eq(0).hide();
+            $("#register-form").children().eq(1).show();
+            {% if data.type == '1' %}
+                $("#register-form").children().eq(1).children().eq(6).remove();
+                $("#register-form").children().eq(1).children().eq(3).remove();
+            {% endif %}
         {% endif %}
+
 
         $("#next-step").click(function () {
             var form = $("#register-form");
@@ -223,6 +230,11 @@
                         if(data['status']=="success"){
                             form.children().eq(0).hide();
                             form.children().eq(1).show();
+                            if($("input[name='type']:checked").val()=="1"){
+                                form.children().eq(1).children().eq(6).remove();
+                                form.children().eq(1).children().eq(3).remove();
+                            }
+
                         }
                         else{
                             $('#register_email').parent().append('<p class="help-block"><span class="text-danger">该邮箱已被注册，请使用新的邮箱</span></p>');
@@ -235,7 +247,6 @@
 
         // 验证第一张表单
         function first_form_validate(){
-
             $('#register_email').parent().children('p:last-child').remove();
             $("#type_message").html('');
 

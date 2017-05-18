@@ -23,7 +23,7 @@ def auth():
             login_user(u)
             u.last_login = datetime.now()
             db.session.commit()
-            return redirect(url_for('admin.system'))
+            return redirect(request.args.get('next') or url_for('admin.system'))
         else:
             message = gettext('Invalid username or password.')
             return render_template('admin/auth.html', title=gettext('Admin Auth'),

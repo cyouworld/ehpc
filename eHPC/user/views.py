@@ -87,20 +87,18 @@ def reg():
             return render_template('user/reg.html', title=gettext('Register Account'),
                                    data=_form, message_captcha=message_captcha)
 
-        username = _form['username']
         email = _form['email']
         password = _form['password']
         password2 = _form['password2']
 
+        username = _form['username']
         name = _form.get('name')
-        gender = _form.get('gender', 1)
         phone = _form.get('phone')
         university = _form.get('university')
-        student_id = _form.get('student_id', 0)
 
         message_e, message_u, message_p = "", "", ""
         # Check username is valid or not.
-        if User.query.filter_by(username=username).first():
+        if User.query.filter_by(username=_form['username']).first():
             message_u = gettext('Username already exists.')
 
         # Check email is valid or not.
@@ -125,15 +123,20 @@ def reg():
         # A valid register info, save the info into db.
         else:
             reg_user = User()
-            reg_user.username = username
             reg_user.email = email
             reg_user.password = password
+            reg_user.username = username
             reg_user.name = name
-            reg_user.gender = gender
             reg_user.phone = phone
             reg_user.university = university
-            reg_user.student_id = student_id
             reg_user.avatar_url = 'none.jpg'
+
+            # 如果是学生用户
+            if _form.get('type') == '0':
+                gender = _form.get('gender', 1)
+                student_id = _form.get('student_id', 0)
+                reg_user.gender = gender
+                reg_user.student_id = student_id
 
             db.session.add(reg_user)
             db.session.commit()
@@ -151,20 +154,6 @@ def reg():
 
             # TODO, Confirm the email.
             return redirect(request.args.get('next') or url_for('main.index'))
-
-
-@user.route('/register/teacher/<int:user_id>/', methods=['GET', 'POST'])
-@system_login
-def reg_teacher(user_id):
-    if request.method == 'GET':
-        u = User.query.filter_by(id=user_id).first_or_404()
-        return render_template('user/reg_teacher.html', user=u)
-    elif request.method == 'POST':
-        if request.form.get('op') == 'approve':
-            u = User.query.filter_by(id=user_id).first_or_404()
-            u.permissions = 2
-            db.session.commit()
-        return redirect(url_for('admin.user'))
 
 
 @user.route('/<int:uid>/')
