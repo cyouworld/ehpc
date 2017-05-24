@@ -293,10 +293,9 @@ def vnc_ready_to_connect():
         result, message, docker_image = create_new_image()
         if result is False:
             return jsonify(status='fail', msg=message)
-
-    result, message = start_vnc_server(docker_image, token)
-    if result is False:
-        return jsonify(status='fail', msg=message)
+        result, message = start_vnc_server(docker_image, token)
+        if result is False:
+            return jsonify(status='fail', msg=message)
 
     return jsonify(status='success',
                    token=token,
