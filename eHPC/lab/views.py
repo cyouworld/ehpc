@@ -291,7 +291,6 @@ def vnc_ready_to_connect():
 
     if docker_image is None:
         result, message, docker_image = create_new_image()
-        print result, message, docker_image
         if result is False:
             return jsonify(status='fail', msg=message)
 
@@ -324,8 +323,8 @@ def vnc_set_resolution():
         return jsonify(status='fail')
 
     try:
-        req = requests.post('http://%s:%d/server/handler' % (current_user.docker_image.docker_holder.ip,
-                                                             current_user.docker_image.docker_holder.public_port),
+        req = requests.post('http://%s:%d/server/handler' % (current_user.docker_image.docker_holder.inner_ip,
+                                                             current_user.docker_image.docker_holder.inner_port),
                             params={"op": "set_resolution", "width": width, "height": height}, timeout=30)
         req.raise_for_status()
     except requests.RequestException as e:
