@@ -694,4 +694,4 @@ class DockerImage(db.Model):
     name = db.Column(db.String(64), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    docker_holder_id = db.Column(db.Integer, db.ForeignKey('docker_holders.id'), default=None)
+    docker_holder_id = db.Column(db.Integer, db.ForeignKey('docker_holders.id'), nullable=False, default=0)

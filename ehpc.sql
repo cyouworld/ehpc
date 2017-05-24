@@ -1218,10 +1218,10 @@ LOCK TABLES `docker_holders` WRITE;
 /*!40000 ALTER TABLE `docker_holders` DISABLE KEYS */;
 INSERT INTO `docker_holders` (`id`, `name`, `ip`, `public_port`, `status`, `running_container_count`, `images_count`)
 VALUES
-  (1,'docker1','a002.nscc-gz.cn',10287,1,0,2),
-  (2,'docker2','a002.nscc-gz.cn',10288,0,0,0),
+  (1,'docker1','a002.nscc-gz.cn',10287,1,0,0),
+  (2,'docker2','a002.nscc-gz.cn',10288,1,0,0),
   (3,'docker3','a002.nscc-gz.cn',10289,1,0,0),
-  (4,'docker4','a002.nscc-gz.cn',10290,0,0,0),
+  (4,'docker4','a002.nscc-gz.cn',10290,1,0,0),
   (5,'docker5','a002.nscc-gz.cn',10291,1,0,0);
 /*!40000 ALTER TABLE `docker_holders` ENABLE KEYS */;
 UNLOCK TABLES;
@@ -1246,7 +1246,7 @@ CREATE TABLE `docker_images` (
   `token` varchar(64) DEFAULT NULL,
   `name` varchar(64) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `docker_holder_id` int(11) DEFAULT NULL,
+  `docker_holder_id` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `docker_holder_id` (`docker_holder_id`),
@@ -1261,10 +1261,6 @@ CREATE TABLE `docker_images` (
 
 LOCK TABLES `docker_images` WRITE;
 /*!40000 ALTER TABLE `docker_images` DISABLE KEYS */;
-  INSERT INTO `docker_images` (`id`, `create_time`, `last_connect_time`, `remaining_time_today`, `port`, `tunnel_id`, `password`, `status`, `is_running`, `token`, `name`, `user_id`, `docker_holder_id`)
-  VALUES
-    (1,'2017-01-01 10:50:12', '2017-01-01 11:50:42', 14400, 5902,NULL,'abcdefgh',0,1,NULL,'image_3',3,1),
-    (2,'2017-02-01 19:33:45', '2017-02-02 14:34:15', 14400, 5903,NULL,'abcdefgh',0,1,NULL,'image_5',5,1);
 /*!40000 ALTER TABLE `docker_images` ENABLE KEYS */;
 UNLOCK TABLES;
 
