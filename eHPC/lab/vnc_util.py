@@ -43,7 +43,7 @@ def create_new_image():
         pass
 
     try:
-        req = requests.post('http://%s:%d/server/handler' % (holder_to_assign.ip, holder_to_assign.public_port),
+        req = requests.post('http://%s:%d/server/handler' % (holder_to_assign.inner_ip, holder_to_assign.inner_port),
                             params={"op": "create_image",
                                     "image_port": str(new_image.port),
                                     "image_password": new_image.password,
@@ -70,8 +70,8 @@ def create_new_image():
 
 def start_vnc_server(docker_image, token):
     try:
-        req = requests.post('http://%s:%d/server/handler' % (docker_image.docker_holder.ip,
-                                                             docker_image.docker_holder.public_port),
+        req = requests.post('http://%s:%d/server/handler' % (docker_image.docker_holder.inner_ip,
+                                                             docker_image.docker_holder.inner_port),
                             params={"op": "start_vnc_server", "image_name": docker_image.name}, timeout=30)
         req.raise_for_status()
     except requests.RequestException as e:

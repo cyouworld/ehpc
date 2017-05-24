@@ -627,10 +627,7 @@ class DockerHolder(db.Model):
     STOPPED = 0
     RUNNING = 1
 
-    def __init__(self, name, ip, public_port):
-        self.name = name
-        self.ip = ip
-        self.public_port = public_port
+    def __init__(self):
         self.status = 0
         self.running_container_count = 0
         self.images_count = 0
@@ -639,7 +636,9 @@ class DockerHolder(db.Model):
     id = db.Column(db.Integer, nullable=False, primary_key=True)
     name = db.Column(db.String(256), nullable=False)
     ip = db.Column(db.String(128), nullable=False)
+    inner_ip = db.Column(db.String(128), nullable=False)
     public_port = db.Column(db.Integer, nullable=False)
+    inner_port = db.Column(db.Integer, nullable=False)
     status = db.Column(db.Integer, default=0)   # 0: 停止 1: 运行
     running_container_count = db.Column(db.Integer, default=0)
     images_count = db.Column(db.Integer, default=0)
@@ -694,4 +693,4 @@ class DockerImage(db.Model):
     name = db.Column(db.String(64), nullable=False)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    docker_holder_id = db.Column(db.Integer, db.ForeignKey('docker_holders.id'), nullable=False, default=0)
+    docker_holder_id = db.Column(db.Integer, db.ForeignKey('docker_holders.id'), default=None)

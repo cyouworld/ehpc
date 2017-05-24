@@ -1202,7 +1202,9 @@ CREATE TABLE `docker_holders` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(256) NOT NULL,
   `ip` varchar(128) NOT NULL,
+  `inner_ip` varchar(128) NOT NULL,
   `public_port` int(11) NOT NULL,
+  `inner_port` int(11) NOT NULL,
   `status` int(11) DEFAULT 0,
   `running_container_count` int(11) DEFAULT 0,
   `images_count` int(11) DEFAULT 0,
@@ -1216,13 +1218,13 @@ CREATE TABLE `docker_holders` (
 
 LOCK TABLES `docker_holders` WRITE;
 /*!40000 ALTER TABLE `docker_holders` DISABLE KEYS */;
-INSERT INTO `docker_holders` (`id`, `name`, `ip`, `public_port`, `status`, `running_container_count`, `images_count`)
+INSERT INTO `docker_holders` (`id`, `name`, `ip`, `inner_ip`, `public_port`, `inner_port`, `status`, `running_container_count`, `images_count`)
 VALUES
-  (1,'docker1','a002.nscc-gz.cn',10287,1,0,0),
-  (2,'docker2','a002.nscc-gz.cn',10288,1,0,0),
-  (3,'docker3','a002.nscc-gz.cn',10289,1,0,0),
-  (4,'docker4','a002.nscc-gz.cn',10290,1,0,0),
-  (5,'docker5','a002.nscc-gz.cn',10291,1,0,0);
+  (1,'docker1','a002.nscc-gz.cn','10.133.100.18',10287,8080,1,0,0),
+  (2,'docker2','a002.nscc-gz.cn','10.133.100.238',10288,8080,1,0,0),
+  (3,'docker3','a002.nscc-gz.cn','10.133.100.239',10289,8080,1,0,0),
+  (4,'docker4','a002.nscc-gz.cn','10.133.100.7',10290,8080,1,0,0),
+  (5,'docker5','a002.nscc-gz.cn','10.133.100.71',10291,8080,1,0,0);
 /*!40000 ALTER TABLE `docker_holders` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1246,7 +1248,7 @@ CREATE TABLE `docker_images` (
   `token` varchar(64) DEFAULT NULL,
   `name` varchar(64) NOT NULL,
   `user_id` int(11) NOT NULL,
-  `docker_holder_id` int(11) NOT NULL DEFAULT 0,
+  `docker_holder_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   KEY `docker_holder_id` (`docker_holder_id`),
@@ -1273,16 +1275,8 @@ FOR EACH ROW
   BEGIN
     DECLARE dhid INT(11);
 
-    UPDATE docker_holders set
-      images_count = images_count + 1
-    where @dhid := id =
-          (
-            SELECT  t1.id
-            FROM (SELECT * from docker_holders) AS t1
-            WHERE t1.images_count = (SELECT MAX(t2.images_count)
-                                     FROM (SELECT * from docker_holders) AS t2
-                                     WHERE t2.images_count < 10) LIMIT 1
-          );
+    SET @dhid = (SELECT t1.id FROM (SELECT * from docker_holders) AS t1 WHERE t1.images_count = (SELECT MAX(t2.images_count) FROM (SELECT * from docker_holders) AS t2 WHERE t2.images_count < 10) LIMIT 1);
+    UPDATE docker_holders set images_count = images_count + 1 where id = @dhid;
 
     SET NEW.port = IF(ISNULL(@dhid), 0, 5901 + (SELECT t1.images_count FROM (SELECT * from docker_holders) AS t1 WHERE t1.id = @dhid));
     SET NEW.docker_holder_id = IF(ISNULL(@dhid), NULL, @dhid);
