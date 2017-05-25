@@ -282,7 +282,10 @@ def vnc_ready_to_connect():
 
     result, docker_image = is_reconnection()
     if result is True:
+        print("reconnect")
         token = docker_image.token
+        docker_image.status = DockerImage.READY_TO_CONNECT
+        db.session.commit()
         return jsonify(status='success',
                        token=token,
                        address=docker_image.docker_holder.ip + ':' + str(docker_image.docker_holder.public_port))
@@ -329,7 +332,7 @@ def vnc_set_resolution():
     try:
         req = requests.post('http://%s:%d/server/handler' % (current_user.docker_image.docker_holder.inner_ip,
                                                              current_user.docker_image.docker_holder.inner_port),
-                            params={"op": "set_resolution", "width": width, "height": height}, timeout=10)
+                            params={"op": "set_resolution", "image_name": current_user.docker_image.name, "width": width, "height": height}, timeout=10)
         req.raise_for_status()
     except requests.RequestException as e:
         print e
@@ -337,6 +340,9 @@ def vnc_set_resolution():
     else:
         result = req.json()
         if result['status'] == DockerImage.STATUS_SET_RESOLUTION_SUCCESSFULLY:
+            current_user.docker_image.status = DockerImage.READY_TO_CONNECT
+            current_user.docker_image.docker_holder.running_container_count -= 1
+            db.session.commit()
             return jsonify(status='success')
         else:
             return jsonify(status='fail')

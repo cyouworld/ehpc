@@ -322,7 +322,6 @@
                         "height": Math.floor(resolution_height)
                     },
                     success: function (data) {
-                        data = JSON.parse(data);
                         $("#loading").modal("hide");
                         if(data["status"] === "success"){
                             guac.disconnect();
