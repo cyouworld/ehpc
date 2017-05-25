@@ -541,9 +541,9 @@ def images(docker_holder_id):
 
         if op == 'start_image':
             try:
-                req = requests.post('http://%s:%d/server/handler' % (docker_holder.ip, docker_holder.public_port),
+                req = requests.post('http://%s:%d/server/handler' % (docker_holder.inner_ip, docker_holder.inner_port),
                                     params={"op": "start_image",
-                                            "image_name": str(docker_images.name)}, timeout=30)
+                                            "image_name": str(docker_images.name)}, timeout=10)
                 req.raise_for_status()
             except requests.RequestException as e:
                 print e
@@ -559,9 +559,9 @@ def images(docker_holder_id):
                     return jsonify(status='fail', msg=u'启动镜像失败')
         elif op == 'stop_image':
             try:
-                req = requests.post('http://%s:%d/server/handler' % (docker_holder.ip, docker_holder.public_port),
+                req = requests.post('http://%s:%d/server/handler' % (docker_holder.inner_ip, docker_holder.inner_port),
                                     params={"op": "stop_image",
-                                            "image_name": str(docker_images.name)}, timeout=30)
+                                            "image_name": str(docker_images.name)}, timeout=10)
                 req.raise_for_status()
             except requests.RequestException as e:
                 print e

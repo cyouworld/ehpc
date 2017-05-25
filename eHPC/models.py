@@ -675,7 +675,7 @@ class DockerImage(db.Model):
         self.tunnel_id = None
         self.password = password
         self.status = 0
-        self.is_running = True
+        self.is_running = False
         self.token = None
         self.name = name
 
@@ -688,7 +688,7 @@ class DockerImage(db.Model):
     tunnel_id = db.Column(db.String(256), default=None)
     password = db.Column(db.String(128), nullable=False)
     status = db.Column(db.Integer, default=0)  # 0: 未连接, 1: 准备连接, 2: 已连接
-    is_running = db.Column(db.Boolean, default=True)
+    is_running = db.Column(db.Boolean, default=False)
     token = db.Column(db.String(64), default=None)
     name = db.Column(db.String(64), nullable=False)
 

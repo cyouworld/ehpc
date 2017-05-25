@@ -1220,7 +1220,7 @@ LOCK TABLES `docker_holders` WRITE;
 /*!40000 ALTER TABLE `docker_holders` DISABLE KEYS */;
 INSERT INTO `docker_holders` (`id`, `name`, `ip`, `inner_ip`, `public_port`, `inner_port`, `status`, `running_container_count`, `images_count`)
 VALUES
-  (1,'docker1','a002.nscc-gz.cn','10.133.100.18',10287,8080,1,0,0),
+#   (1,'docker1','a002.nscc-gz.cn','10.133.100.18',10287,8080,1,0,0);
   (2,'docker2','a002.nscc-gz.cn','10.133.100.238',10288,8080,1,0,0),
   (3,'docker3','a002.nscc-gz.cn','10.133.100.239',10289,8080,1,0,0),
   (4,'docker4','a002.nscc-gz.cn','10.133.100.7',10290,8080,1,0,0),
@@ -1244,7 +1244,7 @@ CREATE TABLE `docker_images` (
   `tunnel_id` varchar(256) DEFAULT NULL,
   `password` varchar(128) NOT NULL,
   `status` int(11) DEFAULT 0,
-  `is_running` tinyint(1) DEFAULT 1 NOT NULL,
+  `is_running` tinyint(1) DEFAULT 0 NOT NULL,
   `token` varchar(64) DEFAULT NULL,
   `name` varchar(64) NOT NULL,
   `user_id` int(11) NOT NULL,

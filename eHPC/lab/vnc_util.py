@@ -47,10 +47,11 @@ def create_new_image():
                             params={"op": "create_image",
                                     "image_port": str(new_image.port),
                                     "image_password": new_image.password,
-                                    "image_name": new_image.name}, timeout=30)
+                                    "image_name": new_image.name}, timeout=10)
         req.raise_for_status()
     except requests.RequestException as e:
         print e
+        new_image.docker_holder.images_count -= 1
         db.session.delete(new_image)
         db.session.commit()
         return False, u'服务器内部错误，请联系管理员', None
@@ -62,17 +63,18 @@ def create_new_image():
             db.session.commit()
             return True, "success", new_image
         else:
+            new_image.docker_holder.images_count -= 1
             db.session.delete(new_image)
             db.session.commit()
             print result['message']
             return False, u'创建镜像失败', None
 
 
-def start_vnc_server(docker_image, token):
+def start_vnc_server(docker_image):
     try:
         req = requests.post('http://%s:%d/server/handler' % (docker_image.docker_holder.inner_ip,
                                                              docker_image.docker_holder.inner_port),
-                            params={"op": "start_vnc_server", "image_name": docker_image.name}, timeout=30)
+                            params={"op": "start_vnc_server", "image_name": docker_image.name}, timeout=10)
         req.raise_for_status()
     except requests.RequestException as e:
         print e
@@ -80,8 +82,7 @@ def start_vnc_server(docker_image, token):
     else:
         result = req.json()
         if result['status'] == DockerImage.STATUS_START_VNC_SERVER_SUCCESSFULLY:
-            docker_image.token = token
-            docker_image.status = DockerImage.READY_TO_CONNECT
+            docker_image.is_running = True
             db.session.commit()
             return True, "success"
         else:

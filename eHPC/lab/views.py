@@ -293,10 +293,15 @@ def vnc_ready_to_connect():
         result, message, docker_image = create_new_image()
         if result is False:
             return jsonify(status='fail', msg=message)
-        result, message = start_vnc_server(docker_image, token)
+    if docker_image.is_running == 0:
+        result, message = start_vnc_server(docker_image)
         if result is False:
             return jsonify(status='fail', msg=message)
 
+    docker_image.token = token
+    docker_image.status = DockerImage.READY_TO_CONNECT
+
+    db.session.commit()
     return jsonify(status='success',
                    token=token,
                    address=docker_image.docker_holder.ip + ':' + str(docker_image.docker_holder.public_port))
@@ -324,7 +329,7 @@ def vnc_set_resolution():
     try:
         req = requests.post('http://%s:%d/server/handler' % (current_user.docker_image.docker_holder.inner_ip,
                                                              current_user.docker_image.docker_holder.inner_port),
-                            params={"op": "set_resolution", "width": width, "height": height}, timeout=30)
+                            params={"op": "set_resolution", "width": width, "height": height}, timeout=10)
         req.raise_for_status()
     except requests.RequestException as e:
         print e
@@ -337,30 +342,34 @@ def vnc_set_resolution():
             return jsonify(status='fail')
 
 
-@lab.route('/vnc/controller/', methods=['POST'])
+@lab.route('/vnc/controller/', methods=['GET', 'POST'])
 def db_controller():
     op = request.form.get('op', None)
     if op is None:
+        print('op is None')
         return jsonify(status='fail')
 
     if op == 'find_image':
         token = request.form.get('token', None)
 
         if token is None:
+            print('token is None')
             return jsonify(status='fail')
 
         if len(token) is not 32:
+            print('token length error')
             return jsonify(status='fail')
 
-        cur_image = DockerImage.query.filter_by(token=token).first()
+        cur_image = DockerImage.query.filter_by(token=token, status=DockerImage.READY_TO_CONNECT).first()
 
         if cur_image is None:
+            print('image not found')
             return jsonify(status='fail')
 
         return jsonify(status='success',
-                       docker_holder_ip=cur_image.docker_holder.ip,
+                       docker_holder_ip=cur_image.docker_holder.inner_ip,
                        image_id=str(cur_image.id),
-                       image_port=cur_image.port,
+                       image_port=str(cur_image.port),
                        image_pw=cur_image.password)
 
     elif op == 'update_information':
