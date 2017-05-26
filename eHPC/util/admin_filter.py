@@ -45,5 +45,11 @@ def get_question_id(question):
 
 @filter_blueprint.app_template_filter('get_apply_status')
 def get_apply_status(status):
-    dic = {0: u'待定', 1: u'已同意', 2: u'已拒绝', 3:u'已退出'}
+    dic = {0: u'待定', 1: u'已同意', 2: u'已拒绝', 3: u'已退出'}
     return dic[status]
+
+
+@filter_blueprint.app_template_filter('get_sc_center')
+def get_sc_center(sc_id):
+    dic = {0: u'广州超算', 1: u'长沙超算', 2: u'中科院超算', 3: u'上海超算'}
+    return dic[sc_id]
