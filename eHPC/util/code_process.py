@@ -1,19 +1,36 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 # @Author: xuezaigds@gmail.com
-import urllib2, urllib
+import os
+import urllib
+import urllib2
+
+import re
 from config import TH2_MAX_NODE_NUMBER, TH2_BASE_URL, TH2_ASYNC_WAIT_TIME, TH2_LOGIN_DATA, TH2_MACHINE_NAME, TH2_DEBUG_ASYNC, TH2_MY_PATH, TH2_ASYNC_FIRST_WAIT_TIME, TH2_ASYNC_URL, TH2_LOGIN_URL
 from flask import jsonify
 import json
 import time
+
+global g__cookies
 
 # 完成天河2号接口的功能的客户端
 class ehpc_client:
     def __init__(self, base_url=TH2_BASE_URL, headers={}, login_cookie=None, login_data=TH2_LOGIN_DATA):
         self.headers = headers
         self.base_url = base_url
+        self.login_cookie = login_cookie
         self.login_data = login_data
         self.async_wait_time = TH2_ASYNC_WAIT_TIME
+        self.username = None
+        global g__cookies
+
+        try :
+            if 'cookie' in g__cookies :
+                pass
+                if self.login_data == None :
+                    self.login_data = g__cookies['cookie']
+        except NameError :
+            g__cookies = {}
 
     def open(self, url, data=None, method=None, login=True, async_get=True, async_wait=True, retjson=True):
         """ 入口函数，完成接收前端数据-发送请求到特定api接口-接收并保存返回数据的功能
@@ -31,9 +48,13 @@ class ehpc_client:
         # https://docs.python.org/2/library/urllib.html#urllib.urlencode
         if data:
             try:
-                data = urllib.urlencode(data)
-            except TypeError:
-                data = data.encode('utf-8')             # Issue 470
+                if method != 'PUT' :
+                    data = urllib.urlencode(data).encode(encoding='UTF8')
+                else :
+                    data = data.encode('utf-8')
+            except TypeError :
+                print data
+                pass
 
             # https://docs.python.org/2/library/urllib2.html#urllib2.Request
             # Data may be a string specifying additional data to send to the server
@@ -65,22 +86,42 @@ class ehpc_client:
             print "The server couldn't fulfill the request.  Error code:", e.code
             rdata = e.read()
         except urllib2.URLError, e:
+            self.status_code = 500
+            self.status = "ERROR"
             print "Failed to reach the server. The reason:", e.reason
             rdata = e.read()
 
+        if not retjson :
+            self.data = rdata
+            self.status_code = self.resp.code
+            self.status = "OK" if resp.code == 200 else "ERROR"
+            self.output = self.data
+            return self.data
+
+        if isinstance(rdata, bytes) :
+            rdata = rdata.decode('utf-8')
+        rdata_reg = re.search( '\{.+\}',rdata)
+        rdata = rdata if rdata_reg is None else rdata_reg.group()
+
         # 保存数据
         try:
-            rdata = json.loads(rdata.decode('utf-8'))
-            self.data = rdata
-            self.status = self.data["status"]
-            self.status_code = self.data["status_code"]
-            self.output = self.data["output"]
-        except ValueError:
+            if rdata_reg is None:
+                self.data = rdata
+            else :
+                rdata = json.loads(rdata.decode('utf-8'))
+                self.data = rdata
+                self.status = self.data["status"]
+                self.status_code = self.data["status_code"]
+                self.output = self.data["output"]
+        except ValueError as exc:
+            print('ValueError:', exc, ';rdata:', rdata)
             self.data = rdata
             try:
-                self.status_code = resp.getcode()
+                self.status = self.data['status']
+                self.status_code = self.data["status_code"]
             except Exception:
-                self.status_code = 403
+                self.status_code = 200
+                self.status = 200
             self.status = "unknown"
             self.output = self.data
             if self.status_code == 200:
@@ -88,7 +129,7 @@ class ehpc_client:
 
         # 如果开启了异步获取并且返回码是201,表示转入异步获取请求结果的状态
         if self.status_code == 201 and async_get:
-            self.async_wait_time = 5
+            self.async_wait_time = TH2_ASYNC_FIRST_WAIT_TIME
             time.sleep(TH2_ASYNC_FIRST_WAIT_TIME)
             if TH2_DEBUG_ASYNC:
                 print "jump to async"
@@ -127,6 +168,15 @@ class ehpc_client:
     def login(self):
         tmpdata = self.open(TH2_LOGIN_URL, data=self.login_data, login=False)
         self.login_cookie = 'newt_sessionid=' + tmpdata["output"]["newt_sessionid"]
+        self.username = self.login_data['username']
+        global g__cookies
+
+        try :
+            g__cookies['cookie'] = self.login_cookie
+        except NameError :
+            g__cookies = {}
+            g__cookies['cookie'] = self.login_cookie
+
         return self.ret200()
 
     # 登出，返回值为是否成功（布尔型）
@@ -168,9 +218,9 @@ class ehpc_client:
         if isjob:
             filename = "slurm-%s.out" % filename
         tmpdata = self.open("/file/" + TH2_MACHINE_NAME + myPath + '/' + filename + "?download=True")
-        async_id = tmpdata["output"]
+        #async_id = tmpdata["output"]
         # print async_id
-        tmpdata = self.open("/file/" + TH2_MACHINE_NAME + "/%s?download=True" % async_id)
+        #tmpdata = self.open("/file/" + TH2_MACHINE_NAME + "/%s?download=True" % async_id)
         return tmpdata
 
     # 上传文件，需要注意的是data指文件内容，filename指保存在天河内部的文件名
@@ -234,17 +284,20 @@ class ehpc_client:
 
         if int(node_number) > TH2_MAX_NODE_NUMBER:
             partition = "BIGJOB1"
+        partition = "debug"
 
         jobscript = """#!/bin/bash
-#SBATCH -p %s
-#SBATCH -N %s
-    yhrun -n %s -c %s ./%s
+#SBATCH --partition=%s
+#SBATCH --nodes=%s
+#SBATCH --ntasks=%s
+    srun -c %s ./%s
 """ % (partition, node_number, task_number, cpu_number_per_task, output_filename)
 
         if not self.upload(myPath, job_filename, jobscript):
             return "ERROR"
         jobPath = myPath + "/" + job_filename
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript" : jobscript, "jobfilepath" : jobPath})
+        print tmpdata
         return tmpdata["output"]["jobid"]
 
     def get_job_status(self, job_id):
@@ -311,6 +364,7 @@ class ehpc_client:
         if int(node_number) > TH2_MAX_NODE_NUMBER:
             partition = "BIGJOB1"
 
+        partition = "debug"
         jobid = self.submit_job(myPath, job_filename, output_filename, node_number=node_number, task_number=task_number,
                                 cpu_number_per_task=cpu_number_per_task, partition=partition)
 
@@ -342,7 +396,7 @@ class ehpc_client:
 
 def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_number, language, op, jobid, compile_success=[False]):
     """ 后台提交从前端获取的代码到天河系统，编译运行并返回结果
-    
+
     @pid: 编程题ID（对于非编程题的代码，可自行赋予ID）,
     @uid: 用户ID,
     @source_code: 所提交的代码文本,
@@ -447,9 +501,11 @@ if __name__ == '__main__':
     test_text = open("mpicc_demo.c").read()
 
     if not mc.login():
+        print "login failed"
         exit(-1)
 
     if not mc.upload(TH2_MY_PATH, input_filename, test_text):
+        print "upload fail"
         exit(-1)
 
     is_success = [False]
@@ -457,5 +513,5 @@ if __name__ == '__main__':
     print compile_out, type(compile_out)
     if not is_success[0]:
         exit(-1)
-    run_out = mc.ehpc_run(output_filename, job_filename, TH2_MY_PATH, "4", "1", "2")
+    run_out = mc.ehpc_run(output_filename, job_filename, TH2_MY_PATH, "4", "1", "2","debug")
     print run_out, type(run_out)
