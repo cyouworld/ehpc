@@ -18,7 +18,7 @@
             </div>
 
             <div class="panel-body">
-                <section class="admin-list">
+                <section class="admin-list" id="classifies-box">
                     <div class="row">
                         {% for c in classifies %}
                             <div class="col-sm-6 col-md-3">
@@ -113,7 +113,7 @@
             });
 
             var obj = null;
-            $("#tb").find("a[name=del-btn]").each(function () {
+            $("#classifies-box").find("a[name=del-btn]").each(function () {
                 $(this).click(function () {
                     obj = this;
                     $("#del-warning").modal("show");

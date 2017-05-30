@@ -74,8 +74,8 @@
                 </div>
 
                 <div class="col-md-3 form-group">
-                    <label class="" for="task_number">任务数</label>
-                    <select class="col-md-6 selectpicker" name="task_number" id="task_number">
+                    <label class="" for="cpu_number">核数</label>
+                    <select class="col-md-6 selectpicker" name="cpu_number" id="cpu_number">
                         <option value="1">1</option>
                         <option value="4">4</option>
                         <option value="16">16</option>
@@ -86,29 +86,6 @@
                         <option value="2400">2400</option>
                     </select>
                 </div>
-
-                <div class="col-md-3 form-group">
-                    <label class="" for="cpu_number_per_task">CPU/任务</label>
-                    <select class="col-md-6 selectpicker" name="cpu_number_per_task" id="cpu_number_per_task">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                </div>
-
-                <div class="col-md-3 form-group">
-                    <label class="" for="node_number">结点数</label>
-                    <select class="col-md-6 selectpicker" name="node_number" id="node_number">
-                        <option value="1">1</option>
-                        <option value="4">4</option>
-                        <option value="16">16</option>
-                        <option value="64">64</option>
-                        <option value="128">128</option>
-                        <option value="256">256</option>
-                    </select>
-                </div>
-
             </div>
 
             <div class="row form-group">
@@ -217,9 +194,7 @@
             document.getElementById('source_code').value = editor.getValue();
 
             $("input[name=language]").val($("#language").find("option:selected").text());
-            $("input[name=task_number]").val($("#task_number").find("option:selected").text());
-            $("input[name=cpu_number_per_task]").val($("#cpu_number_per_task").find("option:selected").text());
-            $("input[name=node_number]").val($("#node_number").find("option:selected").text());
+            $("input[name=cpu_number]").val($("#cpu_number").find("option:selected").text());
 
             var data = $.param({'job_op': '1', 'job_id': 'ERROR'}) + '&' + $("form").serialize();
             $('#result-show').css("display", 'block');

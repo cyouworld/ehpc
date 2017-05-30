@@ -169,13 +169,10 @@ def submit(pid):
         db.session.add(submit_problem)
         db.session.commit()
 
-        task_number = request.form['task_number']
-        cpu_number_per_task = request.form['cpu_number_per_task']
-        node_number = request.form['node_number']
+        cpu_number = request.form['cpu_number']
 
     #print op, type(op)
 
-    return submit_code(pid=pid, uid=uid, source_code=source_code,
-                        task_number=task_number, cpu_number_per_task=cpu_number_per_task, node_number=node_number, language=language, op=op, jobid=jobid)
+    return submit_code(pid=pid, uid=uid, source_code=source_code, cpu_number=cpu_number, language=language, op=op, jobid=jobid)
 
 
