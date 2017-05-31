@@ -4918,7 +4918,7 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     border-bottom-left-radius: 15px;
 }
 
-#apply-submit-status .submit-status:nth-child(3) {
+#apply-submit-status .submit-status:nth-child(4) {
     border-top-right-radius: 15px;
     border-bottom-right-radius: 15px;
 }

@@ -59,7 +59,6 @@ class User(UserMixin, db.Model):
 
     vnc_progresses = db.relationship('VNCProgress', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
 
-
     machine_apply = db.relationship("MachineApply", backref='user', lazy='dynamic', cascade="delete, delete-orphan")
     machine_account = db.relationship("MachineAccount", uselist=False, backref='user')
 
@@ -596,15 +595,19 @@ class HomeworkScore(db.Model):
 class MachineApply(db.Model):
     __tablename__ = "machine_apply"
     id = db.Column(db.Integer, primary_key=True)
-    project_user_institution = db.Column(db.String(256), nullable=True)  # 项目负责人单位
-    project_user_tel = db.Column(db.String(64), nullable=True)  # 项目负责人联系方式
-    project_user_address = db.Column(db.String(256), nullable=True)  # 项目负责人地址
-    project_applicant_institution = db.Column(db.String(256), nullable=True)  # 项目申请人单位
-    project_applicant_tel = db.Column(db.String(64), nullable=True)  # 项目申请人联系方式
-    project_applicant_address = db.Column(db.String(256), nullable=True)  # 项目申请人地址
-    project_name = db.Column(db.String(512), nullable=True)  # 项目名称
+    applicant_name = db.Column(db.String(64), nullable=True)  # 申请人姓名
+    applicant_institution = db.Column(db.String(64), nullable=True)  # 申请人单位
+    applicant_tel = db.Column(db.String(64), nullable=True)  # 申请人电话号码
+    applicant_email = db.Column(db.String(64), nullable=True)  # 申请人电子邮件
+    applicant_address = db.Column(db.String(128), nullable=True)  # 项申请人地址
+    manager_name = db.Column(db.String(64), nullable=True)  # 项目负责人姓名
+    manager_institution = db.Column(db.String(64), nullable=True)  # 项目负责人单位
+    manager_tel = db.Column(db.String(64), nullable=True)  # 项目负责人电话号码
+    manager_email = db.Column(db.String(64), nullable=True)  # 项目负责人电子邮件
+    manager_address = db.Column(db.String(128), nullable=True)  # 项目负责人地址
+    project_name = db.Column(db.String(128), nullable=True)  # 项目名称
     sc_center = db.Column(db.Integer, nullable=True, default=0)  # 超算单位：0-广州超算，1-长沙超算，2-中科院超算，3-上海超算
-    CPU_hour = db.Column(db.Integer, nullable=True, default=0)  # CPU核时，CPU_hour字段不能置空，若用户未填写则默认为0
+    cpu_hour = db.Column(db.Integer, nullable=True, default=0)  # CPU核时，CPU_hour字段不能置空，若用户未填写则默认为0
     applying_time = db.Column(db.DateTime, default=datetime.now, nullable=False)  # 提交申请的时间
     submit_status = db.Column(db.Integer, default=0)  # 当前申请的提交状态：0-未提交，1-已提交，等待审批，2-审批通过，3-申请被拒绝
 

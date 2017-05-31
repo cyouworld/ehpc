@@ -5,7 +5,8 @@
     <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
     <link href="//cdn.bootcss.com/bootstrap-select/1.12.1/css/bootstrap-select.min.css" rel="stylesheet">
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="//cdn.bootcss.com/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+    <script src="//rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.js"></script>
+    <link href="//rawgithub.com/indrimuska/jquery-editable-select/master/dist/jquery-editable-select.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -25,77 +26,117 @@
                     <div class="panel-heading">
                         <h3 class="panel-title" style="display: inline-block">{% if op == "create" %}{{ _('Machine Hour Apply Create') }}{% else %}{{ _('Machine Hour Apply Edit') }}{% endif %}</h3>
                         <div id="apply-submit-status" class="pull-right">
-                            <span id="status0" class="submit-status active">未提交</span><span id="status1" class="submit-status" style="width: 150px">已提交，等待审批</span>{% if apply %}{% if apply.submit_status ==2 %}<span id="status2" class="submit-status">审批通过</span>{% elif apply.submit_status ==3 %}<span id="status3" class="submit-status">审批未通过</span>{% else %}<span class="submit-status">开始使用</span>{% endif %}{% else %}<span class="submit-status">开始使用</span>{% endif %}
+                            <span id="status0" class="submit-status active">开始申请</span>
+                            <span id="status1" class="submit-status">已保存</span>
+                            <span id="status2" class="submit-status">等待审批</span>
+                            {% if apply and apply.submit_status == 2 %}
+                                <span id="status3" class="submit-status">审批通过</span>
+                            {% elif apply and apply.submit_status == 3 %}
+                                <span id="status3" class="submit-status">审批未通过</span>
+                            {% else %}
+                                <span class="submit-status">申请完成</span>
+                            {% endif %}
                         </div>
                     </div>
                     <div class="panel-body">
-                        <form id="machine-apply-create-form" method="post" enctype="application/x-www-form-urlencoded"
-                              action="{% if op == "create" %}{{ url_for('machine_apply.machine_apply_create') }}{% else %}{{ url_for('machine_apply.machine_apply_edit', apply_id=apply.id) }}{% endif %}">
-                            <table class="table table-bordered" cellspacing="0" id="problem">
-                                <tr>
-                                    <td class="text-center text-verticle-center" width="20%" rowspan="4">{{ _('Apply Information') }}</td>
-                                    <td class="text-center" width="20%"></td>
-                                    <td class="text-center" width="20%">{{ _('Applicant Institution') }}</td>
-                                    <td class="text-center" width="20%">{{ _('Phone') }}</td>
-                                    <td class="text-center" width="20%">{{ _('Institution Address') }}</td>
+                        <form id="machine-apply-create-form" method="post" enctype="application/x-www-form-urlencoded"#}
+                              action="{% if op == "create" %}{{ url_for('machine_apply.machine_apply_create') }}
+                              {% else %}{{ url_for('machine_apply.machine_apply_edit', apply_id=apply.id) }}{% endif %}">
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                        <td colspan="4">申请信息</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人姓名</td>
+                                        <td><input id="applicant_name" type="text" name="applicant_name" value="{% if apply %}{{ apply.applicant_name }}{% endif %}"></td>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人单位</td>
+                                        <td><input id="applicant_institution" type="text" name="applicant_institution" value="{% if apply %}{{ apply.applicant_institution }}{% endif %}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人电话</td>
+                                        <td><input id="applicant_tel" type="text" name="applicant_tel" value="{% if apply %}{{ apply.applicant_tel }}{% endif %}"></td>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人邮箱</td>
+                                        <td><input id="applicant_email" type="text" name="applicant_email" value="{% if apply %}{{ apply.applicant_email }}{% endif %}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人通信地址</td>
+                                        <td colspan="3"><input id="applicant_address" type="text" name="applicant_address" value="{% if apply %}{{ apply.applicant_address }}{% endif %}"></td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;">项目名称</td>
+                                        <td colspan="3">
+                                            <select id="project_name" name="project_name" data-width="100%"
+                                                    data-parsley-required-message="请填写项目名称" required
+                                                    value="{% if apply %}{{ apply.project_name }}{% endif %}">
+                                                <option value="高性能教育实践平台">高性能教育实践平台</option>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                    <td colspan="4">负责人信息</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-center" width="20%">{{ _('Applicant Manager') }}</td>
-                                    <td class="text-center" width="20%">
-                                        <input id="project-user-institution" type="text" name="project-user-institution"
-                                               value="{% if apply %}{{ apply.project_user_institution }}{% endif %}">
-                                    </td>
-                                    <td class="text-center" width="20%">
-                                        <input id="project-user-tel" type="text" name="project-user-tel" value="{% if apply %}{{ apply.project_user_tel }}{% endif %}">
-                                    </td>
-                                    <td class="text-center" width="20%">
-                                        <input id="project-user-address" type="text" name="project-user-address" value="{% if apply %}{{ apply.project_user_address }}{% endif %}">
-                                    </td>
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人姓名</td>
+                                    <td><input id="manager_name" type="text" name="manager_name" value="{% if apply %}{{ apply.manager_name }}{% endif %}"></td>
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人单位</td>
+                                    <td><input id="manager_institution" type="text" name="manager_institution" value="{% if apply %}{{ apply.manager_institution }}{% endif %}"></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-center" width="20%">{{ _('Applicant people') }}</td>
-                                    <td class="text-center" width="20%">
-                                        <input id="project-applicant-institution" type="text" name="project-applicant-institution" value="{% if apply %}{{ apply.project_applicant_institution }}{% endif %}">
-                                    </td>
-                                    <td class="text-center" width="20%">
-                                        <input id="project-applicant-tel" type="text" name="project-applicant-tel" value="{% if apply %}{{ apply.project_applicant_tel }}{% endif %}">
-                                    </td>
-                                    <td class="text-center" width="20%">
-                                        <input id="project-applicant-address" type="text" name="project-applicant-address" value="{% if apply %}{{ apply.project_applicant_address }}{% endif %}">
-                                    </td>
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人电话</td>
+                                    <td><input id="manager_tel" type="text" name="manager_tel" value="{% if apply %}{{ apply.manager_tel }}{% endif %}"></td>
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人邮箱</td>
+                                    <td><input id="manager_email" type="text" name="manager_email" value="{% if apply %}{{ apply.manager_email }}{% endif %}"></td>
                                 </tr>
                                 <tr>
-                                    <td class="text-center" width="20%">{{ _('Project Name') }}</td>
-                                    <td class="text-center" width="20%" colspan="3">
-                                        <input id="project-name" type="text" name="project-name" value="{% if apply %}{{ apply.project_name }}{% endif %}">
-                                    </td>
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人通信地址</td>
+                                    <td colspan="3"><input id="manager_address" type="text" name="manager_address" value="{% if apply %}{{ apply.manager_address }}{% endif %}"></td>
+                                </tr>
+                                </tbody>
+                            </table>
+
+                            <table class="table table-bordered">
+                                <tbody>
+                                <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                    <td colspan="4">资源信息</td>
                                 </tr>
                                 <tr>
-                                    <td class="text-center text-verticle-center" width="20%" rowspan="3">{{ _('Resourse Information') }}</td>
-                                    <td class="text-center" width="20%">{{ _('Supercomputer Institute') }}</td>
-                                    <td class="text-center" width="20%" colspan="3">
-                                        <!--input type="text" name="sc-center"-->
-                                        <select id="sc-center" name="sc-center" class="selectpicker" data-width="100%" data-parsley-required-message="请选择超算单位" required
-                                                value="{% if apply %}{{ apply.sc_center }}{% endif %}">
-                                            <option value="0">广州超算中心</option>
-                                            <option value="1">长沙超算中心</option>
-                                            <option value="2">中科院超算中心</option>
-                                            <option value="3">上海超算中心</option>
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;">超算单位</td>
+                                    <td>
+                                        <select id="sc_center" name="sc_center" data-width="100%"
+                                                data-parsley-required-message="请选择超算单位" required
+                                                value="{% if apply %}{{ apply.sc_center | get_sc_center }}{% endif %}">
+                                            <option value="0" selected>国家超级计算广州中心</option>
+                                            <option value="1">国家超级计算长沙中心</option>
+                                            <option value="2">中科院级计算中心</option>
+                                            <option value="3">国家超级计算上海中心</option>
                                         </select>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="text-center" width="20%">{{ _('CPU Machine Hours') }}</td>
-                                    <td class="text-center" width="20%" colspan="3">
-                                        <input id="cpu-hour" type="text" name="cpu-hour" value="{% if apply %}{{ apply.CPU_hour }}{% endif %}">
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;">CPU核时</td>
+                                    <td>
+                                        <select id="cpu_hour" name="cpu_hour" data-width="100%"
+                                                data-parsley-required-message="请选择核时" required
+                                                value="{% if apply %}{{ apply.cpu_hour }}{% endif %}">
+                                            <option value="1000">1000</option>
+                                            <option value="2000">2000</option>
+                                            <option value="5000">5000</option>
+                                            <option value="10000">10000</option>
+                                        </select>
                                     </td>
                                 </tr>
+                                </tbody>
                             </table>
                             <input id="save-op" type="hidden" name="save-op" value="submit">
                             <div class="form-submit text-right">
                                 <input class='btn btn-info' id='show-info' type='button' value="申请说明" data-toggle="modal" data-target="#InfoModal">
-                                <input class='btn btn-success' id='save-as-draft' type='submit' value="保存草稿"{% if apply %}{% if apply.submit_status == 1 or apply.submit_status == 2 %} disabled{% endif %}{% endif %}>
-                                <input class='btn btn-success' id='submit' type='submit'{% if apply %}{% if apply.submit_status == 1 or apply.submit_status == 2 %} disabled{% endif %}{% endif %}>
+                                <input class='btn btn-primary' id='save-as-draft' type='submit' value="保存草稿"{% if apply %}{% if apply.submit_status == 1 or apply.submit_status == 2 %} disabled{% endif %}{% endif %}>
+                                <input class='btn btn-primary' id='submit' type='submit' value="提交申请" {% if apply %}{% if apply.submit_status == 1 or apply.submit_status == 2 %} disabled{% endif %}{% endif %}>
                             </div>
                         </form>
                     </div>
@@ -116,7 +157,6 @@
         </div>
     </div>
 
-    <!-- 模态框（Modal） -->
     <div class="modal fade" id="InfoModal" tabindex="-1" role="dialog" aria-labelledby="InfoModalLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
@@ -133,8 +173,8 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal -->
+            </div><
+        </div>
     </div>
 
     {% include "widget/alert_modal.html" %}
@@ -142,58 +182,62 @@
 
 {% block footer_ext %}
     <script>
+    $(function () {
+        $("#project_name").editableSelect({
+            filter: false,
+            effects: "fade"
+        });
+
+        $("#sc_center").editableSelect({
+            filter: false,
+            effects: "fade"
+        });
+
+        $("#cpu_hour").editableSelect({
+            filter: false,
+            effects: "fade"
+        });
+
         var op = "{{ op }}";
         var save_satus = "{{ save_status }}";
-        if (op == "edit") {
+        if (op === "edit") {
             {% if apply %}
-                var data = "{{ apply.sc_center }}";
-                var selected_classifies = [];
-                selected_classifies.push(data);
-                $(".selectpicker").selectpicker('val', selected_classifies);
-                {% if apply.submit_status <= 2 %}
-                    $("#status1").addClass("active");
-                    {% if apply.submit_status == 2 %}
-                        $("#status2").addClass("active");
-                    {% endif %}
-                {% else %}
-                    $("#status1").addClass("active");
+                $("#status1").addClass("active");
+                {% if apply.submit_status >= 1 %}
+                    $("#status2").addClass("active");
+                {% endif %}
+                {% if apply.submit_status == 2%}
+                    $("#status3").addClass("active");
+                {% elif apply.submit_status == 3 %}
                     $("#status3").addClass("active");
                     $("#status3").css("background-color", "#E83D2C");
                 {% endif %}
             {% endif %}
         }
 
-        if (save_satus == "save") {
+
+        if (save_satus === "save") {
             alert_modal("保存草稿成功！");
         }
         $("#save-as-draft").click(function() {
             $("#save-op").val("save-as-draft");
         });
         $("#submit").click(function() {
-            $('#project-user-institution').attr('data-parsley-maxlength', 256);
-            $('#project-user-institution').attr('data-parsley-required-message', "请输入负责人单位");
-            $('#project-user-institution').attr('required', "required");
-            $('#project-user-tel').attr('data-parsley-required-message', "请输入负责人联系方式");
-            $('#project-user-tel').attr('required', "required");
-            $('#project-user-address').attr('data-parsley-maxlength', 256);
-            $('#project-user-address').attr('data-parsley-required-message', "请输入负责人通讯地址");
-            $('#project-user-address').attr('required', "required");
-            $('#project-applicant-institution').attr('data-parsley-maxlength', 256);
-            $('#project-applicant-institution').attr('data-parsley-required-message', "请输入申请人单位");
-            $('#project-applicant-institution').attr('required', "required");
-            $('#project-applicant-tel').attr('data-parsley-required-message', "请输入负申请人联系方式");
-            $('#project-applicant-tel').attr('required', "required");
-            $('#project-applicant-address').attr('data-parsley-maxlength', 256);
-            $('#project-applicant-address').attr('data-parsley-required-message', "请输入申请人通讯地址");
-            $('#project-applicant-address').attr('required', "required");
-            $('#project-name').attr('data-parsley-maxlength', 256);
-            $('#project-name').attr('data-parsley-required-message', "请输入项目名称");
-            $('#project-name').attr('required', "required");
-            $('#cpu-hour').attr('data-parsley-required-message', "请输入所需CPU核时");
-            $('#cpu-hour').attr('required', "required");
-            var p_instance = $("#machine-apply-create-form").parsley();
-            p_instance.validate();
+            $("#applicant_name").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");
+            $("#applicant_institution").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");
+            $("#applicant_tel").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人电话");
+            $("#applicant_email").attr('required', "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");
+            $("#applicant_address").attr('required', "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");
+
+            $("#manager_name").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");
+            $("#manager_institution").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");
+            $("#manager_tel").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人电话");
+            $("#manager_email").attr('required', "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");
+            $("#manager_address").attr('required', "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");
+
+            $("#machine-apply-create-form").parsley().validate();
         });
+    });
     </script>
     <script type="text/javascript" src="{{ url_for("static", filename="js/vnc/guacamole.min.js") }}"></script>
     <script>

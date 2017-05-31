@@ -437,6 +437,8 @@ def machine_apply(apply_id):
             return jsonify(status='success', url=url_for('admin.machine_apply', apply_id=apply_id))
         elif op == 'export':
             return jsonify(status='success', url=url_for('admin.machine_download', apply_id=apply_id))
+        elif op == 'edit':
+            return jsonify(status='success', url=url_for('admin.machine_apply_edit', apply_id=apply_id))
 
 
 @admin.route('/hpc/<int:apply_id>/download/', methods=['GET', 'POST'])
@@ -495,6 +497,32 @@ def machine_apply_password(apply_id):
         db.session.commit()
 
         return redirect(url_for('admin.machine_apply_index'))
+
+
+@admin.route('/hpc/<int:apply_id>/edit/', methods=['GET', 'POST'])
+@hpc_login
+def machine_apply_edit(apply_id):
+    if request.method == 'GET':
+        curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
+        return render_template('admin/hpc/edit.html', apply=curr_apply)
+    elif request.method == 'POST':
+        curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
+        curr_apply.applicant_name = request.form.get('applicant_name')
+        curr_apply.applicant_institution = request.form.get('applicant_institution')
+        curr_apply.applicant_tel = request.form.get('applicant_tel')
+        curr_apply.applicant_email = request.form.get('applicant_email')
+        curr_apply.applicant_address = request.form.get('applicant_address')
+        curr_apply.manager_name = request.form.get('manager_name')
+        curr_apply.manager_institution = request.form.get('manager_institution')
+        curr_apply.manager_tel = request.form.get('manager_tel')
+        curr_apply.manager_email = request.form.get('manager_email')
+        curr_apply.manager_address = request.form.get('manager_address')
+        curr_apply.project_name = request.form.get('project_name')
+        sc_map = {u"国家超级计算广州中心": 0, u"国家超级计算长沙中心": 1, u"中科院级计算中心": 2, u"国家超级计算上海中心": 3}
+        curr_apply.sc_center = sc_map[request.form.get('sc_center')]
+        curr_apply.cpu_hour = request.form.get('cpu_hour', 0)
+        db.session.commit()
+        return redirect(url_for('admin.machine_apply', apply_id=apply_id))
 
 
 @admin.route('/dockers/', methods=['GET'])

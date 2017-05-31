@@ -18,42 +18,79 @@
                         <h3 class="panel-title">机时申请表</h3>
                     </div>
                     <div class="panel-body">
-                        <table class="table table-bordered" cellspacing="0">
-                            <tr>
-                                <td class="text-center" width="20%" rowspan="4" style="vertical-align: middle;"><strong>申请信息</strong></td>
-                                <td class="text-center" width="20%"></td>
-                                <td class="text-center" width="20%"><strong>申请单位名称</strong></td>
-                                <td class="text-center" width="20%"><strong>联系方式</strong></td>
-                                <td class="text-center" width="20%"><strong>单位通信地址</strong></td>
+
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                <td colspan="4">申请信息</td>
                             </tr>
                             <tr>
-                                <td class="text-center" width="20%"><strong>课题负责人</strong></td>
-                                <td class="text-center" width="20%">{{ apply.project_user_institution }}</td>
-                                <td class="text-center" width="20%">{{ apply.project_user_tel }}</td>
-                                <td class="text-center" width="20%">{{ apply.project_user_address }}</td>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">申请人姓名</td>
+                                <td align="center">{{ apply.applicant_name }}</td>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">申请人单位</td>
+                                <td align="center">{{ apply.applicant_institution }}</td>
                             </tr>
                             <tr>
-                                <td class="text-center" width="20%"><strong>申请人</strong></td>
-                                <td class="text-center" width="20%">{{ apply.project_applicant_institution }}</td>
-                                <td class="text-center" width="20%">{{ apply.project_applicant_tel }}</td>
-                                <td class="text-center" width="20%">{{ apply.project_applicant_address }}</td>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">申请人电话</td>
+                                <td align="center">{{ apply.applicant_tel }}</td>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">申请人邮箱</td>
+                                <td align="center">{{ apply.applicant_email }}</td>
                             </tr>
                             <tr>
-                                <td class="text-center" width="20%"><strong>项目名称</strong></td>
-                                <td class="text-center" width="20%" colspan="3">{{ apply.project_name }}</td>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">申请人通信地址</td>
+                                <td align="center" colspan="3">{{ apply.applicant_address }}</td>
                             </tr>
                             <tr>
-                                <td class="text-center" width="20%" rowspan="2" style="vertical-align: middle;"><strong>资源信息</strong></td>
-                                <td class="text-center" width="20%"><strong>超算单位</strong></td>
-                                <td class="text-center" width="20%" colspan="3">{{ apply.sc_center | get_sc_center }}</td>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">项目名称</td>
+                                <td align="center" colspan="3">{{ apply.project_name }}</td>
                             </tr>
-                            <tr>
-                                <td class="text-center" width="20%"><strong>CPU核时</strong></td>
-                                <td class="text-center" width="20%" colspan="3">{{ apply.CPU_hour }}</td>
-                            </tr>
+                            </tbody>
                         </table>
+
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                <td colspan="4">负责人信息</td>
+                            </tr>
+                            <tr>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">负责人姓名</td>
+                                <td align="center">{{ apply.manager_name }}</td>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">负责人单位</td>
+                                <td align="center">{{ apply.manager_institution }}</td>
+                            </tr>
+                            <tr>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">负责人电话</td>
+                                <td align="center">{{ apply.manager_tel }}</td>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">负责人邮箱</td>
+                                <td align="center">{{ apply.manager_email }}</td>
+                            </tr>
+                            <tr>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">负责人通信地址</td>
+                                <td align="center" colspan="3">{{ apply.manager_address }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table table-bordered">
+                            <tbody>
+                            <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                <td colspan="4">资源信息</td>
+                            </tr>
+                            <tr>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">超算单位</td>
+                                <td align="center">{{ apply.sc_center | get_sc_center }}</td>
+
+                            </tr>
+                            <tr>
+                                <td align="center" width="20%" style="background-color: #cfe9d4;">CPU核时</td>
+                                <td align="center">{{ apply.cpu_hour }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+
                         <div class="pull-right">
                             {% if apply.submit_status == 1 %}
+                            <button data-op="edit" class="btn btn-primary">编辑申请</button>
                             <button data-op="approve" class="btn btn-info">同意申请</button>
                             <button data-op="disapprove" class="btn btn-danger">拒绝申请</button>
                             {% elif apply.submit_status == 2 %}

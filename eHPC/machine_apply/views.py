@@ -24,35 +24,42 @@ def index():
         return redirect(url_for('machine_apply.machine_apply_edit', apply_id=my_apply.id))
 
 
-@machine_apply.route('/create', methods=['GET', 'POST'])
+@machine_apply.route('/create/', methods=['GET', 'POST'])
 @login_required
 def machine_apply_create():
     if request.method == "GET":
         return render_template('machine_apply/create.html', op="create", title=gettext('Machine Hour Apply Create'))
     elif request.method == 'POST':
-        curr_apply = MachineApply(project_user_institution=request.form['project-user-institution'],
-                                  project_user_tel=request.form['project-user-tel'],
-                                  project_user_address=request.form['project-user-address'],
-                                  project_applicant_institution=request.form['project-applicant-institution'],
-                                  project_applicant_tel=request.form['project-applicant-tel'],
-                                  project_applicant_address=request.form['project-applicant-address'],
-                                  project_name=request.form['project-name'], sc_center=request.form['sc-center'],
-                                  user_id=current_user.id)
+        curr_apply = MachineApply()
+        curr_apply.applicant_name = request.form.get('applicant_name')
+        curr_apply.applicant_institution = request.form.get('applicant_institution')
+        curr_apply.applicant_tel = request.form.get('applicant_tel')
+        curr_apply.applicant_email = request.form.get('applicant_email')
+        curr_apply.applicant_address = request.form.get('applicant_address')
+        curr_apply.manager_name = request.form.get('manager_name')
+        curr_apply.manager_institution = request.form.get('manager_institution')
+        curr_apply.manager_tel = request.form.get('manager_tel')
+        curr_apply.manager_email = request.form.get('manager_email')
+        curr_apply.manager_address = request.form.get('manager_address')
+        curr_apply.project_name = request.form.get('project_name')
+        sc_map = {u"国家超级计算广州中心": 0, u"国家超级计算长沙中心": 1, u"中科院级计算中心": 2, u"国家超级计算上海中心": 3}
+        curr_apply.sc_center = sc_map[request.form.get('sc_center')]
+        curr_apply.cpu_hour = request.form.get('cpu_hour', 0)  # CPU_hour字段不能置空，若用户未填写则默认为0
+
+        curr_apply.user = current_user
         db.session.add(curr_apply)
-        db.session.commit()
-        # CPU_hour字段不能置空，若用户未填写则默认为0
-        if request.form['cpu-hour']:
-            curr_apply.CPU_hour = request.form['cpu-hour']
+
         if request.form['save-op'] == "submit":
             # 若用户点击“提交”按钮， 提交状态改为1
             curr_apply.submit_status = 1
         else:
             curr_apply.submit_status = 0
+
         db.session.commit()
         return redirect(url_for('machine_apply.machine_apply_edit', apply_id=curr_apply.id))
 
 
-@machine_apply.route('/edit/<int:apply_id>', methods=['GET', 'POST'])
+@machine_apply.route('/edit/<int:apply_id>/', methods=['GET', 'POST'])
 @login_required
 def machine_apply_edit(apply_id):
     if request.method == "GET":
@@ -64,17 +71,22 @@ def machine_apply_edit(apply_id):
                                proxy_server="114.67.37.197:8080")
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
-        curr_apply.project_user_institution = request.form['project-user-institution']
-        curr_apply.project_user_tel = request.form['project-user-tel']
-        curr_apply.project_user_address = request.form['project-user-address']
-        curr_apply.project_applicant_institution = request.form['project-applicant-institution']
-        curr_apply.project_applicant_tel = request.form['project-applicant-tel']
-        curr_apply.project_applicant_address = request.form['project-applicant-address']
-        curr_apply.project_name = request.form['project-name']
-        curr_apply.sc_center = request.form['sc-center']
+        curr_apply.applicant_name = request.form.get('applicant_name')
+        curr_apply.applicant_institution = request.form.get('applicant_institution')
+        curr_apply.applicant_tel = request.form.get('applicant_tel')
+        curr_apply.applicant_email = request.form.get('applicant_email')
+        curr_apply.applicant_address = request.form.get('applicant_address')
+        curr_apply.manager_name = request.form.get('manager_name')
+        curr_apply.manager_institution = request.form.get('manager_institution')
+        curr_apply.manager_tel = request.form.get('manager_tel')
+        curr_apply.manager_email = request.form.get('manager_email')
+        curr_apply.manager_address = request.form.get('manager_address')
+        curr_apply.project_name = request.form.get('project_name')
+        sc_map = {u"国家超级计算广州中心": 0, u"国家超级计算长沙中心": 1, u"中科院级计算中心": 2, u"国家超级计算上海中心": 3}
+        curr_apply.sc_center = sc_map[request.form.get('sc_center')]
+        curr_apply.cpu_hour = request.form.get('cpu_hour', 0)
         curr_apply.submit_status = 1
-        if request.form['cpu-hour']:
-            curr_apply.CPU_hour = request.form['cpu-hour']
+
         if request.form['save-op'] == "submit":
             # 若用户点击“提交”按钮， 提交状态改为1
             curr_apply.submit_status = 1

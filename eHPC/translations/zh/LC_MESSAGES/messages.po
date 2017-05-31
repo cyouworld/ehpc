@@ -245,7 +245,7 @@ msgstr ""
 #: templates/machine_apply/index.html:7 templates/navbar.html:12
 #: templates/navbar.html:70 templates/navbar.html:84
 msgid "Machine Hour Apply"
-msgstr "机时申请"
+msgstr "免费机时申请"
 
 #: machine_apply/views.py:25 templates/machine_apply/create.html:18
 #: templates/machine_apply/create.html:27

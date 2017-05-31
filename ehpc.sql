@@ -222,6 +222,8 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `classifies`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `classifies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
@@ -235,13 +237,7 @@ CREATE TABLE `classifies` (
 
 LOCK TABLES `classifies` WRITE;
 /*!40000 ALTER TABLE `classifies` DISABLE KEYS */;
-INSERT INTO `classifies` VALUES ('4', '并行计算理论');
-INSERT INTO `classifies` VALUES ('5', '并行算法');
-INSERT INTO `classifies` VALUES ('7', '北大并行计算试题');
-INSERT INTO `classifies` VALUES ('8', '并行计算机体系结构');
-INSERT INTO `classifies` VALUES ('9', 'MPI编程');
-INSERT INTO `classifies` VALUES ('10', 'OpenMP编程');
-INSERT INTO `classifies` VALUES ('11', 'Pthreads编程');
+INSERT INTO `classifies` VALUES (4,'并行计算理论'),(5,'并行算法'),(7,'北大并行计算试题'),(8,'并行计算机体系结构'),(9,'MPI编程'),(10,'OpenMP编程'),(11,'Pthreads编程');
 /*!40000 ALTER TABLE `classifies` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -372,6 +368,101 @@ LOCK TABLES `courses` WRITE;
 INSERT INTO `courses` VALUES (1,'并行计算－结构•算法•编程','中国科大《并行计算》国家精品课程，陈国良院士主讲。','# 课程主讲：陈国良院士\n![](/static/upload/md_images/20170325225146.png)\n\n# 1. 课程内容体系结构\n\n“并行计算”是“并行算法类教学体系”中的核心内容之一，它是处于并行算法类教学体系中的算法应用基础层次，是面向计算机专业本科高年级学生或从事计算科学的研究生的，是为了适应高性能计算机迅速发展的形势，满足国家培养面向21世纪高科技人才之需求。为此本课程在内容体系上力求有所创新，而在遵循课程自身学科性、系统性和完整性的同时，应充分考虑不同应用领域在并行计算机上求解大型科学工程问题的需求，将并行机体系结构、并行数值计算、并行算法和并行编程等课程的内容有机的整合在一起，在国内形成一门新型的“并行计算”课程。\n \n# 2. 教学内容组织方式与目的\n\n* 教学内容组织方式: 全课程的教学内容组织成为四篇：第一篇为并行计算的硬件基础，包括并行计算机的系统结构模型、当代并行计算机系统介绍和并行计算性能评测；第二篇为并行算法的设计，包括并行算法通用设计策略、基本设计技术和一般设计过程；第三篇为并行数值算法，包括矩阵运算、线性方程组求解和快速傅氏变换；第四篇为并行程序设计，包括并行程序设计基础、共享存储系统并行编程、分布式存储系统并行编程和并行程序设计环境与工具。\n* 教学目的: 本课程以并行计算为主题、要求讲授并行计算的硬件平台（当代并行计算机系统及其结构模型）、软件支撑（并行程序设计）和理论基础（并行算法的设计和并行数值算法）。在内容组织上，强调融并行机结构、并行算法和并行编程为一体，着重讨论并行算法的设计及其实现，并力图反映本学科的最新成就和发展趋势，体现出并行机硬件和软件相结合以及并行算法和并行编程相结合。\n\n# 3.实践性教学的设计与效果\n\n“并行计算”是一门实践性很强的课程，除了系统的课堂理论学习外，还配有足够数量的实践内容，以巩固和加深学生对并行算法理论、设计技术、分析方法和具体实现等各个环节的整体理解。通过课程实践，强化学生“结构—算法—编程”一体化学习方法的意识，充分理解对于求解一个给定问题的任何并行算法，都必须采用某种并行编程语言，最终运行在一台具体的并行计算\n\n根据并行计算课程的要求，其实验教学的要求如下：\n\n- 熟悉三种以上的主流并行计算平台，包括共享存储的多处理机、分布存储的多计算机和目前流行的PC机群，要求学生能够使用上述几种并行计算平台所提供的硬／软件环境及工具来开展自己的实验工作。\n- 掌握至少两种并行程序设计语言标准：即分布存储的MPI和共享存储的OpenMP。对面向大型科学和工程计算的HPF（高性能Fortran）也应尽量了解和熟悉。\n- 选择某些典型的非数值并行算法和数值并行算法，使用上述的并行编程语言标准，至少在PC机群上编程调试、分析和运行它们。\n- 为了入门，选用课程中简单的计算π的样本程序为出发点，通过使用不同的并行程序设计模型和不同的并行编程语言，在不同的硬件编程环境上改造和重现，以便为进一步的实践打下基础。','2016-10-20 00:00:00',29,4,'upload/course/cover_1.png',NULL,NULL,3.20,1,NULL,NULL,3,16,1),(2,'并行计算介绍','以下内容仅用于系统测试，知识产权归课件开发者所有','# 1. Overview\nParallel computing has become the dominant technique for achieving high performance in computational science and engineering research. Parallel computing systems are now becoming mainstream in commercial sectors as well, due to the performance demands and requirements of today\'s engineering, database, and financial applications. Multiprocessor systems based on commodity processors (IA32, IA64, G4, Alpha, UltraSparc, Power3, Power4) are now common and offer excellent performance for the price. However, parallel computing is relatively new to college curricula; until recently, parallel computing was largely learned on the side (for research scientists) or on the job (in industry).\nThis class will discuss architectures of modern parallel computers (briefly) and will teach students how to write parallel programs for these parallel computers. This class will be very \'applied\' in nature: there will be more emphasis on parallel programming libraries than on abstract theoretical parallel programming concepts or computer engineering details.\n# 2.  Prerequisites\nStudents must have prior programming experience using either C or Fortran. Experience using Unix workstations and developing scientific codes is helpful but not required.\n# 3.  Topics\n* Overview of Parallel Computing(Majumdar): parallel computing concepts, parallel computer architectures, and standard programming models for parallel computers.\n* Shared Memory Parallel Programming with OpenMP (Majumdar): OpenMP features and syntax, examples of parallelizing serial codes with OpenMP, discussion of performance issues.\n* Distributed Memory Programming with Message Passing Interface (MPI) (Majumdar): MPI features and syntax, examples of parallelizing serial codes with MPI, discussion of performance issues.\n* Single Processor Optimization (Valafar): overview of microprocessor architectures, utilizing microprocessor features (registers, cashes, etc.) effectively, characteristics and potential bottlenecks that determine maximum deliverable performance for code segments, and measuring and improving code performance.','2016-09-20 08:00:00',3,0,'upload/course/cover_2.png',NULL,NULL,4.00,1,NULL,NULL,3,17,2),(3,'并行计算原理与实践','华中科技大学金海教授主讲 （课程内容仅用于系统测试，知识产权归课件开发者所有）','# 1. Course Description\nThe students will get the skills to use some of the best existing parallel programming tools, and be exposed to a number of open research questions. This course will:\n\n* provide an introduction to parallel computing including parallel computer architectures, analytical modeling of parallel programs, the principles of parallel algorithm design.\n* include material on TBB, OpenMP, CUDA, OpenCL, MPI, MapReduce.\n\n# 2. Prerequisite\nC language, discrete mathematics, data structure, principles of computer composition, operating system, C++, algorithms\n\n# 3. Syllabus\n* **Part 1: Principle (Lecture 1-5)**\n	\n	This section covers the very basics of parallel computing, and is intended for someone who is just becoming acquainted with the subject. It begins with a brief overview, including concepts and terminology associated with parallel computing. The topics of parallel memory architectures and programming models are then explored. These topics are followed by a discussion on a number of issues related to designing parallel programs.\n\n* **Part 2: Typical Issues Solved by Parallel Programming (Lecture 6-10)**\n	\n	This section concludes with several examples of how to parallelize simple serial programs. Including: threads and shared memory programming with TBB and OpenMP, SIMD programming model and Cuda & OpenCL, programming using the Message Passing Paradigm, parallel computing with MapReduce.\n\n* **Part 3: Parallel Programming Case Study and Assignment (Lecture 11 and Assignment)**\n	\n	Students in this course are required to complete several assignments, which accounts for 30% of their grade.','2016-09-21 00:00:00',12,1,'upload/course/cover_3.png',NULL,NULL,3.00,1,NULL,NULL,3,18,3),(4,'并行编程','以下内容仅用于系统测试，知识产权归课件开发者所有','# 1. Background and Description\nThis course is a comprehensive exploration of parallel programming paradigms, examining core concepts, focusing on a subset of widely used contemporary parallel programmingmodels, and providing context with a small set of parallel algorithms. In the last few years, this area has been the subject of significant interest due to a number of factors. Most significantly, the advent of multi-core microprocessors has made parallel computing available to the masses. At the high end, major vendors of large-scale parallel systems, including IBM, and Cray, have recently introduced new parallel programming languages designed for applications that exploit tens of thousands of processors. Embedded devices can also be thought of as small multiprocessors. The convergence of these distinct markets offers an opportunity to finally provide application programmers with a productive way to express parallel computation.\n\nThe course will be structured as lectures, homeworks, programming assignments and a final project. Students will perform four programming projects to express algorithms using selected parallel programming models and measure their performance. The final project will consist of teams of 2-3 students who will implement codes by combining multiple programming models.\n\n# 2. Prerequisites\nCS 4400, or concurrent\n','2016-09-22 00:00:00',24,1,'upload/course/cover_4.png',NULL,NULL,0.00,0,'2017-01-03 13:03:37','2017-02-23 14:50:34',3,19,4),(5,'并行方法在数值分析中的应用','以下内容仅用于系统测试，知识产权归课件开发者所有','# 1. Course Description\nEmphasis is on techniques for obtaining maximum parallelism in numerical algorithms, especially those occurring when solving matrix problems, partial differential equations, and the subsequent mapping onto the computer. Implementation issues on parallel computers. Topics: parallel architecture, programming models (MPI, GPU Computing with CUDA ¿ quick review), matrix computations, FFT, fast multiple methods, domain decomposition, graph partitioning, discrete algorithms.\n\n# 2. Prerequisites\n302 or 200 ( ME 300A), 213 or equivalent, or consent of instructor. Recommended: differential equations and knowledge of a high-level programming language such as C or C++ (F90/95 also allowable).','2016-09-23 01:00:00',13,2,'upload/course/cover_5.png',NULL,NULL,1.00,1,NULL,NULL,3,20,5),(6,' CUDA Programming on NVIDIA GPUs','以下内容仅用于系统测试，知识产权归课件开发者所有','# 1. Course Description\nThe course consists of approximately 3 hours of lectures and 4 hours of practicals each day. The aim is that by the end of the course you will be able to write relatively simple programs and will be confident and able to continue learning through studying the examples provided by NVIDIA as part of their SDK (software development kit). \n\n# 2. Preliminary Reading\n* Please read chapters 1 and 2 of the NVIDIA CUDA C Programming Guide. \n\n* CUDA is an extension of C/C++, so if you are a little rusty with C/C++ you should refresh your memory of it. ','2016-09-29 01:00:00',11,0,'upload/course/cover_6.png',NULL,NULL,0.00,0,'2017-01-03 13:04:21','2017-01-28 15:35:17',3,21,6),(9,'并行编程初步','上海超算中心张丹丹老师主讲（以下内容仅用于系统测试，知识产权归课件开发者所有）','# Abstract\nThe Message Passing Interface Standard (MPI) is a message passing library standard based on the consensus of the MPI Forum, which has over 40 participating organizations, including vendors, researchers, software library developers, and users. The goal of the Message Passing Interface is to establish a portable, efficient, and flexible standard for message passing that will be widely used for writing message passing programs. As such, MPI is the first standardized, vendor independent, message passing library. The advantages of developing message passing software using MPI closely match the design goals of portability, efficiency, and flexibility. MPI is not an IEEE or ISO standard, but has in fact, become the \"industry standard\" for writing message passing programs on HPC platforms.\n\nThe goal of this tutorial is to teach those unfamiliar with MPI how to develop and run parallel programs according to the MPI standard. The primary topics that are presented focus on those which are the most useful for new MPI programmers. The tutorial begins with an introduction, background, and basic information for getting started with MPI. This is followed by a detailed look at the MPI routines that are most useful for new MPI programmers, including MPI Environment Management, Point-to-Point Communications, and Collective Communications routines. Numerous examples in both C and Fortran are provided, as well as a lab exercise.\n\nThe tutorial materials also include more advanced topics such as Derived Data Types, Group and Communicator Management Routines, and Virtual Topologies. However, these are not actually presented during the lecture, but are meant to serve as \"further reading\" for those who are interested.\n\n# Level/Prerequisites\nThis tutorial is ideal for those who are new to parallel programming with MPI. A basic understanding of parallel programming in C or Fortran is required. For those who are unfamiliar with Parallel Programming in general, the material covered in EC3500: Introduction To Parallel Computing would be helpful. ','2016-10-23 08:58:17',2,0,'upload/course/cover_9.png',NULL,NULL,0.00,1,NULL,NULL,3,22,7),(10,'并行计算机体系结构','以下内容仅用于系统测试，知识产权归课件开发者所有','# 并行计算机\n并行计算机就是由多个处理单元组成的计算机系统，这些处理单元相互通信和协作，能快速，高效地求解大型复杂问题。\n# 涉及问题\n* **资源分配**\n	1. 并行计算机系统有多大? \n    2. 处理单元的性能如何?\n	3. 购买价格如何?\n\n* **数据存取, 通信 以及 同步** \n	1. 各处理单元如何协作及通信?\n	2. 数据如何在各处理机间传送?\n	3. 什么是协作的概念?\n\n* **性能与规模**\n	1. 如何将之全部转化为高性能?\n	2. 如何对其进行评测?\n','2016-12-12 12:48:28',8,0,'upload/course/cover_10.png',NULL,NULL,0.00,1,NULL,NULL,3,23,8),(11,'并行算法的设计与分析','以下内容仅用于系统测试，知识产权归课件开发者所有','# 课程目标\n* 通过课程讲授、课程论文和课堂讨论的方式使同学们掌握各种并行计算模型上常用的、基本的、典型的并行算法设计和分析，以及在各自研究领域中的应用\n\n# 课程内容\n* 并行机结构模型、并行计算模型、并行算法基本知识\n* 非数值并行算法：排序、选择、组合搜索、串匹配、图论算法等\n* 数值并行算法：矩阵运算、线性方程组求解、FFT算法等\n* 并行计算理论初步和并行算法的应用举例\n','2016-12-12 13:12:49',13,0,'upload/course/cover_11.png',NULL,NULL,0.00,1,NULL,NULL,3,24,9),(12,'并行计算基础','以下内容仅用于系统测试，知识产权归课件开发者所有','# 1. 集群计算\n集群计算主要研究方向是并行计算所需的各种工具，如并行调试器、容错工具、性能调试、 并行化编译等等，另外还包括集群计算的实际应用程序的开发，如生物信息学、电力系统模 拟与仿真等。\n\n随着计算机体系结构的发展，并行处理重新成为了研究热点。原因是单内核处理器的发展已 经遇到了瓶颈，进一步提高 CPU 的性能必须从多内核入手， Intel 公司目前大部分的研究 工作都开始以多内核为基础。8 － 16 内核的处理器现在已经是桌面和服务器的主流， 如何有效地利用多内核处理器系统对于研究者来说仍然是一个新 的挑战。需要在并行处理的体系结构、并行算法、并行编程工具以及运行时系统等多个方面 进行更加深入的研究。可以预计，此方向的研究在今后 10 年之内仍然会持续成为研究的热 点。\n\n# 2. 开设本课程的动机\n* 并行系统已经逐渐成为主流\n\n	(1) 多核已经成为趋势\n\n	(2) 桌面系统已经成为并行系统，而且核数增加，软件需要从串行变为并行\n\n	(3) 集群已经大量普及，但当前的并行编程方法、工具还是专家们所掌握\n\n* 并行不再是少数人的专利，并行计算有可能成为通用计算技术\n* 并行计算的使用者来自各个领域，但对并行编程的熟悉程度还不高\n\n# 3. 课程目标\n* 不是单纯理论学习课，偏重实践的课程 \n* 实实在在体验并行软件开发过程\n\n# 4. 得到的收获\n* 在今后采用并行计算方法提升程序性能\n* 能编写一定规模的并行程序\n* 知道使用并行工具提高并行程序实现效率\n* 初步了解并行计算程序设计的过程\n* 了解最新的众核/异构并行技术','2016-12-16 15:22:12',12,0,'upload/course/cover_12.png',NULL,NULL,0.00,1,NULL,NULL,3,25,10),(14,'并行程序设计','北京大学信息科学技术学院余华山老师主讲','[课程网页](http://course.pku.edu.cn)','2016-12-31 20:45:39',14,0,'upload/course/cover_14.png',NULL,NULL,0.00,1,NULL,NULL,3,26,11),(32,'云计算概论','中山大学数据科学与计算机学院，2017年春','本课程讲授内容包括云计算基础概念、原理和应用。','2017-03-21 21:20:01',3,23,'upload/course/cover_32.png',NULL,NULL,0.00,0,'2017-02-23 21:35:42','2017-06-30 23:55:42',15,27,1);
 /*!40000 ALTER TABLE `courses` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `docker_holders`
+--
+
+DROP TABLE IF EXISTS `docker_holders`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `docker_holders` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `name` varchar(256) NOT NULL,
+  `ip` varchar(128) NOT NULL,
+  `inner_ip` varchar(128) NOT NULL,
+  `public_port` int(11) NOT NULL,
+  `inner_port` int(11) NOT NULL,
+  `status` int(11) DEFAULT '0',
+  `running_container_count` int(11) DEFAULT '0',
+  `images_count` int(11) DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `docker_holders`
+--
+
+LOCK TABLES `docker_holders` WRITE;
+/*!40000 ALTER TABLE `docker_holders` DISABLE KEYS */;
+INSERT INTO `docker_holders` VALUES (2,'docker2','a002.nscc-gz.cn','10.133.100.238',10288,8080,1,0,0),(3,'docker3','a002.nscc-gz.cn','10.133.100.239',10289,8080,1,0,0),(4,'docker4','a002.nscc-gz.cn','10.133.100.7',10290,8080,1,0,0),(5,'docker5','a002.nscc-gz.cn','10.133.100.71',10291,8080,1,0,0);
+/*!40000 ALTER TABLE `docker_holders` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `docker_images`
+--
+
+DROP TABLE IF EXISTS `docker_images`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `docker_images` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `create_time` datetime NOT NULL,
+  `last_connect_time` datetime DEFAULT NULL,
+  `remaining_time_today` int(11) DEFAULT '14400',
+  `port` int(11) DEFAULT '0',
+  `tunnel_id` varchar(256) DEFAULT NULL,
+  `password` varchar(128) NOT NULL,
+  `status` int(11) DEFAULT '0',
+  `is_running` tinyint(1) NOT NULL DEFAULT '0',
+  `token` varchar(64) DEFAULT NULL,
+  `name` varchar(64) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `docker_holder_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `user_id` (`user_id`),
+  KEY `docker_holder_id` (`docker_holder_id`),
+  CONSTRAINT `docker_images_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `docker_images_ibfk_2` FOREIGN KEY (`docker_holder_id`) REFERENCES `docker_holders` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `docker_images`
+--
+
+LOCK TABLES `docker_images` WRITE;
+/*!40000 ALTER TABLE `docker_images` DISABLE KEYS */;
+/*!40000 ALTER TABLE `docker_images` ENABLE KEYS */;
+UNLOCK TABLES;
+/*!50003 SET @saved_cs_client      = @@character_set_client */ ;
+/*!50003 SET @saved_cs_results     = @@character_set_results */ ;
+/*!50003 SET @saved_col_connection = @@collation_connection */ ;
+/*!50003 SET character_set_client  = utf8 */ ;
+/*!50003 SET character_set_results = utf8 */ ;
+/*!50003 SET collation_connection  = utf8_general_ci */ ;
+/*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
+/*!50003 SET sql_mode              = 'NO_AUTO_VALUE_ON_ZERO' */ ;
+DELIMITER ;;
+/*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `create_new_image`
+BEFORE INSERT ON `docker_images`
+FOR EACH ROW
+  BEGIN
+    DECLARE dhid INT(11);
+
+    SET @dhid = (SELECT t1.id FROM (SELECT * from docker_holders) AS t1 WHERE t1.images_count = (SELECT MAX(t2.images_count) FROM (SELECT * from docker_holders) AS t2 WHERE t2.images_count < 10) LIMIT 1);
+    UPDATE docker_holders set images_count = images_count + 1 where id = @dhid;
+
+    SET NEW.port = IF(ISNULL(@dhid), 0, 5901 + (SELECT t1.images_count FROM (SELECT * from docker_holders) AS t1 WHERE t1.id = @dhid));
+    SET NEW.docker_holder_id = IF(ISNULL(@dhid), NULL, @dhid);
+  END */;;
+DELIMITER ;
+/*!50003 SET sql_mode              = @saved_sql_mode */ ;
+/*!50003 SET character_set_client  = @saved_cs_client */ ;
+/*!50003 SET character_set_results = @saved_cs_results */ ;
+/*!50003 SET collation_connection  = @saved_col_connection */ ;
 
 --
 -- Table structure for table `group_members`
@@ -677,22 +768,26 @@ DROP TABLE IF EXISTS `machine_apply`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `machine_apply` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `project_user_institution` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `project_user_tel` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `project_user_address` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `project_applicant_institution` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `project_applicant_tel` varchar(64) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `project_applicant_address` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
-  `project_name` varchar(512) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `applicant_name` varchar(64) DEFAULT NULL,
+  `applicant_institution` varchar(64) DEFAULT NULL,
+  `applicant_tel` varchar(64) DEFAULT NULL,
+  `applicant_email` varchar(64) DEFAULT NULL,
+  `applicant_address` varchar(128) DEFAULT NULL,
+  `manager_name` varchar(64) DEFAULT NULL,
+  `manager_institution` varchar(64) DEFAULT NULL,
+  `manager_tel` varchar(64) DEFAULT NULL,
+  `manager_email` varchar(64) DEFAULT NULL,
+  `manager_address` varchar(128) DEFAULT NULL,
+  `project_name` varchar(512) DEFAULT NULL,
   `sc_center` int(11) DEFAULT NULL,
-  `CPU_hour` int(11) DEFAULT NULL,
+  `cpu_hour` int(11) DEFAULT NULL,
   `applying_time` datetime NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `submit_status` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `machine_apply_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -701,7 +796,7 @@ CREATE TABLE `machine_apply` (
 
 LOCK TABLES `machine_apply` WRITE;
 /*!40000 ALTER TABLE `machine_apply` DISABLE KEYS */;
-INSERT INTO `machine_apply` VALUES (1,'中山大学超算中心','12345678','中山大学超算学院','中山大学数据学院','87654321','中山大学数据学院','EHPC',3,1000,'2017-05-12 16:12:51',3,1);
+INSERT INTO `machine_apply` VALUES (2,'姓名1','单位1','123456','123456@qq.com','地址1','姓名2','单位2','654321','654321@qq.com','地址2','高性能教育实践平台',0,2000,'2017-05-31 04:53:15',1,3);
 /*!40000 ALTER TABLE `machine_apply` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -935,236 +1030,7 @@ CREATE TABLE `question_classifies` (
 
 LOCK TABLES `question_classifies` WRITE;
 /*!40000 ALTER TABLE `question_classifies` DISABLE KEYS */;
-INSERT INTO `question_classifies` VALUES ('8', '8');
-INSERT INTO `question_classifies` VALUES ('13', '4');
-INSERT INTO `question_classifies` VALUES ('14', '8');
-INSERT INTO `question_classifies` VALUES ('15', '4');
-INSERT INTO `question_classifies` VALUES ('16', '8');
-INSERT INTO `question_classifies` VALUES ('17', '8');
-INSERT INTO `question_classifies` VALUES ('18', '5');
-INSERT INTO `question_classifies` VALUES ('19', '8');
-INSERT INTO `question_classifies` VALUES ('20', '8');
-INSERT INTO `question_classifies` VALUES ('21', '5');
-INSERT INTO `question_classifies` VALUES ('22', '8');
-INSERT INTO `question_classifies` VALUES ('23', '5');
-INSERT INTO `question_classifies` VALUES ('24', '8');
-INSERT INTO `question_classifies` VALUES ('25', '8');
-INSERT INTO `question_classifies` VALUES ('26', '10');
-INSERT INTO `question_classifies` VALUES ('27', '8');
-INSERT INTO `question_classifies` VALUES ('28', '8');
-INSERT INTO `question_classifies` VALUES ('29', '8');
-INSERT INTO `question_classifies` VALUES ('30', '4');
-INSERT INTO `question_classifies` VALUES ('31', '8');
-INSERT INTO `question_classifies` VALUES ('32', '10');
-INSERT INTO `question_classifies` VALUES ('33', '9');
-INSERT INTO `question_classifies` VALUES ('34', '8');
-INSERT INTO `question_classifies` VALUES ('35', '9');
-INSERT INTO `question_classifies` VALUES ('36', '4');
-INSERT INTO `question_classifies` VALUES ('37', '8');
-INSERT INTO `question_classifies` VALUES ('38', '9');
-INSERT INTO `question_classifies` VALUES ('39', '9');
-INSERT INTO `question_classifies` VALUES ('40', '4');
-INSERT INTO `question_classifies` VALUES ('41', '5');
-INSERT INTO `question_classifies` VALUES ('42', '4');
-INSERT INTO `question_classifies` VALUES ('43', '4');
-INSERT INTO `question_classifies` VALUES ('44', '8');
-INSERT INTO `question_classifies` VALUES ('45', '8');
-INSERT INTO `question_classifies` VALUES ('46', '8');
-INSERT INTO `question_classifies` VALUES ('47', '5');
-INSERT INTO `question_classifies` VALUES ('48', '4');
-INSERT INTO `question_classifies` VALUES ('49', '4');
-INSERT INTO `question_classifies` VALUES ('50', '4');
-INSERT INTO `question_classifies` VALUES ('51', '5');
-INSERT INTO `question_classifies` VALUES ('53', '5');
-INSERT INTO `question_classifies` VALUES ('55', '5');
-INSERT INTO `question_classifies` VALUES ('56', '8');
-INSERT INTO `question_classifies` VALUES ('57', '8');
-INSERT INTO `question_classifies` VALUES ('58', '4');
-INSERT INTO `question_classifies` VALUES ('59', '5');
-INSERT INTO `question_classifies` VALUES ('60', '5');
-INSERT INTO `question_classifies` VALUES ('61', '8');
-INSERT INTO `question_classifies` VALUES ('62', '4');
-INSERT INTO `question_classifies` VALUES ('64', '8');
-INSERT INTO `question_classifies` VALUES ('65', '8');
-INSERT INTO `question_classifies` VALUES ('66', '4');
-INSERT INTO `question_classifies` VALUES ('67', '5');
-INSERT INTO `question_classifies` VALUES ('68', '4');
-INSERT INTO `question_classifies` VALUES ('69', '8');
-INSERT INTO `question_classifies` VALUES ('71', '4');
-INSERT INTO `question_classifies` VALUES ('72', '8');
-INSERT INTO `question_classifies` VALUES ('73', '9');
-INSERT INTO `question_classifies` VALUES ('75', '5');
-INSERT INTO `question_classifies` VALUES ('76', '5');
-INSERT INTO `question_classifies` VALUES ('77', '10');
-INSERT INTO `question_classifies` VALUES ('78', '8');
-INSERT INTO `question_classifies` VALUES ('81', '5');
-INSERT INTO `question_classifies` VALUES ('82', '8');
-INSERT INTO `question_classifies` VALUES ('83', '8');
-INSERT INTO `question_classifies` VALUES ('86', '9');
-INSERT INTO `question_classifies` VALUES ('87', '4');
-INSERT INTO `question_classifies` VALUES ('88', '5');
-INSERT INTO `question_classifies` VALUES ('89', '9');
-INSERT INTO `question_classifies` VALUES ('92', '4');
-INSERT INTO `question_classifies` VALUES ('94', '10');
-INSERT INTO `question_classifies` VALUES ('96', '4');
-INSERT INTO `question_classifies` VALUES ('97', '5');
-INSERT INTO `question_classifies` VALUES ('100', '5');
-INSERT INTO `question_classifies` VALUES ('103', '8');
-INSERT INTO `question_classifies` VALUES ('104', '4');
-INSERT INTO `question_classifies` VALUES ('106', '4');
-INSERT INTO `question_classifies` VALUES ('108', '4');
-INSERT INTO `question_classifies` VALUES ('109', '4');
-INSERT INTO `question_classifies` VALUES ('110', '4');
-INSERT INTO `question_classifies` VALUES ('111', '10');
-INSERT INTO `question_classifies` VALUES ('112', '8');
-INSERT INTO `question_classifies` VALUES ('113', '4');
-INSERT INTO `question_classifies` VALUES ('114', '4');
-INSERT INTO `question_classifies` VALUES ('115', '4');
-INSERT INTO `question_classifies` VALUES ('116', '4');
-INSERT INTO `question_classifies` VALUES ('117', '10');
-INSERT INTO `question_classifies` VALUES ('118', '10');
-INSERT INTO `question_classifies` VALUES ('119', '9');
-INSERT INTO `question_classifies` VALUES ('120', '9');
-INSERT INTO `question_classifies` VALUES ('121', '4');
-INSERT INTO `question_classifies` VALUES ('122', '8');
-INSERT INTO `question_classifies` VALUES ('123', '8');
-INSERT INTO `question_classifies` VALUES ('124', '4');
-INSERT INTO `question_classifies` VALUES ('125', '8');
-INSERT INTO `question_classifies` VALUES ('126', '8');
-INSERT INTO `question_classifies` VALUES ('127', '8');
-INSERT INTO `question_classifies` VALUES ('128', '8');
-INSERT INTO `question_classifies` VALUES ('129', '9');
-INSERT INTO `question_classifies` VALUES ('130', '4');
-INSERT INTO `question_classifies` VALUES ('131', '9');
-INSERT INTO `question_classifies` VALUES ('132', '9');
-INSERT INTO `question_classifies` VALUES ('133', '4');
-INSERT INTO `question_classifies` VALUES ('134', '5');
-INSERT INTO `question_classifies` VALUES ('135', '4');
-INSERT INTO `question_classifies` VALUES ('136', '4');
-INSERT INTO `question_classifies` VALUES ('138', '8');
-INSERT INTO `question_classifies` VALUES ('139', '4');
-INSERT INTO `question_classifies` VALUES ('140', '10');
-INSERT INTO `question_classifies` VALUES ('141', '8');
-INSERT INTO `question_classifies` VALUES ('143', '4');
-INSERT INTO `question_classifies` VALUES ('144', '4');
-INSERT INTO `question_classifies` VALUES ('145', '4');
-INSERT INTO `question_classifies` VALUES ('146', '4');
-INSERT INTO `question_classifies` VALUES ('147', '4');
-INSERT INTO `question_classifies` VALUES ('148', '4');
-INSERT INTO `question_classifies` VALUES ('149', '4');
-INSERT INTO `question_classifies` VALUES ('150', '4');
-INSERT INTO `question_classifies` VALUES ('151', '4');
-INSERT INTO `question_classifies` VALUES ('152', '4');
-INSERT INTO `question_classifies` VALUES ('153', '8');
-INSERT INTO `question_classifies` VALUES ('156', '4');
-INSERT INTO `question_classifies` VALUES ('157', '8');
-INSERT INTO `question_classifies` VALUES ('158', '11');
-INSERT INTO `question_classifies` VALUES ('159', '4');
-INSERT INTO `question_classifies` VALUES ('160', '4');
-INSERT INTO `question_classifies` VALUES ('161', '4');
-INSERT INTO `question_classifies` VALUES ('162', '4');
-INSERT INTO `question_classifies` VALUES ('163', '4');
-INSERT INTO `question_classifies` VALUES ('165', '4');
-INSERT INTO `question_classifies` VALUES ('166', '4');
-INSERT INTO `question_classifies` VALUES ('167', '4');
-INSERT INTO `question_classifies` VALUES ('169', '4');
-INSERT INTO `question_classifies` VALUES ('170', '9');
-INSERT INTO `question_classifies` VALUES ('171', '4');
-INSERT INTO `question_classifies` VALUES ('172', '4');
-INSERT INTO `question_classifies` VALUES ('173', '4');
-INSERT INTO `question_classifies` VALUES ('174', '4');
-INSERT INTO `question_classifies` VALUES ('175', '4');
-INSERT INTO `question_classifies` VALUES ('176', '4');
-INSERT INTO `question_classifies` VALUES ('178', '8');
-INSERT INTO `question_classifies` VALUES ('180', '4');
-INSERT INTO `question_classifies` VALUES ('181', '4');
-INSERT INTO `question_classifies` VALUES ('182', '5');
-INSERT INTO `question_classifies` VALUES ('183', '4');
-INSERT INTO `question_classifies` VALUES ('184', '8');
-INSERT INTO `question_classifies` VALUES ('185', '4');
-INSERT INTO `question_classifies` VALUES ('186', '4');
-INSERT INTO `question_classifies` VALUES ('191', '4');
-INSERT INTO `question_classifies` VALUES ('192', '8');
-INSERT INTO `question_classifies` VALUES ('195', '5');
-INSERT INTO `question_classifies` VALUES ('196', '5');
-INSERT INTO `question_classifies` VALUES ('197', '5');
-INSERT INTO `question_classifies` VALUES ('198', '5');
-INSERT INTO `question_classifies` VALUES ('200', '5');
-INSERT INTO `question_classifies` VALUES ('201', '5');
-INSERT INTO `question_classifies` VALUES ('202', '5');
-INSERT INTO `question_classifies` VALUES ('203', '5');
-INSERT INTO `question_classifies` VALUES ('204', '4');
-INSERT INTO `question_classifies` VALUES ('205', '9');
-INSERT INTO `question_classifies` VALUES ('206', '4');
-INSERT INTO `question_classifies` VALUES ('207', '8');
-INSERT INTO `question_classifies` VALUES ('208', '4');
-INSERT INTO `question_classifies` VALUES ('209', '11');
-INSERT INTO `question_classifies` VALUES ('210', '11');
-INSERT INTO `question_classifies` VALUES ('212', '8');
-INSERT INTO `question_classifies` VALUES ('213', '8');
-INSERT INTO `question_classifies` VALUES ('214', '4');
-INSERT INTO `question_classifies` VALUES ('216', '4');
-INSERT INTO `question_classifies` VALUES ('217', '4');
-INSERT INTO `question_classifies` VALUES ('218', '9');
-INSERT INTO `question_classifies` VALUES ('219', '9');
-INSERT INTO `question_classifies` VALUES ('220', '4');
-INSERT INTO `question_classifies` VALUES ('221', '4');
-INSERT INTO `question_classifies` VALUES ('222', '8');
-INSERT INTO `question_classifies` VALUES ('223', '4');
-INSERT INTO `question_classifies` VALUES ('224', '9');
-INSERT INTO `question_classifies` VALUES ('225', '8');
-INSERT INTO `question_classifies` VALUES ('227', '5');
-INSERT INTO `question_classifies` VALUES ('228', '8');
-INSERT INTO `question_classifies` VALUES ('229', '8');
-INSERT INTO `question_classifies` VALUES ('232', '10');
-INSERT INTO `question_classifies` VALUES ('233', '8');
-INSERT INTO `question_classifies` VALUES ('235', '8');
-INSERT INTO `question_classifies` VALUES ('236', '10');
-INSERT INTO `question_classifies` VALUES ('237', '4');
-INSERT INTO `question_classifies` VALUES ('238', '10');
-INSERT INTO `question_classifies` VALUES ('239', '8');
-INSERT INTO `question_classifies` VALUES ('241', '4');
-INSERT INTO `question_classifies` VALUES ('242', '8');
-INSERT INTO `question_classifies` VALUES ('243', '5');
-INSERT INTO `question_classifies` VALUES ('244', '8');
-INSERT INTO `question_classifies` VALUES ('245', '8');
-INSERT INTO `question_classifies` VALUES ('247', '8');
-INSERT INTO `question_classifies` VALUES ('248', '5');
-INSERT INTO `question_classifies` VALUES ('249', '8');
-INSERT INTO `question_classifies` VALUES ('250', '5');
-INSERT INTO `question_classifies` VALUES ('251', '5');
-INSERT INTO `question_classifies` VALUES ('259', '5');
-INSERT INTO `question_classifies` VALUES ('260', '4');
-INSERT INTO `question_classifies` VALUES ('261', '4');
-INSERT INTO `question_classifies` VALUES ('264', '4');
-INSERT INTO `question_classifies` VALUES ('265', '4');
-INSERT INTO `question_classifies` VALUES ('266', '4');
-INSERT INTO `question_classifies` VALUES ('268', '8');
-INSERT INTO `question_classifies` VALUES ('269', '4');
-INSERT INTO `question_classifies` VALUES ('272', '8');
-INSERT INTO `question_classifies` VALUES ('275', '5');
-INSERT INTO `question_classifies` VALUES ('277', '4');
-INSERT INTO `question_classifies` VALUES ('279', '4');
-INSERT INTO `question_classifies` VALUES ('281', '5');
-INSERT INTO `question_classifies` VALUES ('282', '5');
-INSERT INTO `question_classifies` VALUES ('283', '8');
-INSERT INTO `question_classifies` VALUES ('284', '8');
-INSERT INTO `question_classifies` VALUES ('294', '9');
-INSERT INTO `question_classifies` VALUES ('756', '7');
-INSERT INTO `question_classifies` VALUES ('757', '7');
-INSERT INTO `question_classifies` VALUES ('758', '7');
-INSERT INTO `question_classifies` VALUES ('759', '7');
-INSERT INTO `question_classifies` VALUES ('760', '7');
-INSERT INTO `question_classifies` VALUES ('761', '7');
-INSERT INTO `question_classifies` VALUES ('762', '7');
-INSERT INTO `question_classifies` VALUES ('763', '7');
-INSERT INTO `question_classifies` VALUES ('764', '7');
-INSERT INTO `question_classifies` VALUES ('765', '7');
-INSERT INTO `question_classifies` VALUES ('766', '7');
-INSERT INTO `question_classifies` VALUES ('767', '7');
-INSERT INTO `question_classifies` VALUES ('768', '7');
-INSERT INTO `question_classifies` VALUES ('769', '7');
-INSERT INTO `question_classifies` VALUES ('770', '7');
+INSERT INTO `question_classifies` VALUES (8,8),(13,4),(14,8),(15,4),(16,8),(17,8),(18,5),(19,8),(20,8),(21,5),(22,8),(23,5),(24,8),(25,8),(26,10),(27,8),(28,8),(29,8),(30,4),(31,8),(32,10),(33,9),(34,8),(35,9),(36,4),(37,8),(38,9),(39,9),(40,4),(41,5),(42,4),(43,4),(44,8),(45,8),(46,8),(47,5),(48,4),(49,4),(50,4),(51,5),(53,5),(55,5),(56,8),(57,8),(58,4),(59,5),(60,5),(61,8),(62,4),(64,8),(65,8),(66,4),(67,5),(68,4),(69,8),(71,4),(72,8),(73,9),(75,5),(76,5),(77,10),(78,8),(81,5),(82,8),(83,8),(86,9),(87,4),(88,5),(89,9),(92,4),(94,10),(96,4),(97,5),(100,5),(103,8),(104,4),(106,4),(108,4),(109,4),(110,4),(111,10),(112,8),(113,4),(114,4),(115,4),(116,4),(117,10),(118,10),(119,9),(120,9),(121,4),(122,8),(123,8),(124,4),(125,8),(126,8),(127,8),(128,8),(129,9),(130,4),(131,9),(132,9),(133,4),(134,5),(135,4),(136,4),(138,8),(139,4),(140,10),(141,8),(143,4),(144,4),(145,4),(146,4),(147,4),(148,4),(149,4),(150,4),(151,4),(152,4),(153,8),(156,4),(157,8),(158,11),(159,4),(160,4),(161,4),(162,4),(163,4),(165,4),(166,4),(167,4),(169,4),(170,9),(171,4),(172,4),(173,4),(174,4),(175,4),(176,4),(178,8),(180,4),(181,4),(182,5),(183,4),(184,8),(185,4),(186,4),(191,4),(192,8),(195,5),(196,5),(197,5),(198,5),(200,5),(201,5),(202,5),(203,5),(204,4),(205,9),(206,4),(207,8),(208,4),(209,11),(210,11),(212,8),(213,8),(214,4),(216,4),(217,4),(218,9),(219,9),(220,4),(221,4),(222,8),(223,4),(224,9),(225,8),(227,5),(228,8),(229,8),(232,10),(233,8),(235,8),(236,10),(237,4),(238,10),(239,8),(241,4),(242,8),(243,5),(244,8),(245,8),(247,8),(248,5),(249,8),(250,5),(251,5),(259,5),(260,4),(261,4),(264,4),(265,4),(266,4),(268,8),(269,4),(272,8),(275,5),(277,4),(279,4),(281,5),(282,5),(283,8),(284,8),(294,9),(756,7),(757,7),(758,7),(759,7),(760,7),(761,7),(762,7),(763,7),(764,7),(765,7),(766,7),(767,7),(768,7),(769,7),(770,7);
 /*!40000 ALTER TABLE `question_classifies` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1194,236 +1060,7 @@ CREATE TABLE `questions` (
 
 LOCK TABLES `questions` WRITE;
 /*!40000 ALTER TABLE `questions` DISABLE KEYS */;
-INSERT INTO `questions` VALUES ('8', '1', '{\"0\":\"单指令流单数据流（Single Instruction stream Single Data stream, SISD\",\"1\":\"单指令流多数据流（Single Instruction stream Multiple Data stream, SIMD\",\"2\":\"多指令流单数据流（Multiple Instruction stream Single Data stream, MISD\",\"3\":\"多指令流多数据流（Multiple Instruction stream Multiple Data stream, MISD\",\"title\":\"Flynn根据指令流和数据流的不同组织方式，把计算机系统的结构分为以下四类：\\n\\n\",\"len\":4}', 'A;B;C;D', '对并行计算机的分类有多种方法，其中最著名的是1966年由M.J.Flynn提出的分类法，称为Flynn分类法。Flynn分类法是从计算机的运行机制进行分类的。首先作如下定义：\r\n\r\n* 指令流（instruction stream）：机器执行的指令序列；\r\n* 数据流（data stream）：由指令流调用的数据序列，包括输入数据和中间结果。\r\n\r\nFlynn根据指令流和数据流的不同组织方式，把计算机系统的结构分为以下四类：\r\n\r\n* 单指令流单数据流（Single Instruction stream Single Data stream, SISD）；\r\n* 单指令流多数据流（Single Instruction stream Multiple Data stream, SIMD）；\r\n* 多指令流单数据流（Multiple Instruction stream Single Data stream, MISD）；\r\n* 多指令流多数据流（Multiple Instruction stream Multiple Data stream, MISD）。\r\n', '3');
-INSERT INTO `questions` VALUES ('13', '0', '{\"0\":\"(n/8+4) tc＋4tw, (n/8+4) tc＋4tw\",\"1\":\"(n/8+4) tc＋4tw, (n/8+4) tc＋3tw\",\"2\":\"(n/8+4) tc＋3tw, (n/8+4) tc＋4tw\",\"3\":\"(n/8+4) tc＋3tw, (n/8+4) tc＋3tw\",\"title\":\"将n个数相加，假设一个人相加两个数需要的时间为tc，那么一个人完成相加n个数需要(n-1)\\\\*tc。\\n\\n若由8个技能完全相同的人计算这n个数的和，且8|n，相邻的两个人传送一个数需时间tw，在下列两种情况下：\\n\\n1. 8个人坐成一圈。\\n2. 8个人坐成一行。\\n\\n完成n个数的相加各需多长时间？\",\"len\":4}', 'A', ' 一个人完成n个数的相加需要的时间为(n-1)*tc \r\n \r\n 1. 若8个人坐成一圈，每个人完成n/8个数需要的时间为(n/8-1)\\*tc，从相邻的两个人同时开始向两个方向传送数据并相加，三次传送与相加需时间3(tc+tw)，最后，两个人再进行一次传送及一次计算就得到了最终结果。总的开销为(n/8-1)\\*tc＋ 3(tc+tw)＋(tc+tw)＝(n/8+4) tc＋4tw \r\n2. 同理，若8个人坐成一行，每个人完成n/8个数需要的时间为(n/8-1)\\*tc，从最远的两个人同时开始向中间方向传送数据并相加，最后，两个人再进行一次传送及一次计算就得到了最终结果。总的开销也为(n/8+4) tc＋4tw ', '3');
-INSERT INTO `questions` VALUES ('14', '4', '并行计算机的自动编程：设计一个并行化编译器，使用户的串行程序通过并行化编译器编译，直接可在并行机上运行。到目前为此，这种编译器**已经存在**，并广泛应用于许多学科中。\r\n', '0', '并行计算机的自动编程：可否设计一个并行化编译器，使用户的串行程序通过并行化编译器编译，直接可在并行机上运行。到目前为此，这种编译器还不存在，而仅有一些半自动并行化编译器。\r\n', '3');
-INSERT INTO `questions` VALUES ('15', '1', '{\"0\":\"计算密集型（Compute-Intensive）\",\"1\":\"数据密集型 (Data-Intensive)\",\"2\":\"文本密集型 (Text-Intensive)\",\"3\":\"网络密集型 (Network-Intensive)\",\"title\":\"并行计算的应用可概括为以下哪些方面\",\"len\":4}', 'A;B;D', '科学与工程计算对并行计算的需求是十分广泛的，但所有的应用可概括为三个方面：\r\n\r\n* 计算密集型（Compute-Intensive）：这一类型的应用问题主要集中在大型科学工程计算与数值模拟（气象预报、地球物理勘探等）\r\n* 数据密集型 (Data-Intensive)：Internet的发展，为我们提供了大量的数据资源，但有效地利用这些资源，需要进行大量地处理，且对计算机的要求也相当高，这些应用包括数字图书馆、数据仓库、数据挖掘、计算可视化。\r\n* 网络密集型 (Network-Intensive)：通过网络进行远距离信息交互，来完成用传统方法不同的一些应用问题。如协同工作、遥控与远程医疗诊断等', '3');
-INSERT INTO `questions` VALUES ('16', '4', 'SIMD中通常包含大量处理单元PE，而控制部件只有一个。控制部件广播一条指令，所有的处理单元同时执行这条指令，但不同的处理单元操作的数据可能不同。', '1', 'SIMD中通常包含大量处理单元PE，而控制部件只有一个。控制部件广播一条指令，所有的处理单元同时执行这条指令，但不同的处理单元操作的数据可能不同。', '3');
-INSERT INTO `questions` VALUES ('17', '4', '并行向量处理机的最大特点是其中的各处理器完全平等，无主从之分。所有的处理器都可以访问任何存储单元和I/O设备。', '0', '对称多处理机 对称多处理机的最大特点是其中的各处理器完全平等，无主从之分。所有的处理器都可以访问任何存储单元和I/O设备。存储器一般使用共享存储器，只有一个地址空间。', '3');
-INSERT INTO `questions` VALUES ('18', '4', '为了维持一定的并行效率（介于 0 与 1 之间），当处理器 P 增大时，需要相应地增大问题规模 W 的值，由此定 义函数 fE(p)为问题规模 W 随处理器 P 变化的函数，称此函数为等效率函数。', '1', '', '3');
-INSERT INTO `questions` VALUES ('19', '4', '用户态线程和核心态线程都由操作系统直接调度。', '0', '', '3');
-INSERT INTO `questions` VALUES ('20', '4', '在广播通信中，单个进程传递相同的数据给所有的进程。', '1', '', '3');
-INSERT INTO `questions` VALUES ('21', '4', 'while 循环语句是忙等待的一个例子。', '1', '', '3');
-INSERT INTO `questions` VALUES ('22', '4', '一个好的并行算法要既能很好地匹配并行计算机硬件体系结构的特点又能反映问题内在并行性。', '1', '', '3');
-INSERT INTO `questions` VALUES ('23', '4', '如果一个线程在临界区中执行代码，其他线程需要被排序在临界区外。', '1', '', '3');
-INSERT INTO `questions` VALUES ('24', '4', '计算机视觉不属于英特尔集成性能函数库(IPP)所涵盖的领域。', '0', '', '3');
-INSERT INTO `questions` VALUES ('25', '4', '控制单元负责决定应该执行程序中的哪些指令，而 ALU 负责执行指令核已经成为中央处理器或者 CPU 的代名词。', '1', '', '3');
-INSERT INTO `questions` VALUES ('26', '4', 'OpenMP 是用于共享内存并行系统的多线程程序设计的一套指导性的编译处理方案(Compiler Directive)，也可以将其扩展到用于分布式内存的集群系统。', '1', '', '3');
-INSERT INTO `questions` VALUES ('27', '4', '在共享内存系统中，每个处理器有自己私有的内存空间，处理器-内存对之间通过互连网络相互通信。', '0', '', '3');
-INSERT INTO `questions` VALUES ('28', '4', '在 Amdahl 定律中，以 f 表示串行分量的比例，随着处理器数目的无限增大，并行系统所能够达到的加速上限是S=1/f。', '1', '', '3');
-INSERT INTO `questions` VALUES ('29', '4', '通过继续增快集成电路的速度来提高处理器性能是可行的。', '0', '', '3');
-INSERT INTO `questions` VALUES ('30', '4', '阻塞通信的功能都可以用非阻塞通信的方式实现。', '1', '', '3');
-INSERT INTO `questions` VALUES ('31', '4', 'ALU 负责决定应该执行程序中的哪些指令，而控制单元负责执行指令。', '0', '', '3');
-INSERT INTO `questions` VALUES ('32', '4', 'OpenMP 对同一个临界区不应当混合使用不同的互斥机制。', '1', '', '3');
-INSERT INTO `questions` VALUES ('33', '4', 'MPI 中发送语句用整型，接收语句用实型可以匹配。', '0', '', '3');
-INSERT INTO `questions` VALUES ('34', '4', '在有效编程下，超线程性能要高于多核性能。', '0', '', '3');
-INSERT INTO `questions` VALUES ('35', '4', 'MPI_COMM_RANK 是 MPI 的一个基本函数，它用于确定进程总数。', '0', '', '3');
-INSERT INTO `questions` VALUES ('36', '4', '并行计算中的并行性指问题中具有可在同一时刻发生的两个或者多个运算或者操作的特性。', '0', '', '3');
-INSERT INTO `questions` VALUES ('37', '4', '英特尔线程检查器能够找出线程间的工作不平衡。', '0', '', '3');
-INSERT INTO `questions` VALUES ('38', '4', '如果 MPI 程序中的某条输出语句在每一个进程都执行，则从标准输出上看，不同进程对该语句的输出在 顺序上是随机的。', '1', '', '3');
-INSERT INTO `questions` VALUES ('39', '4', '依赖于 MPI 提供的缓冲机制是安全的。', '0', '', '3');
-INSERT INTO `questions` VALUES ('40', '4', '利用矩阵向量相乘的方式进行离散傅立叶变换，计算复杂度是 O(n3),而快速傅里叶变换的时间复杂度是 O(nlogn)。', '0', '', '3');
-INSERT INTO `questions` VALUES ('41', '4', '对于一个给定的应用，并行算法相比于串行算法的性能提升是（1- T 并行执行时间/T 串行执行时间）', '0', '', '3');
-INSERT INTO `questions` VALUES ('42', '4', '一般来说，对高速缓冲存储器的访问时间比其他存储区域的访问时间短', '1', '', '3');
-INSERT INTO `questions` VALUES ('43', '4', '组通信需要该组内所有的进程都参加?。', '1', '', '3');
-INSERT INTO `questions` VALUES ('44', '4', '在细粒度多线程中，处理器在每条指令执行完后切换线程，从而跳过被阻塞的线程。', '1', '', '3');
-INSERT INTO `questions` VALUES ('45', '4', '英特尔 Parallel Inspector 采用动态技术，不需要特殊的检查工具或者编译', '1', '', '3');
-INSERT INTO `questions` VALUES ('46', '4', '虚拟进程数要小于实际的处理器的个数。', '0', '', '3');
-INSERT INTO `questions` VALUES ('47', '4', 'Vtune 性能分析器能够分析程序中的代码错误并指出错误代码的位置。', '0', '', '3');
-INSERT INTO `questions` VALUES ('48', '4', 'Linpack 是国际上最流行的用于测试高性能计算机系统浮点性能的 benchmark。它采用高斯消元法求解一 元 N 次稠密线性代数方程组，也即采用正交三角分解法（LU 分解）。', '0', '', '3');
-INSERT INTO `questions` VALUES ('49', '4', '在并行程序设计中，局部变量指的是单个函数的私有变量。', '0', '', '3');
-INSERT INTO `questions` VALUES ('50', '4', '忙等待是保护临界区的唯一办法。', '0', '', '3');
-INSERT INTO `questions` VALUES ('51', '4', '向量处理器与图形处理器单元一般划分在 SIMD 系统里。', '1', '', '3');
-INSERT INTO `questions` VALUES ('53', '4', '单处理器性能大幅度提升的主要原因之一是日益增加的集成电路晶体管密度。', '1', '', '3');
-INSERT INTO `questions` VALUES ('55', '4', 'OS timer service 是 Vtune 性能分析器的基于时间的采样。', '1', '', '3');
-INSERT INTO `questions` VALUES ('56', '4', '利用虚拟存储器，使得主存可以作为辅存的缓存。', '1', '', '3');
-INSERT INTO `questions` VALUES ('57', '4', '在分布式内存系统中，各个核能够共享访问计算机的内存，理论上每个核能够读、写内存的所有', '0', '', '3');
-INSERT INTO `questions` VALUES ('58', '4', '在实现指令级并行中，流水线是指将功能单元分阶段安排。（', '0', '', '3');
-INSERT INTO `questions` VALUES ('59', '4', 'Vtune 性能分析器不搜集执行代码在内存中的地址信息。', '0', '', '3');
-INSERT INTO `questions` VALUES ('60', '4', '将串行程序并行化，并行化的代码区域越多，程序的整体性能越好。', '0', '', '3');
-INSERT INTO `questions` VALUES ('61', '4', '多核 CPU 中也可以使用超线程技术。', '1', '', '3');
-INSERT INTO `questions` VALUES ('62', '4', '在大多数系统中，进程间的切换比线程间的切换更快。', '0', '', '3');
-INSERT INTO `questions` VALUES ('64', '4', '英特尔线程检查器能够找出线程间的工作不平衡。', '0', '', '3');
-INSERT INTO `questions` VALUES ('65', '4', '内存系统由多个内存“体”组成，每个内存体能够独立访问。', '1', '', '3');
-INSERT INTO `questions` VALUES ('66', '4', '阻塞通信的功能都可以用非阻塞通信的方式实现?。', '1', '', '3');
-INSERT INTO `questions` VALUES ('67', '4', '一个好的并行算法要既能很好地匹配并行计算机硬件体系结构的特点又能反映问题内在并行性', '1', '', '3');
-INSERT INTO `questions` VALUES ('68', '4', '组通信调用只能实现通信功能 。', '0', '', '3');
-INSERT INTO `questions` VALUES ('69', '4', '中央处理单元分为控制单元和算术逻辑单元。', '1', '', '3');
-INSERT INTO `questions` VALUES ('71', '4', '非阻塞通信的功能都可以用阻塞通信的方式实现?。', '0', '', '3');
-INSERT INTO `questions` VALUES ('72', '4', 'Cache 3C 失效中的强制性失效不受 Cache 容量的影响。', '1', '', '3');
-INSERT INTO `questions` VALUES ('73', '4', 'MPI 主从模式的并行程序可以为 SPMD 形式。', '1', '', '3');
-INSERT INTO `questions` VALUES ('75', '4', '多线程程序中，一个线程可以与同进程中的其它线程共享数据，因此当一个线程对全局变量 X赋值 0（即执行 x=0）之后，其它线程立刻读取 X，其值必为 0。', '0', '', '3');
-INSERT INTO `questions` VALUES ('76', '4', '在共享内存系统中，每个核拥有自己的私有内存，核之间的通信是显式的，必须使用类似于网络 中发送消息的机制。', '0', '', '3');
-INSERT INTO `questions` VALUES ('77', '4', '不管 OpenMP 语句以何种形式实现，修改同一变量的不同语句都将视为属于同一个临界区。', '1', '', '3');
-INSERT INTO `questions` VALUES ('78', '4', '在机群系统的并行应用中，一个进程先执行发送操作，另一个进程先执行相应的接收操作，是安 全的发送和接收序列。', '1', '', '3');
-INSERT INTO `questions` VALUES ('81', '4', 'IPO 对于循环内包含调用的程序可以极大地提高其性能。', '1', '', '3');
-INSERT INTO `questions` VALUES ('82', '4', '操作系统是一种用来管理计算机的软件和硬件资源的主要软件。', '1', '', '3');
-INSERT INTO `questions` VALUES ('83', '4', '单处理器性能大幅度提升的主要原因之一是日益增加的集成电路晶体管密度。', '1', '', '3');
-INSERT INTO `questions` VALUES ('86', '4', 'MPI 使用的是所谓的“推”（Push） 通信机制', '1', '', '3');
-INSERT INTO `questions` VALUES ('87', '4', '一块内存空间，包括可执行代码，一个用来跟踪执行函数的调用栈、一个堆，以及一些其他内存', '1', '', '3');
-INSERT INTO `questions` VALUES ('88', '4', '一个并行程序的并行效率越高，它的浮点性能就越高。', '0', '', '3');
-INSERT INTO `questions` VALUES ('89', '4', 'MPI 中发送语句用整型，接收语句用实型可以匹配。', '0', '', '3');
-INSERT INTO `questions` VALUES ('92', '4', '有依赖关系的语句中一定有语句会有序地写或更新变量。', '1', '', '3');
-INSERT INTO `questions` VALUES ('94', '4', 'OpenMP 只能并行化 for 循环，不能并行化 while 和 do-while 循环。', '1', '', '3');
-INSERT INTO `questions` VALUES ('96', '4', '用户态线程和核心态线程都由操作系统直接调度。', '0', '', '3');
-INSERT INTO `questions` VALUES ('97', '4', '并行算法求解问题只要保证与相应的串行算法一致的数据依赖，则其求解的结果与串行算法相同。', '0', '', '3');
-INSERT INTO `questions` VALUES ('100', '4', '向量处理器与图形处理器单元一般划分在 SIMD 系统里。', '1', '', '3');
-INSERT INTO `questions` VALUES ('103', '4', '大多数系统中，默认状态下，一个进程的内存块是公有的。', '0', '', '3');
-INSERT INTO `questions` VALUES ('104', '4', '在分布式内存和共享内存系统，所有进程/线程都能够访问 stdout 和 stder', '1', '', '3');
-INSERT INTO `questions` VALUES ('106', '4', '所有的向量数据类型都可以定义为结构数据类型。', '1', '', '3');
-INSERT INTO `questions` VALUES ('108', '4', '非阻塞发送语句可以用阻塞接收语句来接收。', '1', '', '3');
-INSERT INTO `questions` VALUES ('109', '4', '在写回 Cache 中，数据不是立即更新到主存中，而是将发生数据更新的高速缓存行标记为脏。', '1', '', '3');
-INSERT INTO `questions` VALUES ('110', '4', '当一个 for 循环存在循环依赖时不能被并行化。', '1', '', '3');
-INSERT INTO `questions` VALUES ('111', '0', '{\"0\":\"master\",\"1\":\"single\",\"2\":\"critical\",\"3\":\"atomic\",\"title\":\"指定代码只能由线程组中的一个线程执行的 OpenMP 编译制导命令是\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('112', '0', '{\"0\":\"Load-link 和普通的 Load 指令没有差别，只是多核处理器上的特别叫法。\",\"1\":\"Store-conditional 指令和普通的 Store 指令没有差别，只是多核处理器上的特别叫法。\",\"2\":\"Load-link 和 Store-conditional 指令可以用于实现同步原语。\",\"3\":\"Load-link 指令有可能失败。\",\"title\":\"下面关于 Load-link 和 Store-conditional 指令的说法，正确的是\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('113', '0', '{\"0\":\"带宽\",\"1\":\"速率\",\"2\":\"延迟\",\"3\":\"延迟带宽积\",\"title\":\"链路的（ ）是指它传输数据的速度。\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('114', '0', '{\"0\":\"critical\",\"1\":\"barrier\",\"2\":\"atomic\",\"3\":\"master\",\"title\":\"在并行域当中，在一段代码临界区之前只有一个线程进入，是使用什么关键字\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('115', '0', '{\"0\":\"M/0.85\",\"1\":\"M/(0.85+0.015M)\",\"2\":\"M/(0.85085+0.165M)\",\"3\":\"M/(0.85085+0.015M)\",\"title\":\"假设有一个计算问题，其中串行计算量占 15%。为实现并行计算，需要增加 1.5%的计算量，这部分计算量是不能并行执行的，并且与所使用处理器/执行内核的数量无关。此外，每个处理器执行内核在执行并行计算任务的过程中，还需要执行为所承担的并行任务执行一定的额外操作。这些额外操作的计算量是所承担并行任务量 的 0.1%。请问，在一个有 M 颗处理器/执行内核的计算平台上，并行程序可取得的最大加速比是多少？\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('116', '0', '{\"0\":\"共享\",\"1\":\"伪共享\",\"title\":\"缓存一致性强迫多个线程看起来好像是共享同一个内存单元，这称为()\",\"len\":2}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('117', '0', '{\"0\":\"栈\",\"1\":\"堆\",\"2\":\"线程局部存储\",\"3\":\"DATA 段\",\"title\":\"在 OpenMP 中，用 threadprivate 作用域标记的变量会存储在内存中的什么位置：\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('118', '0', '{\"0\":\"线程任务量不均衡\",\"1\":\"并行过载和顺序过载\",\"2\":\"以上都是\",\"title\":\"Intel(R)线程档案器为 OpenMP  提供了哪些功能？( ) A  并行代码和顺序代码的时间花费\",\"len\":3}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('119', '0', '{\"0\":\"都没有\",\"1\":\"都有\",\"2\":\"可有可无\",\"title\":\"MPI 的名字( )  前缀 MPI_\",\"len\":3}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('120', '0', '{\"0\":\"点对点通信\",\"1\":\"集合通信\",\"2\":\"广播\",\"title\":\"在 MPI 里涉及通信子中所有进程的通信函数是函数 ( )\",\"len\":3}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('121', '0', '{\"0\":\"任务并行\",\"1\":\"任务串行\",\"2\":\"数据并行\",\"3\":\"数据串行\",\"title\":\"编写并行程序将待解决问题所需要处理的数据分配给各个核的方法是（）\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('122', '0', '{\"0\":\"4\",\"1\":\"16\",\"2\":\"32\",\"3\":\"64\",\"title\":\"AMD 的 Radeon7970 图形卡包括（ ）个向量处理器(计算单元)?\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('123', '0', '{\"0\":\"动态功率\",\"1\":\"静态功率\",\"2\":\"动态功率和静态功率中较小的功率\",\"3\":\"动态功率与静态功率之和\",\"title\":\"CMOS 的动态功耗等于\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('124', '0', '{\"0\":\"效率\",\"1\":\"加速比\",\"title\":\"串行时间与并行时间的比值叫做\",\"len\":2}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('125', '0', '{\"0\":\"284\",\"1\":\"142\",\"2\":\"71\",\"3\":\"36；\",\"title\":\"要配置双精度浮点峰值性能是 20TFlops 的 HPC 集群，目前采用双路 2.93GHz  Intel  westmere 六核处理器 X5670来构建，我们知道该处理器的每个核都有两套浮点向量计算单元，问该集群共需要多少个计算节点？\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('126', '0', '{\"0\":\"KNF\",\"1\":\"KNC\",\"2\":\"KNL\",\"3\":\"KNH\",\"title\":\"What\'s the code name of 2nd generation Xeon Phi product?\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('127', '0', '{\"0\":\"61\",\"1\":\"48\",\"2\":\"57\",\"3\":\"72\",\"title\":\"How many cores on the Intel Xeon Phi product at least?\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('128', '0', '{\"0\":\"1\",\"1\":\"2\",\"2\":\"3\",\"3\":\"4\",\"title\":\"How many VPU will be available on the 2nd generation Xeon Phi product?\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('129', '0', '{\"0\":\"Relace static task partition with dynamic task partition\",\"1\":\"Remove MPI barrier\",\"2\":\"atomic computation\",\"title\":\"Which one is not the frequently used skills to tune MPI application?\",\"len\":3}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('130', '0', '{\"0\":\"Replace arrays with temporary variable\",\"1\":\"Replace 2D structure with 1D\",\"2\":\"AoS-＞SoA\",\"3\":\"Loop fusion and Loop Split\",\"title\":\"Which skill is not used for data restructure?\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('131', '1', '{\"0\":\"C 语言\",\"1\":\"C++语言\",\"2\":\"Fortran  语言\",\"title\":\"下面是 MPI 可以绑定的语言的是( )\",\"len\":3}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('132', '1', '{\"0\":\"消息拆卸\",\"1\":\"消息装配\",\"2\":\"消息传递\",\"title\":\"MPI 的消息传递过程分为 ( )\",\"len\":3}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('133', '1', '{\"0\":\"派生\",\"1\":\"合并\",\"2\":\"分离\",\"3\":\"消亡\",\"title\":\"如果进程是执行的“主线程”，其他线程由主线程启动和停止，那么我们可以设想进程和它的子线程如下进行， 当一个线程开始时，它从进程中（ ）出来；当一个线程结束，它（ ）到进程中。\",\"len\":4}', 'A;B', '', '3');
-INSERT INTO `questions` VALUES ('134', '1', '{\"len\": 6, \"1\": \"执行终止\", \"title\": \"作为多遍优化算法 PGO 的三步过程由以下哪三步构成？( )\", \"5\": \"代码执行与评估\", \"3\": \"执行被插入信息采集代码的程序(Instrumented execution)\", \"4\": \"插入信息采集代码后编译(Instrumented compilation)\", \"0\": \"代码编译\", \"2\": \"反馈编译（feedback compilation）\"}', 'C;D', '', '3');
-INSERT INTO `questions` VALUES ('135', '1', '{\"0\":\"少用锁，甚至采用无锁编程。\",\"1\":\"使用原子操作来替代锁。\",\"2\":\"从设计和算法层面来缩小串行化所占的比例。\",\"3\":\"设计并行指令\",\"title\":\"对于如何解决串行化方面的难题，以下表述正确的是：()\",\"len\":4}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('136', '1', '{\"0\":\"在 pthread 并行程序中，不允许 worker 线程执行函数调用\",\"1\":\"在 MPI 并行程序中，同一个串行函数，可以同时被多个进程分别执行\",\"2\":\"在 MPI 并行程序中，如果一个某个函数的数据运算划分到多个处理器上并行执行，则在参与计算的处理器 上都要执行该函数的调用\",\"3\":\"在 pthread 并行程序中，不允许 worker 线程执行线程创建操作\",\"title\":\"关于函数调用，下列哪些说法是正确的？\",\"len\":4}', 'B;C;D', '', '3');
-INSERT INTO `questions` VALUES ('138', '1', '{\"0\":\"Computation Granularity *B Load Balance\",\"1\":\"Communication and I/O\",\"2\":\"Synchronization Overhead\",\"title\":\"To achieve the good load balance, which items may be needs to considered?\",\"len\":3}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('139', '1', '{\"0\":\"pragma ivdep\",\"1\":\"pragma simd\",\"2\":\"pragma vector align\",\"3\":\"pragma loop count(n)\",\"title\":\"Frenquently used pragma for vectorization includes\",\"len\":4}', 'A;B;C;D', '', '3');
-INSERT INTO `questions` VALUES ('140', '0', '{\"0\":\"栈\",\"1\":\"堆\",\"2\":\"线程局部存储\",\"3\":\"DATA 段\",\"title\":\"在 OpenMP 中，用 threadprivate 作用域标记的变量会存储在内存中的什么位置：\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('141', '0', '{\"0\":\"集群\",\"1\":\"网格\",\"2\":\"分布式内存系统\",\"3\":\"共享内存系统\",\"title\":\"（）提供一种基础架构，使地理上分布的计算机大型网络转换成一个分布式内存系统，通常这样的系统是异构 的。\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('143', '0', '{\"0\":\"在传统的操作系统中，CPU  调度和分派的基本单位是进程\",\"1\":\"在引入线程的操作系统中，则把线程作为 CPU  调度和分派的基本单位\",\"2\":\"同一进程中线程的切换不会引起进程切换，从而避免了昂贵的系统调用\",\"3\":\"由一个进程中的线程切换到另一进程中的线程时，也不会引起进程切换\",\"title\":\"以下表述不正确的是：( )\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('144', '0', '{\"0\":\"信号量\",\"1\":\"互斥量\",\"title\":\"一个条件变量总是与一个 ( )相关联\",\"len\":2}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('145', '0', '{\"0\":\"任务,数据\",\"1\":\"任务,线程\",\"2\":\"数据,线程\",\"3\":\"进程,数据\",\"title\":\"OpenCL 提供了基于()和基于()的两种并行计算方式.\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('146', '0', '{\"0\":\"写回法\",\"1\":\"重复写\",\"2\":\"备份\",\"title\":\"当 CPU 向 Cache 中写数据时，Cache 中的值就会不同或者不一致，有两种方法：写直达和（ ）来解决这个不一 致性问题。\",\"len\":3}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('147', '0', '{\"0\":\"在 MIM*D 并行计算机上，并行程序的加速比不能随处理器执行核的数量按比例增长\",\"1\":\"并行程序的运行时间越短，加速比越高\",\"2\":\"确定了运行计算平台、及所使用的处理器数量，就可以确定并行程序的加速比\",\"3\":\"根据 Amdahl 定理，并行程序的加速比小于参与计算的处理器执行核数量\",\"title\":\"关于加速比，正确的说法是：\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('148', '0', '{\"0\":\"消息传递\",\"1\":\"负载平衡\",\"2\":\"同步\",\"3\":\"异步\",\"title\":\"在（）中，一个进程必须调用一个发送函数，并且发送函数必须与另一个进程调用的接受函数相匹配。\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('149', '0', '{\"0\":\"任务并行\",\"1\":\"任务串行\",\"2\":\"数据并行\",\"3\":\"数据串行\",\"title\":\"编写并行程序将待解决问题所需要处理的数据分配给各个核的方法是（）\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('150', '0', '{\"0\":\"合并最里面两层循环\",\"1\":\"最里层 for 循环用两个线程处理\",\"2\":\"合并最外两层循环\",\"title\":\"#pragma omp for collapse(2)的作用是什么？\",\"len\":3}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('151', '0', '{\"0\":\"分辨率\",\"1\":\"电压\",\"2\":\"电流\",\"title\":\"（ ）是指计时器的时间测量单位，是计时器在计时的过程中最短的非零时间跨度。\",\"len\":3}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('152', '0', '{\"0\":\"死锁\",\"1\":\"挂起\",\"title\":\"条件变量是一个数据对象，允许线程在某个特定条件或事件发生前都处于 ( )状态\",\"len\":2}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('153', '0', '{\"0\":\"NUMA 模型是高速缓存一致的、非均匀存储访问模型的简称。\",\"1\":\"并行计算机访存模型只有 NUMA、COMA 和 NORMA 这三种类型\",\"2\":\"多台 P*C 机通过网线连接形成的机群属于 NORM*A 非远程存储访问模型。\",\"3\":\"COMA 模型是 Coherent-Only Memory Access 的缩写。\",\"title\":\"下面哪个关于并行计算机的访存模型描述是对的？\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('156', '0', '{\"0\":\"随机的\",\"1\":\"特定的\",\"title\":\"不同进程对同一个内容的输出，其顺序是( )\",\"len\":2}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('157', '0', '{\"0\":\"共享存储并行计算模型包括 PRAM 模型和 BSP 模型\",\"1\":\"共享存储并行计算模型包括 LogP 模型和 PRAM 模型\",\"2\":\"分布式存储并行计算模型包括 PRAM 模型和 BSP 模型\",\"3\":\"分布式存储并行计算模型包括 LogP 模型和 BSP 模型；\",\"title\":\"下面关于并行计算模型，哪个描述是正确的？\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('158', '0', '{\"0\":\"MPI\",\"1\":\"CUDA\",\"2\":\"MapReduce\",\"3\":\"Pthreads\",\"title\":\"（ ）和 OpenMP 是为共享内存系统的编程而设计的，它们提供访问共享内存的机制。\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('159', '0', '{\"0\":\"3X\",\"1\":\"2X\",\"2\":\"1.5X\",\"3\":\"4X\",\"title\":\"How much improvement of Single-Thread Performance on 2nd generation compared to the 1st generation Intel Xeon Phi coprocessor?\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('160', '0', '{\"0\":\"128bits\",\"1\":\"512bits\",\"2\":\"256bits\",\"3\":\"64bits\",\"title\":\"How long is vector length on Xeon Phi?\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('161', '0', '{\"0\":\"4GB\",\"1\":\"8GB\",\"2\":\"16GB\",\"3\":\"32GB\",\"title\":\"What \'s the maxmum size of on-package memory (MCDRAM) will be available on 2nd generation Xeon Phi?\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('162', '0', '{\"0\":\"6\",\"1\":\"4\",\"2\":\"8\",\"3\":\"10\",\"title\":\"How many channels of DDR4 will be available on 2nd generation Xeon Phi?\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('163', '0', '{\"0\":\"KNF\",\"1\":\"KNC\",\"2\":\"KNL\",\"3\":\"KNH\",\"title\":\"What\'s the code name of 2nd generation Xeon Phi product?\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('165', '1', '{\"0\":\"MKL  是线程安全的， 可以在多线程中被使用\",\"1\":\"MKL  使用 OpenMP*  实现多线程\",\"2\":\"MKL  函数内部实现了多线程\",\"3\":\"MKL  函数内部实现了多线程，但 MKL 库不是线程安全的\",\"title\":\"下面关于英特 MKL 多线程的特性，哪些是正确的？( )\",\"len\":4}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('166', '1', '{\"0\":\"Microsoft\",\"1\":\"GNU\",\"2\":\"Intel\",\"title\":\"TBB 支持的 C++编译器包括：( )\",\"len\":3}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('167', '1', '{\"0\":\"concurrent_set\",\"1\":\"concurrent_queue\",\"2\":\"concurrent_hash_map\",\"3\":\"concurrent_vector\",\"title\":\"以下属于 TBB 中的并行容器的是：( )\",\"len\":4}', 'B;C;D', '', '3');
-INSERT INTO `questions` VALUES ('169', '1', '{\"0\":\"进程 0 先执行 MPI_Send 发送 M0、然后执行 MPI_Recv 接收 M1，进程 1 先执行 MPI_Send 发送 M1、然后执行 MPI_Recv 接收 M0\",\"1\":\"进程 0 先执行 MPI_Recv 接收 M1、然后执行 MPI_Send 发送 M0，进程 1 执行 MPI_Recv 接收 M0、然后先执行 MPI_Send 发送 M1\",\"2\":\"进程 0 先执行 MPI_ISend 发送 M0、然后执行 MPI_Recv 接收 M1，进程 1 先执行 MPI_Send 发送 M1、然后执行 MPI_Recv 接收 M0\",\"3\":\"进程 0 先执行 MPI_IRecv 接收 M1、然后执行 MPI_Send 发送 M0，进程 1 执行 MPI_Recv 接收 M0、然后先执行 MPI_Send 发送 M1\",\"title\":\"进程 0 要将消息 M0 发送给进程 1，进程 1 要将消息 M1 发送给进程 0。下列哪几种情况下，可能出现“死锁”？\",\"len\":4}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('170', '1', '{\"0\":\"消息拆卸\",\"1\":\"消息装配\",\"2\":\"消息传递\",\"title\":\"MPI 的消息传递过程分为 ( )\",\"len\":3}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('171', '1', '{\"0\":\"编译器的编译优化\",\"1\":\"处理器的乱序执行\",\"2\":\"使用原子操作\",\"3\":\"使用单核 CPU\",\"title\":\"以下哪些选项有可能使得程序不会按照程序本身的顺序执行的\",\"len\":4}', 'A;B', '', '3');
-INSERT INTO `questions` VALUES ('172', '1', '{\"0\":\"Use nontemporal pragma\",\"1\":\"pragma prefetch\",\"2\":\"the option of \\\"-qopt-streaming-stores=always\\\"\",\"3\":\"AoS-＞SoA\",\"title\":\"In order to improve memory bandwidth, comman used skills inlclude:\",\"len\":4}', 'A;C', '', '3');
-INSERT INTO `questions` VALUES ('173', '1', '{\"0\":\"__attribute    ((aligned(n)))\",\"1\":\"mm_aligned_malloc(size, alignment_bytes)/);    mm_aligned_free()\",\"2\":\"scalable_aligned_malloc()/scalable_aligned_free()\",\"title\":\"Data alignment about dynamic memory can be achieved by __.\",\"len\":3}', 'B;C', '', '3');
-INSERT INTO `questions` VALUES ('174', '0', '{\"0\":\"60%\",\"1\":\"70%\",\"2\":\"80%\",\"3\":\"90%\",\"title\":\"某并行任务中，通信部分占总时间 50%，计算占%40，而并行带来的额外开销占%10。经过优化，使得 通信与计算得到部分重叠，有 40%的通信时间被计算重叠。此时，总时间为原本的\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('175', '0', '{\"0\":\"进程\",\"1\":\"线程\",\"2\":\"接口\",\"title\":\"（ ）为程序员提供了一种机制，将程序划分为多个大致独立的任务，当某个任务阻塞时能执行其他任 务。\",\"len\":3}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('176', '0', '{\"0\":\"0\",\"1\":\"1\",\"2\":\"2\",\"3\":\"以上都有可能\",\"title\":\"在 Concurrent read concurrent write (CRCW) PRAM 模型中，两个处理器同时对初值为 0 的内存空间进行 加一操作（*p = *p + 1）。当其中一个处理器完成其操作时，该内存空间不可能的值是：\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('178', '0', '{\"0\":\"NUMA 模型是高速缓存一致的、非均匀存储访问模型的简称。\",\"1\":\"并行计算机访存模型只有 NUMA、COMA 和 NORMA 这三种类型\",\"2\":\"多台 PC 机通过网线连接形成的机群属于 NORMA 非远程存储访问模型。\",\"3\":\"COMA 模型是 Coherent-Only Memory Access 的缩写。\",\"title\":\"下面哪个关于并行计算机的访存模型描述是对的？\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('180', '0', '{\"0\":\"atomic\",\"1\":\"barrier\",\"2\":\"single\",\"3\":\"master\",\"title\":\"在并行域当中，指定一个数据操作原子性操作完成，是使用什么关键字\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('181', '0', '{\"0\":\"设计阶段\",\"1\":\"测试阶段\",\"2\":\"需求收集阶段\",\"3\":\"以上全部?\",\"title\":\"我们应该在产品生命周期中的哪个阶段考虑产品的性能？( )?\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('182', '0', '{\"len\": 4, \"1\": \"1\", \"title\": \"在 Exclusive read exclusive write (EREW) PRAM 模型中，三个处理器同时对初值为 0 的内存空间进行加一 操作（*p = *p + 1）。当所有处理器完成其操作时，该内存空间不可能的值是：\", \"3\": \"以上均不可能\", \"0\": \"0\", \"2\": \"2\"}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('183', '0', '{\"0\":\"进程\",\"1\":\"线程\",\"2\":\"接口\",\"3\":\"多发射\",\"title\":\"有两种主要方法来实现指令级并行：流水线和（ ）。\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('184', '0', '{\"0\":\"1\",\"1\":\"2\",\"2\":\"4\",\"3\":\"8\",\"title\":\"Intel Xeon Phi 处理器中，每个核有几个硬件线程。\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('185', '0', '{\"0\":\"barrier\",\"1\":\"single\",\"2\":\"atomic\",\"3\":\"master\",\"title\":\"在并行域当中，使代码线程同步，是使用什么关键字\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('186', '0', '{\"0\":\"忙等待\",\"1\":\"运行\",\"2\":\"就绪\",\"3\":\"休眠\",\"title\":\"在（ ）时，一个线程进入一个循环，这个循环的目的只是测试一个条件。\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('191', '0', '{\"0\":\"Data alignment\",\"1\":\"Cache blocking\",\"2\":\"Prefetch\",\"3\":\"data restructure\",\"title\":\"Which one is the freqently used skill to improve data locality?\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('192', '0', '{\"0\":\"O1\",\"1\":\"O2\",\"2\":\"O3\",\"3\":\"O0\",\"title\":\"What\'s the default vectorization option for Intel Compiler?\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('195', '1', '{\"len\": 4, \"1\": \"在引入线程的操作系统中，一个进程中的多个线程之间不可以并发执行\", \"title\": \"以下表述正确的是：( )\", \"3\": \"线程是拥有系统资源的一个独立单位，它可以拥有自己的资源\", \"0\": \"在引入线程的操作系统中，进程之间可以并发执行\", \"2\": \"进程是拥有系统资源的一个独立单位，它可以拥有自己的资源\"}', 'A;C', '', '3');
-INSERT INTO `questions` VALUES ('196', '1', '{\"title\": \"Intel  调优助手能够给我们自动推荐代码改进办法，主要有以下哪些方面？ ( ) A  算法自动改进\", \"len\": 3, \"1\": \"取样向导增强\", \"0\": \"处理器瓶颈以及改进\", \"2\": \"超线程\"}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('197', '1', '{\"title\": \"避免对临界区竞争访问的基本方法有 ()\", \"len\": 3, \"1\": \"互斥量\", \"0\": \"忙等待\", \"2\": \"信号量\"}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('198', '1', '{\"title\": \"请说出目前 MPI 的主要免费实现的种类 ()\", \"len\": 3, \"1\": \"LAM\", \"0\": \"MPICH\", \"2\": \"CHIMP\"}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('200', '1', '{\"len\": 4, \"1\": \"Offload\", \"title\": \"The features supported on the 1st generation Xeon Phi include__\", \"3\": \"Symmetric\", \"0\": \"Native\", \"2\": \"Self-boot\"}', 'A;B;D', '', '3');
-INSERT INTO `questions` VALUES ('201', '1', '{\"len\": 4, \"1\": \"pragma prefetch\", \"title\": \"In order to improve memory bandwidth, comman used skills inlclude:\", \"3\": \"AoS-＞SoA\", \"0\": \"Use nontemporal pragma\", \"2\": \"the option of \\\"-qopt-streaming-stores=always\\\"\"}', 'A;C', '', '3');
-INSERT INTO `questions` VALUES ('202', '0', '{\"title\": \"以下哪个事例是 Vtune 性能分析器的基于事件的采样？ ( )\", \"len\": 3, \"1\": \"Every n processor ticks\", \"0\": \"Branch misprediction\", \"2\": \"Bugs encountered\"}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('203', '0', '{\"len\": 4, \"1\": \"1MB\", \"title\": \"Mmap()函数可以申请大页表空间，请问它申请的空间，每个页表的大小是多少?\", \"3\": \"4MB\", \"0\": \"512KB\", \"2\": \"2MB\"}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('204', '0', '{\"0\":\"stack\",\"1\":\"data section\",\"2\":\"register set\",\"3\":\"thread ID\",\"title\":\"同一进程下的线程可以共享以下\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('205', '0', '{\"0\":\"通信子\",\"1\":\"标签\",\"title\":\"在 MPI 中 ( )  指的是一组可以互相发送消息的进程集合\",\"len\":2}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('206', '0', '{\"0\":\"弱\",\"1\":\"强\",\"title\":\"如果程序可以在不增加问题规模的前提下维持恒定效率，那么程序拥有( )  扩展性\",\"len\":2}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('207', '0', '{\"0\":\"强确定性\",\"1\":\"弱确定性\",\"2\":\"非确定性\",\"title\":\"在任何一个 MIMD 系统中，如果处理器异步执行，那么很可能会引发（ ）。\",\"len\":3}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('208', '0', '{\"0\":\"进程悬挂\",\"1\":\"进程阻\",\"2\":\"进程死锁\",\"title\":\"如果一个进程试图接收消息，但没有相匹配的消息，那么该进程将会被永远阻塞在那里,这种情况叫做( )\",\"len\":3}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('209', '0', '{\"0\":\"条件变量\",\"1\":\"互斥量\",\"title\":\"在 Pthreads 中实现路障的更好方法是采用 ( )\",\"len\":2}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('210', '0', '{\"0\":\"各个线程共享同一个存储空间\",\"1\":\"一个条件信号可以唤醒多个线程\",\"2\":\"允许两个线程同时处于相同的临界区\",\"3\":\"采用互斥锁机制，可以解决线程之间的“读-写”冲突\",\"title\":\"关于 pthread 线程并行模型，正确的说法是：\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('212', '0', '{\"0\":\"采用超级流水线技术\",\"1\":\"采用超标量技术\",\"2\":\"以上都是\",\"3\":\"以上都不是\",\"title\":\"提高微处理器内部执行的并行性有哪些措施。( )\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('213', '0', '{\"0\":\"写回法\",\"1\":\"重复写\",\"2\":\"备份\",\"3\":\"写直达\",\"title\":\"在（ ）Cache 中，当 CPU 向 Cache 写数据时，高速缓存行会立即写入主存中。\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('214', '0', '{\"0\":\"Flynn 分类法\",\"1\":\"PCAM 方法\",\"2\":\"KMP 算法\",\"title\":\"通常（ ）用对并行硬件进行分类，通过系统可以处理的指令流数目和数据流数目来区别各个分类。\",\"len\":3}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('216', '0', '{\"0\":\"进程\",\"1\":\"线程\",\"2\":\"接口\",\"title\":\"当用户运行一个程序时，操作系统创建一个（ ）。\",\"len\":3}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('217', '0', '{\"0\":\"进程和线程都可以独立执行\",\"1\":\"线程是 CPU 调度和分派的基本单位\",\"2\":\"进程是系统进行资源分配和调度的一个独立单位\",\"3\":\"线程必须依存在进程中，由进程提供多个线程执行的控制\",\"title\":\"关于进程和线程的描述中不正确的是\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('218', '0', '{\"0\":\"MPI_Reduce\",\"1\":\"MPI_Allreduce\",\"2\":\"MPI_Reduce_scatter\",\"3\":\"MPI_Scan\",\"title\":\"在 MPI 集合通信中，下列哪一个函数可以完成多个进程间的前缀和（prefix sum）计算：\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('219', '0', '{\"0\":\"不可超越的\",\"1\":\"可超越的\",\"title\":\"MPI 要求消息是 ( )\",\"len\":2}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('220', '0', '{\"0\":\"互斥条件：一个资源每次只能被一个进程使用\",\"1\":\"请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放\",\"2\":\"资源分配不当:资源分配的顺序不合理\",\"3\":\"循环等待条件:若干进程之间形成一种头尾相接的循环等待资源关系\",\"title\":\"产生死锁的必要条件不包括\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('221', '0', '{\"0\":\"进程悬挂\",\"1\":\"进程阻碍\",\"2\":\"进程死锁\",\"title\":\"标签不匹配和目标进程的进程号与源进程的进程号不相同都会导致 （）\",\"len\":3}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('222', '0', '{\"0\":\"SSE\",\"1\":\"IMCI\",\"2\":\"AVX2\",\"3\":\"AVX-512\",\"title\":\"What\'s the instruction set on 2nd generation xeon phi?\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('223', '0', '{\"0\":\"Add compiler option\",\"1\":\"pragma prefetch\",\"2\":\"prefetch intrinsic\",\"3\":\"Cache blocking\",\"title\":\"Which skill is not used for prefetch?\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('224', '1', '{\"0\":\"MPICH\",\"1\":\"LAM\",\"2\":\"CHIMP\",\"title\":\"请说出目前 MPI 的主要免费实现的种类 ()\",\"len\":3}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('225', '1', '{\"0\":\"编写适用于特定 CPU  的优化代码\",\"1\":\"避免冗余的函数调用\",\"2\":\"避免不必要的边界检查\",\"3\":\"利 用局部变量保存中间计算结果\",\"title\":\"独立于体系结构性能优化方法主要有：( )\",\"len\":4}', 'B;C;D', '', '3');
-INSERT INTO `questions` VALUES ('227', '1', '{\"len\": 4, \"1\": \"扩展指令集\", \"title\": \"对于现代微处理器体系结构而言，对性能优化影响比较大的主要是：( )\", \"3\": \"指令流水线的深度\", \"0\": \"超标量\", \"2\": \"乱序执行\"}', 'A;C;D', '', '3');
-INSERT INTO `questions` VALUES ('228', '1', '{\"0\":\"Intel C/C++编译器\",\"1\":\"IPP 性能库\",\"2\":\"MKL 函数库\",\"3\":\"TBB 多线程开发库\",\"title\":\"英特尔 Parallel Composer 主要包含：( )\",\"len\":4}', 'A;B;D', '', '3');
-INSERT INTO `questions` VALUES ('229', '1', '{\"0\":\"基于时间取样\",\"1\":\"随机取样\",\"2\":\"基于事件取样\",\"3\":\"线性取样\",\"title\":\"VTune  性能分析器中的取样功能有哪几种方式？()\",\"len\":4}', 'A;C', '', '3');
-INSERT INTO `questions` VALUES ('232', '1', '{\"0\":\"OpenMP\",\"1\":\"Intel Cilk Plus,\",\"2\":\"Intel Threading Building Blocks\",\"title\":\"Which are the frenquently used multi-thread parallelization methods? A MPI\",\"len\":3}', 'A;B;C', '', '3');
-INSERT INTO `questions` VALUES ('233', '0', '{\"0\":\"没有区别所以没有代价\",\"1\":\"和-O1(/O1)相比可能会大幅增加代码大小\",\"2\":\"性能优势将只能发挥在某些特定硬件平台上\",\"title\":\"使用 Intel 编译器时，开关-O2 对代码进行和开关-O1 或/O1 相类似的优化，但是会以什么为“代价”？( )\",\"len\":3}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('235', '0', '{\"0\":\"程序计数器\",\"1\":\"寄存器集合\",\"2\":\"堆栈\",\"3\":\"堆\",\"title\":\"一个标准的线程不一定需要哪一项资源？\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('236', '0', '{\"0\":\"flush\",\"1\":\"critical\",\"2\":\"atomic\",\"3\":\"master\",\"title\":\"在并行域当中，保证各个 openmp 线程数据影像的一致性，是使用什么关键字\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('237', '0', '{\"0\":\"稳定\",\"1\":\"速率\",\"2\":\"延迟\",\"3\":\"抖动\",\"title\":\"两个常用来衡量互连网络性能的指标：（ ）和带宽。\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('238', '0', '{\"0\":\"OpenMP  可以根据目标系统尽量使用最优数量的线程个数。\",\"1\":\"使用线程池可以避免为每个线程创建新进程的开销\",\"2\":\"线程池通常具有最大线程数限制，如果所有线程都繁忙，而额外的任务将放入队列中，直到有线程可用时 才能够得到处理\",\"3\":\"对于有优先级的线程，也可以使用线程池\",\"title\":\"以下表述错误的是：()\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('239', '0', '{\"0\":\"单指令多数据\",\"1\":\"多指令多数据\",\"2\":\"分布式内存\",\"3\":\"共享内存\",\"title\":\"（ ）系统支持同时多个指令流在多个数据流上操作。\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('241', '0', '{\"0\":\"进程级\",\"1\":\"线程级\",\"2\":\"程序级\",\"3\":\"任务级\",\"title\":\"（ ）并行是尝试通过同时执行不同线程来提供并行性。\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('242', '0', '{\"0\":\"可以，会\",\"1\":\"可以，不会\",\"2\":\"不可以，会\",\"3\":\"不可以，不会\",\"title\":\"具有不同局部性的存储单元，__放置在同一 cache 行中，这样__引发伪共享问题。( )\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('243', '0', '{\"0\":\"MKL_solver.lib\",\"1\":\"MKL_lapack.lib\",\"2\":\"MKL_c.lib\",\"3\":\"MKL_c_dll.lib\",\"title\":\"在 Windows*中静态链接 MKL  的 DFT 函数，应该选择下面哪一个 MKL 库\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('244', '0', '{\"0\":\"主存\",\"1\":\"寄存器\",\"2\":\"互联结构\",\"3\":\"程序计数器\",\"title\":\"控制单元有一个特殊的存储器，用来存放下一条指令的地址，叫做（ ）\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('245', '0', '{\"0\":\"4\",\"1\":\"16\",\"2\":\"32\",\"3\":\"64\",\"title\":\"AMD 的 Radeon7970 图形卡包括（ ）个向量处理器(计算单元)?\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('247', '0', '{\"0\":\"Loop Interchange\",\"1\":\"Data restructure\",\"2\":\"vectorization\",\"3\":\"Cache Blocking\",\"title\":\"Which optimization methods is not used in the case of \\\"small matrix multiplication\\\"?\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('248', '0', '{\"title\": \"Which optimization may not apply for below code?\", \"len\": 3, \"1\": \"Parallelization and Use \\\"pragma omp atomic\\\" to make sure the right result\", \"0\": \"Vectorize the loop\", \"2\": \"Pre-caculate rand() and store into an array\"}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('249', '0', '{\"0\":\"Reduce IO latentcy\",\"1\":\"Improve cache hit rate\",\"2\":\"Vectorization\",\"3\":\"Parallelization\",\"title\":\"What is the key reason for performance improvement after replacing Glibc rand() with Intel Math Kernel Library random generator in the case of \\\"Deep Learning\\\"?\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('250', '0', '{\"title\": \"Which one is not the potential issue of the code?\", \"len\": 3, \"1\": \"In the most inner loop, bad vectorization effect,even can\'t be vectorized\", \"0\": \"Can\'t be parallelized in the outer loop\", \"2\": \"non-contiguous memory access\"}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('251', '0', '{\"title\": \"Which option is commanly used for detailed vectorization information? D-no-vec\", \"len\": 3, \"1\": \"-fno-alias\", \"0\": \"-ansi-alias\", \"2\": \"-qopt-report\"}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('259', '1', '{\"len\": 4, \"1\": \"Intel? Cilk? Plus Array Notations\", \"title\": \"The common used vectorization methods include\", \"3\": \"Intrinsics\", \"0\": \"Auto-Vectorized using \\\"pragma\\\"\", \"2\": \"Elemental Functions\"}', 'A;B;C;D', '', '3');
-INSERT INTO `questions` VALUES ('260', '0', '{\"0\":\"弱\",\"1\":\"强\",\"title\":\"如果当问题规模增加，需要通过增大进程数来维持程序效率的，那么程序拥有（）可扩展性\",\"len\":2}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('261', '0', '{\"0\":\"master\",\"1\":\"barrier C atomic D Single\",\"title\":\"在并行域当中，指定一段代码由主线程执行，是使用什么关键字\",\"len\":2}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('264', '0', '{\"0\":\"当两个或多个进程试图在同一时刻访问共享内存，或读写某些共享数据，就会产生竞争条件\",\"1\":\"每个临界区都有相应的进入区（entry section）和退出区（exit section）\",\"2\":\"可能有两个线程同时进入临界区。\",\"3\":\"临界区的存在就是为了保证当有一个线程在临界区内执行的时候，不能有其他任何进程被允许在临界区执 行\",\"title\":\"以下表述不正确的是：( )\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('265', '0', '{\"0\":\"线程\",\"1\":\"进程\",\"title\":\"在共享内存编程中，运行在一个处理器上的一个程序实例称为( )\",\"len\":2}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('266', '0', '{\"0\":\"进程\",\"1\":\"线程\",\"2\":\"接口\",\"title\":\"（ ）为程序员提供了一种机制，将程序划分为多个大致独立的任务，当某个任务阻塞时能执行其他任 务。\",\"len\":3}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('268', '0', '{\"0\":\"主存\",\"1\":\"寄存器\",\"2\":\"互联结构\",\"3\":\"程序计数器\",\"title\":\"CPU 中的数据和程序执行时的状态信息存储在特殊的快速存储介质中，即（ ）。\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('269', '0', '{\"0\":\"计算强度低\",\"1\":\"计算强度相当\",\"2\":\"较难实现负载均衡\",\"3\":\"时间开销较小\",\"title\":\"在并行计算中,粗粒度的并行相对细粒度的并行来说\",\"len\":4}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('272', '0', '{\"0\":\"通信\",\"1\":\"负载平衡\",\"2\":\"同步\",\"3\":\"异步\",\"title\":\"一个或多个核将自己的部分和结果发送给其他的核这一过程称之为：（）\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('275', '0', '{\"title\": \"在一个集合通信中，如果属于一个进程的数据被发送到通信子中的所有进程，则这样的集合通信叫做 ( )\", \"len\": 3, \"1\": \"集合通信\", \"0\": \"点对点通信\", \"2\": \"广播\"}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('277', '0', '{\"0\":\"single\",\"1\":\"barrier\",\"2\":\"atomic\",\"3\":\"master\",\"title\":\"在并行域当中，有一段代码想用单线程执行，是使用什么关键字\",\"len\":4}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('279', '0', '{\"0\":\"锁类似于信号量，不同之处在于在同一时刻只能使用一个锁。\",\"1\":\"锁有两个操作，分别是获取锁和释放锁\",\"2\":\"互斥量是一种锁，线程对共享资源进行访问之前必须先获得锁；否则线程将保持等待状态，直到该锁可用。\",\"3\":\"若线程不主动放弃锁，其他线程可以抢占它\",\"title\":\"对于锁，以下表述不正确的是：( )\",\"len\":4}', 'D', '', '3');
-INSERT INTO `questions` VALUES ('281', '0', '{\"len\": 4, \"1\": \"除非你已经有了一个相当清晰可靠的非优化版本的实现，否则你不要试图对程序进行优化\", \"title\": \"Jackson  优化定律是指：( )\", \"3\": \"以上两条都不是\", \"0\": \"不要进行优化\", \"2\": \"以上两条都是\"}', 'C', '', '3');
-INSERT INTO `questions` VALUES ('282', '0', '{\"len\": 4, \"1\": \"线程是 CPU 调度和分派的基本单位\", \"title\": \"关于进程和线程的描述中不正确的是\", \"3\": \"线程必须依存在进程中，由进程提供多个线程执行的控制\", \"0\": \"进程和线程都可以独立执行\", \"2\": \"进程是系统进行资源分配和调度的一个独立单位\"}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('283', '0', '{\"0\":\"2\",\"1\":\"4\",\"2\":\"6\",\"3\":\"8\",\"title\":\"How many threads per core on Xeon Phi?\",\"len\":4}', 'B', '', '3');
-INSERT INTO `questions` VALUES ('284', '0', '{\"0\":\"Improve TLB hit ratio.\",\"1\":\"Improve memory bandwidth\",\"2\":\"Improve data locality\",\"title\":\"What\'s the purpose of huge page setting on Xeon Phi?\",\"len\":3}', 'A', '', '3');
-INSERT INTO `questions` VALUES ('294', '1', '{\"0\":\"笛卡儿拓扑\",\"1\":\"图拓扑\",\"title\":\"下面是 MPI 提供的拓扑是 ( )\",\"len\":2}', 'A;B', '', '3');
-INSERT INTO `questions` VALUES ('756', '3', '下列函数将一个数组A变换成另一个数组B，A和B的元素数量相同、且![](/static/upload/mdimages/20161228163737.png)。数组A和数组B已预先划分成若干个等长片段，每个片段的大小为size，第k个片段存储在通信子\\*comm的第k号进程上。在每个处理器上，数组A的本地片段的存储空间起始地址为函数参数”A”、 数组B的本地片段的存储空间起始地址为函数参数”B”。请补充缺少的代码。\r\n\r\n```\r\nvoid mysum(MPIComm *comm, int *A, int *B, int size) {\r\n  int i, rank, np, *sum;\r\n  MPICommsize(*comm, &np);\r\n  MPICommrank(*comm, &rank);  \r\n  B[0] = A[0];\r\n  for(i=1; i<size; i++) B[i] = B[i-1] + A[i];\r\n sum = new int[np];\r\n  MPIAllgather(&B[size-1], 1, MPIINT, sum, 1, MPIINT, *comm);\r\n *sum[rank] = 0;for(i=0; i<rank; i++) sum[rank] += sum[i];for(i=0; i<size; i++) B[i] += sum[rank]; *\r\n delete[] sum; \r\n}\r\n```\r\n', '{\"0\":\"comm的第k号进程上。在每个处理器上，数组A的本地片段的存储空间起始地址为函数参数”A”、 数组B的本地片段的存储空间起始地址为函数参数”B”。请补充缺少的代码。\\n\\n```\\nvoid mysum(MPIComm \",\"1\":\"A, int \",\"2\":\"sum;\\n\\tMPICommsize(\",\"3\":\"comm, &rank);\\t\\n\\tB[0] = A[0];\\n\\tfor(i=1; i<size; i++) B[i] = B[i-1] + A[i];\\n\\tsum = new int[np];\\n\\tMPIAllgather(&B[size-1], 1, MPIINT, sum, 1, MPIINT, \",\"4\":\"sum[rank] = 0;for(i=0; i<rank; i++) sum[rank] += sum[i];for(i=0; i<size; i++) B[i] += sum[rank]; \",\"len\":5}', '', '3');
-INSERT INTO `questions` VALUES ('757', '3', '下列程序的输出结果为：0 1 2 3 4 5 6 7 7 6 5 4 3 2 1 0。请补充缺少的代码。提示：对线程从0开始编号，先顺序输出线程编号，再逆序输出线程编号。\r\n\r\n```\r\n#include <pthread.h>\r\n#include <unistd.h>  \r\n#include <stdlib.h>  \r\n#include <stdio.h>  \r\n#define THREAD_NUM 8      \r\nint threadid = 0;\r\npthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\r\npthread_cond_t  cond  = PTHREAD_COND_INITIALIZER;\r\nvoid *fun(void *arg) {\r\n    *缺少的代码*\r\n pthread_exit(NULL);\r\n} \r\nint main(int argc, char* argv[])  {  \r\n    int i;\r\n  pthread_t *threads;  \r\n threads = new pthread_t[THREAD_NUM];      \r\n    for(i=0; i<THREAD_NUM; i++)  pthread_create(&threads[i], NULL, fun, NULL); \r\n    for(i=0; i<THREAD_NUM; i++)  pthread_join(threads[i], NULL);\r\n    delete[] threads;\r\n    printf(\"\\n\");\r\n    return EXIT_SUCCESS;  \r\n}\r\n```\r\n', '{\"0\":\"fun(void \",\"1\":\"缺少的代码\",\"2\":\" argv[])  {  \\n    int i;\\n\\tpthread_t \",\"len\":3}', '', '3');
-INSERT INTO `questions` VALUES ('758', '3', '下列程序输出结果：sum=4950。请补充缺少的代码。提示：线程函数\\*fun(void \\*arg)的功能是对一个数组片段的各元素求和，并通过原子操作将计算结果规约到\\*arg中的sum分量上。\r\n\r\n```\r\n#include <pthread.h>\r\n#include <unistd.h>  \r\n#include <stdlib.h>  \r\n#include <stdio.h>        \r\nstruct Task {\r\n int *data, *sum, first, last;\r\n};\r\nvoid *fun(void *arg) {\r\n Task& task=*(Task*)arg;\r\n int sum=0, i; \r\n  for(i=task.first; i<task.last; i++) sum+=task.data[i];\r\n  __sync_fetch_and_add (task.sum, sum);\r\n pthread_exit(NULL);\r\n} \r\nint main(int argc, char* argv[])  {  \r\n    int       i, data[100], sum=0, thread_num=sysconf(_SC_NPROCESSORS_ONLN);\r\n  pthread_t *threads;  \r\n Task      *tasks; \r\n  for(i=0; i<100; i++) data[i] = i;\r\n tasks   = new Task[thread_num];\r\n threads = new pthread_t[thread_num];\r\n  *缺少的代码*\r\n    for(i=0; i<thread_num; i++)  pthread_create(&threads[i], NULL, fun, &tasks[i]); \r\n    for(i=0; i<thread_num; i++)  pthread_join(threads[i], NULL);\r\n    delete[] tasks;\r\n    delete[] threads;\r\n    printf(\"sum=%d\\n\", sum);    \r\n    return EXIT_SUCCESS;  \r\n}\r\n```\r\n', '{\"0\":\"fun(void \\\\\",\"1\":\"arg中的sum分量上。\\n\\n```\\n#include <pthread.h>\\n#include <unistd.h>  \\n#include <stdlib.h>  \\n#include <stdio.h>        \\nstruct Task {\\n\\tint \",\"2\":\"sum, first, last;\\n};\\nvoid \",\"3\":\"arg) {\\n\\tTask& task=\",\"4\":\")arg;\\n\\tint sum=0, i;\\t\\n\\tfor(i=task.first; i<task.last; i++) sum+=task.data[i];\\n\\t__sync_fetch_and_add (task.sum, sum);\\n\\tpthread_exit(NULL);\\n} \\nint main(int argc, char\",\"5\":\"threads;  \\n\\tTask      \",\"6\":\"缺少的代码\",\"len\":7}', '', '3');
-INSERT INTO `questions` VALUES ('759', '3', '下列函数实现数组元素求和：数组的大小为array_size，其元素全部存储在通信子\\*comm的第root号进程上，array是数组的起始地址，计算结果也返回给第root号进程。请补充缺少的代码。\r\n\r\n```\r\n#define SIZE       20 \r\n#define NOTASK     1\r\n#define NEWTASK    2  \r\nint my_sum(MPI_Comm* comm, int *array, int array_size, int root) {\r\n  MPI_Status  status;\r\n int rank, i, size, data[SIZE], val=0;\r\n MPI_Comm_rank(*comm, &rank);  \r\n  if ( rank==root ) {\r\n   *缺少的代码*\r\n }\r\n else while(1) {\r\n   MPI_Send(&val, 1, MPI_INT, root, 0, *comm);\r\n   MPI_Recv(data, SIZE, MPI_INT, root, MPI_ANY_TAG, *comm, &status);\r\n   if (status.MPI_TAG==NOTASK) break;\r\n    val = 0;\r\n    MPI_Get_count(&status, MPI_INT, &size);\r\n   for(i=0; i<size; i++) val += data[i];\r\n } \r\n}\r\n```', '{\"0\":\"comm的第root号进程上，array是数组的起始地址，计算结果也返回给第root号进程。请补充缺少的代码。\\n\\n```\\n#define SIZE       20 \\n#define NOTASK     1\\n#define NEWTASK    2  \\nint my_sum(MPI_Comm\",\"1\":\"array, int array_size, int root) {\\n\\tMPI_Status  status;\\n\\tint rank, i, size, data[SIZE], val=0;\\n\\tMPI_Comm_rank(\",\"2\":\"缺少的代码\",\"3\":\"comm);\\n\\t\\tMPI_Recv(data, SIZE, MPI_INT, root, MPI_ANY_TAG, \",\"len\":4}', '', '3');
-INSERT INTO `questions` VALUES ('760', '5', '在有24颗执行核的SMP/多核处理器系统上，对二维矩阵A进行2D5P模板计算，假设A的规模为2m2n，m>n>5。请设计一个并行求解算法并给出该算法的加速比上限。\r\n\r\n', '', '', '3');
-INSERT INTO `questions` VALUES ('761', '5', 'A和B是两个单精度浮点数的矩阵，A的规模为n×m、B的规模为m×k。请问，在CUDA上实现矩阵乘法A×B时，GPU与设备内存之间的最少数据交换量为多少？假设执行配置中，线程块的笛卡尔结构为r×c。', '', '', '3');
-INSERT INTO `questions` VALUES ('762', '5', '矩阵A的规模是2^m×2^n、矩阵B的规模是2^n×2^k。在一个由2^2p颗处理器构成的BSP上，采用流水并行执行A×B。假设m、n、k均大于p。\r\n\r\na)  每颗处理上消耗的存储空间规模是多少？\r\n\r\nb)  要执行多少个超级计算步？\r\n\r\nc)  在计算过程中，每颗处理器总共要发送多少个数据元素？ ', '', '', '3');
-INSERT INTO `questions` VALUES ('763', '5', '一个无权图G的顶点数量为n、半径为α、直径为β。在一个APRAM-CRCW并行计算机上以最快速度执行BFS，请问并行计算效率的上限和下限分别是多少？假设在该APRAM-CRCW并行计算机上，一个操作内可以完成两项计算：某个顶点的状态更新计算；比较当前顶点被更新前后的状态值并将比较结果写入并行计算机的存储空间。', '', '', '3');
-INSERT INTO `questions` VALUES ('764', '5', '在一个由p颗处理器构成的BSP上将数组A变换成数组B，A和B都有n个元素，B的每个元素 Bi 的值是![](/static/upload/md_images/20161229234518.png)。假设p远小于n，设计一个并行求解算法并给出该算法的加速比上限。', '', '', '3');
-INSERT INTO `questions` VALUES ('765', '5', '在一台BSP并行计算机上，共有p颗处理器。请问：为尽可能快的完成两个长度为N的向量的点积运算，共需要执行多少个超级计算步、并简述计算超级计算步数量的依据。假设N远大于p。', '', '', '3');
-INSERT INTO `questions` VALUES ('766', '5', '在p颗处理器的PRAM并行计算机上对N个元素求和。请问加速比和并行计算效率分别是多少？', '', '', '3');
-INSERT INTO `questions` VALUES ('767', '5', '一个N-body问题中包括2^n个粒子。在一个由2^p颗处理器构成的BSP上采用分治并行计算粒子的受力，在一个时间步上要经过多少个超级计算步才能计算出一个粒子的受力？假设n大于p。', '', '', '3');
-INSERT INTO `questions` VALUES ('768', '5', '一个N-body问题中包括2^n个粒子。在一个由2^p颗处理器构成的SMP系统上采用流水并行计算粒子的受力。假设SMP系统上每个存储单位可以存储一个粒子的全部信息；n大于p。\r\n\r\na) 使用Pthreads编程实现，应用程序的内存开销是多少？ \r\n\r\nb) 使用MPI编程实现，应用程序的内存开销是多少？\r\n', '', '', '3');
-INSERT INTO `questions` VALUES ('769', '5', '假设有一个计算问题，其中串行计算量占15%。为实现并行计算，需要增加1.5%的计算量，这部分计算量是不能并行执行的，并且与所使用处理器/执行内核的数量无关。此外，每个处理器/执行内核在执行并行计算任务的过程中，还需要执行为所承担的并行任务执行一定的额外操作。这些额外操作的计算量是所承担并行任务量的0.1%。请问：\r\n\r\na) 在一个有M颗处理器/执行内核的计算平台上,并行程序可取得的最大加速比是多少？\r\n\r\nb)   为了使得并行计算效率至少为70%，M最大可为多少？\r\n', '', '', '3');
-INSERT INTO `questions` VALUES ('770', '5', '假设A和B是两个向量，各存储N个复数。请问执行A和B的向量乘(A的第I个元素与B的第I个元素相乘)，至少需要多少次乘法运算?', '', '', '3');
+INSERT INTO `questions` VALUES (8,1,'{\"0\":\"单指令流单数据流（Single Instruction stream Single Data stream, SISD\",\"1\":\"单指令流多数据流（Single Instruction stream Multiple Data stream, SIMD\",\"2\":\"多指令流单数据流（Multiple Instruction stream Single Data stream, MISD\",\"3\":\"多指令流多数据流（Multiple Instruction stream Multiple Data stream, MISD\",\"title\":\"Flynn根据指令流和数据流的不同组织方式，把计算机系统的结构分为以下四类：\\n\\n\",\"len\":4}','A;B;C;D','对并行计算机的分类有多种方法，其中最著名的是1966年由M.J.Flynn提出的分类法，称为Flynn分类法。Flynn分类法是从计算机的运行机制进行分类的。首先作如下定义：\r\n\r\n* 指令流（instruction stream）：机器执行的指令序列；\r\n* 数据流（data stream）：由指令流调用的数据序列，包括输入数据和中间结果。\r\n\r\nFlynn根据指令流和数据流的不同组织方式，把计算机系统的结构分为以下四类：\r\n\r\n* 单指令流单数据流（Single Instruction stream Single Data stream, SISD）；\r\n* 单指令流多数据流（Single Instruction stream Multiple Data stream, SIMD）；\r\n* 多指令流单数据流（Multiple Instruction stream Single Data stream, MISD）；\r\n* 多指令流多数据流（Multiple Instruction stream Multiple Data stream, MISD）。\r\n',3),(13,0,'{\"0\":\"(n/8+4) tc＋4tw, (n/8+4) tc＋4tw\",\"1\":\"(n/8+4) tc＋4tw, (n/8+4) tc＋3tw\",\"2\":\"(n/8+4) tc＋3tw, (n/8+4) tc＋4tw\",\"3\":\"(n/8+4) tc＋3tw, (n/8+4) tc＋3tw\",\"title\":\"将n个数相加，假设一个人相加两个数需要的时间为tc，那么一个人完成相加n个数需要(n-1)\\\\*tc。\\n\\n若由8个技能完全相同的人计算这n个数的和，且8|n，相邻的两个人传送一个数需时间tw，在下列两种情况下：\\n\\n1. 8个人坐成一圈。\\n2. 8个人坐成一行。\\n\\n完成n个数的相加各需多长时间？\",\"len\":4}','A',' 一个人完成n个数的相加需要的时间为(n-1)*tc \r\n \r\n 1. 若8个人坐成一圈，每个人完成n/8个数需要的时间为(n/8-1)\\*tc，从相邻的两个人同时开始向两个方向传送数据并相加，三次传送与相加需时间3(tc+tw)，最后，两个人再进行一次传送及一次计算就得到了最终结果。总的开销为(n/8-1)\\*tc＋ 3(tc+tw)＋(tc+tw)＝(n/8+4) tc＋4tw \r\n2. 同理，若8个人坐成一行，每个人完成n/8个数需要的时间为(n/8-1)\\*tc，从最远的两个人同时开始向中间方向传送数据并相加，最后，两个人再进行一次传送及一次计算就得到了最终结果。总的开销也为(n/8+4) tc＋4tw ',3),(14,4,'并行计算机的自动编程：设计一个并行化编译器，使用户的串行程序通过并行化编译器编译，直接可在并行机上运行。到目前为此，这种编译器**已经存在**，并广泛应用于许多学科中。\r\n','0','并行计算机的自动编程：可否设计一个并行化编译器，使用户的串行程序通过并行化编译器编译，直接可在并行机上运行。到目前为此，这种编译器还不存在，而仅有一些半自动并行化编译器。\r\n',3),(15,1,'{\"0\":\"计算密集型（Compute-Intensive）\",\"1\":\"数据密集型 (Data-Intensive)\",\"2\":\"文本密集型 (Text-Intensive)\",\"3\":\"网络密集型 (Network-Intensive)\",\"title\":\"并行计算的应用可概括为以下哪些方面\",\"len\":4}','A;B;D','科学与工程计算对并行计算的需求是十分广泛的，但所有的应用可概括为三个方面：\r\n\r\n* 计算密集型（Compute-Intensive）：这一类型的应用问题主要集中在大型科学工程计算与数值模拟（气象预报、地球物理勘探等）\r\n* 数据密集型 (Data-Intensive)：Internet的发展，为我们提供了大量的数据资源，但有效地利用这些资源，需要进行大量地处理，且对计算机的要求也相当高，这些应用包括数字图书馆、数据仓库、数据挖掘、计算可视化。\r\n* 网络密集型 (Network-Intensive)：通过网络进行远距离信息交互，来完成用传统方法不同的一些应用问题。如协同工作、遥控与远程医疗诊断等',3),(16,4,'SIMD中通常包含大量处理单元PE，而控制部件只有一个。控制部件广播一条指令，所有的处理单元同时执行这条指令，但不同的处理单元操作的数据可能不同。','1','SIMD中通常包含大量处理单元PE，而控制部件只有一个。控制部件广播一条指令，所有的处理单元同时执行这条指令，但不同的处理单元操作的数据可能不同。',3),(17,4,'并行向量处理机的最大特点是其中的各处理器完全平等，无主从之分。所有的处理器都可以访问任何存储单元和I/O设备。','0','对称多处理机 对称多处理机的最大特点是其中的各处理器完全平等，无主从之分。所有的处理器都可以访问任何存储单元和I/O设备。存储器一般使用共享存储器，只有一个地址空间。',3),(18,4,'为了维持一定的并行效率（介于 0 与 1 之间），当处理器 P 增大时，需要相应地增大问题规模 W 的值，由此定 义函数 fE(p)为问题规模 W 随处理器 P 变化的函数，称此函数为等效率函数。','1','',3),(19,4,'用户态线程和核心态线程都由操作系统直接调度。','0','',3),(20,4,'在广播通信中，单个进程传递相同的数据给所有的进程。','1','',3),(21,4,'while 循环语句是忙等待的一个例子。','1','',3),(22,4,'一个好的并行算法要既能很好地匹配并行计算机硬件体系结构的特点又能反映问题内在并行性。','1','',3),(23,4,'如果一个线程在临界区中执行代码，其他线程需要被排序在临界区外。','1','',3),(24,4,'计算机视觉不属于英特尔集成性能函数库(IPP)所涵盖的领域。','0','',3),(25,4,'控制单元负责决定应该执行程序中的哪些指令，而 ALU 负责执行指令核已经成为中央处理器或者 CPU 的代名词。','1','',3),(26,4,'OpenMP 是用于共享内存并行系统的多线程程序设计的一套指导性的编译处理方案(Compiler Directive)，也可以将其扩展到用于分布式内存的集群系统。','1','',3),(27,4,'在共享内存系统中，每个处理器有自己私有的内存空间，处理器-内存对之间通过互连网络相互通信。','0','',3),(28,4,'在 Amdahl 定律中，以 f 表示串行分量的比例，随着处理器数目的无限增大，并行系统所能够达到的加速上限是S=1/f。','1','',3),(29,4,'通过继续增快集成电路的速度来提高处理器性能是可行的。','0','',3),(30,4,'阻塞通信的功能都可以用非阻塞通信的方式实现。','1','',3),(31,4,'ALU 负责决定应该执行程序中的哪些指令，而控制单元负责执行指令。','0','',3),(32,4,'OpenMP 对同一个临界区不应当混合使用不同的互斥机制。','1','',3),(33,4,'MPI 中发送语句用整型，接收语句用实型可以匹配。','0','',3),(34,4,'在有效编程下，超线程性能要高于多核性能。','0','',3),(35,4,'MPI_COMM_RANK 是 MPI 的一个基本函数，它用于确定进程总数。','0','',3),(36,4,'并行计算中的并行性指问题中具有可在同一时刻发生的两个或者多个运算或者操作的特性。','0','',3),(37,4,'英特尔线程检查器能够找出线程间的工作不平衡。','0','',3),(38,4,'如果 MPI 程序中的某条输出语句在每一个进程都执行，则从标准输出上看，不同进程对该语句的输出在 顺序上是随机的。','1','',3),(39,4,'依赖于 MPI 提供的缓冲机制是安全的。','0','',3),(40,4,'利用矩阵向量相乘的方式进行离散傅立叶变换，计算复杂度是 O(n3),而快速傅里叶变换的时间复杂度是 O(nlogn)。','0','',3),(41,4,'对于一个给定的应用，并行算法相比于串行算法的性能提升是（1- T 并行执行时间/T 串行执行时间）','0','',3),(42,4,'一般来说，对高速缓冲存储器的访问时间比其他存储区域的访问时间短','1','',3),(43,4,'组通信需要该组内所有的进程都参加?。','1','',3),(44,4,'在细粒度多线程中，处理器在每条指令执行完后切换线程，从而跳过被阻塞的线程。','1','',3),(45,4,'英特尔 Parallel Inspector 采用动态技术，不需要特殊的检查工具或者编译','1','',3),(46,4,'虚拟进程数要小于实际的处理器的个数。','0','',3),(47,4,'Vtune 性能分析器能够分析程序中的代码错误并指出错误代码的位置。','0','',3),(48,4,'Linpack 是国际上最流行的用于测试高性能计算机系统浮点性能的 benchmark。它采用高斯消元法求解一 元 N 次稠密线性代数方程组，也即采用正交三角分解法（LU 分解）。','0','',3),(49,4,'在并行程序设计中，局部变量指的是单个函数的私有变量。','0','',3),(50,4,'忙等待是保护临界区的唯一办法。','0','',3),(51,4,'向量处理器与图形处理器单元一般划分在 SIMD 系统里。','1','',3),(53,4,'单处理器性能大幅度提升的主要原因之一是日益增加的集成电路晶体管密度。','1','',3),(55,4,'OS timer service 是 Vtune 性能分析器的基于时间的采样。','1','',3),(56,4,'利用虚拟存储器，使得主存可以作为辅存的缓存。','1','',3),(57,4,'在分布式内存系统中，各个核能够共享访问计算机的内存，理论上每个核能够读、写内存的所有','0','',3),(58,4,'在实现指令级并行中，流水线是指将功能单元分阶段安排。（','0','',3),(59,4,'Vtune 性能分析器不搜集执行代码在内存中的地址信息。','0','',3),(60,4,'将串行程序并行化，并行化的代码区域越多，程序的整体性能越好。','0','',3),(61,4,'多核 CPU 中也可以使用超线程技术。','1','',3),(62,4,'在大多数系统中，进程间的切换比线程间的切换更快。','0','',3),(64,4,'英特尔线程检查器能够找出线程间的工作不平衡。','0','',3),(65,4,'内存系统由多个内存“体”组成，每个内存体能够独立访问。','1','',3),(66,4,'阻塞通信的功能都可以用非阻塞通信的方式实现?。','1','',3),(67,4,'一个好的并行算法要既能很好地匹配并行计算机硬件体系结构的特点又能反映问题内在并行性','1','',3),(68,4,'组通信调用只能实现通信功能 。','0','',3),(69,4,'中央处理单元分为控制单元和算术逻辑单元。','1','',3),(71,4,'非阻塞通信的功能都可以用阻塞通信的方式实现?。','0','',3),(72,4,'Cache 3C 失效中的强制性失效不受 Cache 容量的影响。','1','',3),(73,4,'MPI 主从模式的并行程序可以为 SPMD 形式。','1','',3),(75,4,'多线程程序中，一个线程可以与同进程中的其它线程共享数据，因此当一个线程对全局变量 X赋值 0（即执行 x=0）之后，其它线程立刻读取 X，其值必为 0。','0','',3),(76,4,'在共享内存系统中，每个核拥有自己的私有内存，核之间的通信是显式的，必须使用类似于网络 中发送消息的机制。','0','',3),(77,4,'不管 OpenMP 语句以何种形式实现，修改同一变量的不同语句都将视为属于同一个临界区。','1','',3),(78,4,'在机群系统的并行应用中，一个进程先执行发送操作，另一个进程先执行相应的接收操作，是安 全的发送和接收序列。','1','',3),(81,4,'IPO 对于循环内包含调用的程序可以极大地提高其性能。','1','',3),(82,4,'操作系统是一种用来管理计算机的软件和硬件资源的主要软件。','1','',3),(83,4,'单处理器性能大幅度提升的主要原因之一是日益增加的集成电路晶体管密度。','1','',3),(86,4,'MPI 使用的是所谓的“推”（Push） 通信机制','1','',3),(87,4,'一块内存空间，包括可执行代码，一个用来跟踪执行函数的调用栈、一个堆，以及一些其他内存','1','',3),(88,4,'一个并行程序的并行效率越高，它的浮点性能就越高。','0','',3),(89,4,'MPI 中发送语句用整型，接收语句用实型可以匹配。','0','',3),(92,4,'有依赖关系的语句中一定有语句会有序地写或更新变量。','1','',3),(94,4,'OpenMP 只能并行化 for 循环，不能并行化 while 和 do-while 循环。','1','',3),(96,4,'用户态线程和核心态线程都由操作系统直接调度。','0','',3),(97,4,'并行算法求解问题只要保证与相应的串行算法一致的数据依赖，则其求解的结果与串行算法相同。','0','',3),(100,4,'向量处理器与图形处理器单元一般划分在 SIMD 系统里。','1','',3),(103,4,'大多数系统中，默认状态下，一个进程的内存块是公有的。','0','',3),(104,4,'在分布式内存和共享内存系统，所有进程/线程都能够访问 stdout 和 stder','1','',3),(106,4,'所有的向量数据类型都可以定义为结构数据类型。','1','',3),(108,4,'非阻塞发送语句可以用阻塞接收语句来接收。','1','',3),(109,4,'在写回 Cache 中，数据不是立即更新到主存中，而是将发生数据更新的高速缓存行标记为脏。','1','',3),(110,4,'当一个 for 循环存在循环依赖时不能被并行化。','1','',3),(111,0,'{\"0\":\"master\",\"1\":\"single\",\"2\":\"critical\",\"3\":\"atomic\",\"title\":\"指定代码只能由线程组中的一个线程执行的 OpenMP 编译制导命令是\",\"len\":4}','B','',3),(112,0,'{\"0\":\"Load-link 和普通的 Load 指令没有差别，只是多核处理器上的特别叫法。\",\"1\":\"Store-conditional 指令和普通的 Store 指令没有差别，只是多核处理器上的特别叫法。\",\"2\":\"Load-link 和 Store-conditional 指令可以用于实现同步原语。\",\"3\":\"Load-link 指令有可能失败。\",\"title\":\"下面关于 Load-link 和 Store-conditional 指令的说法，正确的是\",\"len\":4}','C','',3),(113,0,'{\"0\":\"带宽\",\"1\":\"速率\",\"2\":\"延迟\",\"3\":\"延迟带宽积\",\"title\":\"链路的（ ）是指它传输数据的速度。\",\"len\":4}','A','',3),(114,0,'{\"0\":\"critical\",\"1\":\"barrier\",\"2\":\"atomic\",\"3\":\"master\",\"title\":\"在并行域当中，在一段代码临界区之前只有一个线程进入，是使用什么关键字\",\"len\":4}','A','',3),(115,0,'{\"0\":\"M/0.85\",\"1\":\"M/(0.85+0.015M)\",\"2\":\"M/(0.85085+0.165M)\",\"3\":\"M/(0.85085+0.015M)\",\"title\":\"假设有一个计算问题，其中串行计算量占 15%。为实现并行计算，需要增加 1.5%的计算量，这部分计算量是不能并行执行的，并且与所使用处理器/执行内核的数量无关。此外，每个处理器执行内核在执行并行计算任务的过程中，还需要执行为所承担的并行任务执行一定的额外操作。这些额外操作的计算量是所承担并行任务量 的 0.1%。请问，在一个有 M 颗处理器/执行内核的计算平台上，并行程序可取得的最大加速比是多少？\",\"len\":4}','C','',3),(116,0,'{\"0\":\"共享\",\"1\":\"伪共享\",\"title\":\"缓存一致性强迫多个线程看起来好像是共享同一个内存单元，这称为()\",\"len\":2}','B','',3),(117,0,'{\"0\":\"栈\",\"1\":\"堆\",\"2\":\"线程局部存储\",\"3\":\"DATA 段\",\"title\":\"在 OpenMP 中，用 threadprivate 作用域标记的变量会存储在内存中的什么位置：\",\"len\":4}','C','',3),(118,0,'{\"0\":\"线程任务量不均衡\",\"1\":\"并行过载和顺序过载\",\"2\":\"以上都是\",\"title\":\"Intel(R)线程档案器为 OpenMP  提供了哪些功能？( ) A  并行代码和顺序代码的时间花费\",\"len\":3}','C','',3),(119,0,'{\"0\":\"都没有\",\"1\":\"都有\",\"2\":\"可有可无\",\"title\":\"MPI 的名字( )  前缀 MPI_\",\"len\":3}','B','',3),(120,0,'{\"0\":\"点对点通信\",\"1\":\"集合通信\",\"2\":\"广播\",\"title\":\"在 MPI 里涉及通信子中所有进程的通信函数是函数 ( )\",\"len\":3}','B','',3),(121,0,'{\"0\":\"任务并行\",\"1\":\"任务串行\",\"2\":\"数据并行\",\"3\":\"数据串行\",\"title\":\"编写并行程序将待解决问题所需要处理的数据分配给各个核的方法是（）\",\"len\":4}','C','',3),(122,0,'{\"0\":\"4\",\"1\":\"16\",\"2\":\"32\",\"3\":\"64\",\"title\":\"AMD 的 Radeon7970 图形卡包括（ ）个向量处理器(计算单元)?\",\"len\":4}','C','',3),(123,0,'{\"0\":\"动态功率\",\"1\":\"静态功率\",\"2\":\"动态功率和静态功率中较小的功率\",\"3\":\"动态功率与静态功率之和\",\"title\":\"CMOS 的动态功耗等于\",\"len\":4}','D','',3),(124,0,'{\"0\":\"效率\",\"1\":\"加速比\",\"title\":\"串行时间与并行时间的比值叫做\",\"len\":2}','B','',3),(125,0,'{\"0\":\"284\",\"1\":\"142\",\"2\":\"71\",\"3\":\"36；\",\"title\":\"要配置双精度浮点峰值性能是 20TFlops 的 HPC 集群，目前采用双路 2.93GHz  Intel  westmere 六核处理器 X5670来构建，我们知道该处理器的每个核都有两套浮点向量计算单元，问该集群共需要多少个计算节点？\",\"len\":4}','B','',3),(126,0,'{\"0\":\"KNF\",\"1\":\"KNC\",\"2\":\"KNL\",\"3\":\"KNH\",\"title\":\"What\'s the code name of 2nd generation Xeon Phi product?\",\"len\":4}','C','',3),(127,0,'{\"0\":\"61\",\"1\":\"48\",\"2\":\"57\",\"3\":\"72\",\"title\":\"How many cores on the Intel Xeon Phi product at least?\",\"len\":4}','C','',3),(128,0,'{\"0\":\"1\",\"1\":\"2\",\"2\":\"3\",\"3\":\"4\",\"title\":\"How many VPU will be available on the 2nd generation Xeon Phi product?\",\"len\":4}','B','',3),(129,0,'{\"0\":\"Relace static task partition with dynamic task partition\",\"1\":\"Remove MPI barrier\",\"2\":\"atomic computation\",\"title\":\"Which one is not the frequently used skills to tune MPI application?\",\"len\":3}','C','',3),(130,0,'{\"0\":\"Replace arrays with temporary variable\",\"1\":\"Replace 2D structure with 1D\",\"2\":\"AoS-＞SoA\",\"3\":\"Loop fusion and Loop Split\",\"title\":\"Which skill is not used for data restructure?\",\"len\":4}','D','',3),(131,1,'{\"0\":\"C 语言\",\"1\":\"C++语言\",\"2\":\"Fortran  语言\",\"title\":\"下面是 MPI 可以绑定的语言的是( )\",\"len\":3}','A;B;C','',3),(132,1,'{\"0\":\"消息拆卸\",\"1\":\"消息装配\",\"2\":\"消息传递\",\"title\":\"MPI 的消息传递过程分为 ( )\",\"len\":3}','A;B;C','',3),(133,1,'{\"0\":\"派生\",\"1\":\"合并\",\"2\":\"分离\",\"3\":\"消亡\",\"title\":\"如果进程是执行的“主线程”，其他线程由主线程启动和停止，那么我们可以设想进程和它的子线程如下进行， 当一个线程开始时，它从进程中（ ）出来；当一个线程结束，它（ ）到进程中。\",\"len\":4}','A;B','',3),(134,1,'{\"len\": 6, \"1\": \"执行终止\", \"title\": \"作为多遍优化算法 PGO 的三步过程由以下哪三步构成？( )\", \"5\": \"代码执行与评估\", \"3\": \"执行被插入信息采集代码的程序(Instrumented execution)\", \"4\": \"插入信息采集代码后编译(Instrumented compilation)\", \"0\": \"代码编译\", \"2\": \"反馈编译（feedback compilation）\"}','C;D','',3),(135,1,'{\"0\":\"少用锁，甚至采用无锁编程。\",\"1\":\"使用原子操作来替代锁。\",\"2\":\"从设计和算法层面来缩小串行化所占的比例。\",\"3\":\"设计并行指令\",\"title\":\"对于如何解决串行化方面的难题，以下表述正确的是：()\",\"len\":4}','A;B;C','',3),(136,1,'{\"0\":\"在 pthread 并行程序中，不允许 worker 线程执行函数调用\",\"1\":\"在 MPI 并行程序中，同一个串行函数，可以同时被多个进程分别执行\",\"2\":\"在 MPI 并行程序中，如果一个某个函数的数据运算划分到多个处理器上并行执行，则在参与计算的处理器 上都要执行该函数的调用\",\"3\":\"在 pthread 并行程序中，不允许 worker 线程执行线程创建操作\",\"title\":\"关于函数调用，下列哪些说法是正确的？\",\"len\":4}','B;C;D','',3),(138,1,'{\"0\":\"Computation Granularity *B Load Balance\",\"1\":\"Communication and I/O\",\"2\":\"Synchronization Overhead\",\"title\":\"To achieve the good load balance, which items may be needs to considered?\",\"len\":3}','A;B;C','',3),(139,1,'{\"0\":\"pragma ivdep\",\"1\":\"pragma simd\",\"2\":\"pragma vector align\",\"3\":\"pragma loop count(n)\",\"title\":\"Frenquently used pragma for vectorization includes\",\"len\":4}','A;B;C;D','',3),(140,0,'{\"0\":\"栈\",\"1\":\"堆\",\"2\":\"线程局部存储\",\"3\":\"DATA 段\",\"title\":\"在 OpenMP 中，用 threadprivate 作用域标记的变量会存储在内存中的什么位置：\",\"len\":4}','C','',3),(141,0,'{\"0\":\"集群\",\"1\":\"网格\",\"2\":\"分布式内存系统\",\"3\":\"共享内存系统\",\"title\":\"（）提供一种基础架构，使地理上分布的计算机大型网络转换成一个分布式内存系统，通常这样的系统是异构 的。\",\"len\":4}','B','',3),(143,0,'{\"0\":\"在传统的操作系统中，CPU  调度和分派的基本单位是进程\",\"1\":\"在引入线程的操作系统中，则把线程作为 CPU  调度和分派的基本单位\",\"2\":\"同一进程中线程的切换不会引起进程切换，从而避免了昂贵的系统调用\",\"3\":\"由一个进程中的线程切换到另一进程中的线程时，也不会引起进程切换\",\"title\":\"以下表述不正确的是：( )\",\"len\":4}','D','',3),(144,0,'{\"0\":\"信号量\",\"1\":\"互斥量\",\"title\":\"一个条件变量总是与一个 ( )相关联\",\"len\":2}','B','',3),(145,0,'{\"0\":\"任务,数据\",\"1\":\"任务,线程\",\"2\":\"数据,线程\",\"3\":\"进程,数据\",\"title\":\"OpenCL 提供了基于()和基于()的两种并行计算方式.\",\"len\":4}','A','',3),(146,0,'{\"0\":\"写回法\",\"1\":\"重复写\",\"2\":\"备份\",\"title\":\"当 CPU 向 Cache 中写数据时，Cache 中的值就会不同或者不一致，有两种方法：写直达和（ ）来解决这个不一 致性问题。\",\"len\":3}','A','',3),(147,0,'{\"0\":\"在 MIM*D 并行计算机上，并行程序的加速比不能随处理器执行核的数量按比例增长\",\"1\":\"并行程序的运行时间越短，加速比越高\",\"2\":\"确定了运行计算平台、及所使用的处理器数量，就可以确定并行程序的加速比\",\"3\":\"根据 Amdahl 定理，并行程序的加速比小于参与计算的处理器执行核数量\",\"title\":\"关于加速比，正确的说法是：\",\"len\":4}','A','',3),(148,0,'{\"0\":\"消息传递\",\"1\":\"负载平衡\",\"2\":\"同步\",\"3\":\"异步\",\"title\":\"在（）中，一个进程必须调用一个发送函数，并且发送函数必须与另一个进程调用的接受函数相匹配。\",\"len\":4}','A','',3),(149,0,'{\"0\":\"任务并行\",\"1\":\"任务串行\",\"2\":\"数据并行\",\"3\":\"数据串行\",\"title\":\"编写并行程序将待解决问题所需要处理的数据分配给各个核的方法是（）\",\"len\":4}','C','',3),(150,0,'{\"0\":\"合并最里面两层循环\",\"1\":\"最里层 for 循环用两个线程处理\",\"2\":\"合并最外两层循环\",\"title\":\"#pragma omp for collapse(2)的作用是什么？\",\"len\":3}','C','',3),(151,0,'{\"0\":\"分辨率\",\"1\":\"电压\",\"2\":\"电流\",\"title\":\"（ ）是指计时器的时间测量单位，是计时器在计时的过程中最短的非零时间跨度。\",\"len\":3}','A','',3),(152,0,'{\"0\":\"死锁\",\"1\":\"挂起\",\"title\":\"条件变量是一个数据对象，允许线程在某个特定条件或事件发生前都处于 ( )状态\",\"len\":2}','B','',3),(153,0,'{\"0\":\"NUMA 模型是高速缓存一致的、非均匀存储访问模型的简称。\",\"1\":\"并行计算机访存模型只有 NUMA、COMA 和 NORMA 这三种类型\",\"2\":\"多台 P*C 机通过网线连接形成的机群属于 NORM*A 非远程存储访问模型。\",\"3\":\"COMA 模型是 Coherent-Only Memory Access 的缩写。\",\"title\":\"下面哪个关于并行计算机的访存模型描述是对的？\",\"len\":4}','C','',3),(156,0,'{\"0\":\"随机的\",\"1\":\"特定的\",\"title\":\"不同进程对同一个内容的输出，其顺序是( )\",\"len\":2}','A','',3),(157,0,'{\"0\":\"共享存储并行计算模型包括 PRAM 模型和 BSP 模型\",\"1\":\"共享存储并行计算模型包括 LogP 模型和 PRAM 模型\",\"2\":\"分布式存储并行计算模型包括 PRAM 模型和 BSP 模型\",\"3\":\"分布式存储并行计算模型包括 LogP 模型和 BSP 模型；\",\"title\":\"下面关于并行计算模型，哪个描述是正确的？\",\"len\":4}','D','',3),(158,0,'{\"0\":\"MPI\",\"1\":\"CUDA\",\"2\":\"MapReduce\",\"3\":\"Pthreads\",\"title\":\"（ ）和 OpenMP 是为共享内存系统的编程而设计的，它们提供访问共享内存的机制。\",\"len\":4}','D','',3),(159,0,'{\"0\":\"3X\",\"1\":\"2X\",\"2\":\"1.5X\",\"3\":\"4X\",\"title\":\"How much improvement of Single-Thread Performance on 2nd generation compared to the 1st generation Intel Xeon Phi coprocessor?\",\"len\":4}','A','',3),(160,0,'{\"0\":\"128bits\",\"1\":\"512bits\",\"2\":\"256bits\",\"3\":\"64bits\",\"title\":\"How long is vector length on Xeon Phi?\",\"len\":4}','B','',3),(161,0,'{\"0\":\"4GB\",\"1\":\"8GB\",\"2\":\"16GB\",\"3\":\"32GB\",\"title\":\"What \'s the maxmum size of on-package memory (MCDRAM) will be available on 2nd generation Xeon Phi?\",\"len\":4}','C','',3),(162,0,'{\"0\":\"6\",\"1\":\"4\",\"2\":\"8\",\"3\":\"10\",\"title\":\"How many channels of DDR4 will be available on 2nd generation Xeon Phi?\",\"len\":4}','A','',3),(163,0,'{\"0\":\"KNF\",\"1\":\"KNC\",\"2\":\"KNL\",\"3\":\"KNH\",\"title\":\"What\'s the code name of 2nd generation Xeon Phi product?\",\"len\":4}','C','',3),(165,1,'{\"0\":\"MKL  是线程安全的， 可以在多线程中被使用\",\"1\":\"MKL  使用 OpenMP*  实现多线程\",\"2\":\"MKL  函数内部实现了多线程\",\"3\":\"MKL  函数内部实现了多线程，但 MKL 库不是线程安全的\",\"title\":\"下面关于英特 MKL 多线程的特性，哪些是正确的？( )\",\"len\":4}','A;B;C','',3),(166,1,'{\"0\":\"Microsoft\",\"1\":\"GNU\",\"2\":\"Intel\",\"title\":\"TBB 支持的 C++编译器包括：( )\",\"len\":3}','A;B;C','',3),(167,1,'{\"0\":\"concurrent_set\",\"1\":\"concurrent_queue\",\"2\":\"concurrent_hash_map\",\"3\":\"concurrent_vector\",\"title\":\"以下属于 TBB 中的并行容器的是：( )\",\"len\":4}','B;C;D','',3),(169,1,'{\"0\":\"进程 0 先执行 MPI_Send 发送 M0、然后执行 MPI_Recv 接收 M1，进程 1 先执行 MPI_Send 发送 M1、然后执行 MPI_Recv 接收 M0\",\"1\":\"进程 0 先执行 MPI_Recv 接收 M1、然后执行 MPI_Send 发送 M0，进程 1 执行 MPI_Recv 接收 M0、然后先执行 MPI_Send 发送 M1\",\"2\":\"进程 0 先执行 MPI_ISend 发送 M0、然后执行 MPI_Recv 接收 M1，进程 1 先执行 MPI_Send 发送 M1、然后执行 MPI_Recv 接收 M0\",\"3\":\"进程 0 先执行 MPI_IRecv 接收 M1、然后执行 MPI_Send 发送 M0，进程 1 执行 MPI_Recv 接收 M0、然后先执行 MPI_Send 发送 M1\",\"title\":\"进程 0 要将消息 M0 发送给进程 1，进程 1 要将消息 M1 发送给进程 0。下列哪几种情况下，可能出现“死锁”？\",\"len\":4}','A;B;C','',3),(170,1,'{\"0\":\"消息拆卸\",\"1\":\"消息装配\",\"2\":\"消息传递\",\"title\":\"MPI 的消息传递过程分为 ( )\",\"len\":3}','A;B;C','',3),(171,1,'{\"0\":\"编译器的编译优化\",\"1\":\"处理器的乱序执行\",\"2\":\"使用原子操作\",\"3\":\"使用单核 CPU\",\"title\":\"以下哪些选项有可能使得程序不会按照程序本身的顺序执行的\",\"len\":4}','A;B','',3),(172,1,'{\"0\":\"Use nontemporal pragma\",\"1\":\"pragma prefetch\",\"2\":\"the option of \\\"-qopt-streaming-stores=always\\\"\",\"3\":\"AoS-＞SoA\",\"title\":\"In order to improve memory bandwidth, comman used skills inlclude:\",\"len\":4}','A;C','',3),(173,1,'{\"0\":\"__attribute    ((aligned(n)))\",\"1\":\"mm_aligned_malloc(size, alignment_bytes)/);    mm_aligned_free()\",\"2\":\"scalable_aligned_malloc()/scalable_aligned_free()\",\"title\":\"Data alignment about dynamic memory can be achieved by __.\",\"len\":3}','B;C','',3),(174,0,'{\"0\":\"60%\",\"1\":\"70%\",\"2\":\"80%\",\"3\":\"90%\",\"title\":\"某并行任务中，通信部分占总时间 50%，计算占%40，而并行带来的额外开销占%10。经过优化，使得 通信与计算得到部分重叠，有 40%的通信时间被计算重叠。此时，总时间为原本的\",\"len\":4}','C','',3),(175,0,'{\"0\":\"进程\",\"1\":\"线程\",\"2\":\"接口\",\"title\":\"（ ）为程序员提供了一种机制，将程序划分为多个大致独立的任务，当某个任务阻塞时能执行其他任 务。\",\"len\":3}','B','',3),(176,0,'{\"0\":\"0\",\"1\":\"1\",\"2\":\"2\",\"3\":\"以上都有可能\",\"title\":\"在 Concurrent read concurrent write (CRCW) PRAM 模型中，两个处理器同时对初值为 0 的内存空间进行 加一操作（*p = *p + 1）。当其中一个处理器完成其操作时，该内存空间不可能的值是：\",\"len\":4}','A','',3),(178,0,'{\"0\":\"NUMA 模型是高速缓存一致的、非均匀存储访问模型的简称。\",\"1\":\"并行计算机访存模型只有 NUMA、COMA 和 NORMA 这三种类型\",\"2\":\"多台 PC 机通过网线连接形成的机群属于 NORMA 非远程存储访问模型。\",\"3\":\"COMA 模型是 Coherent-Only Memory Access 的缩写。\",\"title\":\"下面哪个关于并行计算机的访存模型描述是对的？\",\"len\":4}','C','',3),(180,0,'{\"0\":\"atomic\",\"1\":\"barrier\",\"2\":\"single\",\"3\":\"master\",\"title\":\"在并行域当中，指定一个数据操作原子性操作完成，是使用什么关键字\",\"len\":4}','A','',3),(181,0,'{\"0\":\"设计阶段\",\"1\":\"测试阶段\",\"2\":\"需求收集阶段\",\"3\":\"以上全部?\",\"title\":\"我们应该在产品生命周期中的哪个阶段考虑产品的性能？( )?\",\"len\":4}','C','',3),(182,0,'{\"len\": 4, \"1\": \"1\", \"title\": \"在 Exclusive read exclusive write (EREW) PRAM 模型中，三个处理器同时对初值为 0 的内存空间进行加一 操作（*p = *p + 1）。当所有处理器完成其操作时，该内存空间不可能的值是：\", \"3\": \"以上均不可能\", \"0\": \"0\", \"2\": \"2\"}','D','',3),(183,0,'{\"0\":\"进程\",\"1\":\"线程\",\"2\":\"接口\",\"3\":\"多发射\",\"title\":\"有两种主要方法来实现指令级并行：流水线和（ ）。\",\"len\":4}','D','',3),(184,0,'{\"0\":\"1\",\"1\":\"2\",\"2\":\"4\",\"3\":\"8\",\"title\":\"Intel Xeon Phi 处理器中，每个核有几个硬件线程。\",\"len\":4}','C','',3),(185,0,'{\"0\":\"barrier\",\"1\":\"single\",\"2\":\"atomic\",\"3\":\"master\",\"title\":\"在并行域当中，使代码线程同步，是使用什么关键字\",\"len\":4}','A','',3),(186,0,'{\"0\":\"忙等待\",\"1\":\"运行\",\"2\":\"就绪\",\"3\":\"休眠\",\"title\":\"在（ ）时，一个线程进入一个循环，这个循环的目的只是测试一个条件。\",\"len\":4}','A','',3),(191,0,'{\"0\":\"Data alignment\",\"1\":\"Cache blocking\",\"2\":\"Prefetch\",\"3\":\"data restructure\",\"title\":\"Which one is the freqently used skill to improve data locality?\",\"len\":4}','B','',3),(192,0,'{\"0\":\"O1\",\"1\":\"O2\",\"2\":\"O3\",\"3\":\"O0\",\"title\":\"What\'s the default vectorization option for Intel Compiler?\",\"len\":4}','B','',3),(195,1,'{\"len\": 4, \"1\": \"在引入线程的操作系统中，一个进程中的多个线程之间不可以并发执行\", \"title\": \"以下表述正确的是：( )\", \"3\": \"线程是拥有系统资源的一个独立单位，它可以拥有自己的资源\", \"0\": \"在引入线程的操作系统中，进程之间可以并发执行\", \"2\": \"进程是拥有系统资源的一个独立单位，它可以拥有自己的资源\"}','A;C','',3),(196,1,'{\"title\": \"Intel  调优助手能够给我们自动推荐代码改进办法，主要有以下哪些方面？ ( ) A  算法自动改进\", \"len\": 3, \"1\": \"取样向导增强\", \"0\": \"处理器瓶颈以及改进\", \"2\": \"超线程\"}','A;B;C','',3),(197,1,'{\"title\": \"避免对临界区竞争访问的基本方法有 ()\", \"len\": 3, \"1\": \"互斥量\", \"0\": \"忙等待\", \"2\": \"信号量\"}','A;B;C','',3),(198,1,'{\"title\": \"请说出目前 MPI 的主要免费实现的种类 ()\", \"len\": 3, \"1\": \"LAM\", \"0\": \"MPICH\", \"2\": \"CHIMP\"}','A;B;C','',3),(200,1,'{\"len\": 4, \"1\": \"Offload\", \"title\": \"The features supported on the 1st generation Xeon Phi include__\", \"3\": \"Symmetric\", \"0\": \"Native\", \"2\": \"Self-boot\"}','A;B;D','',3),(201,1,'{\"len\": 4, \"1\": \"pragma prefetch\", \"title\": \"In order to improve memory bandwidth, comman used skills inlclude:\", \"3\": \"AoS-＞SoA\", \"0\": \"Use nontemporal pragma\", \"2\": \"the option of \\\"-qopt-streaming-stores=always\\\"\"}','A;C','',3),(202,0,'{\"title\": \"以下哪个事例是 Vtune 性能分析器的基于事件的采样？ ( )\", \"len\": 3, \"1\": \"Every n processor ticks\", \"0\": \"Branch misprediction\", \"2\": \"Bugs encountered\"}','A','',3),(203,0,'{\"len\": 4, \"1\": \"1MB\", \"title\": \"Mmap()函数可以申请大页表空间，请问它申请的空间，每个页表的大小是多少?\", \"3\": \"4MB\", \"0\": \"512KB\", \"2\": \"2MB\"}','C','',3),(204,0,'{\"0\":\"stack\",\"1\":\"data section\",\"2\":\"register set\",\"3\":\"thread ID\",\"title\":\"同一进程下的线程可以共享以下\",\"len\":4}','B','',3),(205,0,'{\"0\":\"通信子\",\"1\":\"标签\",\"title\":\"在 MPI 中 ( )  指的是一组可以互相发送消息的进程集合\",\"len\":2}','A','',3),(206,0,'{\"0\":\"弱\",\"1\":\"强\",\"title\":\"如果程序可以在不增加问题规模的前提下维持恒定效率，那么程序拥有( )  扩展性\",\"len\":2}','B','',3),(207,0,'{\"0\":\"强确定性\",\"1\":\"弱确定性\",\"2\":\"非确定性\",\"title\":\"在任何一个 MIMD 系统中，如果处理器异步执行，那么很可能会引发（ ）。\",\"len\":3}','C','',3),(208,0,'{\"0\":\"进程悬挂\",\"1\":\"进程阻\",\"2\":\"进程死锁\",\"title\":\"如果一个进程试图接收消息，但没有相匹配的消息，那么该进程将会被永远阻塞在那里,这种情况叫做( )\",\"len\":3}','A','',3),(209,0,'{\"0\":\"条件变量\",\"1\":\"互斥量\",\"title\":\"在 Pthreads 中实现路障的更好方法是采用 ( )\",\"len\":2}','A','',3),(210,0,'{\"0\":\"各个线程共享同一个存储空间\",\"1\":\"一个条件信号可以唤醒多个线程\",\"2\":\"允许两个线程同时处于相同的临界区\",\"3\":\"采用互斥锁机制，可以解决线程之间的“读-写”冲突\",\"title\":\"关于 pthread 线程并行模型，正确的说法是：\",\"len\":4}','B','',3),(212,0,'{\"0\":\"采用超级流水线技术\",\"1\":\"采用超标量技术\",\"2\":\"以上都是\",\"3\":\"以上都不是\",\"title\":\"提高微处理器内部执行的并行性有哪些措施。( )\",\"len\":4}','C','',3),(213,0,'{\"0\":\"写回法\",\"1\":\"重复写\",\"2\":\"备份\",\"3\":\"写直达\",\"title\":\"在（ ）Cache 中，当 CPU 向 Cache 写数据时，高速缓存行会立即写入主存中。\",\"len\":4}','D','',3),(214,0,'{\"0\":\"Flynn 分类法\",\"1\":\"PCAM 方法\",\"2\":\"KMP 算法\",\"title\":\"通常（ ）用对并行硬件进行分类，通过系统可以处理的指令流数目和数据流数目来区别各个分类。\",\"len\":3}','A','',3),(216,0,'{\"0\":\"进程\",\"1\":\"线程\",\"2\":\"接口\",\"title\":\"当用户运行一个程序时，操作系统创建一个（ ）。\",\"len\":3}','A','',3),(217,0,'{\"0\":\"进程和线程都可以独立执行\",\"1\":\"线程是 CPU 调度和分派的基本单位\",\"2\":\"进程是系统进行资源分配和调度的一个独立单位\",\"3\":\"线程必须依存在进程中，由进程提供多个线程执行的控制\",\"title\":\"关于进程和线程的描述中不正确的是\",\"len\":4}','A','',3),(218,0,'{\"0\":\"MPI_Reduce\",\"1\":\"MPI_Allreduce\",\"2\":\"MPI_Reduce_scatter\",\"3\":\"MPI_Scan\",\"title\":\"在 MPI 集合通信中，下列哪一个函数可以完成多个进程间的前缀和（prefix sum）计算：\",\"len\":4}','D','',3),(219,0,'{\"0\":\"不可超越的\",\"1\":\"可超越的\",\"title\":\"MPI 要求消息是 ( )\",\"len\":2}','A','',3),(220,0,'{\"0\":\"互斥条件：一个资源每次只能被一个进程使用\",\"1\":\"请求与保持条件：一个进程因请求资源而阻塞时，对已获得的资源保持不放\",\"2\":\"资源分配不当:资源分配的顺序不合理\",\"3\":\"循环等待条件:若干进程之间形成一种头尾相接的循环等待资源关系\",\"title\":\"产生死锁的必要条件不包括\",\"len\":4}','C','',3),(221,0,'{\"0\":\"进程悬挂\",\"1\":\"进程阻碍\",\"2\":\"进程死锁\",\"title\":\"标签不匹配和目标进程的进程号与源进程的进程号不相同都会导致 （）\",\"len\":3}','A','',3),(222,0,'{\"0\":\"SSE\",\"1\":\"IMCI\",\"2\":\"AVX2\",\"3\":\"AVX-512\",\"title\":\"What\'s the instruction set on 2nd generation xeon phi?\",\"len\":4}','D','',3),(223,0,'{\"0\":\"Add compiler option\",\"1\":\"pragma prefetch\",\"2\":\"prefetch intrinsic\",\"3\":\"Cache blocking\",\"title\":\"Which skill is not used for prefetch?\",\"len\":4}','D','',3),(224,1,'{\"0\":\"MPICH\",\"1\":\"LAM\",\"2\":\"CHIMP\",\"title\":\"请说出目前 MPI 的主要免费实现的种类 ()\",\"len\":3}','A;B;C','',3),(225,1,'{\"0\":\"编写适用于特定 CPU  的优化代码\",\"1\":\"避免冗余的函数调用\",\"2\":\"避免不必要的边界检查\",\"3\":\"利 用局部变量保存中间计算结果\",\"title\":\"独立于体系结构性能优化方法主要有：( )\",\"len\":4}','B;C;D','',3),(227,1,'{\"len\": 4, \"1\": \"扩展指令集\", \"title\": \"对于现代微处理器体系结构而言，对性能优化影响比较大的主要是：( )\", \"3\": \"指令流水线的深度\", \"0\": \"超标量\", \"2\": \"乱序执行\"}','A;C;D','',3),(228,1,'{\"0\":\"Intel C/C++编译器\",\"1\":\"IPP 性能库\",\"2\":\"MKL 函数库\",\"3\":\"TBB 多线程开发库\",\"title\":\"英特尔 Parallel Composer 主要包含：( )\",\"len\":4}','A;B;D','',3),(229,1,'{\"0\":\"基于时间取样\",\"1\":\"随机取样\",\"2\":\"基于事件取样\",\"3\":\"线性取样\",\"title\":\"VTune  性能分析器中的取样功能有哪几种方式？()\",\"len\":4}','A;C','',3),(232,1,'{\"0\":\"OpenMP\",\"1\":\"Intel Cilk Plus,\",\"2\":\"Intel Threading Building Blocks\",\"title\":\"Which are the frenquently used multi-thread parallelization methods? A MPI\",\"len\":3}','A;B;C','',3),(233,0,'{\"0\":\"没有区别所以没有代价\",\"1\":\"和-O1(/O1)相比可能会大幅增加代码大小\",\"2\":\"性能优势将只能发挥在某些特定硬件平台上\",\"title\":\"使用 Intel 编译器时，开关-O2 对代码进行和开关-O1 或/O1 相类似的优化，但是会以什么为“代价”？( )\",\"len\":3}','C','',3),(235,0,'{\"0\":\"程序计数器\",\"1\":\"寄存器集合\",\"2\":\"堆栈\",\"3\":\"堆\",\"title\":\"一个标准的线程不一定需要哪一项资源？\",\"len\":4}','D','',3),(236,0,'{\"0\":\"flush\",\"1\":\"critical\",\"2\":\"atomic\",\"3\":\"master\",\"title\":\"在并行域当中，保证各个 openmp 线程数据影像的一致性，是使用什么关键字\",\"len\":4}','A','',3),(237,0,'{\"0\":\"稳定\",\"1\":\"速率\",\"2\":\"延迟\",\"3\":\"抖动\",\"title\":\"两个常用来衡量互连网络性能的指标：（ ）和带宽。\",\"len\":4}','C','',3),(238,0,'{\"0\":\"OpenMP  可以根据目标系统尽量使用最优数量的线程个数。\",\"1\":\"使用线程池可以避免为每个线程创建新进程的开销\",\"2\":\"线程池通常具有最大线程数限制，如果所有线程都繁忙，而额外的任务将放入队列中，直到有线程可用时 才能够得到处理\",\"3\":\"对于有优先级的线程，也可以使用线程池\",\"title\":\"以下表述错误的是：()\",\"len\":4}','D','',3),(239,0,'{\"0\":\"单指令多数据\",\"1\":\"多指令多数据\",\"2\":\"分布式内存\",\"3\":\"共享内存\",\"title\":\"（ ）系统支持同时多个指令流在多个数据流上操作。\",\"len\":4}','B','',3),(241,0,'{\"0\":\"进程级\",\"1\":\"线程级\",\"2\":\"程序级\",\"3\":\"任务级\",\"title\":\"（ ）并行是尝试通过同时执行不同线程来提供并行性。\",\"len\":4}','B','',3),(242,0,'{\"0\":\"可以，会\",\"1\":\"可以，不会\",\"2\":\"不可以，会\",\"3\":\"不可以，不会\",\"title\":\"具有不同局部性的存储单元，__放置在同一 cache 行中，这样__引发伪共享问题。( )\",\"len\":4}','C','',3),(243,0,'{\"0\":\"MKL_solver.lib\",\"1\":\"MKL_lapack.lib\",\"2\":\"MKL_c.lib\",\"3\":\"MKL_c_dll.lib\",\"title\":\"在 Windows*中静态链接 MKL  的 DFT 函数，应该选择下面哪一个 MKL 库\",\"len\":4}','B','',3),(244,0,'{\"0\":\"主存\",\"1\":\"寄存器\",\"2\":\"互联结构\",\"3\":\"程序计数器\",\"title\":\"控制单元有一个特殊的存储器，用来存放下一条指令的地址，叫做（ ）\",\"len\":4}','D','',3),(245,0,'{\"0\":\"4\",\"1\":\"16\",\"2\":\"32\",\"3\":\"64\",\"title\":\"AMD 的 Radeon7970 图形卡包括（ ）个向量处理器(计算单元)?\",\"len\":4}','C','',3),(247,0,'{\"0\":\"Loop Interchange\",\"1\":\"Data restructure\",\"2\":\"vectorization\",\"3\":\"Cache Blocking\",\"title\":\"Which optimization methods is not used in the case of \\\"small matrix multiplication\\\"?\",\"len\":4}','D','',3),(248,0,'{\"title\": \"Which optimization may not apply for below code?\", \"len\": 3, \"1\": \"Parallelization and Use \\\"pragma omp atomic\\\" to make sure the right result\", \"0\": \"Vectorize the loop\", \"2\": \"Pre-caculate rand() and store into an array\"}','A','',3),(249,0,'{\"0\":\"Reduce IO latentcy\",\"1\":\"Improve cache hit rate\",\"2\":\"Vectorization\",\"3\":\"Parallelization\",\"title\":\"What is the key reason for performance improvement after replacing Glibc rand() with Intel Math Kernel Library random generator in the case of \\\"Deep Learning\\\"?\",\"len\":4}','C','',3),(250,0,'{\"title\": \"Which one is not the potential issue of the code?\", \"len\": 3, \"1\": \"In the most inner loop, bad vectorization effect,even can\'t be vectorized\", \"0\": \"Can\'t be parallelized in the outer loop\", \"2\": \"non-contiguous memory access\"}','A','',3),(251,0,'{\"title\": \"Which option is commanly used for detailed vectorization information? D-no-vec\", \"len\": 3, \"1\": \"-fno-alias\", \"0\": \"-ansi-alias\", \"2\": \"-qopt-report\"}','C','',3),(259,1,'{\"len\": 4, \"1\": \"Intel? Cilk? Plus Array Notations\", \"title\": \"The common used vectorization methods include\", \"3\": \"Intrinsics\", \"0\": \"Auto-Vectorized using \\\"pragma\\\"\", \"2\": \"Elemental Functions\"}','A;B;C;D','',3),(260,0,'{\"0\":\"弱\",\"1\":\"强\",\"title\":\"如果当问题规模增加，需要通过增大进程数来维持程序效率的，那么程序拥有（）可扩展性\",\"len\":2}','A','',3),(261,0,'{\"0\":\"master\",\"1\":\"barrier C atomic D Single\",\"title\":\"在并行域当中，指定一段代码由主线程执行，是使用什么关键字\",\"len\":2}','A','',3),(264,0,'{\"0\":\"当两个或多个进程试图在同一时刻访问共享内存，或读写某些共享数据，就会产生竞争条件\",\"1\":\"每个临界区都有相应的进入区（entry section）和退出区（exit section）\",\"2\":\"可能有两个线程同时进入临界区。\",\"3\":\"临界区的存在就是为了保证当有一个线程在临界区内执行的时候，不能有其他任何进程被允许在临界区执 行\",\"title\":\"以下表述不正确的是：( )\",\"len\":4}','C','',3),(265,0,'{\"0\":\"线程\",\"1\":\"进程\",\"title\":\"在共享内存编程中，运行在一个处理器上的一个程序实例称为( )\",\"len\":2}','A','',3),(266,0,'{\"0\":\"进程\",\"1\":\"线程\",\"2\":\"接口\",\"title\":\"（ ）为程序员提供了一种机制，将程序划分为多个大致独立的任务，当某个任务阻塞时能执行其他任 务。\",\"len\":3}','B','',3),(268,0,'{\"0\":\"主存\",\"1\":\"寄存器\",\"2\":\"互联结构\",\"3\":\"程序计数器\",\"title\":\"CPU 中的数据和程序执行时的状态信息存储在特殊的快速存储介质中，即（ ）。\",\"len\":4}','B','',3),(269,0,'{\"0\":\"计算强度低\",\"1\":\"计算强度相当\",\"2\":\"较难实现负载均衡\",\"3\":\"时间开销较小\",\"title\":\"在并行计算中,粗粒度的并行相对细粒度的并行来说\",\"len\":4}','C','',3),(272,0,'{\"0\":\"通信\",\"1\":\"负载平衡\",\"2\":\"同步\",\"3\":\"异步\",\"title\":\"一个或多个核将自己的部分和结果发送给其他的核这一过程称之为：（）\",\"len\":4}','A','',3),(275,0,'{\"title\": \"在一个集合通信中，如果属于一个进程的数据被发送到通信子中的所有进程，则这样的集合通信叫做 ( )\", \"len\": 3, \"1\": \"集合通信\", \"0\": \"点对点通信\", \"2\": \"广播\"}','C','',3),(277,0,'{\"0\":\"single\",\"1\":\"barrier\",\"2\":\"atomic\",\"3\":\"master\",\"title\":\"在并行域当中，有一段代码想用单线程执行，是使用什么关键字\",\"len\":4}','A','',3),(279,0,'{\"0\":\"锁类似于信号量，不同之处在于在同一时刻只能使用一个锁。\",\"1\":\"锁有两个操作，分别是获取锁和释放锁\",\"2\":\"互斥量是一种锁，线程对共享资源进行访问之前必须先获得锁；否则线程将保持等待状态，直到该锁可用。\",\"3\":\"若线程不主动放弃锁，其他线程可以抢占它\",\"title\":\"对于锁，以下表述不正确的是：( )\",\"len\":4}','D','',3),(281,0,'{\"len\": 4, \"1\": \"除非你已经有了一个相当清晰可靠的非优化版本的实现，否则你不要试图对程序进行优化\", \"title\": \"Jackson  优化定律是指：( )\", \"3\": \"以上两条都不是\", \"0\": \"不要进行优化\", \"2\": \"以上两条都是\"}','C','',3),(282,0,'{\"len\": 4, \"1\": \"线程是 CPU 调度和分派的基本单位\", \"title\": \"关于进程和线程的描述中不正确的是\", \"3\": \"线程必须依存在进程中，由进程提供多个线程执行的控制\", \"0\": \"进程和线程都可以独立执行\", \"2\": \"进程是系统进行资源分配和调度的一个独立单位\"}','A','',3),(283,0,'{\"0\":\"2\",\"1\":\"4\",\"2\":\"6\",\"3\":\"8\",\"title\":\"How many threads per core on Xeon Phi?\",\"len\":4}','B','',3),(284,0,'{\"0\":\"Improve TLB hit ratio.\",\"1\":\"Improve memory bandwidth\",\"2\":\"Improve data locality\",\"title\":\"What\'s the purpose of huge page setting on Xeon Phi?\",\"len\":3}','A','',3),(294,1,'{\"0\":\"笛卡儿拓扑\",\"1\":\"图拓扑\",\"title\":\"下面是 MPI 提供的拓扑是 ( )\",\"len\":2}','A;B','',3),(756,3,'下列函数将一个数组A变换成另一个数组B，A和B的元素数量相同、且![](/static/upload/mdimages/20161228163737.png)。数组A和数组B已预先划分成若干个等长片段，每个片段的大小为size，第k个片段存储在通信子\\*comm的第k号进程上。在每个处理器上，数组A的本地片段的存储空间起始地址为函数参数”A”、 数组B的本地片段的存储空间起始地址为函数参数”B”。请补充缺少的代码。\r\n\r\n```\r\nvoid mysum(MPIComm *comm, int *A, int *B, int size) {\r\n  int i, rank, np, *sum;\r\n  MPICommsize(*comm, &np);\r\n  MPICommrank(*comm, &rank);  \r\n  B[0] = A[0];\r\n  for(i=1; i<size; i++) B[i] = B[i-1] + A[i];\r\n sum = new int[np];\r\n  MPIAllgather(&B[size-1], 1, MPIINT, sum, 1, MPIINT, *comm);\r\n *sum[rank] = 0;for(i=0; i<rank; i++) sum[rank] += sum[i];for(i=0; i<size; i++) B[i] += sum[rank]; *\r\n delete[] sum; \r\n}\r\n```\r\n','{\"0\":\"comm的第k号进程上。在每个处理器上，数组A的本地片段的存储空间起始地址为函数参数”A”、 数组B的本地片段的存储空间起始地址为函数参数”B”。请补充缺少的代码。\\n\\n```\\nvoid mysum(MPIComm \",\"1\":\"A, int \",\"2\":\"sum;\\n\\tMPICommsize(\",\"3\":\"comm, &rank);\\t\\n\\tB[0] = A[0];\\n\\tfor(i=1; i<size; i++) B[i] = B[i-1] + A[i];\\n\\tsum = new int[np];\\n\\tMPIAllgather(&B[size-1], 1, MPIINT, sum, 1, MPIINT, \",\"4\":\"sum[rank] = 0;for(i=0; i<rank; i++) sum[rank] += sum[i];for(i=0; i<size; i++) B[i] += sum[rank]; \",\"len\":5}','',3),(757,3,'下列程序的输出结果为：0 1 2 3 4 5 6 7 7 6 5 4 3 2 1 0。请补充缺少的代码。提示：对线程从0开始编号，先顺序输出线程编号，再逆序输出线程编号。\r\n\r\n```\r\n#include <pthread.h>\r\n#include <unistd.h>  \r\n#include <stdlib.h>  \r\n#include <stdio.h>  \r\n#define THREAD_NUM 8      \r\nint threadid = 0;\r\npthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;\r\npthread_cond_t  cond  = PTHREAD_COND_INITIALIZER;\r\nvoid *fun(void *arg) {\r\n    *缺少的代码*\r\n pthread_exit(NULL);\r\n} \r\nint main(int argc, char* argv[])  {  \r\n    int i;\r\n  pthread_t *threads;  \r\n threads = new pthread_t[THREAD_NUM];      \r\n    for(i=0; i<THREAD_NUM; i++)  pthread_create(&threads[i], NULL, fun, NULL); \r\n    for(i=0; i<THREAD_NUM; i++)  pthread_join(threads[i], NULL);\r\n    delete[] threads;\r\n    printf(\"\\n\");\r\n    return EXIT_SUCCESS;  \r\n}\r\n```\r\n','{\"0\":\"fun(void \",\"1\":\"缺少的代码\",\"2\":\" argv[])  {  \\n    int i;\\n\\tpthread_t \",\"len\":3}','',3),(758,3,'下列程序输出结果：sum=4950。请补充缺少的代码。提示：线程函数\\*fun(void \\*arg)的功能是对一个数组片段的各元素求和，并通过原子操作将计算结果规约到\\*arg中的sum分量上。\r\n\r\n```\r\n#include <pthread.h>\r\n#include <unistd.h>  \r\n#include <stdlib.h>  \r\n#include <stdio.h>        \r\nstruct Task {\r\n int *data, *sum, first, last;\r\n};\r\nvoid *fun(void *arg) {\r\n Task& task=*(Task*)arg;\r\n int sum=0, i; \r\n  for(i=task.first; i<task.last; i++) sum+=task.data[i];\r\n  __sync_fetch_and_add (task.sum, sum);\r\n pthread_exit(NULL);\r\n} \r\nint main(int argc, char* argv[])  {  \r\n    int       i, data[100], sum=0, thread_num=sysconf(_SC_NPROCESSORS_ONLN);\r\n  pthread_t *threads;  \r\n Task      *tasks; \r\n  for(i=0; i<100; i++) data[i] = i;\r\n tasks   = new Task[thread_num];\r\n threads = new pthread_t[thread_num];\r\n  *缺少的代码*\r\n    for(i=0; i<thread_num; i++)  pthread_create(&threads[i], NULL, fun, &tasks[i]); \r\n    for(i=0; i<thread_num; i++)  pthread_join(threads[i], NULL);\r\n    delete[] tasks;\r\n    delete[] threads;\r\n    printf(\"sum=%d\\n\", sum);    \r\n    return EXIT_SUCCESS;  \r\n}\r\n```\r\n','{\"0\":\"fun(void \\\\\",\"1\":\"arg中的sum分量上。\\n\\n```\\n#include <pthread.h>\\n#include <unistd.h>  \\n#include <stdlib.h>  \\n#include <stdio.h>        \\nstruct Task {\\n\\tint \",\"2\":\"sum, first, last;\\n};\\nvoid \",\"3\":\"arg) {\\n\\tTask& task=\",\"4\":\")arg;\\n\\tint sum=0, i;\\t\\n\\tfor(i=task.first; i<task.last; i++) sum+=task.data[i];\\n\\t__sync_fetch_and_add (task.sum, sum);\\n\\tpthread_exit(NULL);\\n} \\nint main(int argc, char\",\"5\":\"threads;  \\n\\tTask      \",\"6\":\"缺少的代码\",\"len\":7}','',3),(759,3,'下列函数实现数组元素求和：数组的大小为array_size，其元素全部存储在通信子\\*comm的第root号进程上，array是数组的起始地址，计算结果也返回给第root号进程。请补充缺少的代码。\r\n\r\n```\r\n#define SIZE       20 \r\n#define NOTASK     1\r\n#define NEWTASK    2  \r\nint my_sum(MPI_Comm* comm, int *array, int array_size, int root) {\r\n  MPI_Status  status;\r\n int rank, i, size, data[SIZE], val=0;\r\n MPI_Comm_rank(*comm, &rank);  \r\n  if ( rank==root ) {\r\n   *缺少的代码*\r\n }\r\n else while(1) {\r\n   MPI_Send(&val, 1, MPI_INT, root, 0, *comm);\r\n   MPI_Recv(data, SIZE, MPI_INT, root, MPI_ANY_TAG, *comm, &status);\r\n   if (status.MPI_TAG==NOTASK) break;\r\n    val = 0;\r\n    MPI_Get_count(&status, MPI_INT, &size);\r\n   for(i=0; i<size; i++) val += data[i];\r\n } \r\n}\r\n```','{\"0\":\"comm的第root号进程上，array是数组的起始地址，计算结果也返回给第root号进程。请补充缺少的代码。\\n\\n```\\n#define SIZE       20 \\n#define NOTASK     1\\n#define NEWTASK    2  \\nint my_sum(MPI_Comm\",\"1\":\"array, int array_size, int root) {\\n\\tMPI_Status  status;\\n\\tint rank, i, size, data[SIZE], val=0;\\n\\tMPI_Comm_rank(\",\"2\":\"缺少的代码\",\"3\":\"comm);\\n\\t\\tMPI_Recv(data, SIZE, MPI_INT, root, MPI_ANY_TAG, \",\"len\":4}','',3),(760,5,'在有24颗执行核的SMP/多核处理器系统上，对二维矩阵A进行2D5P模板计算，假设A的规模为2m2n，m>n>5。请设计一个并行求解算法并给出该算法的加速比上限。\r\n\r\n','','',3),(761,5,'A和B是两个单精度浮点数的矩阵，A的规模为n×m、B的规模为m×k。请问，在CUDA上实现矩阵乘法A×B时，GPU与设备内存之间的最少数据交换量为多少？假设执行配置中，线程块的笛卡尔结构为r×c。','','',3),(762,5,'矩阵A的规模是2^m×2^n、矩阵B的规模是2^n×2^k。在一个由2^2p颗处理器构成的BSP上，采用流水并行执行A×B。假设m、n、k均大于p。\r\n\r\na)  每颗处理上消耗的存储空间规模是多少？\r\n\r\nb)  要执行多少个超级计算步？\r\n\r\nc)  在计算过程中，每颗处理器总共要发送多少个数据元素？ ','','',3),(763,5,'一个无权图G的顶点数量为n、半径为α、直径为β。在一个APRAM-CRCW并行计算机上以最快速度执行BFS，请问并行计算效率的上限和下限分别是多少？假设在该APRAM-CRCW并行计算机上，一个操作内可以完成两项计算：某个顶点的状态更新计算；比较当前顶点被更新前后的状态值并将比较结果写入并行计算机的存储空间。','','',3),(764,5,'在一个由p颗处理器构成的BSP上将数组A变换成数组B，A和B都有n个元素，B的每个元素 Bi 的值是![](/static/upload/md_images/20161229234518.png)。假设p远小于n，设计一个并行求解算法并给出该算法的加速比上限。','','',3),(765,5,'在一台BSP并行计算机上，共有p颗处理器。请问：为尽可能快的完成两个长度为N的向量的点积运算，共需要执行多少个超级计算步、并简述计算超级计算步数量的依据。假设N远大于p。','','',3),(766,5,'在p颗处理器的PRAM并行计算机上对N个元素求和。请问加速比和并行计算效率分别是多少？','','',3),(767,5,'一个N-body问题中包括2^n个粒子。在一个由2^p颗处理器构成的BSP上采用分治并行计算粒子的受力，在一个时间步上要经过多少个超级计算步才能计算出一个粒子的受力？假设n大于p。','','',3),(768,5,'一个N-body问题中包括2^n个粒子。在一个由2^p颗处理器构成的SMP系统上采用流水并行计算粒子的受力。假设SMP系统上每个存储单位可以存储一个粒子的全部信息；n大于p。\r\n\r\na) 使用Pthreads编程实现，应用程序的内存开销是多少？ \r\n\r\nb) 使用MPI编程实现，应用程序的内存开销是多少？\r\n','','',3),(769,5,'假设有一个计算问题，其中串行计算量占15%。为实现并行计算，需要增加1.5%的计算量，这部分计算量是不能并行执行的，并且与所使用处理器/执行内核的数量无关。此外，每个处理器/执行内核在执行并行计算任务的过程中，还需要执行为所承担的并行任务执行一定的额外操作。这些额外操作的计算量是所承担并行任务量的0.1%。请问：\r\n\r\na) 在一个有M颗处理器/执行内核的计算平台上,并行程序可取得的最大加速比是多少？\r\n\r\nb)   为了使得并行计算效率至少为70%，M最大可为多少？\r\n','','',3),(770,5,'假设A和B是两个向量，各存储N个复数。请问执行A和B的向量乘(A的第I个元素与B的第I个元素相乘)，至少需要多少次乘法运算?','','',3);
 /*!40000 ALTER TABLE `questions` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1562,7 +1199,7 @@ CREATE TABLE `users` (
 
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
-INSERT INTO `users` VALUES (1,'root','pbkdf2:sha1:1000$xBnOyGu0$2265b81c262f0438d80348748b24db1f66a65425','1291023320@qq.com','name',1,'13800138000','university','0',1,'2017-03-24 09:24:17','2016-09-29 03:14:30','','1.png?t=1475844478.0',1,'知其然，知其所以然。知识广度是深度的副产品！',6,1,3,NULL),(2,'test','pbkdf2:sha1:1000$JZE0rscV$a7b07ad8602a608e76dc583142b1aaf2c378c55b','1@qq.com','name',1,'13800138000','university','0',0,'2017-01-04 14:13:35','2016-09-29 03:35:29',NULL,'none.jpg',1,'好好学习，天天向上',0,0,1,NULL),(3,'teacher','pbkdf2:sha1:1000$ZRqJzJuR$ec4e50db6eb3eaae92e7cb8bd9468fd2743c3505','teacher@qq.com','张三丰',0,'13800138000','中山大学','150101102',0,'2017-04-14 16:30:44','2016-09-29 03:36:08','http://sdcs.sysu.edu.cn','3.png?t=1489327909.05',2,'混吃等死不舒服',0,4,6,NULL),(4,'abc','pbkdf2:sha1:1000$Z0hb47ZO$8cc84309e6a696c6deb28d6ebb910fa828d16e3d','3@qq.com','name',1,'13800138000','university','0',0,'2016-10-23 10:40:03','2016-10-17 03:00:38',NULL,'none.jpg',1,NULL,1,2,0,NULL),(5,'admin','pbkdf2:sha1:1000$h9IWWCJh$78e5c725ab15124732c7b19dbe43775df4e823e1','admin@qq.com','name',1,'13800138000','university','0',0,'2017-03-23 15:23:28','2016-10-22 11:41:15',NULL,'none.jpg',0,NULL,0,0,0,NULL),(6,'wudi','pbkdf2:sha1:1000$6eg5KT1A$36731eb6b025347439f6f333050fa727f7d74d94','wudi27@mail.sysu.edu.cn','吴迪测试2',0,'13800138000','中山大学','14312412',0,'2017-03-22 23:09:29','2016-10-18 02:57:55','netlab.sysu.edu.cn','6.png?t=1490195402.92',2,NULL,1,1,0,NULL),(7,'yongyi_yang','pbkdf2:sha1:1000$qeUp02pL$088fe9b296a054b622d5b3826045d9c7dbd28e9c','18826073128@163.com','name',1,'13800138000','university','0',0,'2016-12-15 12:03:44','2016-10-18 15:03:29',NULL,'none.jpg',1,NULL,2,0,0,NULL),(8,'alexhanbing','pbkdf2:sha1:1000$MsiV0RcE$b9d0794fd92ce0f1d6c3432f4a68614ec60294ca','565613352@qq.com','name',1,'13800138000','university','0',0,'2016-10-21 14:18:52','2016-10-21 14:18:52',NULL,NULL,1,NULL,0,3,0,NULL),(9,'forest80','pbkdf2:sha1:1000$34jYf26A$3f6f628bd4e48ed8492219171920e9d498d5023b','forest80@163.com','name',1,'13800138000','university','0',1,'2016-12-05 14:04:15','2016-12-05 14:04:15',NULL,'none.jpg',1,NULL,0,0,0,NULL),(10,'Zouzhp','pbkdf2:sha1:1000$fzjFGAmb$30667cca608819c147c04d5a49671989dd66cefd','503951764@qq.com','name',1,'13800138000','university','0',1,'2017-03-16 10:29:13','2016-12-12 10:22:07',NULL,'10.png?t=1481509362.88',1,NULL,0,0,0,NULL),(11,'test1','pbkdf2:sha1:1000$3fdjJ0du$b93a90b23e1365bd53962cf7339ff69d7c6e0423','test@163.com','name',1,'13800138000','university','0',1,'2016-12-15 12:15:14','2016-12-15 12:15:14',NULL,'none.jpg',1,NULL,0,0,0,NULL),(12,'test_nscc','pbkdf2:sha1:1000$ANtf20qe$a3f467c203a80abde2b126307f04af5affb50164','lijianggs@126.com','name',1,'13800138000','university','0',1,'2017-03-12 21:06:06','2017-01-03 15:14:08',NULL,'none.jpg',1,NULL,0,0,0,NULL),(13,'111','pbkdf2:sha1:1000$DaD5XWyO$c00d0caab874bac4e3ef1328bdcfc0408a5974b9','1970025901@qq.com','name',1,'13800138000','university','0',1,'2017-03-21 16:32:50','2017-01-09 18:47:36',NULL,'none.jpg',1,NULL,0,0,0,NULL),(14,'233','pbkdf2:sha1:1000$OdRDanMv$0def1b35ce8cb669df1034d4a2c2bb1d057bbae6','50395@qq.com','name',1,'13800138000','university','0',1,'2017-01-14 21:42:28','2017-01-14 21:42:28',NULL,'none.jpg',1,NULL,0,0,0,NULL),(15,'dwu','pbkdf2:sha1:1000$99UY1dEj$fe3e2848ca6be8d45783b7d2047ad83a1d38d9c8','wudi.cuhk@foxmail.com','name',1,'13800138000','university','0',0,'2017-03-25 22:07:05','2017-03-05 12:22:41',NULL,'15.png?t=1490194462.8',2,NULL,0,0,0,NULL),(16,'hpc','pbkdf2:sha1:1000$JB014WRQ$4027e13bcfc8fe8f5543aeb1e8b99fa05dd5bd14','hpc@qq.com','hpc',1,'0','0','0',1,'2017-05-16 07:14:30','2017-05-16 07:14:30',NULL,'none.jpg',3,NULL,0,0,0,NULL);
+INSERT INTO `users` VALUES (1,'root','pbkdf2:sha1:1000$xBnOyGu0$2265b81c262f0438d80348748b24db1f66a65425','1291023320@qq.com','name',1,'13800138000','university','0',1,'2017-03-24 09:24:17','2016-09-29 03:14:30','','1.png?t=1475844478.0',1,'知其然，知其所以然。知识广度是深度的副产品！',6,1,3,NULL),(2,'test','pbkdf2:sha1:1000$JZE0rscV$a7b07ad8602a608e76dc583142b1aaf2c378c55b','1@qq.com','name',1,'13800138000','university','0',0,'2017-01-04 14:13:35','2016-09-29 03:35:29',NULL,'none.jpg',1,'好好学习，天天向上',0,0,1,NULL),(3,'teacher','pbkdf2:sha1:1000$ZRqJzJuR$ec4e50db6eb3eaae92e7cb8bd9468fd2743c3505','teacher@qq.com','张三丰',0,'13800138000','中山大学','150101102',0,'2017-04-14 16:30:44','2016-09-29 03:36:08','http://sdcs.sysu.edu.cn','3.png?t=1489327909.05',2,'混吃等死不舒服',0,4,6,NULL),(4,'abc','pbkdf2:sha1:1000$Z0hb47ZO$8cc84309e6a696c6deb28d6ebb910fa828d16e3d','3@qq.com','name',1,'13800138000','university','0',0,'2016-10-23 10:40:03','2016-10-17 03:00:38',NULL,'none.jpg',1,NULL,1,2,0,NULL),(5,'admin','pbkdf2:sha1:1000$h9IWWCJh$78e5c725ab15124732c7b19dbe43775df4e823e1','admin@qq.com','name',1,'13800138000','university','0',0,'2017-03-23 15:23:28','2016-10-22 11:41:15',NULL,'none.jpg',0,NULL,0,0,0,NULL),(6,'wudi','pbkdf2:sha1:1000$6eg5KT1A$36731eb6b025347439f6f333050fa727f7d74d94','wudi27@mail.sysu.edu.cn','吴迪测试2',0,'13800138000','中山大学','14312412',0,'2017-03-22 23:09:29','2016-10-18 02:57:55','netlab.sysu.edu.cn','6.png?t=1490195402.92',2,NULL,1,1,0,NULL),(7,'yongyi_yang','pbkdf2:sha1:1000$qeUp02pL$088fe9b296a054b622d5b3826045d9c7dbd28e9c','18826073128@163.com','name',1,'13800138000','university','0',0,'2016-12-15 12:03:44','2016-10-18 15:03:29',NULL,'none.jpg',1,NULL,2,0,0,NULL),(8,'alexhanbing','pbkdf2:sha1:1000$MsiV0RcE$b9d0794fd92ce0f1d6c3432f4a68614ec60294ca','565613352@qq.com','name',1,'13800138000','university','0',0,'2016-10-21 14:18:52','2016-10-21 14:18:52',NULL,NULL,1,NULL,0,3,0,NULL),(9,'forest80','pbkdf2:sha1:1000$34jYf26A$3f6f628bd4e48ed8492219171920e9d498d5023b','forest80@163.com','name',1,'13800138000','university','0',1,'2016-12-05 14:04:15','2016-12-05 14:04:15',NULL,'none.jpg',1,NULL,0,0,0,NULL),(10,'Zouzhp','pbkdf2:sha1:1000$fzjFGAmb$30667cca608819c147c04d5a49671989dd66cefd','503951764@qq.com','name',1,'13800138000','university','0',1,'2017-03-16 10:29:13','2016-12-12 10:22:07',NULL,'10.png?t=1481509362.88',1,NULL,0,0,0,NULL),(11,'test1','pbkdf2:sha1:1000$3fdjJ0du$b93a90b23e1365bd53962cf7339ff69d7c6e0423','test@163.com','name',1,'13800138000','university','0',1,'2016-12-15 12:15:14','2016-12-15 12:15:14',NULL,'none.jpg',1,NULL,0,0,0,NULL),(12,'test_nscc','pbkdf2:sha1:1000$ANtf20qe$a3f467c203a80abde2b126307f04af5affb50164','lijianggs@126.com','name',1,'13800138000','university','0',1,'2017-03-12 21:06:06','2017-01-03 15:14:08',NULL,'none.jpg',1,NULL,0,0,0,NULL),(13,'111','pbkdf2:sha1:1000$DaD5XWyO$c00d0caab874bac4e3ef1328bdcfc0408a5974b9','1970025901@qq.com','name',1,'13800138000','university','0',1,'2017-03-21 16:32:50','2017-01-09 18:47:36',NULL,'none.jpg',1,NULL,0,0,0,NULL),(14,'233','pbkdf2:sha1:1000$OdRDanMv$0def1b35ce8cb669df1034d4a2c2bb1d057bbae6','50395@qq.com','name',1,'13800138000','university','0',1,'2017-01-14 21:42:28','2017-01-14 21:42:28',NULL,'none.jpg',1,NULL,0,0,0,NULL),(15,'dwu','pbkdf2:sha1:1000$99UY1dEj$fe3e2848ca6be8d45783b7d2047ad83a1d38d9c8','wudi.cuhk@foxmail.com','name',1,'13800138000','university','0',0,'2017-03-25 22:07:05','2017-03-05 12:22:41',NULL,'15.png?t=1490194462.8',2,NULL,0,0,0,NULL),(16,'hpc','pbkdf2:sha1:1000$JB014WRQ$4027e13bcfc8fe8f5543aeb1e8b99fa05dd5bd14','hpc@qq.com','hpc',1,'0','0','0',1,'2017-05-31 05:12:37','2017-05-16 07:14:30',NULL,'none.jpg',3,NULL,0,0,0,NULL);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -1654,101 +1291,6 @@ INSERT INTO `vnc_tasks` VALUES (1,'第一个小任务','# markdown内容1',1,1),
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
---
--- Table structure for table `docker_holders`
---
-
-DROP TABLE IF EXISTS `docker_holders`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `docker_holders` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(256) NOT NULL,
-  `ip` varchar(128) NOT NULL,
-  `inner_ip` varchar(128) NOT NULL,
-  `public_port` int(11) NOT NULL,
-  `inner_port` int(11) NOT NULL,
-  `status` int(11) DEFAULT 0,
-  `running_container_count` int(11) DEFAULT 0,
-  `images_count` int(11) DEFAULT 0,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `docker_holders`
---
-
-LOCK TABLES `docker_holders` WRITE;
-/*!40000 ALTER TABLE `docker_holders` DISABLE KEYS */;
-INSERT INTO `docker_holders` (`id`, `name`, `ip`, `inner_ip`, `public_port`, `inner_port`, `status`, `running_container_count`, `images_count`)
-VALUES
-#   (1,'docker1','a002.nscc-gz.cn','10.133.100.18',10287,8080,1,0,0);
-  (2,'docker2','a002.nscc-gz.cn','10.133.100.238',10288,8080,1,0,0),
-  (3,'docker3','a002.nscc-gz.cn','10.133.100.239',10289,8080,1,0,0),
-  (4,'docker4','a002.nscc-gz.cn','10.133.100.7',10290,8080,1,0,0),
-  (5,'docker5','a002.nscc-gz.cn','10.133.100.71',10291,8080,1,0,0);
-/*!40000 ALTER TABLE `docker_holders` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `docker_images`
---
-
-DROP TABLE IF EXISTS `docker_images`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `docker_images` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `create_time` datetime NOT NULL,
-  `last_connect_time` datetime DEFAULT NULL,
-  `remaining_time_today` int(11) DEFAULT 14400,
-  `port` int(11) DEFAULT 0,
-  `tunnel_id` varchar(256) DEFAULT NULL,
-  `password` varchar(128) NOT NULL,
-  `status` int(11) DEFAULT 0,
-  `is_running` tinyint(1) DEFAULT 0 NOT NULL,
-  `token` varchar(64) DEFAULT NULL,
-  `name` varchar(64) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `docker_holder_id` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
-  KEY `docker_holder_id` (`docker_holder_id`),
-  CONSTRAINT `docker_images_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `docker_images_ibfk_2` FOREIGN KEY (`docker_holder_id`) REFERENCES `docker_holders` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `docker_images`
---
-
-LOCK TABLES `docker_images` WRITE;
-/*!40000 ALTER TABLE `docker_images` DISABLE KEYS */;
-/*!40000 ALTER TABLE `docker_images` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
-DROP TRIGGER IF EXISTS `create_new_image`;
-DELIMITER $$
-CREATE TRIGGER `create_new_image`
-BEFORE INSERT ON `docker_images`
-FOR EACH ROW
-  BEGIN
-    DECLARE dhid INT(11);
-
-    SET @dhid = (SELECT t1.id FROM (SELECT * from docker_holders) AS t1 WHERE t1.images_count = (SELECT MAX(t2.images_count) FROM (SELECT * from docker_holders) AS t2 WHERE t2.images_count < 10) LIMIT 1);
-    UPDATE docker_holders set images_count = images_count + 1 where id = @dhid;
-
-    SET NEW.port = IF(ISNULL(@dhid), 0, 5901 + (SELECT t1.images_count FROM (SELECT * from docker_holders) AS t1 WHERE t1.id = @dhid));
-    SET NEW.docker_holder_id = IF(ISNULL(@dhid), NULL, @dhid);
-  END $$
-
-DELIMITER ;
-
-
-/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
 /*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
@@ -1757,4 +1299,4 @@ DELIMITER ;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-05-16  7:15:23
+-- Dump completed on 2017-05-31  5:28:52
