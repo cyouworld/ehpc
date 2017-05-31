@@ -3,10 +3,11 @@
 
 from flask import render_template, abort, request, redirect, url_for, jsonify
 from . import machine_apply
-from ..models import MachineApply
+from ..models import MachineApply, MachineAccount
 from flask_babel import gettext
 from flask_login import current_user, login_required
 from .. import db
+import random, string
 
 
 @machine_apply.route('/')
@@ -59,7 +60,8 @@ def machine_apply_edit(apply_id):
         return render_template('machine_apply/create.html',
                                apply=curr_apply,
                                op="edit",
-                               title=gettext('Machine Hour Apply Edit'))
+                               title=gettext('Machine Hour Apply Edit'),
+                               proxy_server="114.67.37.197:8080")
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
         curr_apply.project_user_institution = request.form['project-user-institution']
@@ -90,3 +92,42 @@ def machine_apply_edit(apply_id):
                                    op="edit",
                                    save_status="save",
                                    title=gettext('Machine Hour Apply Edit'))
+
+
+@machine_apply.route('/ssh/ask-connect/', methods=['POST'])
+@login_required
+def ask_connect():
+    while True:
+        token = ''.join(random.sample(string.ascii_letters + string.digits, 32))
+        machine_account = MachineAccount.query.filter_by(token=token).first()
+        if machine_account is not None:
+            continue
+        break
+
+    if current_user.machine_account is None:
+        return jsonify(status='fail', msg=u'未获得帐号')
+    current_user.machine_account.token = token
+    db.session.commit()
+    return jsonify(status='success', token=token)
+
+
+@machine_apply.route('/ssh/', methods=['GET', 'POST'])
+def get_machine_info():
+    op = request.form.get('op', None)
+    if op is None:
+        return jsonify(status='fail', msg='op is Null')
+
+    if op == 'ssh':
+        token = request.form.get('token', None)
+        if token is None:
+            return jsonify(status='fail', msg='Token lost')
+
+        machine_account = MachineAccount.query.filter_by(token=token).first()
+        if machine_account is None:
+            return jsonify(status='fail', msg='Invalid token')
+
+        return jsonify(status='success',
+                       hostname=machine_account.ip,
+                       port=str(machine_account.port),
+                       username=machine_account.username,
+                       password=machine_account.password)

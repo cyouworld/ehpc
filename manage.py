@@ -9,7 +9,7 @@ from flask_script import Manager
 from flask_migrate import Migrate, MigrateCommand
 from flask_babel import Babel
 from flask_wtf.csrf import CSRFProtect
-from eHPC import wechat, lab
+from eHPC import wechat, lab, machine_apply
 
 app = create_app(os.getenv('EHPC_CONFIG') or 'default')
 
@@ -49,6 +49,7 @@ babel = Babel(app)
 csrf = CSRFProtect(app)
 csrf.exempt(wechat.views.process)
 csrf.exempt(lab.views.db_controller)
+csrf.exempt(machine_apply.views.get_machine_info)
 
 manager.add_command('db', MigrateCommand)
 

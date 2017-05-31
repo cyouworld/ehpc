@@ -619,6 +619,7 @@ class MachineAccount(db.Model):
     key = db.Column(db.String(256))
     ip = db.Column(db.String(64))
     port = db.Column(db.Integer)
+    token = db.Column(db.String(64), default=None)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 

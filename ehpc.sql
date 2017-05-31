@@ -651,6 +651,7 @@ CREATE TABLE `machine_account` (
   `key` varchar(256) DEFAULT NULL,
   `ip` varchar(64) DEFAULT NULL,
   `port` int(11) DEFAULT NULL,
+  `token` varchar(64) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),

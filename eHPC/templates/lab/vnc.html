@@ -155,6 +155,14 @@
             keyboard,
             sendScaledMouseState;
 
+        keyboard = new Guacamole.Keyboard(document);
+        keyboard.onkeydown = function (keysym) {
+            guac.sendKeyEvent(1, keysym);
+        };
+        keyboard.onkeyup = function (keysym) {
+            guac.sendKeyEvent(0, keysym);
+        };
+
         content.css("padding", "0");
         content_left.resize(function () {
             content_right.css("width", (1-$(this).width()/$(this).parent().width() - 5/$(this).parent().width())*100 + "%");
@@ -382,13 +390,7 @@
                         guac.getDisplay().showCursor(true);
                         sendScaledMouseState(mouseState);
                     };
-            keyboard = new Guacamole.Keyboard(document);
-            keyboard.onkeydown = function (keysym) {
-                guac.sendKeyEvent(1, keysym);
-            };
-            keyboard.onkeyup = function (keysym) {
-                guac.sendKeyEvent(0, keysym);
-            };
+
             guac.getDisplay().onresize = function (width, height) {
                 if(!guac || !guac.getDisplay()) return;
                 var height_to_set = Math.floor(content_right.eq(0).height()),
