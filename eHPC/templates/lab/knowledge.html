@@ -60,6 +60,7 @@
             <div class="modal-content">
                 <div class="modal-body" style="height: 250px;">
                     <img src='{{ url_for('static', filename='images/submit.gif') }}' alt='Loading'>
+                    <div id="submit-status-box"><span id="submit-status"></span></div>
                 </div>
             </div>
         </div>
@@ -155,6 +156,7 @@
             $run.click(function () {
                 $run.prop('disabled', true);
                 var code = editor.getValue();
+                $("#submit-status")[0].innerHTML = "代码提交中，请稍候....";
                 $("#loading").modal("show");
 
                 $.ajax({
@@ -170,16 +172,9 @@
                     },
                     success: function (data) {
                         if (data.status == "success") {
-                            var compile_success = data.isSuccess
+                            var compile_success = data.isSuccess;
                             var job_id = data.job_id;
                             var sh;
-
-                            if (compile_success == 'true') {
-                                terminal.eq(0).text(data.run_out);
-                            }
-                            else if (compile_success == 'false') {
-                                terminal.eq(0).text(data.compile_out);
-                            }
 
                             sh = setInterval(function () {
                                 $.ajax({
@@ -197,18 +192,16 @@
                                             var job_status = data.job_status;
 
                                             if (job_status == 'Pending') {
-
+                                                $("#submit-status")[0].innerHTML = "正在排队中....";
                                             }
                                             else if (job_status == 'Running') {
-
+                                                $("#submit-status")[0].innerHTML = "正在运行....";
                                             }
                                             else if (job_status == 'Finished') {
-
-                                                //clearInterval(sh);
-                                                $("#loading").modal("hide");
+                                                $("#submit-status")[0].innerHTML = "运行完毕！";
                                             }
                                         }
-                                        else {
+                                        else {console.log(data.msg);
                                             terminal.eq(0).text(data.msg);
                                         }
                                     },
@@ -253,10 +246,10 @@
 
                         }
                         else {
-                            terminal.eq(0).text(data.msg);
+                            terminal.eq(0).text(data.msg);     //接超算主机失败! or 上传程序到超算主机失败！
+                            $("#loading").modal("hide");
                         }
                         $run.prop('disabled', false);
-                        $("#loading").modal("hide");
                     },
                     error: function (msg) {
                         terminal.eq(0).text('天河服务器出错或者长时间没有反应, 请稍后重试...');

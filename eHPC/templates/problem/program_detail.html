@@ -115,7 +115,7 @@
                     <hr>
                     <div id="compiler-content" class="result-keep-space">
                     </div>
-
+                    <div id="submit-status-box" class="hide"><span id="submit-status"></span></div>
                 </div>
             </div>
 
@@ -189,8 +189,6 @@
     <script>
 
         function submit_code() {
-
-
             document.getElementById('source_code').value = editor.getValue();
 
             $("input[name=language]").val($("#language").find("option:selected").text());
@@ -203,6 +201,8 @@
             var $compiler_result = $("#compiler-content");
             $run_result.empty();
             $("#compiler-content").html(loading);
+            $("#submit-status")[0].innerHTML = "代码提交中，请稍候....";
+            $("#submit-status-box").removeClass("hide");
 
             $.ajax({
                 type: "post",
@@ -229,13 +229,13 @@
                                         $compiler_result.html(job_status);
 
                                         if (job_status == 'Pending') {
-
+                                            $("#submit-status")[0].innerHTML = "正在排队中....";
                                         }
                                         else if (job_status == 'Running') {
-
+                                            $("#submit-status")[0].innerHTML = "正在运行....";
                                         }
                                         else if (job_status == 'Finished') {
-
+                                            $("#submit-status")[0].innerHTML = "运行完毕！";
                                             //clearInterval(sh);
                                         }
                                     }
@@ -246,7 +246,7 @@
                                 },
                                 error: function (data) {
                                     $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
-                                    $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+                                   $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
                                 }
                             });
                         }, 1000);
@@ -262,13 +262,13 @@
                                     $compiler_result.html(job_status);
 
                                     if (job_status == 'Pending') {
-
+                                        $("#submit-status")[0].innerHTML = "正在排队中....";
                                     }
                                     else if (job_status == 'Running') {
-
+                                        $("#submit-status")[0].innerHTML = "正在运行....";
                                     }
                                     else if (job_status == 'Finished') {
-
+                                        $("#submit-status")[0].innerHTML = "运行完毕！";
                                         //clearInterval(sh);
                                     }
                                 }
@@ -307,8 +307,6 @@
                             }
                         })
 
-
-
                     }
                     else {
                         $compiler_result.html(data.msg);
@@ -321,8 +319,6 @@
                 }
             });
         }
-
-
     </script>
 
     <script type="text/javascript">
