@@ -12,7 +12,7 @@ from eHPC.util.code_process import ehpc_client, submit_code
 from . import lab
 from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerHolder, DockerImage
 
-from .vnc_util import is_token_unique, is_reconnection, create_new_image, start_vnc_server
+from .vnc_util import is_token_unique, create_new_image, start_vnc_server, start_ssh_server
 from .lab_util import get_cur_progress, increase_progress, get_cur_vnc_progress, increase_vnc_progress
 from config import TH2_MY_PATH
 import random, string
@@ -274,21 +274,25 @@ def vnc_task(vnc_knowledge_id):
 @lab.route('/vnc/ready/', methods=['POST'])
 @login_required
 def vnc_ready_to_connect():
+    protocol = request.form.get('protocol', None)
+    if protocol is None:
+        return jsonify(status='fail', msg=u"参数丢失")
+
     while True:
         token = ''.join(random.sample(string.ascii_letters + string.digits, 32))
         if not is_token_unique(token):
             continue
         break
 
-    result, docker_image = is_reconnection()
-    if result is True:
-        print("reconnect")
-        token = docker_image.token
-        docker_image.status = DockerImage.READY_TO_CONNECT
-        db.session.commit()
-        return jsonify(status='success',
-                       token=token,
-                       address=docker_image.docker_holder.ip + ':' + str(docker_image.docker_holder.public_port))
+    # result, docker_image = is_reconnection()
+    # if result is True:
+    #     print("reconnect")
+    #     token = docker_image.token
+    #     docker_image.status = DockerImage.READY_TO_CONNECT
+    #     db.session.commit()
+    #     return jsonify(status='success',
+    #                    token=token,
+    #                    address=docker_image.docker_holder.ip + ':' + str(docker_image.docker_holder.public_port))
 
     docker_image = current_user.docker_image
 
@@ -296,10 +300,17 @@ def vnc_ready_to_connect():
         result, message, docker_image = create_new_image()
         if result is False:
             return jsonify(status='fail', msg=message)
-    if docker_image.is_running == 0:
-        result, message = start_vnc_server(docker_image)
-        if result is False:
-            return jsonify(status='fail', msg=message)
+
+    if protocol == 'vnc':
+        if docker_image.is_vnc_running is False:
+            result, message = start_vnc_server(docker_image)
+            if result is False:
+                return jsonify(status='fail', msg=message)
+    elif protocol == 'ssh':
+        if docker_image.is_ssh_running is False:
+            result, message = start_ssh_server(docker_image)
+            if result is False:
+                return jsonify(status='fail', msg=message)
 
     docker_image.token = token
     docker_image.status = DockerImage.READY_TO_CONNECT
@@ -357,6 +368,11 @@ def db_controller():
 
     if op == 'find_image':
         token = request.form.get('token', None)
+        protocol = request.form.get('protocol', None)
+
+        if protocol is None:
+            print ('protocol is None')
+            return jsonify(status='fail')
 
         if token is None:
             print('token is None')
@@ -375,8 +391,8 @@ def db_controller():
         return jsonify(status='success',
                        docker_holder_ip=cur_image.docker_holder.inner_ip,
                        image_id=str(cur_image.id),
-                       image_port=str(cur_image.port),
-                       image_pw=cur_image.password)
+                       image_port=str(cur_image.port) if protocol == "vnc" else str(cur_image.port+1000),
+                       image_pw=cur_image.vnc_password if protocol == "vnc" else cur_image.ssh_password)
 
     elif op == 'update_information':
         tunnel_id = request.form.get('tunnel_id', None)

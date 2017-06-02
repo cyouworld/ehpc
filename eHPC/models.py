@@ -666,6 +666,8 @@ class DockerImage(db.Model):
     STATUS_START_IMAGE_SUCCESSFULLY = 4008
     STATUS_STOP_IMAGE_FAIL = 4009
     STATUS_STOP_IMAGE_SUCCESSFULLY = 4010
+    STATUS_START_SSH_SERVER_FAIL = 4011
+    STATUS_START_SSH_SERVER_SUCCESSFULLY = 4012
 
     MESSAGE_CREATE_CONTAINER_FAIL = "Failed to create a new container when creating a new user image"
     MESSAGE_SET_VNC_SERVER_PASSWORD_FAIL = "Failed to set vnc server when creating a new user image"
@@ -674,13 +676,16 @@ class DockerImage(db.Model):
     MESSAGE_START_VNC_SERVER_WITH_RESOLUTION_FAIL = \
         "Failed to start the vnc server with given resolution when setting resolution"
 
-    def __init__(self, password, name):
+    def __init__(self, vnc_password, ssh_password, name):
         self.last_connect_time = None
         self.remaining_time_today = 14400
         self.tunnel_id = None
-        self.password = password
+        self.vnc_password = vnc_password
+        self.ssh_password = ssh_password
         self.status = 0
         self.is_running = False
+        self.is_vnc_running = False
+        self.is_ssh_running = False
         self.token = None
         self.name = name
 
@@ -691,9 +696,12 @@ class DockerImage(db.Model):
     remaining_time_today = db.Column(db.Integer, default=14400)  # 每天4小时
     port = db.Column(db.Integer, default=0)
     tunnel_id = db.Column(db.String(256), default=None)
-    password = db.Column(db.String(128), nullable=False)
+    vnc_password = db.Column(db.String(128), nullable=False)
+    ssh_password = db.Column(db.String(128), nullable=False)
     status = db.Column(db.Integer, default=0)  # 0: 未连接, 1: 准备连接, 2: 已连接
     is_running = db.Column(db.Boolean, default=False)
+    is_vnc_running = db.Column(db.Boolean, default=False)
+    is_ssh_running = db.Column(db.Boolean, default=False)
     token = db.Column(db.String(64), default=None)
     name = db.Column(db.String(64), nullable=False)
 

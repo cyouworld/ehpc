@@ -38,6 +38,7 @@
         <div id="btn-browser-fullscreen" class="vnc-nav"><i class="fa fa-arrows-alt" aria-hidden="true"></i>&nbsp;&nbsp;<span id="btn-fullscreen-text">全屏</span></div>
         <div class="vnc-nav" id="change-resolution"><i class="fa fa-desktop" aria-hidden="true"></i>&nbsp;&nbsp;更改分辨率</div>
         <div class="vnc-nav" id="get-vnc-lab-progress"><i class="fa fa-tasks" aria-hidden="true"></i>&nbsp;&nbsp;实验进度</div>
+        <div class="vnc-nav" id="change-protocol"><i class="fa fa-exchange" aria-hidden="true"></i>&nbsp;&nbsp;SSH连接</div>
     </div>
 
     <div class="modal fade" id="clipboard" tabindex="-1" role="dialog" aria-hidden="true">
@@ -269,18 +270,66 @@
                     }
                 }
             });
+
+            var protocol = "vnc";
+            $("#change-protocol").click(function () {
+                if(protocol === "vnc"){
+                    protocol = "ssh";
+                    $(this).html('<i class="fa fa-exchange" aria-hidden="true"></i>&nbsp;&nbsp;VNC连接');
+                    $("#change-resolution").hide();
+                    guac.disconnect();
+                    $.ajax({
+                        url: "{{ url_for("lab.vnc_ready_to_connect") }}",
+                        type: "post",
+                        data: {"protocol": "ssh"},
+                        success: function (data) {
+                            if(data['status'] === "success"){
+                                $("#display").empty();
+                                do_event_unbind();
+                                do_event_bind(data["token"], data["address"]);
+                                do_connect_vnc_server(data["token"], data["address"], "ssh");
+                            }
+                            else if(data['status'] === 'fail'){
+                                alert_modal(data['msg']);
+                            }
+                        }
+                    });
+                }else if(protocol === "ssh"){
+                    protocol = "vnc";
+                    $(this).html('<i class="fa fa-exchange" aria-hidden="true"></i>&nbsp;&nbsp;SSH连接');
+                    $("#change-resolution").show();
+                    guac.disconnect();
+                    $.ajax({
+                        url: "{{ url_for("lab.vnc_ready_to_connect") }}",
+                        type: "post",
+                        data: {"protocol": "vnc"},
+                        success: function (data) {
+                            if(data['status'] === "success"){
+                                $("#display").empty();
+                                do_event_unbind();
+                                do_event_bind(data["token"], data["address"]);
+                                do_connect_vnc_server(data["token"], data["address"], "vnc");
+                            }
+                            else if(data['status'] === 'fail'){
+                                alert_modal(data['msg']);
+                            }
+                        }
+                    });
+                }
+            });
         });
 
         $(function () {//请求连接远程桌面
             $.ajax({
                 url: "{{ url_for("lab.vnc_ready_to_connect") }}",
                 type: "post",
+                data: {"protocol": "vnc"},
                 success: function (data) {
                     if(data['status'] === "success"){
                         $("#loading-svg").hide("drop", {direction: "right"}, 1000, function () {
                             $("#display").show();
                             do_event_bind(data["token"], data["address"]);
-                            do_connect_vnc_server(data["token"], data["address"]);
+                            do_connect_vnc_server(data["token"], data["address"], "vnc");
                         });
                     }
                     else if(data['status'] === 'fail'){
@@ -336,12 +385,13 @@
                             $.ajax({
                                 url: "{{ url_for("lab.vnc_ready_to_connect") }}",
                                 type: "post",
+                                data: {"protocol": "vnc"},
                                 success: function (data) {
                                     if(data['status'] === "success"){
                                         $("#display").empty();
                                         do_event_unbind();
                                         do_event_bind(data["token"], address);
-                                        do_connect_vnc_server(data["token"], address);
+                                        do_connect_vnc_server(data["token"], address, "vnc");
                                     }
                                     else if(data['status'] === 'fail'){
                                         alert_modal(data['msg']);
@@ -357,7 +407,7 @@
             });
         }
 
-        function do_connect_vnc_server(token, address){
+        function do_connect_vnc_server(token, address, protocol){
             display = document.getElementById("display");
             guac = new Guacamole.Client(
                 new Guacamole.HTTPTunnel("http://" + address + "/server/tunnel")
@@ -366,7 +416,7 @@
             guac.onerror = function (error) {
                 //alert_modal("远程桌面连接错误");
             };
-            guac.connect("token="+token);
+            guac.connect("token="+token+"&protocol="+protocol);
             window.onunload = function () {
                 guac.disconnect();
             };
@@ -469,12 +519,8 @@
 
         function do_event_unbind() {
             $("#change-resolution").unbind();
-            $("#custom-resolution").unbind();
             $("#cancel-change").unbind();
-            $("#input-resolution-width").unbind();
-            $("#input-resolution-height").unbind();
             $("#confirm-change").unbind();
-            $("#auto-resolution").unbind();
             $(window).unbind();
             $("#clipboard-content").unbind();
         }

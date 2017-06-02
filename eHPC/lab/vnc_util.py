@@ -3,6 +3,7 @@
 import requests
 from datetime import datetime
 
+from flask import current_app
 from .. import db
 from ..models import DockerImage, DockerHolder
 from flask_login import current_user
@@ -14,15 +15,16 @@ def is_token_unique(token):
     return docker_image is None
 
 
-def is_reconnection():
-    docker_image = current_user.docker_image
-    if docker_image is not None and docker_image.status == DockerImage.CONNECTED:
-        return True, docker_image
-    return False, None
+# def is_reconnection():
+#     docker_image = current_user.docker_image
+#     if docker_image is not None and docker_image.status == DockerImage.CONNECTED:
+#         return True, docker_image
+#     return False, None
 
 
 def create_new_image():
-    new_image = DockerImage(password=''.join(random.sample(string.ascii_letters + string.digits, 8)),
+    new_image = DockerImage(vnc_password=''.join(random.sample(string.ascii_letters + string.digits, 8)),
+                            ssh_password=current_app.config['SSH_PASSWORD'],
                             name='image_' + str(current_user.id))
     new_image.user = current_user
 
@@ -45,8 +47,9 @@ def create_new_image():
     try:
         req = requests.post('http://%s:%d/server/handler' % (holder_to_assign.inner_ip, holder_to_assign.inner_port),
                             params={"op": "create_image",
+                                    "image_ssh_port": str(new_image.port + 1000),
                                     "image_port": str(new_image.port),
-                                    "image_password": new_image.password,
+                                    "image_password": new_image.vnc_password,
                                     "image_name": new_image.name}, timeout=10)
         req.raise_for_status()
     except requests.RequestException as e:
@@ -82,13 +85,34 @@ def start_vnc_server(docker_image):
     else:
         result = req.json()
         if result['status'] == DockerImage.STATUS_START_VNC_SERVER_SUCCESSFULLY:
-            docker_image.is_running = True
+            docker_image.is_vnc_running = True
             db.session.commit()
             return True, "success"
         else:
+            docker_image.is_vnc_running = False
+            db.session.commit()
             print result['message']
             return False, u'启动远程桌面服务失败'
 
 
-
+def start_ssh_server(docker_image):
+    try:
+        req = requests.post('http://%s:%d/server/handler' % (docker_image.docker_holder.inner_ip,
+                                                             docker_image.docker_holder.inner_port),
+                            params={"op": "start_ssh_server", "image_name": docker_image.name}, timeout=10)
+        req.raise_for_status()
+    except requests.RequestException as e:
+        print e
+        return False, u'服务器内部错误，请联系管理员'
+    else:
+        result = req.json()
+        if result['status'] == DockerImage.STATUS_START_SSH_SERVER_SUCCESSFULLY:
+            docker_image.is_ssh_running = True
+            db.session.commit()
+            return True, "success"
+        else:
+            docker_image.is_ssh_running = False
+            db.session.commit()
+            print result['message']
+            return False, u'启动SSH服务失败'
 

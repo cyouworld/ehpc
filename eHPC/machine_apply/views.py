@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from flask import render_template, abort, request, redirect, url_for, jsonify
+from flask import render_template, abort, request, redirect, url_for, jsonify, current_app
 from . import machine_apply
 from ..models import MachineApply, MachineAccount
 from flask_babel import gettext
@@ -69,7 +69,7 @@ def machine_apply_edit(apply_id):
                                apply=curr_apply,
                                op="edit",
                                title=gettext('Machine Hour Apply Edit'),
-                               proxy_server="114.67.37.197:8080")
+                               proxy_server=current_app.config['SSH_PROXY_SERVER'])
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
         curr_apply.applicant_name = request.form.get('applicant_name')

@@ -100,6 +100,9 @@ class Config:
     CAPTCHA = CAPTCHA
     CAPTCHA_SITE_KEY = CAPTCHA_SITE_KEY
 
+    SSH_PROXY_SERVER = "114.67.37.197:8080"
+    SSH_PASSWORD = "123456"
+
     @staticmethod
     def init_app(app):
         pass
