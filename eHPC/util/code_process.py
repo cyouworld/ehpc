@@ -6,20 +6,32 @@ import urllib
 import urllib2
 
 import re
-from config import TH2_MAX_NODE_NUMBER, TH2_BASE_URL, TH2_ASYNC_WAIT_TIME, TH2_LOGIN_DATA, TH2_MACHINE_NAME, TH2_DEBUG_ASYNC, TH2_MY_PATH, TH2_ASYNC_FIRST_WAIT_TIME, TH2_ASYNC_URL, TH2_LOGIN_URL
+from config import TH2_MAX_NODE_NUMBER, TH2_BASE_URL, TH2_ASYNC_WAIT_TIME, TH2_LOGIN_DATA, TH2_MACHINE_NAME, TH2_DEBUG_ASYNC, TH2_MY_PATH, TH2_ASYNC_FIRST_WAIT_TIME, TH2_ASYNC_URL, TH2_LOGIN_URL, \
+    TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_MY_PATH_NEW, TH2_LOGIN_DATA_NEW
 from flask import jsonify
 import json
 import time
+import logging
+import  logging.config
+
+
+logging.config.fileConfig("./logger.conf")
+logger = logging.getLogger("test")
+
 
 global g__cookies
+global TH2_MY_PATH, TH2_BASE_URL, TH2_USERNAME, TH2_PASSWORD, TH2_MACHINE_NAME, TH2_LOGIN_DATA
+
 
 # 完成天河2号接口的功能的客户端
 class ehpc_client:
     def __init__(self, base_url=TH2_BASE_URL, headers={}, login_cookie=None, login_data=TH2_LOGIN_DATA):
+        global TH2_MY_PATH, TH2_BASE_URL, TH2_USERNAME, TH2_PASSWORD, TH2_MACHINE_NAME, TH2_LOGIN_DATA
+
         self.headers = headers
-        self.base_url = base_url
+        self.base_url = TH2_BASE_URL
         self.login_cookie = login_cookie
-        self.login_data = login_data
+        self.login_data = TH2_LOGIN_DATA
         self.async_wait_time = TH2_ASYNC_WAIT_TIME
         self.username = None
         global g__cookies
@@ -52,8 +64,9 @@ class ehpc_client:
                     data = urllib.urlencode(data).encode(encoding='UTF8')
                 else :
                     data = data.encode('utf-8')
-            except TypeError :
-                print data
+            except TypeError as ex:
+                print(data)
+                logger.debug(ex)
                 pass
 
             # https://docs.python.org/2/library/urllib2.html#urllib2.Request
@@ -92,6 +105,7 @@ class ehpc_client:
             rdata = e.read()
 
         if not retjson :
+            logger.debug(dict(resp))
             self.data = rdata
             self.status_code = self.resp.code
             self.status = "OK" if resp.code == 200 else "ERROR"
@@ -107,6 +121,8 @@ class ehpc_client:
         try:
             if rdata_reg is None:
                 self.data = rdata
+                self.status_code = 200
+                self.status = 200
             else :
                 rdata = json.loads(rdata.decode('utf-8'))
                 self.data = rdata
@@ -114,38 +130,41 @@ class ehpc_client:
                 self.status_code = self.data["status_code"]
                 self.output = self.data["output"]
         except ValueError as exc:
-            print('ValueError:', exc, ';rdata:', rdata)
+            print(exc)
+            logger.debug("exe : %s" % exc)
+            logger.debug(("rdata : %s" % rdata))
             self.data = rdata
             try:
                 self.status = self.data['status']
                 self.status_code = self.data["status_code"]
-            except Exception:
+            except Exception :
                 self.status_code = 200
                 self.status = 200
             self.status = "unknown"
-            self.output = self.data
-            if self.status_code == 200:
-                self.status = "OK"
+        self.output = self.data
+        if self.status_code == 200:
+            self.status = "OK"
 
         # 如果开启了异步获取并且返回码是201,表示转入异步获取请求结果的状态
         if self.status_code == 201 and async_get:
             self.async_wait_time = TH2_ASYNC_FIRST_WAIT_TIME
             time.sleep(TH2_ASYNC_FIRST_WAIT_TIME)
             if TH2_DEBUG_ASYNC:
-                print "jump to async"
-            return self.open(TH2_ASYNC_URL + '/' + self.output)
+                logger.debug("jump to async")
+            logger.debug(self.output)
+            return self.open(TH2_ASYNC_URL + '/' + self.output["output"])
 
         # 如果返回码是100 continue并且设置了异步获取等待，继续请求
         if self.status_code == 100 and async_wait and self.async_wait_time > 0:
             time.sleep(1)
             self.async_wait_time -= 1
             if TH2_DEBUG_ASYNC:
-                print "async retry"
-            self.open(TH2_ASYNC_URL + '/' + self.output)
+                logger.debug("async retry")
+            return self.open(TH2_ASYNC_URL + '/' + self.output["output"])
 
         # 超时
         if self.async_wait_time <= 0:
-            print "Error: async connection time out."
+            logger.debug("Error: async connection time out.")
             self.async_wait_time = 5
 
         return self.data
@@ -166,6 +185,7 @@ class ehpc_client:
     # 登录，返回值为是否成功（布尔型）
     # POST /api/auth
     def login(self):
+        #print self.login_data
         tmpdata = self.open(TH2_LOGIN_URL, data=self.login_data, login=False)
         self.login_cookie = 'newt_sessionid=' + tmpdata["output"]["newt_sessionid"]
         self.username = self.login_data['username']
@@ -176,6 +196,8 @@ class ehpc_client:
         except NameError :
             g__cookies = {}
             g__cookies['cookie'] = self.login_cookie
+
+        logger.debug("Login returned data: %s" %tmpdata)
 
         return self.ret200()
 
@@ -206,7 +228,7 @@ class ehpc_client:
             return None
 
     # GET /api/file/<machine>/<path>?download=True
-    def download(self, myPath, filename, isjob=False):
+    def download(self, myPath, filename, isSmallApiServer=True, isjob=False):
         """ 下载给出路径中的文件内容，如果是脚本文件需要先对文件名进行处理
 
         首先对是否为脚本文件进行判断，然后获取文件的状态，从状态信息中取出保存结果的文件id
@@ -218,9 +240,17 @@ class ehpc_client:
         if isjob:
             filename = "slurm-%s.out" % filename
         tmpdata = self.open("/file/" + TH2_MACHINE_NAME + myPath + '/' + filename + "?download=True")
-        #async_id = tmpdata["output"]
-        # print async_id
-        #tmpdata = self.open("/file/" + TH2_MACHINE_NAME + "/%s?download=True" % async_id)
+
+        print tmpdata
+        if isSmallApiServer:
+            tmpdata = tmpdata
+        else :
+            async_id = tmpdata["output"]
+            # print async_id
+            tmpdata = self.open("/file/" + TH2_MACHINE_NAME + "/%s?download=True" % async_id)
+        #tmpdata = tmpdata if isinstance(tmpdata, str) else tmpdata.decode('utf-8')
+
+        logger.debug("Download returned data: %s" %tmpdata)
         return tmpdata
 
     # 上传文件，需要注意的是data指文件内容，filename指保存在天河内部的文件名
@@ -233,7 +263,8 @@ class ehpc_client:
         返回值为是否成功（布尔型）
         """
         tmpdata = self.open("/file/" + TH2_MACHINE_NAME + myPath + '/' + filename, method="PUT", data=data)
-        # print tmpdata
+
+        logger.debug("Upload returned data: %s" %tmpdata)
         return self.ret200()
 
     # 运行终端命令
@@ -251,7 +282,7 @@ class ehpc_client:
         """
         is_success[0] = False
         tmpdata = self.open("/command/" + TH2_MACHINE_NAME, data={"command": command})
-        # print tmpdata
+
         # 返回结果正确
         if self.ret200() and isinstance(tmpdata, dict) and tmpdata["output"]["retcode"] == 0:
             is_success[0] = True
@@ -282,10 +313,6 @@ class ehpc_client:
         返回的是脚本任务在队列中的id（数字与字母组成的字符串）
         """
 
-        if int(node_number) > TH2_MAX_NODE_NUMBER:
-            partition = "BIGJOB1"
-        partition = "debug"
-
         jobscript = """#!/bin/bash
 #SBATCH --partition=%s
 #SBATCH --nodes=%s
@@ -297,7 +324,9 @@ class ehpc_client:
             return "ERROR"
         jobPath = myPath + "/" + job_filename
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript" : jobscript, "jobfilepath" : jobPath})
-        print tmpdata
+
+        logger.debug("Submit job returned data: %s" %tmpdata)
+
         return tmpdata["output"]["jobid"]
 
     def get_job_status(self, job_id):
@@ -317,11 +346,13 @@ class ehpc_client:
 
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/" + str(job_id) + "/")
 
-        if tmpdata["output"]["status"][job_id] == "Success" or tmpdata["output"]["status"][job_id] == "Failed":
+        logger.debug("Get job status data: %s" %tmpdata)
+        #print tmpdata
+        if tmpdata["output"]["status"][str(job_id)] == "Success" or tmpdata["output"]["status"][str(job_id)] == "Failed":
             return "Finished"
-        elif tmpdata["output"]["status"][job_id] == "Pending" :
+        elif tmpdata["output"]["status"][str(job_id)] == "Pending" :
             return "Pending"
-        elif tmpdata["output"]["status"][job_id] == "Running" :
+        elif tmpdata["output"]["status"][str(job_id)] == "Running" :
             return "Running"
         else :
             return "Getting job status fail."
@@ -343,6 +374,9 @@ class ehpc_client:
         commands = 'cd %s;%s' % (myPath, compile_command[language])
 
         compile_output = self.run_command(commands, is_success)
+
+        logger.debug("Compile returned data: %s" %compile_output)
+
         compile_out = compile_output or "Compile success."
 
         if compile_output is None:
@@ -361,10 +395,26 @@ class ehpc_client:
         node_number指天河执行任务的结点数，language指编译器，partition指天河内部执行的分区
         对于参数进一步的解释请参照天河用户手册返回值为运行文件的输出（字符串）
         """
-        if int(node_number) > TH2_MAX_NODE_NUMBER:
+
+        partition = "nsfc1"
+        isSmallApiServer = False
+        #print node_number
+        if int(node_number) < 2 :
+            global TH2_MY_PATH, TH2_BASE_URL, TH2_USERNAME, TH2_PASSWORD, TH2_MACHINE_NAME, TH2_LOGIN_DATA
+            TH2_BASE_URL = TH2_BASE_URL_NEW
+            TH2_USERNAME = TH2_USERNAME_NEW
+            TH2_PASSWORD = TH2_PASSWORD_NEW
+            TH2_MACHINE_NAME = TH2_MACHINE_NAME_NEW
+            TH2_MY_PATH = TH2_MY_PATH_NEW
+            TH2_LOGIN_DATA = TH2_LOGIN_DATA_NEW
+            isSmallApiServer = True
+            partition = "debug"
+            #print "Now is new Api server."
+            #print "node number is %d" % int(node_number)
+        elif int(node_number) > TH2_MAX_NODE_NUMBER :
+            #print "Big job"
             partition = "BIGJOB1"
 
-        partition = "debug"
         jobid = self.submit_job(myPath, job_filename, output_filename, node_number=node_number, task_number=task_number,
                                 cpu_number_per_task=cpu_number_per_task, partition=partition)
 
@@ -372,7 +422,7 @@ class ehpc_client:
             run_out = "Upload job file fail."
             return run_out
 
-        time.sleep(5)
+        time.sleep(0.2)
 
         job_status = self.get_job_status(jobid)
 
@@ -381,11 +431,11 @@ class ehpc_client:
             if job_status == "Finished":
                 break
 
-            time.sleep(5)
+            time.sleep(0.2)
             job_status = self.get_job_status(jobid)
             print job_status
 
-        run_output = self.download(myPath, jobid, isjob=True)
+        run_output = self.download(myPath, jobid, isSmallApiServer=isSmallApiServer, isjob=True)
         run_out = run_output or "No output."
 
         if run_output is None:
@@ -411,6 +461,25 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
     job_filename = "%s_%s.sh" % (str(pid), str(uid))
     input_filename = "%s_%s.c" % (str(pid), str(uid))
     output_filename = "%s_%s.o" % (str(pid), str(uid))
+
+    partition = "nsfc1"
+    isSmallApiServer = False
+    #print node_number
+    if int(node_number) < 2 :
+        global TH2_MY_PATH, TH2_BASE_URL, TH2_USERNAME, TH2_PASSWORD, TH2_MACHINE_NAME, TH2_LOGIN_DATA
+        TH2_BASE_URL = TH2_BASE_URL_NEW
+        TH2_USERNAME = TH2_USERNAME_NEW
+        TH2_PASSWORD = TH2_PASSWORD_NEW
+        TH2_MACHINE_NAME = TH2_MACHINE_NAME_NEW
+        TH2_MY_PATH = TH2_MY_PATH_NEW
+        TH2_LOGIN_DATA = TH2_LOGIN_DATA_NEW
+        isSmallApiServer = True
+        partition = "debug"
+        #print "Now is new Api server."
+        #print "node number is %d" % int(node_number)
+    elif int(node_number) > TH2_MAX_NODE_NUMBER :
+        #print "Big job"
+        partition = "BIGJOB1"
 
     client = ehpc_client()
     is_success = [False]
@@ -439,10 +508,6 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
             result['isSuccess'] = 'false'
 
         if is_success[0]:
-            if int(node_number) > TH2_MAX_NODE_NUMBER:
-                partition = "BIGJOB1"
-            else :
-                partition = "nsfc1"
 
             jobid = client.submit_job(TH2_MY_PATH, job_filename, output_filename, node_number=node_number, task_number=task_number,
                                       cpu_number_per_task=cpu_number_per_task, partition=partition)
@@ -459,7 +524,7 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
             run_out = "Upload job file fail."
             #return run_out
         else :
-            time.sleep(5)
+            time.sleep(0.2)
 
             job_status = client.get_job_status(jobid)
 
@@ -468,11 +533,11 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
                 if job_status == "Finished":
                     break
 
-                time.sleep(5)
+                time.sleep(0.2)
                 job_status = client.get_job_status(jobid)
                 #print job_status
 
-            run_output = client.download(TH2_MY_PATH, jobid, isjob=True)
+            run_output = client.download(TH2_MY_PATH, jobid, isSmallApiServer=isSmallApiServer, isjob=True)
             run_out = run_output or "No output."
 
             if run_output is None:

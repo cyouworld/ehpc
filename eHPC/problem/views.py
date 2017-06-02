@@ -158,7 +158,8 @@ def submit(pid):
     language = ''
     task_number = 0
     cpu_number_per_task = 0
-    node_number = 0
+    cpu_number = request.form['cpu_number']
+    node_number = int(cpu_number) / 24 + 1
 
     if op == '1':
         uid = current_user.id
@@ -169,19 +170,18 @@ def submit(pid):
         db.session.add(submit_problem)
         db.session.commit()
 
-        cpu_number = request.form['cpu_number']
-
-        if language == 'openmp':
+        if language == "openmp" :
             cpu_number_per_task = cpu_number
             task_number = 1
-        elif language == 'mpi':
-            cpu_number_per_task = 1
+        elif language == "mpi" :
             task_number = cpu_number
+            cpu_number_per_task = 1
 
-        node_number = cpu_number / 24 + 1
+            #print cpu_number
+
+    #print node_number
 
     #print op, type(op)
 
-    return submit_code(pid=pid, uid=uid, source_code=source_code, task_number=task_number,
-                       cpu_number_per_task=cpu_number_per_task, node_number=node_number,
-                       language=language, op=op, jobid=jobid)
+    return submit_code(pid=pid, uid=uid, source_code=source_code, task_number=task_number, cpu_number_per_task=cpu_number_per_task,
+                       node_number=node_number, language=language, op=op, jobid=jobid)
