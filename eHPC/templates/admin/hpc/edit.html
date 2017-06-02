@@ -1,4 +1,4 @@
-{% extends 'base.html' %}
+{% extends 'admin/hpc/base.html' %}
 
 {% block header_ext %}
     <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
@@ -12,6 +12,11 @@
 {% block content %}
 
     <div id="content-container" class="container">
+        <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
+            <li><a href="/">首页</a></li>
+            <li><a href="{{ url_for('admin.machine_apply_index') }}">时机申请</a></li>
+            <li class="active"><a href="{{ url_for('admin.machine_apply', apply_id=apply.id) }}">申请详情</a></li>
+        </ol>
         <div class="row">
             <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="panel panel-default">
@@ -54,7 +59,7 @@
                                 </tbody>
                             </table>
 
-                            <table class="table table-bordered">
+                            <table class="table table-bordered" style="display: none;">
                                 <tbody>
                                 <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
                                     <td colspan="4">负责人信息</td>
@@ -111,6 +116,21 @@
                                 </tr>
                                 </tbody>
                             </table>
+
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                        <td colspan="4">机时用途</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;vertical-align: middle;">机时用途说明</td>
+                                        <td>
+                                            <textarea id="usage" name="usage" class="form-control" rows="3">{% if apply %}{{ apply.usage }}{% endif %}</textarea>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
                             <div class="form-submit text-right">
                                 <input class='btn btn-primary' type='submit' value="保存">
                             </div>
@@ -176,7 +196,6 @@
                     {% endif %}
                 {% endif %}
             }
-
 
             if (save_satus === "save") {
                 alert_modal("保存草稿成功！");

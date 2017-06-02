@@ -47,7 +47,7 @@
                             </tbody>
                         </table>
 
-                        <table class="table table-bordered">
+                        <table class="table table-bordered" style="display: none;">
                             <tbody>
                             <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
                                 <td colspan="4">负责人信息</td>
@@ -85,6 +85,18 @@
                                 <td align="center" width="20%" style="background-color: #cfe9d4;">CPU核时</td>
                                 <td align="center">{{ apply.cpu_hour }}</td>
                             </tr>
+                            </tbody>
+                        </table>
+
+                        <table class="table table-bordered">
+                            <tbody>
+                                <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                    <td colspan="4">机时用途</td>
+                                </tr>
+                                <tr>
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;vertical-align: middle;">机时用途说明</td>
+                                    <td align="center" style="height: 103px;vertical-align: middle;">{{ apply.usage }}</td>
+                                </tr>
                             </tbody>
                         </table>
 

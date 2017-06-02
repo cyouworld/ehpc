@@ -45,6 +45,7 @@ def machine_apply_create():
         sc_map = {u"国家超级计算广州中心": 0, u"国家超级计算长沙中心": 1, u"中科院级计算中心": 2, u"国家超级计算上海中心": 3}
         curr_apply.sc_center = sc_map[request.form.get('sc_center')]
         curr_apply.cpu_hour = request.form.get('cpu_hour', 0)  # CPU_hour字段不能置空，若用户未填写则默认为0
+        curr_apply.usage = request.form.get('usage')
 
         curr_apply.user = current_user
         db.session.add(curr_apply)
@@ -85,6 +86,7 @@ def machine_apply_edit(apply_id):
         sc_map = {u"国家超级计算广州中心": 0, u"国家超级计算长沙中心": 1, u"中科院级计算中心": 2, u"国家超级计算上海中心": 3}
         curr_apply.sc_center = sc_map[request.form.get('sc_center')]
         curr_apply.cpu_hour = request.form.get('cpu_hour', 0)
+        curr_apply.usage = request.form.get('usage')
         curr_apply.submit_status = 1
 
         if request.form['save-op'] == "submit":

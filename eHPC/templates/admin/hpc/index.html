@@ -17,7 +17,7 @@
                     <thead>
                     <tr>
                         <th>项目名称</th>
-                        <th>负责人单位</th>
+                        <th>申请人姓名</th>
                         <th>申请人单位</th>
                         <th>申请时间</th>
                         <th>状态</th>
@@ -28,11 +28,11 @@
                     {% for a in applies %}
                         <tr>
                             <td>{{ a.project_name }}</td>
-                            <td>{{ a.project_user_institution }}</td>
-                            <td>{{ a.project_applicant_institution }}</td>
+                            <td>{{ a.applicant_name }}</td>
+                            <td>{{ a.applicant_institution }}</td>
                             <td>{{ a.applying_time }}</td>
                             <td>{% if a.submit_status == 3 %}已拒绝{% elif a.submit_status == 2 %}已同意{% else %}等待处理{% endif %}</td>
-                            <td><a href="{{ url_for('admin.machine_apply', apply_id=a.id) }}">详情</a></td>
+                            <td><a href="{{ url_for('admin.machine_apply', apply_id=a.id) }}">审核</a></td>
                         </tr>
                     {% endfor %}
                     </tbody>

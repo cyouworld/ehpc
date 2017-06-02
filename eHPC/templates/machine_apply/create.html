@@ -75,7 +75,7 @@
                                 </tbody>
                             </table>
 
-                            <table class="table table-bordered">
+                            <table class="table table-bordered" style="display: none;">
                                 <tbody>
                                 <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
                                     <td colspan="4">负责人信息</td>
@@ -132,6 +132,21 @@
                                 </tr>
                                 </tbody>
                             </table>
+
+                            <table class="table table-bordered">
+                                <tbody>
+                                    <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                        <td colspan="4">机时用途</td>
+                                    </tr>
+                                    <tr>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;vertical-align: middle;">机时用途说明</td>
+                                        <td>
+                                            <textarea id="usage" name="usage" class="form-control" rows="3">{% if apply %}{{ apply.usage }}{% endif %}</textarea>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
                             <input id="save-op" type="hidden" name="save-op" value="submit">
                             <div class="form-submit text-right">
                                 <input class='btn btn-info' id='show-info' type='button' value="申请说明" data-toggle="modal" data-target="#InfoModal">
@@ -229,11 +244,11 @@
             $("#applicant_email").attr('required', "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");
             $("#applicant_address").attr('required', "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");
 
-            $("#manager_name").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");
-            $("#manager_institution").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");
-            $("#manager_tel").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人电话");
-            $("#manager_email").attr('required', "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");
-            $("#manager_address").attr('required', "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");
+{#            $("#manager_name").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");#}
+{#            $("#manager_institution").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");#}
+{#            $("#manager_tel").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人电话");#}
+{#            $("#manager_email").attr('required', "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");#}
+{#            $("#manager_address").attr('required', "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");#}
 
             $("#machine-apply-create-form").parsley().validate();
         });

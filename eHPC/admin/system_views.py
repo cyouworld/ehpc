@@ -521,6 +521,7 @@ def machine_apply_edit(apply_id):
         sc_map = {u"国家超级计算广州中心": 0, u"国家超级计算长沙中心": 1, u"中科院级计算中心": 2, u"国家超级计算上海中心": 3}
         curr_apply.sc_center = sc_map[request.form.get('sc_center')]
         curr_apply.cpu_hour = request.form.get('cpu_hour', 0)
+        curr_apply.usage = request.form.get('usage')
         db.session.commit()
         return redirect(url_for('admin.machine_apply', apply_id=apply_id))
 

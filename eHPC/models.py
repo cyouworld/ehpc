@@ -608,6 +608,7 @@ class MachineApply(db.Model):
     project_name = db.Column(db.String(128), nullable=True)  # 项目名称
     sc_center = db.Column(db.Integer, nullable=True, default=0)  # 超算单位：0-广州超算，1-长沙超算，2-中科院超算，3-上海超算
     cpu_hour = db.Column(db.Integer, nullable=True, default=0)  # CPU核时，CPU_hour字段不能置空，若用户未填写则默认为0
+    usage = db.Column(db.String(512), nullable=True)  # 机时用途说明
     applying_time = db.Column(db.DateTime, default=datetime.now, nullable=False)  # 提交申请的时间
     submit_status = db.Column(db.Integer, default=0)  # 当前申请的提交状态：0-未提交，1-已提交，等待审批，2-审批通过，3-申请被拒绝
 
