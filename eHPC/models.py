@@ -134,6 +134,7 @@ class Course(db.Model):
     nature_order = db.Column(db.Integer, nullable=False)
 
     # 课程包含的课时，评价，资料等， 一对多的关系
+    notices = db.relationship('Notice', backref='course', lazy='dynamic')
     lessons = db.relationship('Lesson', backref='course', lazy='dynamic')
     papers = db.relationship('Paper', backref='course', lazy='dynamic')
     homeworks = db.relationship('Homework', backref='course', lazy='dynamic')
@@ -143,6 +144,18 @@ class Course(db.Model):
                             backref=db.backref('courses', lazy='dynamic'))
     # 二维码，一对一的关系
     qrcode = db.relationship('QRcode', uselist=False, backref='course')
+
+
+class Notice(db.Model):
+    """ 一个课程包括多个公告，每个公告只能属于一个课程
+    """
+    __tablename__ = 'notices'
+    id = db.Column(db.Integer, primary_key=True)                    # 公告 ID
+    title = db.Column(db.String(32), nullable=False)                # 公告标题
+    content = db.Column(db.Text(), default="")                      # 公告正文
+    createdTime = db.Column(db.DateTime(), default=datetime.now)    # 创建时间
+
+    courseId = db.Column(db.Integer, db.ForeignKey('courses.id'))   # 所属课程ID
 
 
 class Lesson(db.Model):

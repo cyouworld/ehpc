@@ -3,6 +3,28 @@
         <div class="panel-heading">
             <h3 class="panel-title">
                 <i class="es-icon es-icon-personadd"></i>
+                最新公告
+                <a class="more" href="{{ url_for('course.notice_index', cid=course.id) }}"><i class="es-icon es-icon-morehoriz"></i></a>
+            </h3>
+        </div>
+        <div class="panel-body">
+            {% if notices %}
+                {% for n in notices %}
+                    <div style="margin-bottom: 5px"><i class="es-icon es-icon-dot color-primary mrs"></i><a class="link-dark" href="{{ url_for('course.notice_detail', cid=course.id, nid=n.id) }}" title="{{ n.title }}">{{ n.title | truncate(14) }}</a>
+                    <span style="float:right;color: #c1c1c1;" class="date">{{ n.createdTime.month }}-{{ n.createdTime.day }}</span></div>
+                {% endfor %}
+{#            <div style="margin-bottom: 5px"><i class="es-icon es-icon-dot color-primary mrs"></i><a class="link-dark" href="#" title="关于系统测试的公告">关于系统测试的公告</a>#}
+{#            <span style="float:right;color: #c1c1c1;" class="date">10-24</span></div>#}
+            {% else %}
+                <div>本课程暂时没有公告</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">
+                <i class="es-icon es-icon-personadd"></i>
                 最新学员
             </h3>
         </div>

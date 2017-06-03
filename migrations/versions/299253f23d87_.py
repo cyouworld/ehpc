@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: 4a11bbc11e31
+Revision ID: 299253f23d87
 Revises: None
-Create Date: 2017-04-10 20:58:18.985000
+Create Date: 2017-06-03 16:02:55.447000
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '4a11bbc11e31'
+revision = '299253f23d87'
 down_revision = None
 
 from alembic import op
@@ -42,6 +42,18 @@ def upgrade():
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('program_id', sa.Integer(), nullable=False),
     sa.Column('code', sa.Text(), nullable=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('docker_holders',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('name', sa.String(length=256), nullable=False),
+    sa.Column('ip', sa.String(length=128), nullable=False),
+    sa.Column('inner_ip', sa.String(length=128), nullable=False),
+    sa.Column('public_port', sa.Integer(), nullable=False),
+    sa.Column('inner_port', sa.Integer(), nullable=False),
+    sa.Column('status', sa.Integer(), nullable=True),
+    sa.Column('running_container_count', sa.Integer(), nullable=True),
+    sa.Column('images_count', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('groups',
@@ -111,6 +123,27 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('docker_images',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('create_time', sa.DateTime(), nullable=False),
+    sa.Column('last_connect_time', sa.DateTime(), nullable=True),
+    sa.Column('remaining_time_today', sa.Integer(), nullable=True),
+    sa.Column('port', sa.Integer(), nullable=True),
+    sa.Column('tunnel_id', sa.String(length=256), nullable=True),
+    sa.Column('vnc_password', sa.String(length=128), nullable=False),
+    sa.Column('ssh_password', sa.String(length=128), nullable=False),
+    sa.Column('status', sa.Integer(), nullable=True),
+    sa.Column('is_running', sa.Boolean(), nullable=True),
+    sa.Column('is_vnc_running', sa.Boolean(), nullable=True),
+    sa.Column('is_ssh_running', sa.Boolean(), nullable=True),
+    sa.Column('token', sa.String(length=64), nullable=True),
+    sa.Column('name', sa.String(length=64), nullable=False),
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('docker_holder_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['docker_holder_id'], ['docker_holders.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('group_members',
     sa.Column('user_id', sa.Integer(), nullable=False),
     sa.Column('group_id', sa.Integer(), nullable=False),
@@ -127,6 +160,40 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('machine_account',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('username', sa.String(length=64), nullable=True),
+    sa.Column('password', sa.String(length=64), nullable=True),
+    sa.Column('key', sa.String(length=256), nullable=True),
+    sa.Column('ip', sa.String(length=64), nullable=True),
+    sa.Column('port', sa.Integer(), nullable=True),
+    sa.Column('token', sa.String(length=64), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('machine_apply',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('applicant_name', sa.String(length=64), nullable=True),
+    sa.Column('applicant_institution', sa.String(length=64), nullable=True),
+    sa.Column('applicant_tel', sa.String(length=64), nullable=True),
+    sa.Column('applicant_email', sa.String(length=64), nullable=True),
+    sa.Column('applicant_address', sa.String(length=128), nullable=True),
+    sa.Column('manager_name', sa.String(length=64), nullable=True),
+    sa.Column('manager_institution', sa.String(length=64), nullable=True),
+    sa.Column('manager_tel', sa.String(length=64), nullable=True),
+    sa.Column('manager_email', sa.String(length=64), nullable=True),
+    sa.Column('manager_address', sa.String(length=128), nullable=True),
+    sa.Column('project_name', sa.String(length=128), nullable=True),
+    sa.Column('sc_center', sa.Integer(), nullable=True),
+    sa.Column('cpu_hour', sa.Integer(), nullable=True),
+    sa.Column('usage', sa.String(length=512), nullable=True),
+    sa.Column('applying_time', sa.DateTime(), nullable=False),
+    sa.Column('submit_status', sa.Integer(), nullable=True),
+    sa.Column('user_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('programs',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=128), nullable=False),
@@ -134,6 +201,7 @@ def upgrade():
     sa.Column('difficulty', sa.Integer(), nullable=True),
     sa.Column('acceptedNum', sa.Integer(), nullable=True),
     sa.Column('submitNum', sa.Integer(), nullable=True),
+    sa.Column('default_code', sa.Text(), nullable=True),
     sa.Column('createdTime', sa.DateTime(), nullable=True),
     sa.Column('user_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
@@ -233,6 +301,15 @@ def upgrade():
     sa.ForeignKeyConstraint(['courseId'], ['courses.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('notices',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('title', sa.String(length=32), nullable=False),
+    sa.Column('content', sa.Text(), nullable=True),
+    sa.Column('createdTime', sa.DateTime(), nullable=True),
+    sa.Column('courseId', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['courseId'], ['courses.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('papers',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('title', sa.String(length=128), nullable=False),
@@ -314,6 +391,16 @@ def upgrade():
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('homework_score',
+    sa.Column('user_id', sa.Integer(), nullable=False),
+    sa.Column('homework_id', sa.Integer(), nullable=False),
+    sa.Column('score', sa.Integer(), nullable=False),
+    sa.Column('comment', sa.String(length=1024), nullable=True),
+    sa.Column('status', sa.Integer(), nullable=False),
+    sa.ForeignKeyConstraint(['homework_id'], ['homework.id'], ),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ),
+    sa.PrimaryKeyConstraint('user_id', 'homework_id')
+    )
     op.create_table('homework_upload',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('name', sa.String(length=256), nullable=False),
@@ -368,6 +455,7 @@ def downgrade():
     op.drop_table('paper_question')
     op.drop_table('materials')
     op.drop_table('homework_upload')
+    op.drop_table('homework_score')
     op.drop_table('homework_appendix')
     op.drop_table('vnc_tasks')
     op.drop_table('vnc_progresses')
@@ -377,6 +465,7 @@ def downgrade():
     op.drop_table('progress')
     op.drop_table('post')
     op.drop_table('papers')
+    op.drop_table('notices')
     op.drop_table('lessons')
     op.drop_table('homework')
     op.drop_table('course_users')
@@ -388,14 +477,18 @@ def downgrade():
     op.drop_table('topics')
     op.drop_table('questions')
     op.drop_table('programs')
+    op.drop_table('machine_apply')
+    op.drop_table('machine_account')
     op.drop_table('knowledges')
     op.drop_table('group_members')
+    op.drop_table('docker_images')
     op.drop_table('courses')
     op.drop_table('case_versions')
     op.drop_index(op.f('ix_users_username'), table_name='users')
     op.drop_index(op.f('ix_users_email'), table_name='users')
     op.drop_table('users')
     op.drop_table('groups')
+    op.drop_table('docker_holders')
     op.drop_table('code_cache')
     op.drop_table('classifies')
     op.drop_table('cases')

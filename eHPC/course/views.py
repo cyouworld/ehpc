@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, jsonify, request, current_app
 from . import course
-from ..models import Course, Material, Paper, Comment, Homework, HomeworkUpload, Apply, HomeworkScore, Topic
+from ..models import Course, Material, Paper, Comment, Homework, HomeworkUpload, Apply, HomeworkScore, Topic, Notice
 from flask_babel import gettext
 from flask_login import current_user, login_required
 from ..util.file_manage import upload_file, custom_secure_filename
@@ -41,12 +41,15 @@ def view(cid):
         if current_user in c.group.members:
             discussion_priority = True
 
+        notices = Notice.query.filter_by(course=c).order_by(Notice.createdTime.desc()).limit(3).all()
+
         return render_template('course/detail.html',
                                title=c.title,
                                tab=tab,
                                course=c,
                                user=current_user,
                                papers=paper_of_course,
+                               notices=notices,
                                status=status,
                                discussion_priority=discussion_priority)
 
@@ -344,3 +347,21 @@ def process_comment():
                        html=render_template('course/widget_course_comment.html', course=curr_course, user=current_user))
     else:
         return jsonify(status='fail')
+
+
+@course.route('/<int:cid>/notice')
+def notice_index(cid):
+    curr_course = Course.query.filter_by(id=cid).first()
+    notices = Notice.query.filter_by(course=curr_course).order_by(Notice.createdTime.desc()).all()
+    return render_template('course/notice_index.html',
+                           course=curr_course,
+                           notices=notices)
+
+
+@course.route('/<int:cid>/notice/<int:nid>')
+def notice_detail(cid, nid):
+    curr_course = Course.query.filter_by(id=cid).first_or_404()
+    curr_notice = Notice.query.filter_by(id=nid).first_or_404()
+    return render_template('course/notice_detail.html',
+                           course=curr_course,
+                           notice=curr_notice)

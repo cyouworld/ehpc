@@ -14,7 +14,7 @@ from sqlalchemy import or_
 
 from . import admin
 from .. import db
-from ..models import Classify, Program, Paper, Question, PaperQuestion, Homework, HomeworkUpload, HomeworkAppendix, HomeworkScore
+from ..models import Classify, Program, Paper, Question, PaperQuestion, Homework, HomeworkUpload, HomeworkAppendix, HomeworkScore, Notice
 from ..models import Course, Lesson, Material, User, Apply, VNCKnowledge, VNCTask
 from ..models import Knowledge, Challenge, Group
 from ..user.authorize import teacher_login
@@ -135,6 +135,63 @@ def course_picture(course_id):
             return jsonify(status='success')
         else:
             return jsonify(status="fail")
+
+
+@admin.route('/course/<int:course_id>/notice/', methods=['GET', 'POST'])
+@teacher_login
+def course_notice(course_id):
+    if request.method == 'GET':
+        curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        notices = Notice.query.filter_by(course=curr_course).order_by(Notice.createdTime.desc()).all()
+        return render_template('admin/course/notice.html',
+                               title=gettext('Course Notice'),
+                               notices=notices,
+                               course=curr_course)
+
+
+@admin.route('/course/<int:course_id>/notice/create', methods=['GET', 'POST'])
+@teacher_login
+def course_notice_create(course_id):
+    if request.method == 'GET':
+        curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        return render_template('admin/course/notice_edit.html', course=curr_course,
+                               title=gettext('Course Notice'))
+    elif request.method == 'POST':
+        curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        new_notice = Notice(title=request.form['title'], content=request.form['content'])
+        db.session.add(new_notice)
+        curr_course.notices.append(new_notice)
+        db.session.commit()
+        return redirect(url_for('admin.course_notice', course_id=course_id))
+
+
+@admin.route('/course/<int:course_id>/notice/edit/<int:notice_id>', methods=['GET', 'POST'])
+@teacher_login
+def course_notice_edit(course_id, notice_id):
+    if request.method == 'GET':
+        curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        curr_notice = Notice.query.filter_by(id=notice_id).first_or_404()
+        return render_template('admin/course/notice_edit.html',
+                               course=curr_course,
+                               notice=curr_notice,
+                               title=gettext('Course Notice'))
+    elif request.method == 'POST':
+        curr_notice = Notice.query.filter_by(id=notice_id).first_or_404()
+        curr_notice.title = request.form['title']
+        curr_notice.content = request.form['content']
+        db.session.commit()
+        return redirect(url_for('admin.course_notice', course_id=course_id))
+
+
+@admin.route('/course/<int:course_id>/notice/del', methods=['GET', 'POST'])
+@teacher_login
+def course_notice_del(course_id):
+    curr_course = Course.query.filter_by(id=course_id).first_or_404()
+    curr_notice = Notice.query.filter_by(id=request.form['notice_id']).first_or_404()
+    curr_course.notices.remove(curr_notice)
+    db.session.delete(curr_notice)
+    db.session.commit()
+    return jsonify(status="success")
 
 
 @admin.route('/course/<int:course_id>/lesson/', methods=['GET', 'POST'])

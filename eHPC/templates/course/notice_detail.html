@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container article-detail-main" id="content-container">
+        <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
+            <li><a href="/">{{ _('Index') }}</a></li>
+            <li><a href="{{ url_for('course.index') }}">{{ _('All The Courses') }}</a></li>
+            <li><a href="{{ url_for('course.view', cid=course.id) }}">{{ course.title }}</a></li>
+            <li><a href="{{ url_for('course.notice_index', cid=course.id) }}">公告列表</a></li>
+            <li class="active">{{ notice.title }}</li>
+        </ol>
+
+        <section class="es-section article-content">
+            <div class="article-metas">
+                <div class="pull-left">
+                    <div class="date">
+                        <div class="day">{{ notice.createdTime.day }}</div>
+                        <div class="month">{{ notice.createdTime.month }}月</div>
+                    </div>
+                </div>
+                <div class="metas-body">
+                    <h2 class="title">{{ notice.title }}</h2>
+                </div>
+            </div>
+            <div id="article-content" style="margin-top: 20px;" class="markdown-body article-text" data-to-render="{{ notice.content }}"></div>
+        </section>
+    </div>
+
+{% endblock %}
+
+{% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/markdown_latex_support.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var article_content = $("#article-content");
+            article_content.html(latex_support(article_content.data('to-render')));
+            article_content.attr('data-to-render', null);
+        });
+    </script>
+{% endblock %}

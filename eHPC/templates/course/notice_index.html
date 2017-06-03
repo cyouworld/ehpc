@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container" id="content-container">
+        <section class="course-detail-header after">
+            <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
+                <li><a href="/">{{ _('Index') }}</a></li>
+                <li><a href="{{ url_for('course.index') }}">{{ _('All The Courses') }}</a></li>
+                <li><a href="{{ url_for('course.view', cid=course.id) }}">{{ course.title }}</a></li>
+                <li class="active">公告列表</li>
+            </ol>
+            {% if notices %}
+                <div class="article-list-body row">
+                    <div class="col-md-10 col-offset-1">
+                        <section class="es-section">
+                            <ul class="media-list thread-list">
+                                {% for n in notices %}
+                                    <li class="media" style="margin-top: 10px;">
+                                        <div class="media-body pts" style="padding-left: 20px;">
+                                            <div class="media-heading">
+                                                <a class="title gray-darker" style="font-size: 20px"
+                                                   href="{{ url_for('course.notice_detail', cid=course.id, nid=n.id) }}">{{ n.title }}</a>
+                                            </div>
+                                            <div class="metas">
+                                                <span>
+                                                    <i class="es-icon es-icon-time"></i>&nbsp;创建于{{ n.createdTime | natural_time }}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </section>
+                    </div>
+                </div>
+            {% else %}
+                <h2>暂无公告信息</h2>
+            {% endif %}
+        </section>
+    </div>
+
+{% endblock %}
+
+{% block footer_ext %}
+
+{% endblock %}

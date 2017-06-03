@@ -1,0 +1,98 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+
+    <div class="container" id="content-container">
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="list-group-panel">
+                    <div class="list-group">
+                        <a class="list-group-item" href="{{ url_for('admin.course') }}">课程管理</a>
+                    </div>
+                    <div class="list-group">
+                        <a class="list-group-item" href="{{ url_for('admin.course_edit', course_id=course.id) }}">课程信息</a>
+                        <a class="list-group-item" href="{{ url_for('admin.course_picture', course_id=course.id) }}">课程图片</a>
+                        <a class="list-group-item" href="{{ url_for('admin.course_lesson', course_id=course.id) }}">课时管理</a>
+                        <a class="list-group-item" href="{{ url_for('admin.course_permission', course_id=course.id) }}">权限管理</a>
+                        <a class="list-group-item" href="{{ url_for('admin.course_member', course_id=course.id) }}">成员管理</a>
+                        <a class="list-group-item" href="{{ url_for('admin.course_homework', course_id=course.id) }}">课程作业</a>
+                        <a class="list-group-item" href="{{ url_for('admin.course_paper', course_id=course.id) }}">试卷管理</a>
+                        <a class="list-group-item active" href="{{ url_for('admin.course_notice', course_id=course.id) }}">公告管理</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-9">
+                <div class="panel panel-default panel-col">
+                    <div class="panel-heading">
+                        <span class="pull-right">
+                            <a id="create-course" href="{{ url_for('admin.course_notice_create', course_id=course.id) }}" class="btn btn-info btn-sm">
+                                <span class="glyphicon glyphicon-plus"></span>
+                                创建公告
+                            </a>
+                        </span>
+                        公告管理
+                    </div>
+
+                    <div class="panel-body">
+                        <ul class="lesson-list sortable-list" id="homework-item-list">
+                            {% if notices %}
+                                {% for n in notices %}
+                                <li class="item-lesson clearfix" data-notice_id="{{ n.id }}" style="word-break: break-all;">
+                                    <div class="item-content col-md-6">
+                                        <i class="es-icon es-icon-undone"></i>
+                                         {{ n.title }}
+                                    </div>
+                                    <div class="col-md-6">
+                                        <span style="color: #c1c1c1;" class="btn btn-link pull-right">{{ n.createdTime }}</span>
+                                        <a class="btn btn-link pull-right" href="javascript:void(0)" name="del-btn">
+                                            <i class="es-icon es-icon-delete"></i>删除</a>
+                                        <a href="{{ url_for('admin.course_notice_edit', course_id=course.id, notice_id=n.id) }}" class="btn btn-link pull-right" data-toggle="modal" name="edit-btn">
+                                            <i class="es-icon es-icon-edit"></i>编辑</a>
+                                    </div>
+                                </li>
+                                {% endfor %}
+                            {% else %}
+                                <div class="text-center">本课程暂时未发布公告</div>
+                            {% endif %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% include "admin/widget-del-warning.html" %}
+
+{% endblock %}
+{% block footer_ext %}
+    <script type="text/javascript" language="JavaScript">
+        var obj = null;
+        $("#homework-item-list").find("a[name=del-btn]").click(function () {
+            obj = this;
+            $("#del-warning").modal("show");
+        });
+
+        $("#del-confirm").click(function () {
+            $.ajax({
+                type: "post",
+                url: "{{ url_for('admin.course_notice_del',course_id=course.id) }}",
+                data: {
+                    op: 'del',
+                    notice_id: $(obj).parent().parent().data('notice_id')
+                },
+                async: false,
+                success: function (data) {
+                    if (data["status"] == "success") {
+                        $(obj).parent().parent().remove();
+                        $("#del-warning").modal("hide");
+                    }
+                    else {
+                        alert_modal("删除失败");
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}
