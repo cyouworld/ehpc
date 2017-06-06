@@ -24,6 +24,23 @@ from ..util.file_manage import remove_dirs
 from ..util.xlsx import get_member_xlsx, get_score_xlsx, get_allscore_xlsx
 
 
+'''add_sidebar():定义上下文处理器，便于把数据导入后台管理模板中的sidebar
+'''
+
+
+@admin.context_processor
+def add_sidebar():
+    courses = current_user.teacher_courses.order_by(Course.nature_order.asc())
+    classifies = Classify.query.all()
+    return {'sidebar_courses': courses, 'sidebar_classifies': classifies}
+
+# 测试用
+# @admin.route('/dev/', methods=["GET", "POST"])
+# @include_sidebar_data
+# def dev():
+#     return render_template('admin/base.html')
+
+
 @admin.route('/course/', methods=['GET', 'POST'])
 @teacher_login
 def course():
@@ -59,7 +76,7 @@ def course():
             cover_path = os.path.join(current_app.config['COURSE_COVER_FOLDER'], 'cover_%d.png' % curr_course.id)
             remove_dirs(resource_path, homework_path, homework_appendix_path, cover_path)
 
-            #将排在此课程后面的课程序号全部减1
+            # 将排在此课程后面的课程序号全部减1
             total_courses = Course.query.order_by(Course.nature_order.asc())
             for c in total_courses:
                 if c.nature_order >= curr_course.nature_order:

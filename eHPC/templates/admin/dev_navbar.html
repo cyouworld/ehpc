@@ -1,0 +1,196 @@
+  <!-- Main Header -->
+  <header class="main-header">
+
+    <!-- Logo -->
+    <a href="{{ url_for('admin.teacher') }}" class="logo">
+      <!-- mini logo for sidebar mini 50x50 pixels -->
+      <span class="logo-mini"><b>E</b>HPC</span>
+      <!-- logo for regular state and mobile devices -->
+      <span class="logo-lg"><b>Admin</b>EHPC</span>
+    </a>
+
+    <!-- Header Navbar -->
+    <nav class="navbar navbar-static-top" role="navigation">
+      <!-- Sidebar toggle button-->
+      <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button">
+        <span class="sr-only">Toggle navigation</span>
+      </a>
+      <!-- Navbar Right Menu -->
+      <div class="navbar-custom-menu">
+        <ul class="nav navbar-nav">
+          <!-- Messages: style can be found in dropdown.less-->
+          <li class="dropdown messages-menu">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-envelope-o"></i>
+              <span class="label label-success">4</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 4 messages</li>
+              <li>
+                <!-- inner menu: contains the messages -->
+                <ul class="menu">
+                  <li><!-- start message -->
+                    <a href="#">
+                      <div class="pull-left">
+                        <!-- User Image -->
+                        <img src="#" class="img-circle" alt="User Image">
+                      </div>
+                      <!-- Message title and timestamp -->
+                      <h4>
+                        Support Team
+                        <small><i class="fa fa-clock-o"></i> 5 mins</small>
+                      </h4>
+                      <!-- The message -->
+                      <p>Why not buy a new awesome theme?</p>
+                    </a>
+                  </li>
+                  <!-- end message -->
+                </ul>
+                <!-- /.menu -->
+              </li>
+              <li class="footer"><a href="#">See All Messages</a></li>
+            </ul>
+          </li>
+          <!-- /.messages-menu -->
+
+          <!-- Notifications Menu -->
+          <li class="dropdown notifications-menu">
+            <!-- Menu toggle button -->
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+              <i class="fa fa-bell-o"></i>
+              <span class="label label-warning">10</span>
+            </a>
+            <ul class="dropdown-menu">
+              <li class="header">You have 10 notifications</li>
+              <li>
+                <!-- Inner Menu: contains the notifications -->
+                <ul class="menu">
+                  <li><!-- start notification -->
+                    <a href="#">
+                      <i class="fa fa-users text-aqua"></i> 5 new members joined today
+                    </a>
+                  </li>
+                  <!-- end notification -->
+                </ul>
+              </li>
+              <li class="footer"><a href="#">View all</a></li>
+            </ul>
+          </li>
+
+          <li><a href="#">切换为学生</a></li>
+          <li><a href="#">退出</a></li>
+        </ul>
+      </div>
+    </nav>
+  </header>
+
+
+  <!-- Left side column. contains the logo and sidebar -->
+  <aside class="main-sidebar">
+
+    <!-- sidebar: style can be found in sidebar.less -->
+    <section class="sidebar">
+
+      <!-- Sidebar user panel (optional) -->
+      <div class="user-panel">
+        <div class="pull-left image">
+          <img src="{{ current_user.avatar_url | get_avatar_path }}" class="img-circle" alt="User Image">
+        </div>
+        <div class="pull-left info">
+          <p>{{ current_user.username }}</p>
+          <!-- Status -->
+          <a href="#"><i class="fa fa-circle text-success"></i> 教师用户</a>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu -->
+      <ul class="sidebar-menu">
+        <li class="header">MENU</li>
+
+
+        <li id="bar-course" class="treeview">
+          <a href="#"><i class="fa fa-file"></i> <span>课程管理</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li id="bar-course-list"><a href="{{ url_for('admin.course') }}?tag1=bar-course&tag2=bar-course-list"><i class="fa fa-list-ul"></i><span>管理课程列表</span></a></li>
+            {% if sidebar_courses %}
+                {% for c in sidebar_courses %}
+                <li id="bar-course-{{ c.id }}" class="treeview">
+                    <a href="#"><i class="fa fa-book"></i><span title="{{ c.title }}">{{ c.title | truncate(25)}}</span>
+                        <span class="pull-right-container">
+                          <i class="fa fa-angle-left pull-right"></i>
+                        </span>
+                    </a>
+                    <ul class="treeview-menu">
+                        <li id="bar-course-{{ c.id }}-0"><a href="{{ url_for('admin.course_edit',course_id=c.id) }}?tag1=bar-course&tag2=bar-course-{{ c.id }}&tag3=bar-course-{{ c.id }}-0"><i class="fa fa-link"></i>课程信息</a></li>
+                        <li id="bar-course-{{ c.id }}-1"><a href="{{ url_for('admin.course_picture',course_id=c.id) }}?tag1=bar-course&tag2=bar-course-{{ c.id }}&tag3=bar-course-{{ c.id }}-1"><i class="fa fa-link"></i>课程图片</a></li>
+                        <li id="bar-course-{{ c.id }}-2"><a href="{{ url_for('admin.course_lesson',course_id=c.id) }}?tag1=bar-course&tag2=bar-course-{{ c.id }}&tag3=bar-course-{{ c.id }}-2"><i class="fa fa-link"></i>课时管理</a></li>
+                        <li id="bar-course-{{ c.id }}-3"><a href="{{ url_for('admin.course_permission',course_id=c.id) }}?tag1=bar-course&tag2=bar-course-{{ c.id }}&tag3=bar-course-{{ c.id }}-3"><i class="fa fa-link"></i>权限管理</a></li>
+                        <li id="bar-course-{{ c.id }}-4"><a href="{{ url_for('admin.course_member',course_id=c.id) }}?tag1=bar-course&tag2=bar-course-{{ c.id }}&tag3=bar-course-{{ c.id }}-4"><i class="fa fa-link"></i>成员管理</a></li>
+                        <li id="bar-course-{{ c.id }}-5"><a href="{{ url_for('admin.course_homework',course_id=c.id) }}?tag1=bar-course&tag2=bar-course-{{ c.id }}&tag3=bar-course-{{ c.id }}-5"><i class="fa fa-link"></i>课程作业</a></li>
+                        <li id="bar-course-{{ c.id }}-6"><a href="{{ url_for('admin.course_paper',course_id=c.id) }}?tag1=bar-course&tag2=bar-course-{{ c.id }}&tag3=bar-course-{{ c.id }}-6"><i class="fa fa-link"></i>试卷管理</a></li>
+                        <li id="bar-course-{{ c.id }}-7"><a href="{{ url_for('admin.course_notice',course_id=c.id) }}?tag1=bar-course&tag2=bar-course-{{ c.id }}&tag3=bar-course-{{ c.id }}-7"><i class="fa fa-link"></i>公告管理</a></li>
+                    </ul>
+                </li>
+                {% endfor %}
+            {% endif %}
+          </ul>
+        </li>
+
+
+        <li id="bar-problem" class="treeview">
+          <a href="#"><i class="fa fa-file"></i> <span>题目管理</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li id="bar-problem-list"><a href="{{ url_for('admin.problem') }}?tag1=bar-problem&tag2=bar-problem-list"><i class="fa fa-list-ul"></i><span>管理题目分类</span></a></li>
+              {% if sidebar_classifies %}
+                  {% for c in sidebar_classifies %}
+                  <li id="bar-problem-{{ c.id }}"><a href="{{ url_for('admin.question_filter_by_classify', question_type='choice', question_classify=c.id) }}?tag1=bar-problem&tag2=bar-problem-{{ c.id }}"><i class="fa fa-link"></i><span>{{ c.name }}</span></a></li>
+                  {% endfor %}
+              {% endif %}
+          </ul>
+        </li>
+
+
+         <li id="bar-lab" class="treeview">
+          <a href="#"><i class="fa fa-file"></i> <span>实验管理</span>
+            <span class="pull-right-container">
+              <i class="fa fa-angle-left pull-right"></i>
+            </span>
+          </a>
+          <ul class="treeview-menu">
+            <li id="bar-lab-0"><a href="{{ url_for('admin.lab') }}?tag1=bar-lab&tag2=bar-lab-0"><i class="fa fa-list-ul"></i><span>编程虚拟实验室</span></a></li>
+            <li id="bar-lab-1"><a href="{{ url_for('admin.vnc_lab') }}?tag1=bar-lab&tag2=bar-lab-1"><i class="fa fa-list-ul"></i><span>VNC虚拟实验室</span></a></li>
+          </ul>
+        </li>
+
+        <li id="bar-know"><a href="{{ url_for('admin.classify') }}?tag1=bar-know"><i class="fa fa-link"></i> <span>知识点管理</span></a></li>
+      </ul>
+
+      <!-- /.sidebar-menu -->
+    </section>
+    <!-- /.sidebar -->
+  </aside>
+
+
+<!-- 菜单栏的当前项高亮设置 -->
+<script>
+    {% if request.args.get('tag1') %}
+        $("#{{ request.args.get('tag1') }}").addClass("active");
+    {% endif %}
+
+    {% if request.args.get('tag2') %}
+        $("#{{ request.args.get('tag2') }}").addClass("active");
+    {% endif %}
+
+    {% if request.args.get('tag3') %}
+        $("#{{ request.args.get('tag3') }}").addClass("active");
+    {% endif %}
+</script>

@@ -1,0 +1,16 @@
+/*
+    本css用于对教师管理界面的模板css做一些适应性覆盖
+*/
+
+.main-sidebar, .left-side{
+    width: 280px;
+}
+
+.main-header .logo{
+    width: 280px;
+}
+
+.main-header .navbar{
+    margin-left: 280px;
+}
+
