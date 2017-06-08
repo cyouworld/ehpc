@@ -212,7 +212,7 @@
                 success: function (data) {
                     if (data.status === 'success') {
                         $compiler_result.html(data.compile_out);
-                        $run_result.html(data.run_out)
+                        $run_result.html(data.run_out);
 
                         var job_id = data.job_id;
                         var sh;
@@ -245,8 +245,8 @@
                                     }
                                 },
                                 error: function (data) {
-                                    $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
-                                   $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+{#                                    $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
+{#                                    $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
                                 }
                             });
                         }, 1000);
@@ -302,8 +302,8 @@
                                 }
                             },
                             error: function (data) {
-                                $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
-                                $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+{#                                $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
+{#                                $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
                             }
                         });
 
