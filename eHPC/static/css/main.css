@@ -3204,6 +3204,11 @@ textarea {
     margin-top: -3px;
 }
 
+.period-list .period .course-deadline {
+    font-size: 14px;
+    line-height: 20px;
+}
+
 .period-list .period .period-state {
     position: absolute;
     top: 10px;

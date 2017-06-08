@@ -21,7 +21,8 @@ from ..user.authorize import teacher_login
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename, extension_to_file_type
 from ..util.pdf import get_paper_pdf
 from ..util.file_manage import remove_dirs
-from ..util.xlsx import get_member_xlsx, get_score_xlsx, get_allscore_xlsx
+from ..util.xlsx import get_member_xlsx, get_score_xlsx, get_allscore_xlsx, get_not_uploaded_xlsx
+from ..util.course_filter import check_upload
 
 
 '''add_sidebar():定义上下文处理器，便于把数据导入后台管理模板中的sidebar
@@ -701,6 +702,28 @@ def course_homework_upload_list(course_id, homework_id):
             return jsonify(status="success",
                            homework_title=curr_homework.title,
                            course_title=curr_course.title)
+
+
+@admin.route('/course/<int:course_id>/homework/<int:homework_id>/not_uploaded', methods=['GET', 'POST'])
+@teacher_login
+def course_homework_not_uploaded(course_id, homework_id):
+    curr_homework = Homework.query.filter_by(id=homework_id).first_or_404()
+    curr_course = Course.query.filter_by(id=course_id).first_or_404()
+    not_uploaded = []
+    all_members = curr_course.users
+    for u in all_members:
+        if check_upload(u, homework_id) == 2:
+            not_uploaded.append(u)
+    if request.method == "GET":
+        return render_template('admin/course/homework_not_uploaded.html',
+                               course=curr_course,
+                               homework=curr_homework,
+                               not_uploaded=not_uploaded,
+                               title=gettext("Course Homework"))
+    elif request.method == "POST":
+        uri = get_not_uploaded_xlsx(not_uploaded, curr_course.id, curr_homework.id)
+        download_file_name = "%s_%s_未交名单" % (curr_course.title.encode('utf-8'), curr_homework.title.encode('utf-8'))
+        return jsonify(status="success", download_file_name=download_file_name)
 
 
 @admin.route('/course/<int:course_id>/homework/<int:homework_id>/correct', methods=['GET', 'POST'])

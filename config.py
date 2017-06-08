@@ -36,6 +36,13 @@ TH2_MACHINE_NAME = os.environ.get("EHPC_MACHINE")
 TH2_MY_PATH = os.environ.get("EHPC_PATH")
 TH2_MAX_NODE_NUMBER = os.environ.get("EHPC_MAX_NODE_NUMBER")
 
+TH2_BASE_URL_NEW = "http://a002.nscc-gz.cn:10307/api"
+TH2_USERNAME_NEW = "testuser"
+TH2_PASSWORD_NEW = "test123qaz"
+TH2_MACHINE_NAME_NEW = "local"
+TH2_MY_PATH_NEW = "/HOME/testuser1"
+TH2_LOGIN_DATA_NEW = {"username": TH2_USERNAME_NEW, "password": TH2_PASSWORD_NEW}
+
 """
 luosimao人机验证参数
 文档地址

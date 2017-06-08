@@ -129,3 +129,13 @@ def get_comment(user, homework_id):
         return homework_score.comment
     else:
         return ""
+
+
+@filter_blueprint.app_template_filter('homework_uploaded')
+def homework_uploaded(homework_id, user_id):
+    curr_user = User.query.filter_by(id=user_id).first_or_404()
+    curr_user_upload = curr_user.homeworks.filter_by(homework_id=homework_id).first()
+    if curr_user_upload:
+        return True
+    else:
+        return False

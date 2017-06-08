@@ -4,12 +4,14 @@
             <ul class="period-list" id="course-item-list">
                 {% if homeworks %}
                     {% for h in homeworks %}
-                        <li class="period homework-item" data-homework_id="{{ h.id }}">
+                        <li class="period homework-item" data-homework_id="{{ h.id }}" data-toggle="tooltip"
+                            title="{% if h.id | homework_uploaded(current_user.id) %}已提交{% else %}未提交{% endif %}">
                             <span>
-                                <i class="es-icon es-icon-undone"></i>
+                                <span><i class="es-icon es-icon-undone"></i></span>
                                 <span class="title"> {{ h.title }}</span>
 
-                                <span class="course-type">
+                                <span class="course-deadline pull-right">截止时间: {{ h.deadline | unite_time_format }}</span>
+                                <span class="course-type" style="{% if h.id | homework_uploaded(current_user.id) %}color: #5BB85D;{% else %}color: #DD4B39;{% endif %}">
                                     <i class="es-icon es-icon-check"></i>
                                 </span>
                             </span>
