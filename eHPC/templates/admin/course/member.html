@@ -121,6 +121,7 @@
         </div>
     </div><!-- /.modal -->
 
+    {% include 'admin/widget-del-warning.html' %}
 
 {% endblock %}
 
@@ -213,6 +214,10 @@
                 })
             });
             $("#batch-del").click(function () {
+                $("#del-warning").modal("show");
+            });
+
+            $("#del-confirm").click(function () {
                 var array = [], flag = false;
                 $("input[name=select]").each(function () {
                     if ($(this).prop("checked"))
@@ -247,6 +252,7 @@
                     }
                 })
             });
+
             $("#course-member-form").find("input[type=checkbox]").prop("checked", true);
         });
     </script>
