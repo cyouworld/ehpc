@@ -84,7 +84,11 @@ def upload_file(file_src, des_path, allowed_type=None):
             os.makedirs(folder)
         file_src.save(des_path)
         unique_uri = os.stat(des_path).st_mtime
-        return True, unique_uri
+        if os.path.exists(des_path):
+            return True, unique_uri
+        else:
+            message = gettext("Save File Failed!")
+            return False, message
     else:
         message = gettext("Invalid file")
         return False, message

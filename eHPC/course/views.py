@@ -171,7 +171,7 @@ def detail_lessons(cid):
 def homework_list(cid):
     c = Course.query.filter_by(id=cid).first()
     homeworks = c.homeworks.all()
-    html_content = render_template('course/widget_homework_list.html', homeworks=homeworks)
+    html_content = render_template('course/widget_homework_list.html', course=c, homeworks=homeworks)
     return jsonify(data=html_content)
 
 

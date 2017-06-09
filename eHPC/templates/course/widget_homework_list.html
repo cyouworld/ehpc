@@ -11,7 +11,9 @@
                                 <span class="title"> {{ h.title }}</span>
 
                                 <span class="course-deadline pull-right">截止时间: {{ h.deadline | unite_time_format }}</span>
-                                <span class="course-type" style="{% if h.id | homework_uploaded(current_user.id) %}color: #5BB85D;{% else %}color: #DD4B39;{% endif %}">
+                                <span class="course-type"
+                                      style="{% if current_user.id | is_join_course(course.id) %}{% if h.id | homework_uploaded(current_user.id) %}color: #5BB85D;{% else %}color: #DD4B39;{% endif %}{% endif %}">
+                                    {% if current_user.id | is_join_course(course.id) %}{% if h.id | homework_uploaded(current_user.id) %}已提交{% else %}未提交{% endif %}{% endif %}
                                     <i class="es-icon es-icon-check"></i>
                                 </span>
                             </span>
@@ -29,19 +31,26 @@
 <script>
     $(".homework-item").click(function() {
         var homework_id = $(this).data('homework_id');
-        $.ajax({
-            url: "{{ url_for('course.homework_detail') }}",
-            type: 'post',
-            data: {
-                hid: homework_id
-            },
-            success: function (html) {
-                $("#course-homework").empty().html(html.data);
-            },
-            error: function () {
-                $("#course-homework").empty().html("<h2 style='text-align: center'> 作业内容为空或者出现其他错误 </h2>");
-            }
-        });
+        {% if current_user.id | is_join_course(course.id) %}
+            $.ajax({
+                url: "{{ url_for('course.homework_detail') }}",
+                type: 'post',
+                data: {
+                    hid: homework_id
+                },
+                success: function (html) {
+                    $("#course-homework").empty().html(html.data);
+                },
+                error: function () {
+                    $("#course-homework").empty().html("<h2 style='text-align: center'> 作业内容为空或者出现其他错误 </h2>");
+                }
+            });
+        {% else %}
+            alert_modal("请先加入课程才能查看作业！");
+            setTimeout(function(){
+                $("#modal-alert .close").click();
+            },1500);
+        {% endif %}
     });
 </script>
 {% endblock %}
