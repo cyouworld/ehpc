@@ -1,3 +1,29 @@
+function delete_appendix(e) {
+    var event = e || window.event;
+    var curr_ele = event || event.srcElement;
+    var curr_div = curr_ele.parentNode.parentNode;
+    if (curr_div.classList.contains("uploaded")) {
+        var appendix_id = curr_div.getAttribute("data-appendix-id");
+        $.ajax({
+            type: "post",
+            url: location.href,
+            data: {
+                op: "del",
+                appendix_id: appendix_id
+            },
+            success: function (data) {
+                if(data.status == "success"){
+                    curr_div.remove();
+                }
+                else{
+                    var str = curr_div.data("appendix-name") + "删除失败，请稍后重试！";
+                    alert_modal(str);
+                }
+            }
+        });
+    }
+}
+
 $(document).ready(function () {
     $('#dtp').datetimepicker({
         format: "yyyy-mm-dd hh:ii",
@@ -28,28 +54,10 @@ $(document).ready(function () {
         }
     });
 
-    $(".delete-appendix").click(function () {
-        var curr_div = $(this).parent().parent();
-        if (curr_div.hasClass("uploaded")) {
-            var appendix_id = curr_div.data("appendix-id");
-            $.ajax({
-                type: "post",
-                url: location.href,
-                data: {
-                    op: "del",
-                    appendix_id: appendix_id
-                },
-                success: function (data) {
-                    if(data.status == "success"){
-                        curr_div.remove();
-                    }
-                    else{
-                        var str = curr_div.data("appendix-name") + "删除失败，请稍后重试！";
-                        alert_modal(str);
-                    }
-                }
-            });
-        }
+    $("#save-homework-info").click(function() {
+        $("#homework-save-op").val("save");
+        var p_instance = $('#course-homework-form').parsley();
+        p_instance.validate();
     });
 
     // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument
@@ -61,7 +69,7 @@ $(document).ready(function () {
         maxFiles: 10,
         maxFilesize: 50,
         acceptedFiles: "video/mp4,video/mkv,application/pdf,.zip,.rar",
-        autoProcessQueue: false,
+        autoProcessQueue: true,
         previewTemplate: template,
         uploadMultiple: true,
         parallelUploads: 10,
@@ -74,38 +82,29 @@ $(document).ready(function () {
             var myDropzone = this;
             this.on("addedfile", function(file) {
                 $("#upload-status").show();
-                $("#upload-status .modal-title span")[0].innerHTML = "待上传文件";
-                $("#upload-status .col-md-5").addClass("set-invisible");
-                $("#select-homework-appendix")[0].innerHTML = "继续添加";
+                $("#homework-save-op").val("upload");
             });
             this.on("error", function (file) {
                error = true;
             });
-            this.on("queuecomplete", function(file) {
-                if (!error) {
-                    if(options == "create") {
-                        setTimeout(function() {location.href = back_to_list;}, 800);
-                    }
-                    else {
-                        location.reload();
-                    }
+            this.on("successmultiple", function(file,response) {
+                $("#homework-id").val(response.homework_id);
+                $("#upload-status .close").click();
+                for (var i=0;i<response.new_upload_id.length;++i) {
+                    var uploadFilehtml;
+                    uploadFilehtml = ''
+                        + '<div id="appendix' + response.new_upload_id[i] + '" class="alert alert-success alert-dismissable uploaded" role="alert" data-appendix-name="'
+                        + response.new_upload_name[i] + '" data-appendix-id="' + response.new_upload_id[i] + '">'
+                        + '<button type="button" class="close" aria-label="Close">'
+                        + '<span class="delete-appendix" aria-hidden="true" onclick="delete_appendix(this);">&times;</span></button>'
+                        + '<i class="es-icon es-icon-description status-icon pull-left"></i>'
+                        + '<a href="/static/homework/appendix/' + response.new_upload_uri[i] + '" download="'
+                        + response.new_upload_name[i] + '">' + response.new_upload_name[i] + '</a>'
+                        + '</div>';
+                    $("#homework-appendix-list").append(uploadFilehtml);
                 }
             });
-            var myDropzone = this;
-            this.element.querySelector("input[type=submit]").addEventListener("click", function(e) {
-                if (myDropzone.getQueuedFiles().length > 0) {
-                    $("#upload-status .modal-title span")[0].innerHTML = "文件正在上传";
-                    $("#upload-status .col-md-5").removeClass("set-invisible");
-                    // Make sure that the form isn't actually being sent.
-                    var p_instance = $('#course-homework-form').parsley();
-                    p_instance.validate();
-                    if (p_instance.isValid()) {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        myDropzone.processQueue();
-                    }
-                }
-            });
+
             $("#upload-status #dialog-mini-btn").click(function () {
                 $("#upload-status .modal-body").toggle();
             });

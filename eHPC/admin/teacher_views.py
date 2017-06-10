@@ -508,59 +508,102 @@ def course_homework_create(course_id):
                                option="create",
                                title=gettext('Course Homework Create'))
     elif request.method == 'POST':
-        curr_homework = Homework(title=request.form['title'], description=request.form['description'],
-                                     deadline=request.form['deadline'])
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
-        curr_course.homeworks.append(curr_homework)
-        db.session.add(curr_homework)
-        db.session.commit()
-        os.makedirs(os.path.join(current_app.config['HOMEWORK_UPLOAD_FOLDER'], 'course_%d' % curr_course.id,
-                                 'homework_%d' % curr_homework.id))
-        os.makedirs(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], 'course_%d' % curr_course.id,
-                                 'homework_%d' % curr_homework.id))
-        appendix_files = request.files
+        if request.form['op'] == "del":
+            curr_appendix = HomeworkAppendix.query.filter_by(id=request.form['appendix_id']).first_or_404()
+            curr_homework = curr_appendix.homework
+            curr_homework.appendix.remove(curr_appendix)
+            db.session.delete(curr_appendix)
+            db.session.commit()
+            try:
+                os.remove(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], curr_appendix.uri))
+            except OSError:
+                pass
+            return jsonify(status="success")
 
-        cnt = 0
-        while (cnt < len(appendix_files)):
-            index = 'file[%d]' % cnt
-            appendix = appendix_files[index]
+        if request.form['homework-save-op'] == "upload":
+            if request.form['homework-id']:
+                curr_homework = Homework.query.filter_by(id=request.form["homework-id"]).first_or_404()
+            else:
+                curr_homework = Homework(course_id=course_id)
+                curr_course.homeworks.append(curr_homework)
+                db.session.add(curr_homework)
+                db.session.commit()
+                os.makedirs(os.path.join(current_app.config['HOMEWORK_UPLOAD_FOLDER'], 'course_%d' % curr_course.id,
+                                     'homework_%d' % curr_homework.id))
+                os.makedirs(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], 'course_%d' % curr_course.id,
+                                     'homework_%d' % curr_homework.id))
+            appendix_files = request.files
 
-            file_name = custom_secure_filename(appendix.filename)
-            extension = file_name[file_name.rfind('.') + 1:]
-            file_type = extension_to_file_type(extension)
-            cur_appendix = HomeworkAppendix(name=file_name, homework_id=curr_homework.id, user_id=current_user.id, uri="")
-            current_user.homework_appendix.append(cur_appendix)
-            curr_homework.appendix.append(cur_appendix)
-            db.session.commit()  # get appendix id
-            cur_appendix.uri = os.path.join("course_%d" % course_id,
+            cnt = 0
+            upload_names = []
+            upload_ids = []
+            upload_uris = []
+            while (cnt < len(appendix_files)):
+                index = 'file[%d]' % cnt
+                appendix = appendix_files[index]
+
+                file_name = custom_secure_filename(appendix.filename)
+                extension = file_name[file_name.rfind('.') + 1:]
+                file_type = extension_to_file_type(extension)
+                cur_appendix = HomeworkAppendix(name=file_name, homework_id=curr_homework.id, user_id=current_user.id, uri="")
+                current_user.homework_appendix.append(cur_appendix)
+                curr_homework.appendix.append(cur_appendix)
+                db.session.commit()  # get appendix id
+                cur_appendix.uri = os.path.join("course_%d" % course_id,
                                             "homework_%d/appendix_%d.%s" % (curr_homework.id, cur_appendix.id, extension))
-            upload_path = unicode(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], cur_appendix.uri), 'utf-8')
-            status = upload_file(appendix, upload_path, ['video', 'pdf',  'wrap'])
-            if status[0]:
+                upload_path = unicode(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], cur_appendix.uri), 'utf-8')
+                status = upload_file(appendix, upload_path, ['video', 'pdf',  'wrap'])
+                if status[0]:
+                    db.session.commit()
+                    upload_ids.append(cur_appendix.id)
+                    upload_names.append(cur_appendix.name)
+                    upload_uris.append(cur_appendix.uri)
+                else:
+                    current_user.homework_appendix.remove(cur_appendix)
+                    curr_homework.appendix.remove(cur_appendix)
+                    db.session.delete(cur_appendix)
+                    db.session.commit()
+                    for m in curr_homework.appendix:
+                        current_user.homework_appendix.remove(m)
+                        curr_homework.appendix.remove(m)
+                        db.session.delete(m)
+                        db.session.commit()
+                        try:
+                            os.remove(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], m.uri))
+                        except OSError:
+                            pass
+                    return render_template('admin/course/homework_edit.html',
+                                           course=curr_course,
+                                           option="create",
+                                           msg=gettext("homework appendix upload failed"),
+                                           title=gettext('Course Homework Create'))
+                cnt = cnt + 1
+            return jsonify(homework_id=curr_homework.id,
+                           new_upload_id=upload_ids,
+                           new_upload_name=upload_names,
+                           new_upload_uri=upload_uris)
+        elif request.form["homework-save-op"] == "save":
+            if request.form['homework-id']:
+                curr_homework = Homework.query.filter_by(id=request.form["homework-id"]).first_or_404()
+                curr_homework.deadline = request.form["deadline"]
+                curr_homework.description = request.form["description"]
+                curr_homework.title = request.form["title"]
                 db.session.commit()
             else:
-                current_user.homework_appendix.remove(cur_appendix)
-                curr_homework.appendix.remove(cur_appendix)
-                db.session.delete(cur_appendix)
+                curr_homework = Homework(title=request.form['title'], description=request.form['description'],
+                                         course_id=course_id)
+                curr_course.homeworks.append(curr_homework)
+                db.session.add(curr_homework)
                 db.session.commit()
-                for m in curr_homework.appendix:
-                    current_user.homework_appendix.remove(m)
-                    curr_homework.appendix.remove(m)
-                    db.session.delete(m)
+                if request.form["deadline"]:
+                    curr_homework.deadline = request.form['deadline']
                     db.session.commit()
-                    try:
-                        os.remove(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], m.uri))
-                    except OSError:
-                        pass
-                return render_template('admin/course/homework_edit.html',
-                                       course=curr_course,
-                                       option="edit",
-                                       homework=curr_homework,
-                                       msg=gettext("homework appendix upload failed"),
-                                       title=gettext('Course Homework edit'))
-            cnt = cnt + 1
-
-        return redirect(url_for('admin.course_homework', course_id=curr_course.id))
+                os.makedirs(os.path.join(current_app.config['HOMEWORK_UPLOAD_FOLDER'], 'course_%d' % curr_course.id,
+                                     'homework_%d' % curr_homework.id))
+                os.makedirs(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], 'course_%d' % curr_course.id,
+                                     'homework_%d' % curr_homework.id))
+            return redirect(url_for("admin.course_homework_edit", course_id=curr_course.id, homework_id=curr_homework.id))
 
 
 @admin.route('/course/<int:course_id>/homework/<int:homework_id>/edit', methods=['GET', 'POST'])
@@ -591,60 +634,73 @@ def course_homework_edit(course_id, homework_id):
 
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         curr_homework = Homework.query.filter_by(id=homework_id).first_or_404()
-        curr_homework.title = request.form['title']
-        curr_homework.description = request.form['description']
-        curr_homework.deadline = request.form['deadline']
-        db.session.commit()
-        appendix_files = request.files
+        if request.form['homework-save-op'] == "upload":
+            cnt = 0
+            upload_names = []
+            upload_ids = []
+            upload_uris = []
+            appendix_files = request.files
+            while (cnt < len(appendix_files)):
+                index = 'file[%d]' % cnt
+                appendix = appendix_files[index]
+                file_name = custom_secure_filename(appendix.filename)
+                extension = file_name[file_name.rfind('.') + 1:]
+                cur_appendix = HomeworkAppendix(name=file_name, homework_id=curr_homework.id, user_id=current_user.id,
+                                                uri="")
+                current_user.homework_appendix.append(cur_appendix)
+                curr_homework.appendix.append(cur_appendix)
+                db.session.commit()  # get appendix id
+                cur_appendix.uri = os.path.join("course_%d" % course_id,
+                                                "homework_%d/appendix_%d.%s" % (
+                                                curr_homework.id, cur_appendix.id, extension))
+                upload_path = unicode(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], cur_appendix.uri),
+                                      'utf-8')
+                status = upload_file(appendix, upload_path, ['video', 'pdf', 'wrap'])
+                if status[0]:
+                    db.session.commit()
+                    upload_ids.append(cur_appendix.id)
+                    upload_names.append(cur_appendix.name)
+                    upload_uris.append(cur_appendix.uri)
+                else:
+                    current_user.homework_appendix.remove(cur_appendix)
+                    curr_homework.appendix.remove(cur_appendix)
+                    db.session.delete(cur_appendix)
+                    db.session.commit()
+                    for m in appendix_files:
+                        for app in curr_homework.appendix:
+                            if app.name == custom_secure_filename(m):
+                                current_user.homework_appendix.remove(m)
+                                curr_homework.appendix.remove(m)
+                                db.session.delete(m)
+                                db.session.commit()
+                                try:
+                                    os.remove(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], m.uri))
+                                except OSError:
+                                    pass
+                    return render_template('admin/course/homework_edit.html',
+                                           course=curr_course,
+                                           option="edit",
+                                           homework=curr_homework,
+                                           msg=gettext("homework appendix upload failed"),
+                                           title=gettext('Course Homework edit'))
+                cnt = cnt + 1
+            return jsonify(homework_id=curr_homework.id,
+                           new_upload_id=upload_ids,
+                           new_upload_name=upload_names,
+                           new_upload_uri=upload_uris)
 
-        cnt = 0
-        while (cnt < len(appendix_files)):
-            index = 'file[%d]' % cnt
-            appendix = appendix_files[index]
-            file_name = custom_secure_filename(appendix.filename)
-            extension = file_name[file_name.rfind('.') + 1:]
-            cur_appendix = HomeworkAppendix(name=file_name, homework_id=curr_homework.id, user_id=current_user.id,
-                                            uri="")
-            current_user.homework_appendix.append(cur_appendix)
-            curr_homework.appendix.append(cur_appendix)
-            db.session.commit()  # get appendix id
-            cur_appendix.uri = os.path.join("course_%d" % course_id,
-                                            "homework_%d/appendix_%d.%s" % (curr_homework.id, cur_appendix.id, extension))
-            upload_path = unicode(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], cur_appendix.uri),
-                                  'utf-8')
-            status = upload_file(appendix, upload_path, ['video', 'pdf', 'wrap'])
-            if status[0]:
-                db.session.commit()
-            else:
-                current_user.homework_appendix.remove(cur_appendix)
-                curr_homework.appendix.remove(cur_appendix)
-                db.session.delete(cur_appendix)
-                db.session.commit()
-                for m in appendix_files:
-                    for app in curr_homework.appendix:
-                        if app.name == custom_secure_filename(m):
-                            current_user.homework_appendix.remove(m)
-                            curr_homework.appendix.remove(m)
-                            db.session.delete(m)
-                            db.session.commit()
-                            try:
-                                os.remove(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], m.uri))
-                            except OSError:
-                                pass
-                return render_template('admin/course/homework_edit.html',
-                                       course=curr_course,
-                                       option="edit",
-                                       homework=curr_homework,
-                                       msg=gettext("homework info saved,homework appendix upload failed"),
-                                       title=gettext('Course Homework edit'))
-            cnt = cnt + 1
+        elif request.form["homework-save-op"] == "save":
+            curr_homework.title = request.form['title']
+            curr_homework.description = request.form['description']
+            curr_homework.deadline = request.form['deadline']
+            db.session.commit()
 
-        return render_template('admin/course/homework_edit.html',
-                               course=curr_course,
-                               option="edit",
-                               homework=curr_homework,
-                               msg=gettext("save homework successfully"),
-                               title=gettext('Course Homework Edit'))
+            return render_template('admin/course/homework_edit.html',
+                                   course=curr_course,
+                                   option="edit",
+                                   homework=curr_homework,
+                                   msg=gettext("save homework successfully"),
+                                   title=gettext('Course Homework Edit'))
 
 
 @admin.route('/course/<int:course_id>/homework/<int:homework_id>', methods=['GET', 'POST'])

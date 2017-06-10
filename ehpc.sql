@@ -494,10 +494,10 @@ INSERT INTO `group_members` VALUES ('27', '15');
 DROP TABLE IF EXISTS `homework`;
 CREATE TABLE `homework` (
   `id` int(64) NOT NULL AUTO_INCREMENT,
-  `title` varchar(256) COLLATE utf8_unicode_ci NOT NULL,
-  `description` text COLLATE utf8_unicode_ci NOT NULL,
+  `title` varchar(256) COLLATE utf8_unicode_ci DEFAULT NULL,
+  `description` text COLLATE utf8_unicode_ci,
   `publish_time` datetime NOT NULL,
-  `deadline` datetime NOT NULL,
+  `deadline` datetime DEFAULT NULL,
   `course_id` int(64) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `course_id` (`course_id`),

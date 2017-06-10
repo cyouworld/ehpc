@@ -108,7 +108,7 @@
                                                     <div id="appendix{{ a.id }}" class="alert alert-success alert-dismissable uploaded" role="alert"
                                                      data-appendix-name="{{ a.name }}" data-appendix-id="{{ a.id }}">
                                                         <button type="button" class="close" aria-label="Close">
-                                                        <span class="delete-appendix" aria-hidden="true">&times;</span></button>
+                                                        <span class="delete-appendix" aria-hidden="true" onclick="delete_appendix(this);">&times;</span></button>
                                                         <i class="es-icon es-icon-description status-icon"></i>
                                                         <a href="{{ url_for('static', filename='homework/appendix/' + a.uri) }}" download="{{ a.name }}" style="color: rgb(101,159,19);">{{ a.name }}</a>
                                                     </div>
@@ -119,17 +119,18 @@
                                         {% endif %}
                                     </div>
                                     <div class="input-group">
-                                        <span id="select-homework-appendix" class="btn btn-default">选择附件</span>
+                                        <span id="select-homework-appendix" class="btn btn-default">添加附件</span>
                                     </div>
                                     <p class="help-block">你可以上传MP4,mkv,pdf,zip,rar格式的文件，一次最多选择10个文件，不超过50M</p>
                                 </div>
                             </div>
 
                             <input id="homework-op" type="hidden" name="op" value="{{ option }}">
-                            <input id="homework-id" type="hidden" name="homework_id" value="{% if option == "edit"  %}{{ homework.id }}{% endif %}">
+                            <input id="homework-save-op" type="hidden" name="homework-save-op" value="upload">
+                            <input id="homework-id" type="hidden" name="homework-id" value="{% if option == "edit"  %}{{ homework.id }}{% elif homework_id %}{{ homework_id }}{% endif %}">
                             <div class="form-group">
                                 <div class="col-md-offset-2 col-sm-offset-2 controls" style="padding-left: 15px">
-                                    <input id="save_homework_info" class="btn btn-info" type="submit" style="cursor: pointer;" value="上传作业">
+                                    <input id="save-homework-info" class="btn btn-info" type="submit" style="cursor: pointer;" value="保存">
                                 </div>
                             </div>
                         </form>
@@ -157,6 +158,7 @@
         });
         {% if msg %}
             alert_modal("{{ msg }}");
+            setTimeout(function() {$("#modal-alert .close").click()}, 1000);
         {% endif %}
     </script>
 

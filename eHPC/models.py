@@ -516,10 +516,10 @@ class Homework(db.Model):
     __tablename__ = "homework"
 
     id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(256), nullable=False)
-    description = db.Column(db.Text(), nullable=False)
+    title = db.Column(db.String(256), nullable=True)
+    description = db.Column(db.Text(), nullable=True)
     publish_time = db.Column(db.DateTime, default=datetime.now, nullable=False)
-    deadline = db.Column(db.DateTime, nullable=False)
+    deadline = db.Column(db.DateTime, nullable=True)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'), nullable=False)
 
     uploads = db.relationship('HomeworkUpload', backref='homework', lazy='dynamic', cascade='delete, delete-orphan')
