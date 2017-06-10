@@ -13,11 +13,12 @@ from datetime import datetime, timedelta
 
 from eHPC.util.captcha import verify_captcha
 from . import user
-from ..models import User
+from ..models import User, Notification
 from ..util.email import send_email
 from .. import db
 from ..util.file_manage import get_file_type
 from ..user.authorize import system_login
+from ..util.notifications import read_message
 
 alphanumeric = re.compile(r'^[0-9a-zA-Z\_]*$')
 email_address = re.compile(r'[a-zA-z0-9]+\@[a-zA-Z0-9]+\.+[a-zA-Z]')
@@ -358,3 +359,45 @@ def setting_password():
             message_success = gettext("Update password done!")
             return jsonify(content=render_template('user/ajax_setting_passwd.html',
                                                    message_success=message_success))
+
+
+@user.route('/notifications/', methods=['GET', 'POST'])
+@login_required
+def notifications():
+    if request.method == 'GET':
+        return render_template('user/notifications.html',
+                               not_read_count=len(current_user.note_info.filter_by(is_read=False).all()),
+                               received_count=len(current_user.note_info.all()),
+                               sent_count=len(current_user.notifications_sent.all()))
+
+    elif request.method == 'POST':
+        note_type = request.form.get("type", None)
+
+        if note_type is None:
+            return jsonify(status='fail')
+
+        if note_type == 'not-read':
+            not_read = [{'id': r.id,
+                         'event_name': r.notification.event_name,
+                         'create_time': str(r.notification.create_time),
+                         'sender': r.notification.sender.name,
+                         'brief_intro': r.notification.event_content[:50]+'...' if len(r.notification.event_content) > 50 else r.notification.event_content} for r in current_user.note_info.filter_by(is_read=False).all()]
+            return jsonify(status='success', note=not_read)
+        elif note_type == 'received':
+            received = [{'id': r.id,
+                         'event_name': r.notification.event_name,
+                         'create_time': str(r.notification.create_time),
+                         'sender': r.notification.sender.name,
+                         'brief_intro': r.notification.event_content[:50]+'...' if len(r.notification.event_content) > 50 else r.notification.event_content,
+                         'is_read': r.is_read} for r in current_user.note_info.all()]
+            return jsonify(status='success', note=received)
+
+
+@user.route('/notifications/<int:note_info_id>/detail/')
+@login_required
+def notification_detail(note_info_id):
+    status, note_info = read_message(note_info_id)
+    if not status:
+        return abort(404)
+
+    return render_template('user/notification_detail.html', notification=note_info.notification)

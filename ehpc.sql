@@ -2052,24 +2052,99 @@ CREATE TABLE `vnc_tasks` (
   KEY `vnc_knowledge_id` (`vnc_knowledge_id`),
   CONSTRAINT `vnc_tasks_ibfk_1` FOREIGN KEY (`vnc_knowledge_id`) REFERENCES `vnc_knowledge` (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of vnc_tasks
--- ----------------------------
-INSERT INTO `vnc_tasks` VALUES ('1', '第一个小任务', '# markdown内容1', '1', '1');
-INSERT INTO `vnc_tasks` VALUES ('2', '第二个小任务', '# markdown内容2', '1', '2');
-INSERT INTO `vnc_tasks` VALUES ('3', '第三个小任务', '# markdown内容3', '1', '3');
-INSERT INTO `vnc_tasks` VALUES ('4', '第四个小任务', '# markdown内容4', '1', '4');
+--
+-- Dumping data for table `vnc_tasks`
+--
+
+LOCK TABLES `vnc_tasks` WRITE;
+/*!40000 ALTER TABLE `vnc_tasks` DISABLE KEYS */;
+INSERT INTO `vnc_tasks` VALUES (1,'第一个小任务','# markdown内容1',1,1),(2,'第二个小任务','# markdown内容2',1,2),(3,'第三个小任务','# markdown内容3',1,3),(4,'第四个小任务','# markdown内容4',1,4);
+/*!40000 ALTER TABLE `vnc_tasks` ENABLE KEYS */;
+UNLOCK TABLES;
+
 DROP TRIGGER IF EXISTS `create_new_image`;
 DELIMITER ;;
 CREATE TRIGGER `create_new_image` BEFORE INSERT ON `docker_images` FOR EACH ROW BEGIN
-    DECLARE dhid INT(11);
+  DECLARE dhid INT(11);
 
-    SET @dhid = (SELECT t1.id FROM (SELECT * from docker_holders) AS t1 WHERE t1.images_count = (SELECT MAX(t2.images_count) FROM (SELECT * from docker_holders) AS t2 WHERE t2.images_count < 10) LIMIT 1);
-    UPDATE docker_holders set images_count = images_count + 1 where id = @dhid;
+  SET @dhid = (SELECT t1.id FROM (SELECT * from docker_holders) AS t1 WHERE t1.images_count = (SELECT MAX(t2.images_count) FROM (SELECT * from docker_holders) AS t2 WHERE t2.images_count < 10) LIMIT 1);
+  UPDATE docker_holders set images_count = images_count + 1 where id = @dhid;
 
-    SET NEW.port = IF(ISNULL(@dhid), 0, 5901 + (SELECT t1.images_count FROM (SELECT * from docker_holders) AS t1 WHERE t1.id = @dhid));
-    SET NEW.docker_holder_id = IF(ISNULL(@dhid), NULL, @dhid);
-  END
+  SET NEW.port = IF(ISNULL(@dhid), 0, 5901 + (SELECT t1.images_count FROM (SELECT * from docker_holders) AS t1 WHERE t1.id = @dhid));
+  SET NEW.docker_holder_id = IF(ISNULL(@dhid), NULL, @dhid);
+END
 ;;
 DELIMITER ;
+
+DROP TABLE IF EXISTS `notifications`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifications` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `create_time` datetime NOT NULL,
+  `event_name` varchar(512) NOT NULL,
+  `event_content` text NOT NULL,
+  `sender_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `sender_id` (`sender_id`),
+  CONSTRAINT `notifications_ibfk_1` FOREIGN KEY (`sender_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifications`
+--
+
+LOCK TABLES `notifications` WRITE;
+/*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
+  INSERT INTO `notifications` VALUES (1, '2017-06-01 11:22:33', 'Test1', 'This is notification test1', 3),
+                                     (2, '2017-06-01 09:13:33', 'Test2', 'This is notification test2', 3),
+                                     (3, '2017-06-01 13:27:19', 'Test3', 'This is notification test3', 3);
+/*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `notifications_receivers`
+--
+
+DROP TABLE IF EXISTS `notifications_receivers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifications_receivers` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `notification_id` int(11) NOT NULL,
+  `receiver_id` int(11) NOT NULL,
+  `is_read` tinyint(1) DEFAULT NULL,
+  `read_time` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `notification_id` (`notification_id`),
+  KEY `receiver_id` (`receiver_id`),
+  CONSTRAINT `notifications_receivers_ibfk_1` FOREIGN KEY (`notification_id`) REFERENCES `notifications` (`id`),
+  CONSTRAINT `notifications_receivers_ibfk_2` FOREIGN KEY (`receiver_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifications_receivers`
+--
+
+LOCK TABLES `notifications_receivers` WRITE;
+/*!40000 ALTER TABLE `notifications_receivers` DISABLE KEYS */;
+  INSERT INTO `notifications_receivers` VALUES (1, 1, 3, 0, NULL),(2, 2, 3, 0, NULL),(3, 3, 3, 0, NULL);
+/*!40000 ALTER TABLE `notifications_receivers` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2017-06-02  6:39:34

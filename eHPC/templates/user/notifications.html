@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block header_ext %}
+
+{% endblock %}
+
+{% block content %}
+    <div id="content-container" class="container">
+        <div class="row">
+            <div class="col-lg-3 col-md-3 col-sm-3">
+                <div class="list-group-panel" style="margin-top: 20px">
+                    <div class="list-group">
+                        <a id="not-read" class="list-group-item" href="javascript:void(0);" style="font-weight: bold">
+                            <span>未读消息</span>
+                            <span class="pull-right notifications-nav-number">{{ not_read_count }}</span>
+                        </a>
+                        <a id="received" class="list-group-item" href="javascript:void(0);" style="font-weight: bold">
+                            <span>已接收消息</span>
+                            <span class="pull-right notifications-nav-number">{{ received_count }}</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-9 col-md-9 col-sm-9">
+                <div class="panel">
+                    <div class="panel-body" style="margin-top: 20px;min-height: 768px">
+                        <ul id="note-list" style="list-style-type: none;padding: 0;">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script>
+        $(function () {
+            var not_read = $("#not-read"), received = $("#received"), sent = $("#sent");
+            var note_list = $("#note-list");
+            var panel_body = note_list.parent();
+            not_read.click(function () {
+                if($("#no-not-read")) $("#no-not-read").remove();
+                if($("#no-received")) $("#no-received").remove();
+                panel_body.css("text-align", "");
+                note_list.empty();
+                note_list.show();
+                $.ajax({
+                     url: location.href,
+                     type: "post",
+                     data: {
+                         type: "not-read"
+                     },
+                     success: function (data) {
+                         if(data["status"] === "success"){
+                             var notifications = data["note"];
+                             notifications.sort(function (a, b) {
+                                 return a["create_time"] < b["create_time"];
+                             });
+
+                             if(notifications.length === 0){
+                                 note_list.hide();
+                                 panel_body.css("text-align", "center");
+                                 panel_body.append('<h3 id="no-not-read" style="line-height: ' + panel_body.height()*0.8 + 'px">暂无未读消息</h3>');
+                                 return;
+                             }
+
+                             for(var i=0;i<notifications.length;i++){
+                                 note_list.append('<li class="notifications-item" data-note-info-id="' + notifications[i]["id"] + '">\
+                                                       <h3 class="notifications-item-title">' + notifications[i]["event_name"] + '</h3>\
+                                                       <span>\
+                                                            <span class="notifications-item-sender">发送者: ' + notifications[i]["sender"] + '&nbsp;&nbsp;&nbsp;&nbsp;</span>\
+                                                            <span class="notifications-item-receive-time">时间: ' + notifications[i]["create_time"] + '</sapn>\
+                                                       </span>\
+                                                       <p class="notifications-item-brief-intro">' + notifications[i]["brief_intro"] + '</p>\
+                                                   </li>'
+                                 )
+                             }
+
+                             note_list.find("li").click(function () {
+                                 location.href = "/user/notifications/" + $(this).data("note-info-id") + "/detail/";
+                             });
+                         }
+                         else if(data["status" === "fail"]){
+                             alert_modal("获取失败,请重试");
+                         }
+                     }
+                 })
+             });
+            received.click(function () {
+                if($("#no-not-read")) $("#no-not-read").remove();
+                if($("#no-received")) $("#no-received").remove();
+                panel_body.css("text-align", "");
+                note_list.empty();
+                note_list.show();
+                $.ajax({
+                    url: location.href,
+                    type: "post",
+                    data: {
+                        type: "received"
+                    },
+                    success: function (data) {
+                        if(data["status"] === "success"){
+                            var notifications = data["note"];
+                            notifications.sort(function (a, b) {
+                                return a["create_time"] < b["create_time"];
+                            });
+
+                            if(notifications.length === 0){
+                                note_list.hide();
+                                panel_body.css("text-align", "center");
+                                panel_body.append('<h3 id="no-received" style="line-height: ' + panel_body.height() + 'px">暂无收到消息</h3>');
+                                return;
+                            }
+
+                            for(var i=0;i<notifications.length;i++){
+                                var str = '<li class="notifications-item" data-note-info-id="' + notifications[i]["id"] + '">\
+                                                       <h3 class="notifications-item-title">' + notifications[i]["event_name"] + '</h3>\
+                                                       <span>\
+                                                            <span class="notifications-item-sender">发送者: ' + notifications[i]["sender"] + '&nbsp;&nbsp;&nbsp;&nbsp;</span>\
+                                                            <span class="notifications-item-receive-time">时间: ' + notifications[i]["create_time"] + '</sapn>';
+
+                                if(!notifications[i]["is_read"]){
+                                    str += '<span class="badge pull-right">新</span>'
+                                }
+
+                                str += '</span>\
+                                        <p class="notifications-item-brief-intro">' + notifications[i]["brief_intro"] + '</p>\
+                                        </li>';
+                                note_list.append(str);
+                            }
+
+                            note_list.find("li").click(function () {
+                                location.href = "/user/notifications/" + $(this).data("note-info-id") + "/detail/";
+                            });
+
+                        }
+                        else if(data["status" === "fail"]){
+                            alert_modal("获取失败,请重试");
+                        }
+                    }
+                })
+            });
+            not_read.click();
+        });
+    </script>
+{% endblock %}

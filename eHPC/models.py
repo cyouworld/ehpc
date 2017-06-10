@@ -64,6 +64,8 @@ class User(UserMixin, db.Model):
 
     docker_image = db.relationship('DockerImage', uselist=False, backref='user', cascade="delete, delete-orphan")
 
+    notifications_sent = db.relationship('Notification', backref='sender', lazy='dynamic', cascade='delete, delete-orphan')
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -720,3 +722,30 @@ class DockerImage(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     docker_holder_id = db.Column(db.Integer, db.ForeignKey('docker_holders.id'), default=None)
+
+
+class NotificationReceiver(db.Model):
+    __tablename__ = "notifications_receivers"
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    notification_id = db.Column(db.Integer, db.ForeignKey('notifications.id'))
+    receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    is_read = db.Column(db.Boolean, default=False)
+    read_time = db.Column(db.DateTime, default=None)
+
+    receiver = db.relationship('User', uselist=False, backref=db.backref('note_info', lazy='dynamic', cascade="delete, delete-orphan"))
+    notification = db.relationship('Notification', uselist=False, backref=db.backref('note_info', lazy='dynamic', cascade="delete, delete-orphan"))
+
+
+class Notification(db.Model):
+    def __init__(self, event_name, event_content):
+        self.event_name = event_name
+        self.event_content = event_content
+
+    __tablename__ = "notifications"
+    id = db.Column(db.Integer, nullable=False, primary_key=True)
+    create_time = db.Column(db.DateTime, default=datetime.now, nullable=False)
+    event_name = db.Column(db.String(512), nullable=False)
+    event_content = db.Column(db.Text(), nullable=False)
+
+    sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), default=None)
+
