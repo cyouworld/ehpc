@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block header_ext %}
+    <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
+    <link href="//cdn.bootcss.com/bootstrap-select/1.12.1/css/bootstrap-select.min.css" rel="stylesheet">
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/jquery-editable-select.min.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/jquery-editable-select.min.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+
+    <div id="content-container" class="container">
+        <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
+            <li><a href="/">{{ _('Index') }}</a></li>
+            <li><a href="{{ url_for('machine_apply.index') }}">{{ _('Resource Apply') }}</a></li>
+            <li class="active"><a href="{{ url_for('machine_apply.machine_apply_information') }}">{{ _('Machine Hour Apply Information') }}</a></li>
+        </ol>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" style="display: inline-block">{{ _('Machine Hour Apply Information') }}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div id="machine-apply-information" class="text-center" style="padding: 0 20px;">
+                            <table id="machine-apply-information-table" class="table table-bordered" style="">
+                                <tbody>
+                                <tr class="table-first-row">
+                                    <td colspan="4">申请指南</td>
+                                </tr>
+                                <tr>
+                                    <td class="table-first-col">第一步:在线填写申请表</td>
+                                    <td>
+                                        1、登录平台，发起核时申请；
+                                        2、仔细填写申请表；
+                                        3、等待办理结果通知。
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-first-col">第二步：系统管理员审批</td>
+                                    <td>
+                                        相关单位管理员对提交的申请进行审核，填写审核意见，给出审核结果。
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="table-first-col">第三步：使用超算核时</td>
+                                    <td>
+                                        申请人可以开始使用超算核时。
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class="text-center" style="margin-top: 20px;">
+                            <a href="{{ url_for('machine_apply.machine_applying') }}" class="btn btn-primary">开始办理</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+{% endblock %}

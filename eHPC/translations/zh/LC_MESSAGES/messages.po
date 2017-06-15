@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-06-10 14:28+0800\n"
+"POT-Creation-Date: 2017-06-14 23:05+0800\n"
 "PO-Revision-Date: 2016-10-08 15:35+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh\n"
@@ -99,89 +99,89 @@ msgstr "课程课时"
 msgid "Lesson Material"
 msgstr "课时资料"
 
-#: admin/teacher_views.py:465 admin/teacher_views.py:720
-#: admin/teacher_views.py:782
+#: admin/teacher_views.py:465 admin/teacher_views.py:716
+#: admin/teacher_views.py:778
 msgid "Course Homework"
 msgstr "课程作业"
 
-#: admin/teacher_views.py:509 admin/teacher_views.py:584
+#: admin/teacher_views.py:509 admin/teacher_views.py:580
 msgid "Course Homework Create"
 msgstr "新建课程作业"
 
-#: admin/teacher_views.py:583 admin/teacher_views.py:688
+#: admin/teacher_views.py:579 admin/teacher_views.py:684
 msgid "homework appendix upload failed"
 msgstr "课程作业附件上传失败！"
 
-#: admin/teacher_views.py:624 admin/teacher_views.py:707
+#: admin/teacher_views.py:620 admin/teacher_views.py:703
 msgid "Course Homework Edit"
 msgstr "修改课程作业信息"
 
-#: admin/teacher_views.py:689
+#: admin/teacher_views.py:685
 msgid "Course Homework edit"
 msgstr "修改课程作业信息"
 
-#: admin/teacher_views.py:706
+#: admin/teacher_views.py:702
 msgid "save homework successfully"
 msgstr "作业修改成功！"
 
-#: admin/teacher_views.py:798
+#: admin/teacher_views.py:794
 msgid "Homework Correct"
 msgstr "批改作业"
 
-#: admin/teacher_views.py:881
+#: admin/teacher_views.py:877
 msgid "Course Paper"
 msgstr "课程测验"
 
-#: admin/teacher_views.py:991 admin/teacher_views.py:1017
+#: admin/teacher_views.py:987 admin/teacher_views.py:1013
 msgid "Question Manage"
 msgstr "试题管理"
 
-#: admin/teacher_views.py:1034 admin/teacher_views.py:1179
+#: admin/teacher_views.py:1030 admin/teacher_views.py:1175
 msgid "Program question"
 msgstr "编程题"
 
-#: admin/teacher_views.py:1049 admin/teacher_views.py:1080
-#: admin/teacher_views.py:1146 admin/teacher_views.py:1214
+#: admin/teacher_views.py:1045 admin/teacher_views.py:1076
+#: admin/teacher_views.py:1142 admin/teacher_views.py:1210
 msgid "Edit question"
 msgstr "编辑试题"
 
-#: admin/teacher_views.py:1110 admin/teacher_views.py:1194
+#: admin/teacher_views.py:1106 admin/teacher_views.py:1190
 msgid "Create question"
 msgstr "创建试题"
 
-#: admin/teacher_views.py:1232
+#: admin/teacher_views.py:1228
 msgid "Lab Manage"
 msgstr "实验室管理"
 
-#: admin/teacher_views.py:1273
+#: admin/teacher_views.py:1269
 msgid "Lab tasks"
 msgstr "实验室任务管理"
 
-#: admin/teacher_views.py:1307
+#: admin/teacher_views.py:1303
 msgid "Lab Create"
 msgstr "新建实验"
 
-#: admin/teacher_views.py:1345
+#: admin/teacher_views.py:1341
 msgid "Lab Edit"
 msgstr "编辑实验"
 
-#: admin/teacher_views.py:1380
+#: admin/teacher_views.py:1376
 msgid "VNC Lab Manage"
 msgstr "VNC实验管理"
 
-#: admin/teacher_views.py:1450
+#: admin/teacher_views.py:1446
 msgid "VNC Lab View"
 msgstr "VNC任务查看"
 
-#: admin/teacher_views.py:1495
+#: admin/teacher_views.py:1491
 msgid "VNC Lab Create"
 msgstr "VNC任务创建"
 
-#: admin/teacher_views.py:1520
+#: admin/teacher_views.py:1516
 msgid "VNC Lab Edit"
 msgstr "VNC任务创建"
 
-#: admin/teacher_views.py:1557
+#: admin/teacher_views.py:1553
 msgid "Classify Admin"
 msgstr "知识点管理"
 
@@ -243,20 +243,25 @@ msgstr "实验室"
 msgid "vnc"
 msgstr ""
 
-#: machine_apply/views.py:21 templates/machine_apply/index.html:12
-#: templates/navbar.html:12 templates/navbar.html:74 templates/navbar.html:88
-msgid "Machine Hour Apply"
+#: machine_apply/views.py:17 templates/machine_apply/create.html:17
+#: templates/machine_apply/index.html:12
+#: templates/machine_apply/machine_apply_information.html:17
+msgid "Resource Apply"
 msgstr "资源申请"
 
-#: machine_apply/views.py:31 templates/machine_apply/create.html:18
-#: templates/machine_apply/create.html:27
+#: machine_apply/views.py:23
+msgid "Resource Apply Information"
+msgstr "资源申请说明"
+
+#: machine_apply/views.py:42 templates/machine_apply/create.html:19
+#: templates/machine_apply/create.html:28
 msgid "Machine Hour Apply Create"
 msgstr "新建机时申请"
 
-#: machine_apply/views.py:71 machine_apply/views.py:99
-#: machine_apply/views.py:108 templates/admin/hpc/edit.html:24
-#: templates/machine_apply/create.html:20
-#: templates/machine_apply/create.html:27
+#: machine_apply/views.py:82 machine_apply/views.py:110
+#: machine_apply/views.py:119 templates/admin/hpc/edit.html:24
+#: templates/machine_apply/create.html:21
+#: templates/machine_apply/create.html:28
 msgid "Machine Hour Apply Edit"
 msgstr "编辑机时申请"
 
@@ -306,6 +311,10 @@ msgstr "互动社区"
 #: templates/navbar.html:10 templates/navbar.html:72 templates/navbar.html:86
 msgid "Virutal Lab"
 msgstr "虚拟实验室"
+
+#: templates/navbar.html:12 templates/navbar.html:74 templates/navbar.html:88
+msgid "Machine Hour Apply"
+msgstr "资源申请"
 
 #: templates/lab/lab_base.html:49 templates/navbar.html:35 user/views.py:163
 msgid "Personal Page"
@@ -393,6 +402,7 @@ msgstr "回复"
 #: templates/group/topic_new.html:13 templates/lab/detail.html:10
 #: templates/lab/index.html:10 templates/lab/vnc_tasks_lists.html:10
 #: templates/machine_apply/create.html:16 templates/machine_apply/index.html:11
+#: templates/machine_apply/machine_apply_information.html:16
 #: templates/problem/program_detail.html:12
 #: templates/problem/show_my_submits.html:7
 #: templates/problem/show_program.html:15
@@ -464,8 +474,17 @@ msgid "Challenges"
 msgstr "虚拟实验室"
 
 #: templates/machine_apply/index.html:18
-msgid "My Machine Hour Applies"
-msgstr "我的申请"
+msgid "Resource Apply Center"
+msgstr "资源申请中心"
+
+#: templates/machine_apply/index.html:25
+msgid "ALL Issues"
+msgstr "所有事项"
+
+#: templates/machine_apply/machine_apply_information.html:18
+#: templates/machine_apply/machine_apply_information.html:24
+msgid "Machine Hour Apply Information"
+msgstr "机时申请说明"
 
 #: templates/main/index.html:93
 msgid "Learn HPC."
@@ -730,7 +749,7 @@ msgstr "没有选中文件"
 
 #: util/file_manage.py:90
 msgid "Save File Failed!"
-msgstr ""
+msgstr "文件保存失败！"
 
 #: util/time_process.py:24
 msgid "year"
@@ -903,4 +922,7 @@ msgstr "管理员"
 
 #~ msgid "Operations"
 #~ msgstr "操作"
+
+#~ msgid "My Machine Hour Applies"
+#~ msgstr "我的申请"
 

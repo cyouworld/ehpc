@@ -14,6 +14,7 @@
     <div id="content-container" class="container">
         <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
             <li><a href="/">{{ _('Index') }}</a></li>
+            <li><a href="{{ url_for('machine_apply.index') }}">{{ _('Resource Apply') }}</a></li>
             {% if op == "create" %}
                 <li class="active"><a href="{{ url_for('machine_apply.machine_apply_create') }}">{{ _('Machine Hour Apply Create') }}</a></li>
             {% else %}
@@ -44,27 +45,27 @@
                               {% else %}{{ url_for('machine_apply.machine_apply_edit', apply_id=apply.id) }}{% endif %}">
                             <table class="table table-bordered">
                                 <tbody>
-                                    <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                    <tr class="table-first-row">
                                         <td colspan="4">申请信息</td>
                                     </tr>
                                     <tr>
-                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人姓名</td>
+                                        <td class="table-first-col">申请人姓名</td>
                                         <td><input id="applicant_name" type="text" name="applicant_name" value="{% if apply %}{{ apply.applicant_name }}{% endif %}"></td>
                                         <td align="center" width="20%" style="background-color: #cfe9d4;">申请人单位</td>
                                         <td><input id="applicant_institution" type="text" name="applicant_institution" value="{% if apply %}{{ apply.applicant_institution }}{% endif %}"></td>
                                     </tr>
                                     <tr>
-                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人电话</td>
+                                        <td class="table-first-col"">申请人电话</td>
                                         <td><input id="applicant_tel" type="text" name="applicant_tel" value="{% if apply %}{{ apply.applicant_tel }}{% endif %}"></td>
                                         <td align="center" width="20%" style="background-color: #cfe9d4;">申请人邮箱</td>
                                         <td><input id="applicant_email" type="text" name="applicant_email" value="{% if apply %}{{ apply.applicant_email }}{% endif %}"></td>
                                     </tr>
                                     <tr>
-                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人通信地址</td>
+                                        <td class="table-first-col">申请人通信地址</td>
                                         <td colspan="3"><input id="applicant_address" type="text" name="applicant_address" value="{% if apply %}{{ apply.applicant_address }}{% endif %}"></td>
                                     </tr>
                                     <tr>
-                                        <td align="center" width="20%" style="background-color: #cfe9d4;">项目名称</td>
+                                        <td class="table-first-col">项目名称</td>
                                         <td colspan="3">
                                             <select id="project_name" name="project_name" data-width="100%"
                                                     data-parsley-required-message="请填写项目名称" required
@@ -77,23 +78,23 @@
 
                             <table class="table table-bordered" style="display: none;">
                                 <tbody>
-                                <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                <tr class="table-first-row">
                                     <td colspan="4">负责人信息</td>
                                 </tr>
                                 <tr>
-                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人姓名</td>
+                                    <td class="table-first-col">负责人姓名</td>
                                     <td><input id="manager_name" type="text" name="manager_name" value="{% if apply %}{{ apply.manager_name }}{% endif %}"></td>
                                     <td align="center" width="20%" style="background-color: #cfe9d4;">负责人单位</td>
                                     <td><input id="manager_institution" type="text" name="manager_institution" value="{% if apply %}{{ apply.manager_institution }}{% endif %}"></td>
                                 </tr>
                                 <tr>
-                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人电话</td>
+                                    <td class="table-first-col">负责人电话</td>
                                     <td><input id="manager_tel" type="text" name="manager_tel" value="{% if apply %}{{ apply.manager_tel }}{% endif %}"></td>
                                     <td align="center" width="20%" style="background-color: #cfe9d4;">负责人邮箱</td>
                                     <td><input id="manager_email" type="text" name="manager_email" value="{% if apply %}{{ apply.manager_email }}{% endif %}"></td>
                                 </tr>
                                 <tr>
-                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人通信地址</td>
+                                    <td class="table-first-col">负责人通信地址</td>
                                     <td colspan="3"><input id="manager_address" type="text" name="manager_address" value="{% if apply %}{{ apply.manager_address }}{% endif %}"></td>
                                 </tr>
                                 </tbody>
@@ -101,11 +102,11 @@
 
                             <table class="table table-bordered">
                                 <tbody>
-                                <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                <tr class="table-first-row">
                                     <td colspan="4">资源信息</td>
                                 </tr>
                                 <tr>
-                                    <td align="center" width="20%" style="background-color: #cfe9d4;">超算单位</td>
+                                    <td class="table-first-col">超算单位</td>
                                     <td>
                                         <select id="sc_center" name="sc_center" data-width="100%"
                                                 data-parsley-required-message="请选择超算单位" required
@@ -118,7 +119,7 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td align="center" width="20%" style="background-color: #cfe9d4;">CPU核时</td>
+                                    <td class="table-first-col">CPU核时</td>
                                     <td>
                                         <select id="cpu_hour" name="cpu_hour" data-width="100%"
                                                 data-parsley-required-message="请选择核时" required
@@ -135,11 +136,11 @@
 
                             <table class="table table-bordered">
                                 <tbody>
-                                    <tr style="height: 41px;font-size: medium;font-weight: bold;color: #fff;background-color: #00551f;">
+                                    <tr class="table-first-row">
                                         <td colspan="4">机时用途</td>
                                     </tr>
                                     <tr>
-                                        <td align="center" width="20%" style="background-color: #cfe9d4;vertical-align: middle;">机时用途说明</td>
+                                        <td class="table-first-col" style="vertical-align: middle;">机时用途说明</td>
                                         <td>
                                             <textarea id="usage" name="usage" class="form-control" rows="3">{% if apply %}{{ apply.usage }}{% endif %}</textarea>
                                         </td>
@@ -181,14 +182,40 @@
                 </div>
                 <div class="modal-body">
                     <div>
-                        这里是申请说明
+                        <table id="machine-apply-information-table" class="table table-bordered" style="">
+                            <tbody>
+                            <tr class="table-first-row">
+                                <td colspan="4">申请指南</td>
+                            </tr>
+                            <tr>
+                                <td class="table-first-col">第一步:在线填写申请表</td>
+                                <td>
+                                    1、登录平台，发起核时申请；
+                                    2、仔细填写申请表；
+                                    3、等待办理结果通知。
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table-first-col">第二步：系统管理员审批</td>
+                                <td>
+                                    相关单位管理员对提交的申请进行审核，填写审核意见，给出审核结果。
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="table-first-col">第三步：使用超算核时</td>
+                                <td>
+                                    申请人可以开始使用超算核时。
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
                 </div>
-            </div><
+            </div>
         </div>
     </div>
 

@@ -10,21 +10,32 @@ from .. import db
 import random, string
 
 
-@machine_apply.route('/')
+@machine_apply.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
+    if request.method == "GET":
+        return render_template('machine_apply/index.html', title=gettext('Resource Apply'))
+
+
+@machine_apply.route('/machine_apply/information')
+@login_required
+def machine_apply_information():
+    return render_template('machine_apply/machine_apply_information.html', title=gettext('Resource Apply Information'))
+
+
+@machine_apply.route('/machine_applying')
+@login_required
+def machine_applying():
     my_apply = MachineApply.query.filter_by(user_id=current_user.id).first()
     if not my_apply:
         # 若此用户还未创建过申请，则显示新建申请界面
-        return render_template('machine_apply/index.html',
-                           my_apply=my_apply,
-                           title=gettext('Machine Hour Apply'))
+        return redirect(url_for('machine_apply.machine_apply_create'))
     else:
         # 若此用户已创建过申请，则直接跳转到编辑申请界面
         return redirect(url_for('machine_apply.machine_apply_edit', apply_id=my_apply.id))
 
 
-@machine_apply.route('/create/', methods=['GET', 'POST'])
+@machine_apply.route('/create', methods=['GET', 'POST'])
 @login_required
 def machine_apply_create():
     if request.method == "GET":
@@ -60,7 +71,7 @@ def machine_apply_create():
         return redirect(url_for('machine_apply.machine_apply_edit', apply_id=curr_apply.id))
 
 
-@machine_apply.route('/edit/<int:apply_id>/', methods=['GET', 'POST'])
+@machine_apply.route('/edit/<int:apply_id>', methods=['GET', 'POST'])
 @login_required
 def machine_apply_edit(apply_id):
     if request.method == "GET":
@@ -108,7 +119,7 @@ def machine_apply_edit(apply_id):
                                    title=gettext('Machine Hour Apply Edit'))
 
 
-@machine_apply.route('/ssh/ask-connect/', methods=['POST'])
+@machine_apply.route('/machine_apply/ssh/ask-connect/', methods=['POST'])
 @login_required
 def ask_connect():
     while True:
@@ -125,7 +136,7 @@ def ask_connect():
     return jsonify(status='success', token=token)
 
 
-@machine_apply.route('/ssh/', methods=['GET', 'POST'])
+@machine_apply.route('/machine_apply/ssh/', methods=['GET', 'POST'])
 def get_machine_info():
     op = request.form.get('op', None)
     if op is None:

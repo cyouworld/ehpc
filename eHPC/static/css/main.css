@@ -4996,3 +4996,48 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     margin: 0;
     font-size: 16px;
 }
+
+#user-issue-box .list-group .list-group-item:hover {
+    cursor: pointer;
+}
+
+#user-issue-box .panel-body {
+    font-size: 16px;
+}
+
+#user-issue-box .col-lg-9 .panel-body {
+    padding-left: 20px;
+}
+
+#user-issue-box .col-lg-9 .panel-default {
+    min-height: 210px;
+}
+
+.table-bordered .table-first-row {
+    height: 41px;
+    font-size: medium;
+    font-weight: bold;
+    color: #fff;
+    background-color: #00551f;
+}
+
+.table-bordered .table-first-col {
+    text-align: center;
+    width: 20%;
+    background-color: #cfe9d4;
+}
+
+#machine-apply-information-table > thead > tr > th,
+#machine-apply-information-table > tbody > tr > th,
+#machine-apply-information-table > tfoot > tr > th,
+#machine-apply-information-table > thead > tr > td,
+#machine-apply-information-table > tbody > tr > td,
+#machine-apply-information-table > tfoot > tr > td {
+   border: 2px solid #CCC;
+}
+
+#machine-apply-information-table .table-first-col {
+    font-size: 16px;
+    font-weight: 600;
+    width: 30%;
+}
