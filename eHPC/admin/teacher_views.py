@@ -25,15 +25,15 @@ from ..util.xlsx import get_member_xlsx, get_score_xlsx, get_allscore_xlsx, get_
 from ..util.course_filter import check_upload
 
 
-'''add_sidebar():定义上下文处理器，便于把数据导入后台管理模板中的sidebar
-'''
-
-
-@admin.context_processor
-def add_sidebar():
-    courses = current_user.teacher_courses.order_by(Course.nature_order.asc())
-    classifies = Classify.query.all()
-    return {'sidebar_courses': courses, 'sidebar_classifies': classifies}
+# '''add_sidebar():定义上下文处理器，便于把数据导入后台管理模板中的sidebar
+# '''
+#
+#
+# @admin.context_processor
+# def add_sidebar():
+#     courses = current_user.teacher_courses.order_by(Course.nature_order.asc())
+#     classifies = Classify.query.all()
+#     return {'sidebar_courses': courses, 'sidebar_classifies': classifies}
 
 # 测试用
 # @admin.route('/dev/', methods=["GET", "POST"])
