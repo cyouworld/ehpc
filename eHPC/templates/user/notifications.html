@@ -66,19 +66,30 @@
                              }
 
                              for(var i=0;i<notifications.length;i++){
-                                 note_list.append('<li class="notifications-item" data-note-info-id="' + notifications[i]["id"] + '">\
-                                                       <h3 class="notifications-item-title">' + notifications[i]["event_name"] + '</h3>\
+                                 note_list.append('<li class="notifications-item" data-note-info-id="' + notifications[i]["id"] + '" data-url="' + notifications[i]["event_content"] + '">\
+                                                       <h3 class="notifications-item-title" style="color: #428bca">' + notifications[i]["event_name"] + '</h3>\
                                                        <span>\
                                                             <span class="notifications-item-sender">发送者: ' + notifications[i]["sender"] + '&nbsp;&nbsp;&nbsp;&nbsp;</span>\
                                                             <span class="notifications-item-receive-time">时间: ' + notifications[i]["create_time"] + '</sapn>\
                                                        </span>\
-                                                       <p class="notifications-item-brief-intro">' + notifications[i]["brief_intro"] + '</p>\
                                                    </li>'
                                  )
                              }
 
                              note_list.find("li").click(function () {
-                                 location.href = "/user/notifications/" + $(this).data("note-info-id") + "/detail/";
+                                 var obj = $(this);
+                                 $.ajax({
+                                     url: "/user/notifications/" + obj.data("note-info-id") + "/read/",
+                                     type: "post",
+                                     success: function (data) {
+                                         if(data["status"] === "success"){
+                                             location.href = obj.data("url");
+                                         }
+                                         else{
+                                             alert_modal("出错，请重试");
+                                         }
+                                     }
+                                 });
                              });
                          }
                          else if(data["status" === "fail"]){
@@ -114,8 +125,8 @@
                             }
 
                             for(var i=0;i<notifications.length;i++){
-                                var str = '<li class="notifications-item" data-note-info-id="' + notifications[i]["id"] + '">\
-                                                       <h3 class="notifications-item-title">' + notifications[i]["event_name"] + '</h3>\
+                                var str = '<li class="notifications-item" data-note-info-id="' + notifications[i]["id"] + '" data-url="' + notifications[i]["event_content"] + '">\
+                                                       <h3 class="notifications-item-title" style="color: #428bca">' + notifications[i]["event_name"] + '</h3>\
                                                        <span>\
                                                             <span class="notifications-item-sender">发送者: ' + notifications[i]["sender"] + '&nbsp;&nbsp;&nbsp;&nbsp;</span>\
                                                             <span class="notifications-item-receive-time">时间: ' + notifications[i]["create_time"] + '</sapn>';
@@ -125,13 +136,24 @@
                                 }
 
                                 str += '</span>\
-                                        <p class="notifications-item-brief-intro">' + notifications[i]["brief_intro"] + '</p>\
                                         </li>';
                                 note_list.append(str);
                             }
 
                             note_list.find("li").click(function () {
-                                location.href = "/user/notifications/" + $(this).data("note-info-id") + "/detail/";
+                                var obj = $(this);
+                                $.ajax({
+                                    url: "/user/notifications/" + obj.data("note-info-id") + "/read/",
+                                    type: "post",
+                                    success: function (data) {
+                                        if(data["status"] === "success"){
+                                            location.href = obj.data("url");
+                                        }
+                                        else{
+                                            alert_modal("出错，请重试");
+                                        }
+                                    }
+                                });
                             });
 
                         }

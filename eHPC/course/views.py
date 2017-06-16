@@ -1,8 +1,8 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import render_template, jsonify, request, current_app
+from flask import render_template, jsonify, request, current_app, url_for
 from . import course
-from ..models import Course, Material, Paper, Comment, Homework, HomeworkUpload, Apply, HomeworkScore, Topic, Notice
+from ..models import Course, Material, Paper, Comment, Homework, HomeworkUpload, Apply, HomeworkScore, Topic, Notice, User
 from flask_babel import gettext
 from flask_login import current_user, login_required
 from ..util.file_manage import upload_file, custom_secure_filename
@@ -11,7 +11,7 @@ from .. import db
 import json
 import os
 from datetime import datetime
-
+from ..util.notifications import send_message
 
 @course.route('/')
 def index():
@@ -89,6 +89,10 @@ def join(cid, u=current_user):
         course_joined.studentNum += 1
         db.session.commit()
         msg = 'success'
+        send_message(u.name + u' 已加入您的 ' + course_joined.title + u' 课程',
+                     url_for('admin.course_member', course_id=course_joined.id),
+                     User.query.filter_by(id=u.id).first(),
+                     [course_joined.teacher])
     elif course_joined.beginTime < datetime.now() < course_joined.endTime:  # 判断是否在规定时间内
         curr_apply = Apply.query.filter_by(user_id=current_user.id).filter_by(course_id=cid).first()
         if curr_apply is None:
@@ -99,6 +103,10 @@ def join(cid, u=current_user):
             course_joined.applies.append(curr_apply)
             db.session.commit()
             msg = 'pending'
+            send_message(u.name + u' 申请加入您的 ' + course_joined.title + u' 课程',
+                         url_for('admin.course_member', course_id=course_joined.id),
+                         User.query.filter_by(id=u.id).first(),
+                         [course_joined.teacher])
         else:
             msg = 'duplicated'
     else:

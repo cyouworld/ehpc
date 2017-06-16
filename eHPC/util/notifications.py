@@ -10,15 +10,12 @@ from flask_login import current_user
 def send_message(event_name, event_content, sender, receivers):
     """
     向receivers发送站内通知
-    :param event_name: 事件名称 str
+    :param event_name: 事件名称
     :param event_content: 事件内容 str
     :param sender: 发送者 User
     :param receivers: 接收者 list
     :return: True or False
     """
-    if not isinstance(event_name, str):
-        print('event_name is not str type')
-        return False
     if not isinstance(event_content, str):
         print('event_content is not str type')
         return False

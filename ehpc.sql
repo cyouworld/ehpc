@@ -884,7 +884,6 @@ CREATE TABLE `notifications` (
 
 LOCK TABLES `notifications` WRITE;
 /*!40000 ALTER TABLE `notifications` DISABLE KEYS */;
-INSERT INTO `notifications` VALUES (1,'2017-06-01 11:22:33','Test1','This is notification test1',3),(2,'2017-06-01 09:13:33','Test2','This is notification test2',3),(3,'2017-06-01 13:27:19','Test3','This is notification test3',3);
 /*!40000 ALTER TABLE `notifications` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -915,7 +914,6 @@ CREATE TABLE `notifications_receivers` (
 
 LOCK TABLES `notifications_receivers` WRITE;
 /*!40000 ALTER TABLE `notifications_receivers` DISABLE KEYS */;
-INSERT INTO `notifications_receivers` VALUES (1,1,3,0,NULL),(2,2,3,0,NULL),(3,3,3,0,NULL);
 /*!40000 ALTER TABLE `notifications_receivers` ENABLE KEYS */;
 UNLOCK TABLES;
 

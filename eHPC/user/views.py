@@ -381,23 +381,22 @@ def notifications():
                          'event_name': r.notification.event_name,
                          'create_time': str(r.notification.create_time),
                          'sender': r.notification.sender.name,
-                         'brief_intro': r.notification.event_content[:50]+'...' if len(r.notification.event_content) > 50 else r.notification.event_content} for r in current_user.note_info.filter_by(is_read=False).all()]
+                         'event_content': r.notification.event_content} for r in current_user.note_info.filter_by(is_read=False).all()]
             return jsonify(status='success', note=not_read)
         elif note_type == 'received':
             received = [{'id': r.id,
                          'event_name': r.notification.event_name,
                          'create_time': str(r.notification.create_time),
                          'sender': r.notification.sender.name,
-                         'brief_intro': r.notification.event_content[:50]+'...' if len(r.notification.event_content) > 50 else r.notification.event_content,
+                         'event_content': r.notification.event_content,
                          'is_read': r.is_read} for r in current_user.note_info.all()]
             return jsonify(status='success', note=received)
 
 
-@user.route('/notifications/<int:note_info_id>/detail/')
+@user.route('/notifications/<int:note_info_id>/read/', methods=['POST'])
 @login_required
-def notification_detail(note_info_id):
+def notification_read(note_info_id):
     status, note_info = read_message(note_info_id)
     if not status:
-        return abort(404)
-
-    return render_template('user/notification_detail.html', notification=note_info.notification)
+        return jsonify(status='fail')
+    return jsonify(status='success')
