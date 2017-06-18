@@ -26,17 +26,19 @@
                 <div class="panel panel-default">
                     <div class="panel-heading">
                         <h3 class="panel-title" style="display: inline-block">{% if op == "create" %}{{ _('Machine Hour Apply Create') }}{% else %}{{ _('Machine Hour Apply Edit') }}{% endif %}</h3>
-                        <div id="apply-submit-status" class="pull-right">
-                            <span id="status0" class="submit-status active">开始申请</span>
-                            <span id="status1" class="submit-status">已保存</span>
-                            <span id="status2" class="submit-status">等待审批</span>
-                            {% if apply and apply.submit_status == 2 %}
-                                <span id="status3" class="submit-status">审批通过</span>
-                            {% elif apply and apply.submit_status == 3 %}
-                                <span id="status3" class="submit-status">审批未通过</span>
-                            {% else %}
-                                <span class="submit-status">申请完成</span>
-                            {% endif %}
+                        <div class="pull-right hpc-pb">
+                            <ul id="hpc-progressbar">
+                                <li id="status0"class="active">开始申请</li>
+                                <li id="status1">已保存</li>
+                                <li id="status2">等待审批</li>
+                                {% if apply and apply.submit_status == 2 %}#}
+                                    <li id="status3">审批通过</li>
+                                {% elif apply and apply.submit_status == 3 %}
+                                    <li id="status3">审批未通过</li>
+                                {% else %}
+                                    <li>申请完成</li>
+                                {% endif %}
+                            </ul>
                         </div>
                     </div>
                     <div class="panel-body">
@@ -55,7 +57,7 @@
                                         <td><input id="applicant_institution" type="text" name="applicant_institution" value="{% if apply %}{{ apply.applicant_institution }}{% endif %}"></td>
                                     </tr>
                                     <tr>
-                                        <td class="table-first-col"">申请人电话</td>
+                                        <td class="table-first-col">申请人电话</td>
                                         <td><input id="applicant_tel" type="text" name="applicant_tel" value="{% if apply %}{{ apply.applicant_tel }}{% endif %}"></td>
                                         <td align="center" width="20%" style="background-color: #cfe9d4;">申请人邮箱</td>
                                         <td><input id="applicant_email" type="text" name="applicant_email" value="{% if apply %}{{ apply.applicant_email }}{% endif %}"></td>

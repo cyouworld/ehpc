@@ -17,13 +17,13 @@ def index():
         return render_template('machine_apply/index.html', title=gettext('Resource Apply'))
 
 
-@machine_apply.route('/machine_apply/information')
+@machine_apply.route('/information/')
 @login_required
 def machine_apply_information():
     return render_template('machine_apply/machine_apply_information.html', title=gettext('Resource Apply Information'))
 
 
-@machine_apply.route('/machine_applying')
+@machine_apply.route('/machine_applying/')
 @login_required
 def machine_applying():
     my_apply = MachineApply.query.filter_by(user_id=current_user.id).first()
@@ -35,7 +35,7 @@ def machine_applying():
         return redirect(url_for('machine_apply.machine_apply_edit', apply_id=my_apply.id))
 
 
-@machine_apply.route('/create', methods=['GET', 'POST'])
+@machine_apply.route('/create/', methods=['GET', 'POST'])
 @login_required
 def machine_apply_create():
     if request.method == "GET":
@@ -71,7 +71,7 @@ def machine_apply_create():
         return redirect(url_for('machine_apply.machine_apply_edit', apply_id=curr_apply.id))
 
 
-@machine_apply.route('/edit/<int:apply_id>', methods=['GET', 'POST'])
+@machine_apply.route('/edit/<int:apply_id>/', methods=['GET', 'POST'])
 @login_required
 def machine_apply_edit(apply_id):
     if request.method == "GET":

@@ -5041,3 +5041,59 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     font-weight: 600;
     width: 30%;
 }
+
+.hpc-pb {
+    width: 400px;
+    margin: 0;
+    text-align: center;
+    position: relative;
+}
+/*progressbar*/
+#hpc-progressbar {
+    margin-bottom: 30px;
+    overflow: hidden;
+    /*CSS counters to number the steps*/
+    counter-reset: step;
+}
+#hpc-progressbar li {
+    list-style-type: none;
+    color: black;
+    text-transform: uppercase;
+    font-size: 9px;
+    width: 25%;
+    float: left;
+    position: relative;
+}
+#hpc-progressbar li:before {
+    content: counter(step);
+    counter-increment: step;
+    width: 20px;
+    line-height: 20px;
+    display: block;
+    font-size: 10px;
+    color: #333;
+    background: gainsboro;
+    border-radius: 3px;
+    margin: 0 auto 5px auto;
+}
+/*progressbar connectors*/
+#hpc-progressbar li:after {
+    content: '';
+    width: 100%;
+    height: 2px;
+    background: white;
+    position: absolute;
+    left: -50%;
+    top: 9px;
+    z-index: -1; /*put it behind the numbers*/
+}
+#hpc-progressbar li:first-child:after {
+    /*connector not needed before the first step*/
+    content: none;
+}
+/*marking active/completed steps green*/
+/*The number of the step and the connector before it = green*/
+#hpc-progressbar li.active:before,  #hpc-progressbar li.active:after{
+    background: #27AE60;
+    color: white;
+}
