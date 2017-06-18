@@ -26,10 +26,8 @@
                                     <div style="padding-top: 30px;font-size: 20px">{{ c.name }}</div>
                                     <div style="padding-top: 10px" data-cid="{{ c.id }}">
                                         <a href="javascript:void(0)" data-id="edit">编辑</a>
-                                        {% if c.questions.count() == 0 %}
                                         <span class="divider"> | </span>
                                         <a href="javascript:void(0)" name="del-btn">删除</a>
-                                        {% endif %}
                                     </div>
                                 </div>
                         </div>

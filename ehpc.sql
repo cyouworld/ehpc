@@ -227,8 +227,11 @@ DROP TABLE IF EXISTS `classifies`;
 CREATE TABLE `classifies` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(128) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8;
+  `user_id` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `classifies_ibfk_1` (`user_id`),
+  CONSTRAINT `classifies_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -237,7 +240,7 @@ CREATE TABLE `classifies` (
 
 LOCK TABLES `classifies` WRITE;
 /*!40000 ALTER TABLE `classifies` DISABLE KEYS */;
-INSERT INTO `classifies` VALUES (4,'并行计算理论'),(5,'并行算法'),(7,'北大并行计算试题'),(8,'并行计算机体系结构'),(9,'MPI编程'),(10,'OpenMP编程'),(11,'Pthreads编程');
+INSERT INTO `classifies` VALUES (4,'并行计算理论',3),(5,'并行算法',3),(7,'北大并行计算试题',3),(8,'并行计算机体系结构',3),(9,'MPI编程',3),(10,'OpenMP编程',3),(11,'Pthreads编程',3);
 /*!40000 ALTER TABLE `classifies` ENABLE KEYS */;
 UNLOCK TABLES;
 

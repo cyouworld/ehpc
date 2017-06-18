@@ -46,6 +46,9 @@
 
             {% if current_user | is_admin_user %}
                 <ul class="nav navbar-nav navbar-right">
+                    <li><a href="{{ url_for('user.notifications') }}">
+                        <i class="es-icon es-icon-mail"></i>新消息 {{ current_user | get_not_read_count }}</a></li>
+
                     <li><a href="{{ url_for('main.index') }}">
                         <i class="es-icon es-icon-administrator"></i>切换为学生</a></li>
                     <li class="dropdown">

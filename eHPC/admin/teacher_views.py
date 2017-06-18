@@ -31,9 +31,9 @@ from ..util.course_filter import check_upload
 
 @admin.context_processor
 def add_sidebar():
-    if current_user.is_authenticated  and current_user.permissions == 2:
+    if current_user.is_authenticated and current_user.permissions == 2:
         courses = current_user.teacher_courses.order_by(Course.nature_order.asc())
-        classifies = Classify.query.all()
+        classifies = current_user.teacher_classify
         return {'sidebar_courses': courses, 'sidebar_classifies': classifies}
     else:
         return {}
@@ -962,7 +962,7 @@ def paper_edit(course_id, paper_id):
 @admin.route('/problem/')
 @teacher_login
 def problem():
-    return render_template('admin/problem/index.html', classify=Classify.query.all(),
+    return render_template('admin/problem/index.html', classify=current_user.teacher_classify,
                            questions=current_user.teacher_questions,
                            programs=current_user.teacher_program)
 
@@ -1041,7 +1041,7 @@ def question_create(question_type):
         return render_template('admin/problem/question_detail.html',
                                title=gettext('Edit question'),
                                op='create',
-                               classifies=Classify.query.all(),
+                               classifies=current_user.teacher_classify,
                                mode='practice',
                                type=question_type,
                                question_classify=question_classify)
@@ -1073,7 +1073,7 @@ def question_edit(question_type, question_id):
                                title=gettext('Edit question'),
                                op='edit',
                                question=curr_question,
-                               classifies=Classify.query.all(),
+                               classifies=current_user.teacher_classify,
                                mode='practice',
                                type=question_type,
                                curr_classifies=json.dumps(curr_classifies, ensure_ascii=False),
@@ -1102,7 +1102,7 @@ def paper_question_create(paper_id, question_type):
         return render_template('admin/problem/question_detail.html',
                                title=gettext('Create question'),
                                op='create',
-                               classifies=Classify.query.all(),
+                               classifies=current_user.teacher_classify,
                                mode='paper',
                                curr_paper=curr_paper,
                                type=question_type)
@@ -1139,7 +1139,7 @@ def paper_question_edit(paper_id, question_type, question_id):
                                title=gettext('Edit question'),
                                op='edit',
                                question=curr_question.questions,
-                               classifies=Classify.query.all(),
+                               classifies=current_user.teacher_classify,
                                mode='paper',
                                curr_paper=curr_paper,
                                point=curr_question.point,
@@ -1545,13 +1545,14 @@ def paper_pdf(paper_id):
 @teacher_login
 def classify():
     if request.method == 'GET':
-        classifies = Classify.query.all()
+        classifies = current_user.teacher_classify
         return render_template('admin/classify/index.html',
                                title=gettext("Classify Admin"),
                                classifies=classifies)
     elif request.method == 'POST':
         if request.form['op'] == 'create':
             new_classify = Classify(name=request.form['cname'])
+            new_classify.teacher = current_user
             db.session.add(new_classify)
             db.session.commit()
             return jsonify(status='success')

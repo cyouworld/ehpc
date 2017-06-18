@@ -4,7 +4,7 @@ from datetime import datetime
 
 from flask import render_template, request, redirect, url_for
 from flask_babel import gettext
-from flask_login import login_user, logout_user
+from flask_login import login_user, logout_user, current_user
 
 from eHPC.util.captcha import verify_captcha
 from . import admin
@@ -48,7 +48,7 @@ def logout():
 @admin.route('/teacher/')
 @teacher_login
 def teacher():
-    return render_template("admin/teacher.html", title=gettext("Teacher Setting"), classify=Classify.query.all())
+    return render_template("admin/teacher.html", title=gettext("Teacher Setting"), classify=current_user.teacher_classify)
 
 
 @admin.route('/system/')

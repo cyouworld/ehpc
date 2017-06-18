@@ -56,5 +56,5 @@ def get_sc_center(sc_id):
 
 
 @filter_blueprint.app_template_filter('get_not_read_count')
-def c(current_user):
+def get_not_read_count(current_user):
     return current_user.note_info.filter_by(is_read=False).count()

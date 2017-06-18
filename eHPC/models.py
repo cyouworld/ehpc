@@ -56,6 +56,7 @@ class User(UserMixin, db.Model):
     teacher_knowledge = db.relationship('Knowledge', backref='teacher', lazy='dynamic')
     teacher_program = db.relationship('Program', backref='teacher', lazy='dynamic')
     teacher_vnc_knowledge = db.relationship('VNCKnowledge', backref='teacher', lazy='dynamic', cascade="delete, delete-orphan")
+    teacher_classify = db.relationship('Classify', backref='teacher', lazy='dynamic')
 
     vnc_progresses = db.relationship('VNCProgress', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
 
@@ -368,6 +369,7 @@ class Classify(db.Model):
     name = db.Column(db.String(128), nullable=False)    # 分类名字
 
     user_questions = db.relationship('UserQuestion', backref='classify', lazy='dynamic')
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
 """ 咨询信息
