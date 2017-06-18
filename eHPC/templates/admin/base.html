@@ -3,6 +3,8 @@
 <head>
     <head>
         {% include 'admin/header.html' %}
+        <link href="{{ url_for('static', filename='css/player.css') }}" rel="stylesheet">
+        <script src="{{ url_for('static', filename='js/admin/sidebar.js') }}"></script>
     </head>
 
     {% block header_ext %}
@@ -16,14 +18,108 @@
 
 <div class="content-wrap">
     <!-- content in this page -->
-    {% block content %}
-    {% endblock %}
+    <div class="col-md-2" style="margin-top: 30px;margin-bottom: 20px;">
+        <ul id="accordion" class="accordion">
+            <li>
+                <div class="link">
+                    <i class="glyphicon glyphicon-tags"></i>
+                    <span>课程管理</span>
+                    <i class="glyphicon glyphicon-chevron-down temp-down"></i>
+                </div>
+                <ul class="submenu" style="display: block;">
+                    <li>
+                        <a id="course-manage" href="{{ url_for('admin.course') }}?tag2=course-manage">课程新增、编辑与删除</a>
+                    </li>
+                    {% if sidebar_courses %}
+                        {% for c in sidebar_courses %}
+                            <li>
+                                <div class="link" title="{{ c.title }}">
+                                    <span>{{ c.title | truncate(25) }}</span>
+                                    <i class="glyphicon glyphicon-chevron-down"></i>
+                                </div>
+                                {% if c == sidebar_courses[0] %}
+                                    <ul id="course-{{ c.id }}" class="submenu" style="display: block">
+                                {% else %}
+                                    <ul id="course-{{ c.id }}" class="submenu" style="display: none;">
+                                {% endif %}
+                                    <li>
+                                        <a id="course-{{ c.id }}-0" href="{{ url_for('admin.course_edit',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-0">课程信息</a>
+                                    </li>
+                                    <li>
+                                        <a id="course-{{ c.id }}-1" href="{{ url_for('admin.course_picture',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-1">课程图片</a>
+                                    </li>
+                                    <li>
+                                        <a id="course-{{ c.id }}-2" href="{{ url_for('admin.course_lesson',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-2">课时管理</a>
+                                    </li>
+                                    <li>
+                                        <a id="course-{{ c.id }}-3" href="{{ url_for('admin.course_permission',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-3">权限管理</a>
+                                    </li>
+                                    <li>
+                                        <a id="course-{{ c.id }}-4" href="{{ url_for('admin.course_member',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-4">成员管理</a>
+                                    </li>
+                                    <li>
+                                        <a id="course-{{ c.id }}-5" href="{{ url_for('admin.course_homework',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-5">课程作业</a>
+                                    </li>
+                                    <li>
+                                        <a id="course-{{ c.id }}-6" href="{{ url_for('admin.course_paper',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-6">试卷管理</a>
+                                    </li>
+                                    <li>
+                                        <a id="course-{{ c.id }}-7" href="{{ url_for('admin.course_notice',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-7">公告管理</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </li>
+            <li>
+                <div class="link">
+                    <i class="glyphicon glyphicon-tags"></i>
+                    <span>试题管理</span>
+                    <i class="glyphicon glyphicon-chevron-down temp-down"></i>
+                </div>
+                <ul class="submenu" style="display: block;">
+                    <li>
+                        <a id="problem-all" href="{{ url_for('admin.question',question_type='choice') }}?tag2=problem-all">所有分类</a>
+                    </li>
+                    {% if sidebar_classifies %}
+                        {% for c in sidebar_classifies %}
+                            <li>
+                                <a id="problem-{{ c.id }}" href="{{ url_for('admin.question_filter_by_classify', question_type='choice', question_classify=c.id) }}?tag2=problem-{{ c.id }}">{{ c.name }}</a>
+                            </li>
+                        {% endfor %}
+                    {% endif %}
+                </ul>
+            </li>
+            <li>
+                <div class="link">
+                    <i class="glyphicon glyphicon-tags"></i>
+                    <span>实验管理</span>
+                    <i class="glyphicon glyphicon-chevron-down temp-down"></i>
+                </div>
+                <ul class="submenu" style="display: block;">
+                    <li>
+                        <a id="lab-0" href="{{ url_for('admin.lab') }}?tag2=lab-0">编程虚拟实验室</a>
+                    </li>
+                    <li>
+                        <a id="lab-1" href="{{ url_for('admin.vnc_lab') }}?tag2=lab-1">VNC虚拟实验室</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <div class="col-md-10">
+        {% block content %}
+        {% endblock %}
+    </div>
+
 </div>
 
 {% include 'widget/alert_modal.html' %}
 
 {% block admin_footer %}
-    {% include 'admin/footer.html' %}
+{#    {% include 'admin/footer.html' %}#}
 {% endblock %}
 
 <!-- 防止 CSRF 攻击: https://github.com/xuelangZF/ehpc/issues/249 -->
@@ -39,6 +135,18 @@
     $(function () {
         $('form[method=post]').append('<input type="hidden" name="csrf_token" value="' + csrf_token + '"/>');
     });
+</script>
+
+
+<!-- 高亮侧边菜单当前项 -->
+<script type="text/javascript">
+    {% if request.args.get('tag1') %}
+        $("#{{ request.args.get('tag1') }}").css("display","block");
+    {% endif %}
+
+    {% if request.args.get('tag2') %}
+        $("#{{ request.args.get('tag2') }}").addClass("active");
+    {% endif %}
 </script>
 
 {% block footer_ext %}{% endblock %}

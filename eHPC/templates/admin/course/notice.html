@@ -5,34 +5,16 @@
     <div class="container" id="content-container">
 
         <div class="row">
-            <div class="col-md-3">
-                <div class="list-group-panel">
-                    <div class="list-group">
-                        <a class="list-group-item" href="{{ url_for('admin.course') }}">课程管理</a>
-                    </div>
-                    <div class="list-group">
-                        <a class="list-group-item" href="{{ url_for('admin.course_edit', course_id=course.id) }}">课程信息</a>
-                        <a class="list-group-item" href="{{ url_for('admin.course_picture', course_id=course.id) }}">课程图片</a>
-                        <a class="list-group-item" href="{{ url_for('admin.course_lesson', course_id=course.id) }}">课时管理</a>
-                        <a class="list-group-item" href="{{ url_for('admin.course_permission', course_id=course.id) }}">权限管理</a>
-                        <a class="list-group-item" href="{{ url_for('admin.course_member', course_id=course.id) }}">成员管理</a>
-                        <a class="list-group-item" href="{{ url_for('admin.course_homework', course_id=course.id) }}">课程作业</a>
-                        <a class="list-group-item" href="{{ url_for('admin.course_paper', course_id=course.id) }}">试卷管理</a>
-                        <a class="list-group-item active" href="{{ url_for('admin.course_notice', course_id=course.id) }}">公告管理</a>
-                    </div>
-                </div>
-            </div>
 
-            <div class="col-md-9">
                 <div class="panel panel-default panel-col">
                     <div class="panel-heading">
                         <span class="pull-right">
-                            <a id="create-course" href="{{ url_for('admin.course_notice_create', course_id=course.id) }}" class="btn btn-info btn-sm">
+                            <a id="create-course" href="{{ url_for('admin.course_notice_create', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-7" class="btn btn-info btn-sm">
                                 <span class="glyphicon glyphicon-plus"></span>
                                 创建公告
                             </a>
                         </span>
-                        公告管理
+                        {{ course.title }}——公告管理
                     </div>
 
                     <div class="panel-body">
@@ -48,7 +30,7 @@
                                         <span style="color: #c1c1c1;" class="btn btn-link pull-right">{{ n.createdTime }}</span>
                                         <a class="btn btn-link pull-right" href="javascript:void(0)" name="del-btn">
                                             <i class="es-icon es-icon-delete"></i>删除</a>
-                                        <a href="{{ url_for('admin.course_notice_edit', course_id=course.id, notice_id=n.id) }}" class="btn btn-link pull-right" data-toggle="modal" name="edit-btn">
+                                        <a href="{{ url_for('admin.course_notice_edit', course_id=course.id, notice_id=n.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-7" class="btn btn-link pull-right" data-toggle="modal" name="edit-btn">
                                             <i class="es-icon es-icon-edit"></i>编辑</a>
                                     </div>
                                 </li>
@@ -59,7 +41,6 @@
                         </ul>
                     </div>
                 </div>
-            </div>
         </div>
     </div>
 
