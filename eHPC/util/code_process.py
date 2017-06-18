@@ -353,7 +353,13 @@ class ehpc_client:
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/" + str(job_id) + "/")
 
         th2_logger.debug("Get job status data: %s" % tmpdata)
+
+        times = 10
+        while tmpdata["status_code"] == 100 and times > 0:
+            times -= 1
+            tmpdata = self.open(TH2_ASYNC_URL + '/' + self.output["output"])
         # print tmpdata
+
         if tmpdata["output"]["status"][str(job_id)] == "Success" or tmpdata["output"]["status"][
             str(job_id)] == "Failed":
             return "Finished"
@@ -449,6 +455,56 @@ class ehpc_client:
             run_out = "Request error."
 
         return run_out
+
+    def upload_multi(self, myPath, problem_id, filename=[], data=[]):
+
+        mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (myPath, problem_id, problem_id)
+
+        output = self.run_command( mkdir_command )
+
+        for index in range( len(data) ) :
+            if not self.upload(myPath + "/" + problem_id, filename[index], data[index]):
+                output = "Upload fail."
+                #return False
+        return output
+
+    def ehpc_compile_multi(self, myPath, problem_id, user_id, language, input_filename=[], output_filename=[] ):
+
+        compile_out = ""
+        is_success = [True]
+
+        mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
+        print self.run_command( mkdir_command )
+
+        for index in range( len(input_filename) ) :
+
+            move_command = "cd %s;cp %s ./%s/." % (myPath + "/" + problem_id, input_filename[index], user_id)
+            self.run_command( move_command )
+
+            output = self.ehpc_compile(is_success, myPath + "/" + problem_id + "/" + user_id,
+                                       input_filename[index], output_filename[index], language)
+            compile_out = compile_out + "\n" + output
+
+        return compile_out
+
+    def submit_job_multi(self, myPath, problem_id, user_id, job_filename, output_filename, node_number=1,
+                         task_number=1, partition="nsfc1"):
+        jobscript = """#!/bin/bash
+#SBATCH --partition=%s
+#SBATCH --nodes=%s
+    ./%s 1 %s
+""" % (partition, node_number, output_filename, task_number)
+
+        if not self.upload(myPath + "/" + problem_id + "/" + user_id, job_filename, jobscript):
+            return "ERROR"
+
+        jobPath = myPath + "/" + problem_id + "/" + user_id + "/" + job_filename
+
+        tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript": jobscript, "jobfilepath": jobPath})
+
+        #th2_logger.debug("Submit job returned data: %s" % tmpdata)
+
+        return tmpdata["output"]["jobid"]
 
 
 def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_number, language, op, jobid,
