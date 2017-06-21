@@ -5093,7 +5093,81 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
 }
 /*marking active/completed steps green*/
 /*The number of the step and the connector before it = green*/
-#hpc-progressbar li.active:before,  #hpc-progressbar li.active:after{
+#hpc-progressbar li.active:before,  #hpc-progressbar li.active:after {
     background: #27AE60;
     color: white;
+}
+
+#apply-process-status {
+    margin-bottom: 20px;
+}
+
+#apply-process-status .process-status {
+    display: inline-block;
+    width: 80px;
+    height: 110px;
+    margin: 0 30px;
+}
+
+#apply-process-status .process-status:hover {
+    color: #46C37B;
+}
+
+#apply-process-status .process-status a {
+    color: #555;
+    display: inline-block;
+    margin-bottom: 10px;
+    position: relative;
+	-webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+#apply-process-status .process-status a:hover {
+    text-decoration: none;
+    cursor: pointer;
+    transform: translateY(-6px);
+    -webkit-transform: translateY(-6px);
+    -moz-transform: translateY(-6px);
+    box-shadow: 0 26px 40px -24px rgba(0, 36, 100, 0.3);
+    -webkit-box-shadow: 0 26px 40px -24px rgba(0, 36, 100, 0.3);
+    -moz-box-shadow: 0 26px 40px -24px rgba(0, 36, 100, 0.3);
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+#apply-process-status .process-status img {
+    width: 100%;
+}
+
+#apply-process-status .process-status a .badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background-color: #B22222 ;
+}
+
+#apply-process-status .process-status .status-title {
+    margin-bottom: 10px;
+    height: 20px;
+}
+
+#issue-list-box {
+    padding: 0px;
+}
+
+#issue-list-box .nav-tabs {
+    margin-bottom: 0px;
+    border-bottom: 2px solid #ddd;
+}
+
+#issue-list-box .nav-tabs li a {
+    font-weight: 600;
+}
+
+#issue-list-box .nav-tabs li.active {
+    border-bottom: 2px solid #46C37B;
 }

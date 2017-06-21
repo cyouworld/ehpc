@@ -17,6 +17,20 @@
                     <div class="panel-heading text-center">
                         <h3>{{ _('Resource Apply Center') }}</h3>
                         <hr>
+                        <div id="apply-process-status" class="text-center">
+                            <div class="process-status">
+                                <div class="status-title">待办理</div>
+                                <a href="{{ url_for('machine_apply.issue_unsubmit') }}"><img src="{{ url_for('static',filename='images/status_1.png') }}"><span class="badge">{{ unsubmit }}</span></a>
+                            </div>
+                            <div class="process-status">
+                                <div class="status-title">待审批</div>
+                                <a href="{{ url_for('machine_apply.issue_waiting') }}"><img src="{{ url_for('static',filename='images/status_2.png') }}"><span class="badge">{{ waiting }}</span></a>
+                            </div>
+                            <div class="process-status">
+                                <div class="status-title">已完成</div>
+                                <a href="{{ url_for('machine_apply.issue_finished') }}"><img src="{{ url_for('static',filename='images/status_3.png') }}"><span class="badge">{{ finished }}</span></a>
+                            </div>
+                        </div>
                     </div>
                     <div id="user-issue-box" class="panel-body">
                         <div class="col-lg-3 col-md-3 col-sm-3 col-xs-3">

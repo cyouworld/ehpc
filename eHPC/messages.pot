@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-06-14 23:05+0800\n"
+"POT-Creation-Date: 2017-06-21 13:59+0800\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,7 +33,7 @@ msgstr ""
 msgid "User Edit"
 msgstr ""
 
-#: admin/system_views.py:79 admin/teacher_views.py:52
+#: admin/system_views.py:79 admin/teacher_views.py:49
 msgid "Course Admin"
 msgstr ""
 
@@ -73,114 +73,114 @@ msgstr ""
 msgid "Case Code Material"
 msgstr ""
 
-#: admin/teacher_views.py:101
+#: admin/teacher_views.py:98
 msgid "Create Course"
 msgstr ""
 
-#: admin/teacher_views.py:126
+#: admin/teacher_views.py:123
 msgid "Edit Course"
 msgstr ""
 
-#: admin/teacher_views.py:143
+#: admin/teacher_views.py:140
 msgid "Course Picture"
 msgstr ""
 
-#: admin/teacher_views.py:165 admin/teacher_views.py:176
-#: admin/teacher_views.py:195
+#: admin/teacher_views.py:162 admin/teacher_views.py:173
+#: admin/teacher_views.py:192
 msgid "Course Notice"
 msgstr ""
 
-#: admin/teacher_views.py:221
+#: admin/teacher_views.py:218
 msgid "Course Lesson"
 msgstr ""
 
-#: admin/teacher_views.py:266
+#: admin/teacher_views.py:263
 msgid "Lesson Material"
 msgstr ""
 
-#: admin/teacher_views.py:465 admin/teacher_views.py:716
-#: admin/teacher_views.py:778
+#: admin/teacher_views.py:462 admin/teacher_views.py:713
+#: admin/teacher_views.py:775
 msgid "Course Homework"
 msgstr ""
 
-#: admin/teacher_views.py:509 admin/teacher_views.py:580
+#: admin/teacher_views.py:506 admin/teacher_views.py:577
 msgid "Course Homework Create"
 msgstr ""
 
-#: admin/teacher_views.py:579 admin/teacher_views.py:684
+#: admin/teacher_views.py:576 admin/teacher_views.py:681
 msgid "homework appendix upload failed"
 msgstr ""
 
-#: admin/teacher_views.py:620 admin/teacher_views.py:703
+#: admin/teacher_views.py:617 admin/teacher_views.py:700
 msgid "Course Homework Edit"
 msgstr ""
 
-#: admin/teacher_views.py:685
+#: admin/teacher_views.py:682
 msgid "Course Homework edit"
 msgstr ""
 
-#: admin/teacher_views.py:702
+#: admin/teacher_views.py:699
 msgid "save homework successfully"
 msgstr ""
 
-#: admin/teacher_views.py:794
+#: admin/teacher_views.py:791
 msgid "Homework Correct"
 msgstr ""
 
-#: admin/teacher_views.py:877
+#: admin/teacher_views.py:874
 msgid "Course Paper"
 msgstr ""
 
-#: admin/teacher_views.py:987 admin/teacher_views.py:1013
+#: admin/teacher_views.py:984 admin/teacher_views.py:1010
 msgid "Question Manage"
 msgstr ""
 
-#: admin/teacher_views.py:1030 admin/teacher_views.py:1175
+#: admin/teacher_views.py:1027 admin/teacher_views.py:1172
 msgid "Program question"
 msgstr ""
 
-#: admin/teacher_views.py:1045 admin/teacher_views.py:1076
-#: admin/teacher_views.py:1142 admin/teacher_views.py:1210
+#: admin/teacher_views.py:1042 admin/teacher_views.py:1073
+#: admin/teacher_views.py:1139 admin/teacher_views.py:1207
 msgid "Edit question"
 msgstr ""
 
-#: admin/teacher_views.py:1106 admin/teacher_views.py:1190
+#: admin/teacher_views.py:1103 admin/teacher_views.py:1187
 msgid "Create question"
 msgstr ""
 
-#: admin/teacher_views.py:1228
+#: admin/teacher_views.py:1225
 msgid "Lab Manage"
 msgstr ""
 
-#: admin/teacher_views.py:1269
+#: admin/teacher_views.py:1266
 msgid "Lab tasks"
 msgstr ""
 
-#: admin/teacher_views.py:1303
+#: admin/teacher_views.py:1300
 msgid "Lab Create"
 msgstr ""
 
-#: admin/teacher_views.py:1341
+#: admin/teacher_views.py:1338
 msgid "Lab Edit"
 msgstr ""
 
-#: admin/teacher_views.py:1376
+#: admin/teacher_views.py:1373
 msgid "VNC Lab Manage"
 msgstr ""
 
-#: admin/teacher_views.py:1446
+#: admin/teacher_views.py:1443
 msgid "VNC Lab View"
 msgstr ""
 
-#: admin/teacher_views.py:1491
+#: admin/teacher_views.py:1488
 msgid "VNC Lab Create"
 msgstr ""
 
-#: admin/teacher_views.py:1516
+#: admin/teacher_views.py:1513
 msgid "VNC Lab Edit"
 msgstr ""
 
-#: admin/teacher_views.py:1553
+#: admin/teacher_views.py:1550
 msgid "Classify Admin"
 msgstr ""
 
@@ -188,7 +188,7 @@ msgstr ""
 msgid "Admin Auth"
 msgstr ""
 
-#: admin/views.py:35 user/views.py:54
+#: admin/views.py:35 user/views.py:55
 msgid "Invalid username or password."
 msgstr ""
 
@@ -208,8 +208,8 @@ msgstr ""
 msgid "Case List"
 msgstr ""
 
-#: case/views.py:23 templates/navbar.html:11 templates/navbar.html:73
-#: templates/navbar.html:87
+#: case/views.py:23 templates/navbar.html:11 templates/navbar.html:76
+#: templates/navbar.html:90
 msgid "Case Display"
 msgstr ""
 
@@ -217,7 +217,7 @@ msgstr ""
 msgid "Courses"
 msgstr ""
 
-#: course/views.py:145
+#: course/views.py:153
 msgid "Course Materials"
 msgstr ""
 
@@ -242,26 +242,32 @@ msgstr ""
 msgid "vnc"
 msgstr ""
 
-#: machine_apply/views.py:17 templates/machine_apply/create.html:17
+#: machine_apply/views.py:33 templates/machine_apply/create.html:17
 #: templates/machine_apply/index.html:12
+#: templates/machine_apply/issue_list.html:16
 #: templates/machine_apply/machine_apply_information.html:17
 msgid "Resource Apply"
 msgstr ""
 
-#: machine_apply/views.py:23
+#: machine_apply/views.py:39
 msgid "Resource Apply Information"
 msgstr ""
 
-#: machine_apply/views.py:42 templates/machine_apply/create.html:19
-#: templates/machine_apply/create.html:28
-msgid "Machine Hour Apply Create"
+#: machine_apply/views.py:58 machine_apply/views.py:98
+#: machine_apply/views.py:127 machine_apply/views.py:136
+msgid "My Machine Hour Apply"
 msgstr ""
 
-#: machine_apply/views.py:82 machine_apply/views.py:110
-#: machine_apply/views.py:119 templates/admin/hpc/edit.html:24
-#: templates/machine_apply/create.html:21
-#: templates/machine_apply/create.html:28
-msgid "Machine Hour Apply Edit"
+#: machine_apply/views.py:184
+msgid "TODO List"
+msgstr ""
+
+#: machine_apply/views.py:193
+msgid "Waiting List"
+msgstr ""
+
+#: machine_apply/views.py:202
+msgid "Finished List"
 msgstr ""
 
 #: main/views.py:53 main/views.py:61 main/views.py:67
@@ -286,55 +292,54 @@ msgstr ""
 msgid "SYSU SDCS"
 msgstr ""
 
-#: templates/admin/dev_header.html:7 templates/admin/header.html:7
-#: templates/course/widget_material_base.html:10 templates/header.html:7
-#: templates/lab/vnc_base.html:10
+#: templates/admin/header.html:7 templates/course/widget_material_base.html:10
+#: templates/header.html:7 templates/lab/vnc_base.html:10
 msgid "eHPC"
 msgstr ""
 
 #: templates/main/index.html:90 templates/navbar.html:7
-#: templates/navbar.html:69 templates/navbar.html:79
+#: templates/navbar.html:72 templates/navbar.html:82
 msgid "Online Courses"
 msgstr ""
 
 #: templates/main/index.html:111 templates/navbar.html:8
-#: templates/navbar.html:70 templates/navbar.html:80
+#: templates/navbar.html:73 templates/navbar.html:83
 msgid "Examination Center"
 msgstr ""
 
-#: templates/main/index.html:137 templates/navbar.html:9
-#: templates/navbar.html:71 templates/navbar.html:85
+#: templates/main/index.html:143 templates/navbar.html:9
+#: templates/navbar.html:74 templates/navbar.html:88
 msgid "Community"
 msgstr ""
 
-#: templates/navbar.html:10 templates/navbar.html:72 templates/navbar.html:86
+#: templates/navbar.html:10 templates/navbar.html:75 templates/navbar.html:89
 msgid "Virutal Lab"
 msgstr ""
 
-#: templates/navbar.html:12 templates/navbar.html:74 templates/navbar.html:88
+#: templates/navbar.html:12 templates/navbar.html:77 templates/navbar.html:91
 msgid "Machine Hour Apply"
 msgstr ""
 
-#: templates/lab/lab_base.html:49 templates/navbar.html:35 user/views.py:163
+#: templates/lab/lab_base.html:49 templates/navbar.html:35 user/views.py:164
 msgid "Personal Page"
 msgstr ""
 
-#: templates/lab/lab_base.html:54 templates/navbar.html:41
-#: templates/user/setting.html:9 user/views.py:267
+#: templates/lab/lab_base.html:54 templates/navbar.html:44
+#: templates/user/setting.html:9 user/views.py:268
 msgid "Setting"
 msgstr ""
 
-#: templates/lab/lab_base.html:56 templates/navbar.html:44
+#: templates/lab/lab_base.html:56 templates/navbar.html:47
 msgid "Logout"
 msgstr ""
 
-#: templates/admin/auth.html:42 templates/navbar.html:58
+#: templates/admin/auth.html:42 templates/navbar.html:61
 #: templates/user/reg.html:12 templates/user/signin.html:12
 #: templates/user/signin.html:43
 msgid "Sign In"
 msgstr ""
 
-#: templates/navbar.html:61 templates/user/reg.html:13
+#: templates/navbar.html:64 templates/user/reg.html:13
 #: templates/user/signin.html:13 templates/user/signin.html:51
 msgid "Registration"
 msgstr ""
@@ -362,6 +367,11 @@ msgstr ""
 
 #: templates/admin/navbar.html:9
 msgid "Teacher Admin"
+msgstr ""
+
+#: templates/admin/hpc/edit.html:24 templates/machine_apply/create.html:21
+#: templates/machine_apply/create.html:28
+msgid "Machine Hour Apply Edit"
 msgstr ""
 
 #: templates/admin/user/edit.html:17
@@ -401,6 +411,7 @@ msgstr ""
 #: templates/group/topic_new.html:13 templates/lab/detail.html:10
 #: templates/lab/index.html:10 templates/lab/vnc_tasks_lists.html:10
 #: templates/machine_apply/create.html:16 templates/machine_apply/index.html:11
+#: templates/machine_apply/issue_list.html:15
 #: templates/machine_apply/machine_apply_information.html:16
 #: templates/problem/program_detail.html:12
 #: templates/problem/show_my_submits.html:7
@@ -472,12 +483,29 @@ msgstr ""
 msgid "Challenges"
 msgstr ""
 
+#: templates/machine_apply/create.html:19
+#: templates/machine_apply/create.html:28
+msgid "Machine Hour Apply Create"
+msgstr ""
+
 #: templates/machine_apply/index.html:18
 msgid "Resource Apply Center"
 msgstr ""
 
-#: templates/machine_apply/index.html:25
+#: templates/machine_apply/index.html:39
 msgid "ALL Issues"
+msgstr ""
+
+#: templates/machine_apply/issue_list.html:17
+msgid "TO DO"
+msgstr ""
+
+#: templates/machine_apply/issue_list.html:17
+msgid "TO audit"
+msgstr ""
+
+#: templates/machine_apply/issue_list.html:17
+msgid "Finished"
 msgstr ""
 
 #: templates/machine_apply/machine_apply_information.html:18
@@ -690,55 +718,55 @@ msgstr ""
 msgid "Have no account?"
 msgstr ""
 
-#: user/views.py:32 user/views.py:44 user/views.py:55
+#: user/views.py:33 user/views.py:45 user/views.py:56
 msgid "User Sign In"
 msgstr ""
 
-#: user/views.py:80 user/views.py:87 user/views.py:117
+#: user/views.py:81 user/views.py:88 user/views.py:118
 msgid "Register Account"
 msgstr ""
 
-#: user/views.py:102
+#: user/views.py:103
 msgid "Username already exists."
 msgstr ""
 
-#: user/views.py:106
+#: user/views.py:107
 msgid "Email already exists."
 msgstr ""
 
-#: user/views.py:181
+#: user/views.py:182
 msgid "The email can not be empty"
 msgstr ""
 
-#: user/views.py:183
+#: user/views.py:184
 msgid "The email has not be registered"
 msgstr ""
 
-#: user/views.py:219
+#: user/views.py:220
 msgid "Passwords don't match."
 msgstr ""
 
-#: user/views.py:221
+#: user/views.py:222
 msgid "Passwords can not be empty."
 msgstr ""
 
-#: user/views.py:256 user/views.py:257
+#: user/views.py:257 user/views.py:258
 msgid "'s Topics"
 msgstr ""
 
-#: user/views.py:299
+#: user/views.py:300
 msgid "Update info done!"
 msgstr ""
 
-#: user/views.py:326
+#: user/views.py:327
 msgid "Update avatar done!"
 msgstr ""
 
-#: user/views.py:330 util/file_manage.py:34 util/file_manage.py:93
+#: user/views.py:331 util/file_manage.py:34 util/file_manage.py:93
 msgid "Invalid file"
 msgstr ""
 
-#: user/views.py:358
+#: user/views.py:359
 msgid "Update password done!"
 msgstr ""
 

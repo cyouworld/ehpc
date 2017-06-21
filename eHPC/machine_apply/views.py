@@ -3,6 +3,7 @@
 
 from flask import render_template, abort, request, redirect, url_for, jsonify, current_app
 from . import machine_apply
+from datetime import datetime
 from ..models import MachineApply, MachineAccount
 from flask_babel import gettext
 from flask_login import current_user, login_required
@@ -14,7 +15,22 @@ import random, string
 @login_required
 def index():
     if request.method == "GET":
-        return render_template('machine_apply/index.html', title=gettext('Resource Apply'))
+        my_apply = MachineApply.query.filter_by(user_id=current_user.id).first()
+        finiehed = 0
+        waiting = 0
+        unsubmit = 0
+        if my_apply:
+            if my_apply.submit_status == 0:
+                unsubmit += 1
+            elif my_apply.submit_status == 1:
+                waiting += 1
+            elif my_apply.submit_status == 2:
+                finiehed += 1
+        return render_template('machine_apply/index.html',
+                               finished=finiehed,
+                               waiting=waiting,
+                               unsubmit=unsubmit,
+                               title=gettext('Resource Apply'))
 
 
 @machine_apply.route('/information/')
@@ -39,7 +55,7 @@ def machine_applying():
 @login_required
 def machine_apply_create():
     if request.method == "GET":
-        return render_template('machine_apply/create.html', op="create", title=gettext('Machine Hour Apply Create'))
+        return render_template('machine_apply/create.html', op="create", title=gettext('My Machine Hour Apply'))
     elif request.method == 'POST':
         curr_apply = MachineApply()
         curr_apply.applicant_name = request.form.get('applicant_name')
@@ -79,7 +95,7 @@ def machine_apply_edit(apply_id):
         return render_template('machine_apply/create.html',
                                apply=curr_apply,
                                op="edit",
-                               title=gettext('Machine Hour Apply Edit'),
+                               title=gettext('My Machine Hour Apply'),
                                proxy_server=current_app.config['SSH_PROXY_SERVER'])
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
@@ -103,11 +119,12 @@ def machine_apply_edit(apply_id):
         if request.form['save-op'] == "submit":
             # 若用户点击“提交”按钮， 提交状态改为1
             curr_apply.submit_status = 1
+            curr_apply.applying_time = datetime.now()
             db.session.commit()
             return render_template('machine_apply/create.html',
                                    apply=curr_apply,
                                    op="edit",
-                                   title=gettext('Machine Hour Apply Edit'))
+                                   title=gettext('My Machine Hour Apply'))
         else:
             # 若用户点击“保存草稿”按钮
             curr_apply.submit_status = 0
@@ -116,7 +133,7 @@ def machine_apply_edit(apply_id):
                                    apply=curr_apply,
                                    op="edit",
                                    save_status="save",
-                                   title=gettext('Machine Hour Apply Edit'))
+                                   title=gettext('My Machine Hour Apply'))
 
 
 @machine_apply.route('/machine_apply/ssh/ask-connect/', methods=['POST'])
@@ -156,3 +173,30 @@ def get_machine_info():
                        port=str(machine_account.port),
                        username=machine_account.username,
                        password=machine_account.password)
+
+
+@machine_apply.route('/machine_apply/todo/')
+def issue_unsubmit():
+    issue_list = MachineApply.query.filter_by(user_id=current_user.id, submit_status=0).all()
+    return render_template('machine_apply/issue_list.html',
+                           issue_list=issue_list,
+                           status='unsubmit',
+                           title=gettext('TODO List'))
+
+
+@machine_apply.route('/machine_apply/waiting/')
+def issue_waiting():
+    issue_list = MachineApply.query.filter_by(user_id=current_user.id, submit_status=1).all()
+    return render_template('machine_apply/issue_list.html',
+                           issue_list=issue_list,
+                           status='waiting',
+                           title=gettext('Waiting List'))
+
+
+@machine_apply.route('/machine_apply/finished')
+def issue_finished():
+    issue_list = MachineApply.query.filter_by(user_id=current_user.id, submit_status=2).all()
+    return render_template('machine_apply/issue_list.html',
+                           issue_list=issue_list,
+                           status='finished',
+                           title=gettext('Finished List'))
