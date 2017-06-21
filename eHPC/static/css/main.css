@@ -4750,6 +4750,10 @@ table.fixed-table {
     right: 30px;
 }
 
+.homework-content-box {
+    position: relative;
+}
+
 #back-to-homework-list {
     color: #616161;
     position: absolute;
