@@ -99,6 +99,14 @@ def machine_apply_edit(apply_id):
                                proxy_server=current_app.config['SSH_PROXY_SERVER'])
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
+        if request.form.get('save-op') == 'withdraw':
+            curr_apply.submit_status = 0
+            db.session.commit()
+            return render_template('machine_apply/create.html',
+                                   apply=curr_apply,
+                                   op="edit",
+                                   title=gettext('My Machine Hour Apply'))
+
         curr_apply.applicant_name = request.form.get('applicant_name')
         curr_apply.applicant_institution = request.form.get('applicant_institution')
         curr_apply.applicant_tel = request.form.get('applicant_tel')

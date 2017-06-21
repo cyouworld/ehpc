@@ -25,7 +25,7 @@
             <div class="col-lg-12 col-md-12 col-sm-12">
                 <div class="panel panel-default">
                     <div class="panel-heading">
-                        <h3 class="panel-title" style="display: inline-block">{% if op == "create" %}{{ _('Machine Hour Apply Create') }}{% else %}{{ _('Machine Hour Apply Edit') }}{% endif %}</h3>
+                        <h3 class="panel-title" style="display: inline-block">我的机时申请</h3>
                         <div class="pull-right hpc-pb">
                             <ul id="hpc-progressbar">
                                 <li id="status0"class="active">开始申请</li>
@@ -51,19 +51,19 @@
                                         <td colspan="4">申请信息</td>
                                     </tr>
                                     <tr>
-                                        <td class="table-first-col">申请人姓名</td>
+                                        <td class="table-first-col">申请人姓名(*)</td>
                                         <td><input id="applicant_name" type="text" name="applicant_name" value="{% if apply %}{{ apply.applicant_name }}{% endif %}"></td>
-                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人单位</td>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人单位(*)</td>
                                         <td><input id="applicant_institution" type="text" name="applicant_institution" value="{% if apply %}{{ apply.applicant_institution }}{% endif %}"></td>
                                     </tr>
                                     <tr>
-                                        <td class="table-first-col">申请人电话</td>
+                                        <td class="table-first-col">申请人电话(*)</td>
                                         <td><input id="applicant_tel" type="text" name="applicant_tel" value="{% if apply %}{{ apply.applicant_tel }}{% endif %}"></td>
-                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人邮箱</td>
+                                        <td align="center" width="20%" style="background-color: #cfe9d4;">申请人邮箱(*)</td>
                                         <td><input id="applicant_email" type="text" name="applicant_email" value="{% if apply %}{{ apply.applicant_email }}{% endif %}"></td>
                                     </tr>
                                     <tr>
-                                        <td class="table-first-col">申请人通信地址</td>
+                                        <td class="table-first-col">申请人通信地址(*)</td>
                                         <td colspan="3"><input id="applicant_address" type="text" name="applicant_address" value="{% if apply %}{{ apply.applicant_address }}{% endif %}"></td>
                                     </tr>
                                     <tr>
@@ -72,7 +72,7 @@
                                             <select id="project_name" name="project_name" data-width="100%"
                                                     data-parsley-required-message="请填写项目名称" required
                                                     value="{% if apply %}{{ apply.project_name }}{% endif %}">
-                                                <option value="高性能教育实践平台">高性能教育实践平台</option>
+                                                <option value="国家重点研发计划项目-基于国家高性能计算环境的教育实践平台" selected>国家重点研发计划项目-基于国家高性能计算环境的教育实践平台</option>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -84,19 +84,19 @@
                                     <td colspan="4">负责人信息</td>
                                 </tr>
                                 <tr>
-                                    <td class="table-first-col">负责人姓名</td>
+                                    <td class="table-first-col">负责人姓名(*)</td>
                                     <td><input id="manager_name" type="text" name="manager_name" value="{% if apply %}{{ apply.manager_name }}{% endif %}"></td>
-                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人单位</td>
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人单位(*)</td>
                                     <td><input id="manager_institution" type="text" name="manager_institution" value="{% if apply %}{{ apply.manager_institution }}{% endif %}"></td>
                                 </tr>
                                 <tr>
-                                    <td class="table-first-col">负责人电话</td>
+                                    <td class="table-first-col">负责人电话(*)</td>
                                     <td><input id="manager_tel" type="text" name="manager_tel" value="{% if apply %}{{ apply.manager_tel }}{% endif %}"></td>
-                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人邮箱</td>
+                                    <td align="center" width="20%" style="background-color: #cfe9d4;">负责人邮箱(*)</td>
                                     <td><input id="manager_email" type="text" name="manager_email" value="{% if apply %}{{ apply.manager_email }}{% endif %}"></td>
                                 </tr>
                                 <tr>
-                                    <td class="table-first-col">负责人通信地址</td>
+                                    <td class="table-first-col">负责人通信地址(*)</td>
                                     <td colspan="3"><input id="manager_address" type="text" name="manager_address" value="{% if apply %}{{ apply.manager_address }}{% endif %}"></td>
                                 </tr>
                                 </tbody>
@@ -129,7 +129,7 @@
                                             <option value="1000">1000</option>
                                             <option value="2000">2000</option>
                                             <option value="5000">5000</option>
-                                            <option value="10000">10000</option>
+                                            <option value="10000" selected>10000</option>
                                         </select>
                                     </td>
                                 </tr>
@@ -142,7 +142,7 @@
                                         <td colspan="4">机时用途</td>
                                     </tr>
                                     <tr>
-                                        <td class="table-first-col" style="vertical-align: middle;">机时用途说明</td>
+                                        <td class="table-first-col" style="vertical-align: middle;">机时用途说明(*)</td>
                                         <td>
                                             <textarea id="usage" name="usage" class="form-control" rows="3">{% if apply %}{{ apply.usage }}{% endif %}</textarea>
                                         </td>
@@ -154,6 +154,7 @@
                             <div class="form-submit text-right">
                                 <input class='btn btn-info' id='show-info' type='button' value="申请说明" data-toggle="modal" data-target="#InfoModal">
                                 <input class='btn btn-primary' id='save-as-draft' type='submit' value="保存草稿"{% if apply %}{% if apply.submit_status == 1 or apply.submit_status == 2 %} disabled{% endif %}{% endif %}>
+                                <input class='btn btn-primary' id='withdraw' type='submit' value="撤回申请"{% if not apply or apply and apply.submit_status != 1 %} disabled{% endif%}>
                                 <input class='btn btn-primary' id='submit' type='submit' value="提交申请" {% if apply %}{% if apply.submit_status == 1 or apply.submit_status == 2 %} disabled{% endif %}{% endif %}>
                             </div>
                         </form>
@@ -259,6 +260,16 @@
             {% endif %}
         }
 
+        {% if apply and apply.submit_status == 1 %}
+        var tables = $(".table.table-bordered");
+        tables.eq(0).find("input").attr("disabled", "");
+        tables.eq(1).find("input").attr("disabled", "");
+        tables.eq(2).find("input").attr("disabled", "");
+        tables.eq(3).find("textarea").attr("disabled", "");
+        $("#project_name").css("background", "#F2F1F0");
+        $("#sc_center").css("background", "#F2F1F0");
+        $("#cpu_hour").css("background", "#F2F1F0");
+        {% endif %}
 
         if (save_satus === "save") {
             alert_modal("保存草稿成功！");
@@ -266,12 +277,17 @@
         $("#save-as-draft").click(function() {
             $("#save-op").val("save-as-draft");
         });
+        $("#withdraw").click(function() {
+            $("#save-op").val("withdraw");
+        });
         $("#submit").click(function() {
-            $("#applicant_name").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");
-            $("#applicant_institution").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");
-            $("#applicant_tel").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人电话");
-            $("#applicant_email").attr('required', "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");
-            $("#applicant_address").attr('required', "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");
+            $("#applicant_name").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请填写申请人姓名");
+            $("#applicant_institution").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请填写申请人单位");
+            $("#applicant_tel").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请填写申请人电话");
+            $("#applicant_email").attr('required', "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请填写申请人邮箱");
+            $("#applicant_address").attr('required', "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请填写申请人电话");
+
+            $("#usage").attr('required', "required").attr("data-parsley-maxlength", 1024).attr("data-parsley-required-message", "请填写用途说明");
 
 {#            $("#manager_name").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");#}
 {#            $("#manager_institution").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");#}

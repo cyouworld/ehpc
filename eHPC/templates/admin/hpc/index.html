@@ -26,6 +26,7 @@
                     </thead>
                     <tbody id="tb">
                     {% for a in applies %}
+                        {% if a.submit_status != 0 %}
                         <tr>
                             <td>{{ a.project_name }}</td>
                             <td>{{ a.applicant_name }}</td>
@@ -34,6 +35,7 @@
                             <td>{% if a.submit_status == 3 %}已拒绝{% elif a.submit_status == 2 %}已同意{% else %}等待处理{% endif %}</td>
                             <td><a href="{{ url_for('admin.machine_apply', apply_id=a.id) }}">审核</a></td>
                         </tr>
+                        {% endif %}
                     {% endfor %}
                     </tbody>
                 </table>
