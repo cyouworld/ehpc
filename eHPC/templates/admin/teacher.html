@@ -1,5 +1,9 @@
 {% extends 'admin/base.html' %}
 
+{% block header_ext %}
+    <link href="{{ url_for('static', filename='css/noty.css') }}" rel="stylesheet">
+{% endblock %}
+
 {% block content %}
     <div id="content-container" class="container">
         <section class="admin-list">
@@ -41,4 +45,42 @@
             </div>
         </section>
     </div>
+{% endblock %}
+{% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/noty.min.js') }}"></script>
+    <script>
+        var note_count={{ current_user | get_not_read_count }};
+        $(function () {
+            if(note_count!==0){
+                new Noty({
+                    type: 'info',
+                    layout: 'topRight',
+                    theme: 'bootstrap-v3',
+                    text: '<a class="noty-a" href="{{ url_for('user.notifications') }}">您共有 {{ current_user | get_not_read_count }} 条新的通知</a>',
+                    timeout: 4000,
+                    progressBar: true,
+                    closeWith: ['button'],
+                    animation: {
+                        open: 'noty_effects_open',
+                        close: 'noty_effects_close'
+                    },
+                    id: false,
+                    force: false,
+                    killer: false,
+                    queue: 'global',
+                    container: false,
+                    buttons: [],
+                    sounds: {
+                        sources: [],
+                        volume: 1,
+                        conditions: []
+                    },
+                    titleCount: {
+                        conditions: []
+                    },
+                    modal: false
+                }).show();
+            }
+        });
+    </script>
 {% endblock %}
