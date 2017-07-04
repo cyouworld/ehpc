@@ -31,11 +31,10 @@ def dated_url_for(endpoint, **values):
         if filename == 'js/pdfjs/web/viewer.html':
             pass
         # 获取课时资源的目录，后面还要再追加具体的地址。
-        elif filename =='resource':
+        elif filename == 'resource':
             pass
         elif filename:
-            file_path = os.path.join(app.root_path,
-                                     endpoint, filename)
+            file_path = os.path.join(app.root_path, endpoint, filename)
             # 如果静态资源不存在, 则会抛出异常, 异常中不用做处理。
             try:
                 values['q'] = int(os.stat(file_path).st_mtime)

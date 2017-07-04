@@ -14,17 +14,18 @@
         var js_pdf_src = "{{ url_for('static', filename='js/pdfjs/web/viewer.html') }}?file={{ url_for('static', filename='resource/' + cur_material.uri) }}";
         var js_pdf_data = "{{ url_for('static', filename='js/pdfjs/web/viewer.html') }}?file=/static/resource/";
         var material_src = "{{ cur_material.uri }}";
-        var js_material_src = "{{ url_for('static', filename='resource/' + cur_material.uri)}}/";
+{#        var js_material_src = "{{ url_for('static', filename='resource/' + cur_material.uri) }}/";#}
+        var js_material_src = "{{ url_for('course.v_get_video_file', uri = cur_material.uri, _external=True) }}";
         /* 外链视频资源直接引用地址 */
         if(material_src.startsWith('http://') || material_src.startsWith('https://')){
             {% if cur_material.m_type == 'pdf' %}
                 //location.href = material_src;
-                js_pdf_src = "{{ url_for('static', filename='js/pdfjs/web/viewer.html') }}?file={{  cur_material.uri }}";
+                js_pdf_src = "{{ url_for('static', filename='js/pdfjs/web/viewer.html') }}?file={{ cur_material.uri }}";
             {% else %}
                 js_material_src = material_src;
             {% endif %}
         }
-        var js_material_data = "{{ url_for('static', filename='resource') }}/";
+        var js_material_data = "{{ url_for('static', filename='resource') }}/"; //unused
         var js_ajax_url = "{{ url_for('course.get_material_src') }}";
     </script>
     <script src="{{ url_for('static', filename='js/course/player.js') }}"></script>

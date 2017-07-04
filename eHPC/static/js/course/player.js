@@ -13,7 +13,6 @@ $(function () {
         $("#player-content").empty().append(video_player);
         clappr = new Clappr.Player({
             source: js_material_src,
-            baseUrl: 'http://cdn.clappr.io/latest',
             parentId: "#player",
             height: "100%",
             width: "100%",
@@ -63,7 +62,7 @@ $(function () {
                     else {
                         $("#player-content").empty().append(video_player);
                         clappr = new Clappr.Player({
-                            source: js_material_data + data['uri'],
+                            source: js_material_src.split('/', 5).join('/') + '/' + data['uri'],
                             baseUrl: 'http://cdn.clappr.io/latest',
                             parentId: "#player",
                             height: "100%",

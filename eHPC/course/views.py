@@ -1,17 +1,23 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
-from flask import render_template, jsonify, request, current_app, url_for
-from . import course
-from ..models import Course, Material, Paper, Comment, Homework, HomeworkUpload, Apply, HomeworkScore, Topic, Notice, User
+import json
+import mimetypes
+import os
+import re
+from datetime import datetime
+
+from flask import render_template, jsonify, request, current_app, url_for, Response, send_file, make_response, abort
 from flask_babel import gettext
 from flask_login import current_user, login_required
-from ..util.file_manage import upload_file, custom_secure_filename
-from ..course.course_util import student_not_in_course, student_in_course
+
+from . import course
 from .. import db
-import json
-import os
-from datetime import datetime
+from ..course.course_util import student_not_in_course, student_in_course
+from ..models import Course, Material, Paper, Comment, Homework, HomeworkUpload, Apply, HomeworkScore, Topic, Notice, \
+    User
+from ..util.file_manage import upload_file, custom_secure_filename
 from ..util.notifications import send_message
+
 
 @course.route('/')
 def index():
@@ -229,7 +235,7 @@ def homework_upload(hid):
             homework_file_name = "%s【迟交】.%s" % (name_without_type,extension)
         else:
             homework_file_name = upload_file_name
-        #上传的作业文件以学生学号+姓名+文件名来命名
+        # 上传的作业文件以学生学号+姓名+文件名来命名
         homework_uri = os.path.join("course_%d" % cur_course.id, "homework_%d" % hid, "%s_%s_%s" % (current_user.student_id.encode("utf-8"), current_user.name.encode("utf-8"), homework_file_name))
         upload_path = unicode(os.path.join(current_app.config['HOMEWORK_UPLOAD_FOLDER'], homework_uri), 'utf8')       #处理中文文件名
         status = upload_file(curr_upload, upload_path, ['wrap', 'pdf'])
@@ -248,7 +254,7 @@ def homework_upload(hid):
             upload_uris.append(homework_upload.uri)
             upload_times.append(datetime.strftime(homework_upload.submit_time, '%Y-%m-%d %H:%M'))
 
-        cnt = cnt +1
+        cnt = cnt + 1
 
     if request.form['upload_time'] == "ontime":
         return jsonify(new_upload_id=upload_ids,
@@ -373,3 +379,51 @@ def notice_detail(cid, nid):
     return render_template('course/notice_detail.html',
                            course=curr_course,
                            notice=curr_notice)
+
+
+def send_file_partial(path):
+    """
+    Simple wrapper around send_file which handles HTTP 206 Partial Content (byte ranges)
+    TODO: handle all send_file args, mirror send_file's error handling (if it has any)
+    """
+    print (request)
+    range_header = request.headers.get('Range', None)
+    if not range_header:
+        return send_file(path)
+
+    size = os.path.getsize(path)
+    byte1, byte2 = 0, None
+
+    m = re.search('(\d+)-(\d*)', range_header)
+    g = m.groups()
+
+    if g[0]:
+        byte1 = int(g[0])
+    if g[1]:
+        byte2 = int(g[1])
+
+    length = size - byte1
+    if byte2 is not None:
+        length = byte2 - byte1
+    print(byte1, byte2)
+    data = None
+    with open(path, 'rb') as f:
+        f.seek(byte1)
+        data = f.read(length)
+
+    rv = Response(data,
+                  206,
+                  mimetype=mimetypes.guess_type(path)[0],
+                  direct_passthrough=True)
+    rv.headers.add('Content-Range', 'bytes {0}-{1}/{2}'.format(byte1, byte1 + length - 1, size))
+    rv.headers.add('Accept-Ranges', 'bytes')
+    return rv
+
+
+@course.route('/res/<path:uri>')
+def v_get_video_file(uri):
+    path = os.path.join(current_app.config['RESOURCE_FOLDER'], uri)
+    if os.path.isfile(path):
+        return send_file_partial(path)
+    else:
+        abort(404)
