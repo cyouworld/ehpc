@@ -172,6 +172,7 @@
                     },
                     success: function (data) {
                         if (data.status == "success") {
+                            terminal.eq(0).text(data.compile_out);
                             var compile_success = data.isSuccess;
                             var job_id = data.job_id;
                             var sh;
