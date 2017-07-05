@@ -295,6 +295,12 @@ class Program(db.Model):
 
     default_code = db.Column(db.Text(), default="")   # 预先设定的代码
 
+    can_evaluate = db.Column(db.Boolean, default=False)  # 是否支持评测
+    pi_code = db.Column(db.Text(), default="")  # 评测主代码
+    null_code = db.Column(db.Text(), default="")  # 参考空代码
+    serial_code = db.Column(db.Text(), default="")  # 参考串行代码
+    ref_code = db.Column(db.Text(), default="")  # 参考并行代码
+
     createdTime = db.Column(db.DateTime(), default=datetime.now)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))

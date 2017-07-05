@@ -464,27 +464,32 @@ class ehpc_client:
 
         for index in range( len(data) ) :
             if not self.upload(myPath + "/" + problem_id, filename[index], data[index]):
-                output = "Upload fail."
-                #return False
-        return output
+                return False
+        return True
 
-    def ehpc_compile_multi(self, myPath, problem_id, user_id, language, input_filename=[], output_filename=[] ):
+    """
+    在当前评测目录编译mpi程序
+    """
+    def mpi_complie(self, myPath, input_filename, output_filename):
+        compile_command = "mpicc -O2 -o %s %s" % (output_filename, input_filename)
+        commands = 'cd %s;%s' % (myPath, compile_command)
 
+        compile_output = self.run_command(commands)
+        print("Compile returned data: %s" % compile_output)
+
+        compile_out = compile_output or "Compile success."
+        if compile_output is None:
+            compile_out = "Request fail."
+        return compile_out
+
+    """
+    初始化编程题评测目录:根据已经上传到评测目录中的源代码文件来编译评测程序、参考程序等
+    """
+    def mpi_compile_multi(self, myPath, problem_id, input_filenames=[], output_filenames=[]):
         compile_out = ""
-        is_success = [True]
-
-        mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
-        print self.run_command( mkdir_command )
-
-        for index in range( len(input_filename) ) :
-
-            move_command = "cd %s;cp %s ./%s/." % (myPath + "/" + problem_id, input_filename[index], user_id)
-            self.run_command( move_command )
-
-            output = self.ehpc_compile(is_success, myPath + "/" + problem_id + "/" + user_id,
-                                       input_filename[index], output_filename[index], language)
+        for index in range(len(input_filenames)):
+            output = self.mpi_complie(myPath + "/" + problem_id, input_filenames[index], output_filenames[index])
             compile_out = compile_out + "\n" + output
-
         return compile_out
 
     def submit_job_multi(self, myPath, problem_id, user_id, job_filename, output_filename, node_number=1,
@@ -492,7 +497,7 @@ class ehpc_client:
         jobscript = """#!/bin/bash
 #SBATCH --partition=%s
 #SBATCH --nodes=%s
-    ./%s 1 %s
+    ./%s 1 %s 20
 """ % (partition, node_number, output_filename, task_number)
 
         if not self.upload(myPath + "/" + problem_id + "/" + user_id, job_filename, jobscript):
@@ -502,9 +507,21 @@ class ehpc_client:
 
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript": jobscript, "jobfilepath": jobPath})
 
-        #th2_logger.debug("Submit job returned data: %s" % tmpdata)
-
         return tmpdata["output"]["jobid"]
+
+    """
+    建立编程题的评测目录
+    """
+    def create_program_dir(self, myPath, program_id):
+        mkdir_command = "cd %s;mkdir %s" % (myPath, program_id)
+        self.run_command( mkdir_command )
+
+    """
+    删除编程题的评测目录
+    """
+    def del_program_dir(self, myPath, program_id):
+        mkdir_command = "cd %s;if [ -d \"./%s\" ]; then rm -rf \"./%s\"; fi" % (myPath, program_id, program_id)
+        self.run_command( mkdir_command )
 
 
 def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_number, language, op, jobid,
@@ -621,29 +638,108 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
     return jsonify(**result)
 
 
+def init_evaluate_program(problem_id, input_filenames=[], input_data=[], output_filenames=[]):
+    """
+    初始化评测程序，包括建立编程题文件夹、以及对评测程序和参考程序进行编译,编译后删除源文件
+    默认提交的程序文件名分别为PI.cpp、program.cpp、ref.cpp、serial.cpp、hello.cpp
+    默认输出的编译文件名分别为PI、program、ref、serial、hello
+    """
+    myPath = TH2_MY_PATH
+    client = ehpc_client()
+    if not client.login():
+        return jsonify(status="fail", msg="连接超算主机失败!")
+    print "login success"
+
+    client.del_program_dir(myPath, problem_id)
+    client.create_program_dir(myPath, problem_id)
+
+    if not client.upload_multi(myPath, problem_id, input_filenames, input_data):
+        print("upload failed")
+        exit(-1)
+    print "upload success"
+
+    print client.mpi_compile_multi(myPath, problem_id, input_filenames, output_filenames)
+
+    rm_command = "cd %s; rm *.cpp" % (myPath + "/" + problem_id)
+    client.run_command( rm_command )
+    return True
+
+
+def del_evaluate_program(myPath, problem_id):
+    """
+    删除评测目录
+    """
+    client = ehpc_client()
+    if not client.login():
+        return jsonify(status="fail", msg="连接超算主机失败!")
+    print "login success"
+    client.del_program_dir(myPath, problem_id)
+
+
+def run_evaluate_program(problem_id, user_id, input_code):
+    """
+    用户提交自己的代码参与评测，并返回评测结果
+    (用户提交代码的默认文件名为 program.cpp 输出编译文件名为 program
+    评测默认运行脚本名为 job.sh)
+    """
+    myPath = TH2_MY_PATH
+    client = ehpc_client()
+    if not client.login():
+        return jsonify(status="fail", msg="连接超算主机失败!")
+    print "login success"
+    # 若有原用户文件夹则删除
+    rm_command = "cd %s;if [ -d \"./%s\" ]; then rm -rf \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
+    print client.run_command( rm_command )
+    # 新建用户文件夹
+    mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
+    print client.run_command( mkdir_command )
+    # 复制公用编译文件到用户文件夹
+    cp_command = "cd %s;cp ../* ./" % (myPath + "/" + problem_id + "/" + user_id )
+    print client.run_command( cp_command )
+    # 上传用户程序到用户文件夹
+    if not client.upload(myPath + "/" + problem_id + "/" + user_id, "program.cpp", input_code):
+        print("upload failed")
+        exit(-1)
+    print "user code upload success"
+    # 编译用户程序
+    print client.mpi_complie(myPath + "/" + problem_id + "/" + user_id, "program.cpp", "program")
+    # 提交运行脚本与用户程序
+    job_id = client.submit_job_multi(myPath, problem_id, user_id, "job.sh", "PI", 1, 1, 'debug')
+    print client.get_job_status(job_id)
+    # 下载运行结果
+    time.sleep(3)
+    run_output = client.download(myPath + "/" + problem_id + "/" + user_id, job_id, isSmallApiServer=True, isjob=True)
+    return run_output
+
+
+"""提交并行代码以及对应评测程序，提交时本地目录下需有对应的文件，并设置好本地参数
+"""
 if __name__ == '__main__':
-    input_filename = "mpicc_demo.c"
-    output_filename = "ab.out"
-    # 上传的脚本文件名
+
+    input_filename_1 = "hello.cpp"
+    input_filename_2 = "ref.cpp"
+    input_filename_3 = "serial.cpp"
+    input_PI = "PI.cpp"
+
+    output_filename_1 = "hello"
+    output_filename_2 = "ref"
+    output_filename_3 = "serial"
+    output_PI = "PI"
+
+    input_text_1 = open(input_filename_1).read()
+    input_text_2 = open(input_filename_2).read()
+    input_text_3 = open(input_filename_3).read()
+    input_text_PI = open(input_PI).read()
+
+    input_files = [input_filename_1, input_filename_2, input_filename_3, input_PI]
+    output_files = [output_filename_1, output_filename_2, output_filename_3, output_PI]
+    input_data = [input_text_1, input_text_2, input_text_3, input_text_PI]
+
+    input_user = "program.cpp"
+    output_user = "program"
+    input_text_user = open(input_user).read()
+
     job_filename = "job.sh"
 
-    mc = ehpc_client()
-    test_text = open("mpicc_demo.c").read()
-
-    if not mc.login():
-        # print "login failed"
-        th2_logger.debug("login failed")
-        exit(-1)
-
-    if not mc.upload(TH2_MY_PATH, input_filename, test_text):
-        # print "upload fail"
-        th2_logger.debug("login failed")
-        exit(-1)
-
-    is_success = [False]
-    compile_out = mc.ehpc_compile(is_success, TH2_MY_PATH, input_filename, output_filename, "mpi")
-    # print compile_out, type(compile_out)
-    if not is_success[0]:
-        exit(-1)
-    run_out = mc.ehpc_run(output_filename, job_filename, TH2_MY_PATH, "4", "1", "2", "debug")
-    # print run_out, type(run_out)
+    init_evaluate_program('233', input_files, input_data, output_files)
+    run_evaluate_program('233', 'zzp', input_text_user)

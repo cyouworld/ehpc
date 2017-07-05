@@ -1,0 +1,153 @@
+{% extends 'admin/base.html' %}
+
+{% block header_ext %}
+    <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="content-container">
+        <div class="row">
+            <div class="col-md-3">
+                {% with type='program' %}
+                    {% include 'admin/problem/widget_nav_left.html' %}
+                {% endwith %}
+            </div><!--左侧导航栏-->
+
+            <div class="col-md-9">
+                <div class="panel panel-default panel-col">
+                    <div class="panel-heading">
+                        代码评测设置--{{ program.title }}
+                    </div>
+
+                    <div class="panel-body">
+                        <form id="form" action="{{ url_for('admin.program_evaluate') }}"
+                               data-parsley-validate="" method="post">
+                            <div class="form-group">
+                                <label>评测开启设置</label>
+                                <div class="row form-group" style="padding: 10px">
+                                    {% if program.can_evaluate %}
+                                        <input type="radio" name="can_evaluate" checked value="on">ON
+                                        <br><br>
+                                        <input type="radio" name="can_evaluate" value="off">Off
+                                    {% else %}
+                                        <input type="radio" name="can_evaluate" value="on">On
+                                        <br><br>
+                                        <input type="radio" name="can_evaluate" checked value="off">OFF
+                                    {% endif %}
+
+                                </div>
+
+                                <label>参考串行代码</label>
+                                <div class="row form-group" style="padding: 10px">
+                                    <div id="serial-code-editor" class="code-editor"></div>
+                                </div>
+
+                                <label>参考并行代码</label>
+                                <div class="row form-group" style="padding: 10px">
+                                    <div id="ref-code-editor" class="code-editor"></div>
+                                </div>
+
+                                <label>参考空代码</label>
+                                <div class="row form-group" style="padding: 10px">
+                                    <div id="null-code-editor" class="code-editor"></div>
+                                </div>
+
+                                <label>主评测代码</label>
+                                <div class="row form-group" style="padding: 10px">
+                                    <div id="pi-code-editor" class="code-editor"></div>
+                                </div>
+                            </div>
+
+                            <input type="hidden" name="serial-code" value="{% if program.serial_code %}{{ program.serial_code }}{% endif %}">
+                            <input type="hidden" name="ref-code" value="{% if program.ref_code %}{{ program.ref_code }}{% endif %}">
+                            <input type="hidden" name="null-code" value="{% if program.null_code %}{{ program.null_code }}{% endif %}">
+                            <input type="hidden" name="pi-code" value="{% if program.pi_code %}{{ program.pi_code }}{% endif %}">
+                            <input type="hidden" name="id" value="{{ program.id }}">
+
+                            <div class="form-submit text-right">
+                                <input type="submit" class="btn btn-primary" value="保存提交">
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block footer_ext %}
+    <script src="//cdn.bootcss.com/ace/1.2.6/ace.js"></script>
+    <script>
+        var editor1 = ace.edit("serial-code-editor");
+        editor1.setOptions({
+            useWrapMode: true,
+            highlightActiveLine: true,
+            showPrintMargin: false,
+            theme: 'ace/theme/tomorrow_night',
+            mode: 'ace/mode/c_cpp'
+        });
+        editor1.setValue($("input[name=serial-code]").val());
+
+        var editor2 = ace.edit("ref-code-editor");
+        editor2.setOptions({
+            useWrapMode: true,
+            highlightActiveLine: true,
+            showPrintMargin: false,
+            theme: 'ace/theme/tomorrow_night',
+            mode: 'ace/mode/c_cpp'
+        });
+        editor2.setValue($("input[name=ref-code]").val());
+
+        var editor3 = ace.edit("null-code-editor");
+        editor3.setOptions({
+            useWrapMode: true,
+            highlightActiveLine: true,
+            showPrintMargin: false,
+            theme: 'ace/theme/tomorrow_night',
+            mode: 'ace/mode/c_cpp'
+        });
+        editor3.setValue($("input[name=null-code]").val());
+
+        var editor4 = ace.edit("pi-code-editor");
+        editor4.setOptions({
+            useWrapMode: true,
+            highlightActiveLine: true,
+            showPrintMargin: false,
+            theme: 'ace/theme/tomorrow_night',
+            mode: 'ace/mode/c_cpp'
+        });
+        editor4.setValue($("input[name=pi-code]").val());
+    </script>
+
+    <!--<script language=javascript src='{{ url_for("static", filename="js/custom_simplemde.js") }}'></script>-->
+    <!--<script>-->
+        <!--var simplemde = custom_simplemde();-->
+        <!--$(document).ready(function () {-->
+            <!--simplemde.codemirror.on("update", function () {-->
+                <!--$("#target-editor")[0].innerHTML = simplemde.value();-->
+                <!--if (simplemde.value()) {-->
+                    <!--hide_validate_info(".textarea-errors");-->
+                <!--}-->
+                <!--else {-->
+                    <!--$(".textarea-errors")[0].innerHTML = '<ul class="parsley-errors-list filled" style="color: red;" id="parsley-id-9"><li class="parsley-required">请输入题目题干</li></ul>';-->
+                <!--}-->
+            <!--});-->
+        <!--});-->
+    <!--</script>-->
+
+    <script>
+    $("form").submit(function(){
+        $("input[name=serial-code]").val(editor1.getValue());
+        $("input[name=ref-code]").val(editor2.getValue());
+        $("input[name=null-code]").val(editor3.getValue());
+        $("input[name=pi-code]").val(editor4.getValue());
+    });
+    </script>
+
+{% endblock %}

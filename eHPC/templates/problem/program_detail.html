@@ -98,6 +98,15 @@
                     <button id="submit" class="btn btn-primary"
                             type="submit">{{ _('Submit Solution') }}
                     </button>
+                    {% if problem.can_evaluate %}
+                    <a href="javascript:evaluate_code();" class="btn btn-primary">
+                        代码评测
+                    </a>
+                    {% else %}
+                    <button disabled id="evaluate" class="btn btn-primary">
+                        本题暂不支持代码评测
+                    </button>
+                    {% endif %}
                 </div>
             </div>
 
@@ -106,6 +115,12 @@
             <input id="source_code" name="source_code" value="" type="hidden">
 
         </form>
+        <div class="row form-group">
+            <div class="pull-right">
+
+            </div>
+        </div>
+
 
         {#  keep the result #}
         <div class="row es-section" id="result-show" style="display: none">
@@ -184,6 +199,40 @@
             theme: 'ace/theme/tomorrow_night',
             mode: 'ace/mode/c_cpp'
         });
+    </script>
+
+    <script type="text/javascript">
+        function evaluate_code() {
+            document.getElementById('source_code').value = editor.getValue();
+            $("input[name=cpu_number]").val($("#cpu_number").find("option:selected").text());
+
+            $('#result-show').css("display", 'block');
+            var loading = "<img src='{{ url_for('static', filename='images/submit.gif') }}' alt='Loading'></div>";
+            var $run_result = $("#run-content");
+            var $compiler_result = $("#compiler-content");
+            $run_result.empty();
+            $("#compiler-content").html(loading);
+            $("#submit-status-box").removeClass("hide");
+
+            $.ajax({
+                type: "post",
+                cache: false,
+                url: "{{ url_for('problem.evaluate', pid=problem.id) }}",
+                data: $("form").serialize(),
+                success: function (data) {
+                    if (data.status === 'success') {
+                        $("#compiler-content").html('');
+                        $run_result.html(data.run_out);
+
+                    }
+                },
+                error: function (data) {
+                    $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+                    $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+                }
+            });
+
+        }
     </script>
 
     <script>
@@ -373,9 +422,10 @@
                 form.submit();
                 $("#download-warning").modal("hide");
             });
+
         });
     </script>
-
+    
 {% endblock %}
 
 {# problem #}

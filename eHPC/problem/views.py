@@ -11,7 +11,7 @@ from flask_login import current_user, login_required
 from sqlalchemy import or_
 
 from config import TH2_MY_PATH, TH2_MAX_NODE_NUMBER
-from eHPC.util.code_process import submit_code, ehpc_client
+from eHPC.util.code_process import submit_code, ehpc_client, run_evaluate_program
 from . import problem
 from .. import db
 from ..models import Program, Classify, SubmitProblem, Question, UserQuestion, CodeCache
@@ -185,3 +185,19 @@ def submit(pid):
 
     return submit_code(pid=pid, uid=uid, source_code=source_code, task_number=task_number, cpu_number_per_task=cpu_number_per_task,
                        node_number=node_number, language=language, op=op, jobid=jobid)
+
+
+@problem.route('/<int:pid>/evaluate/', methods=['POST'])
+@login_required
+def evaluate(pid):
+    uid = current_user.id
+    cpu_num = request.form['cpu_number']
+    source_code = request.form['source_code']
+
+    result = dict()
+    result['status'] = 'error'
+
+    result['run_out'] = run_evaluate_program(str(pid), str(uid), source_code)
+    result['status'] = 'success'
+
+    return jsonify(**result)

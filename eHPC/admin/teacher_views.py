@@ -11,6 +11,7 @@ from flask import render_template, request, redirect, url_for, abort, jsonify, c
 from flask_login import current_user
 from flask_babel import gettext
 from sqlalchemy import or_
+from threading import Thread
 
 from . import admin
 from .. import db
@@ -19,6 +20,7 @@ from ..models import Course, Lesson, Material, User, Apply, VNCKnowledge, VNCTas
 from ..models import Knowledge, Challenge, Group
 from ..user.authorize import teacher_login
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename, extension_to_file_type
+from ..util.code_process import init_evaluate_program
 from ..util.pdf import get_paper_pdf
 from ..util.file_manage import remove_dirs
 from ..util.xlsx import get_member_xlsx, get_score_xlsx, get_allscore_xlsx, get_not_uploaded_xlsx
@@ -1214,6 +1216,53 @@ def program_edit():
         curr_program.detail = request.form['content']
         curr_program.default_code = request.form['default-code']
         db.session.commit()
+        return redirect(url_for('admin.program'))
+
+
+@admin.route('/problem/program/evaluate/', methods=['GET', 'POST'])
+@teacher_login
+def program_evaluate():
+    """ 题库中编程题的评测设置 """
+    if request.method == 'GET':
+        curr_program = Program.query.filter_by(id=request.args['id']).first_or_404()
+        return render_template('admin/problem/program_evaluate_edit.html',
+                               program=curr_program)
+    elif request.method == 'POST':
+        curr_program = Program.query.filter_by(id=request.form['id']).first_or_404()
+        if request.form['can_evaluate'] == 'on':
+            curr_program.can_evaluate = True
+        elif request.form['can_evaluate'] == 'off':
+            curr_program.can_evaluate = False
+        curr_program.serial_code = request.form['serial-code']
+        curr_program.ref_code = request.form['ref-code']
+        curr_program.null_code = request.form['null-code']
+        curr_program.pi_code = request.form['pi-code']
+        db.session.commit()
+
+        if curr_program.can_evaluate:
+            input_filename_1 = "hello.cpp"
+            input_filename_2 = "ref.cpp"
+            input_filename_3 = "serial.cpp"
+            input_PI = "PI.cpp"
+
+            output_filename_1 = "hello"
+            output_filename_2 = "ref"
+            output_filename_3 = "serial"
+            output_PI = "PI"
+
+            input_text_1 = curr_program.null_code
+            input_text_2 = curr_program.ref_code
+            input_text_3 = curr_program.serial_code
+            input_text_PI = curr_program.pi_code
+
+            input_files = [input_filename_1, input_filename_2, input_filename_3, input_PI]
+            output_files = [output_filename_1, output_filename_2, output_filename_3, output_PI]
+            input_data = [input_text_1, input_text_2, input_text_3, input_text_PI]
+
+            # 使用多线程来异步调用init_evaluate_program(str(curr_program.id), input_files, input_data, output_files)
+            thr = Thread(target=init_evaluate_program, args=[str(curr_program.id), input_files, input_data, output_files])
+            thr.start()
+
         return redirect(url_for('admin.program'))
 
 

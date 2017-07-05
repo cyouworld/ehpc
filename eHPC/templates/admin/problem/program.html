@@ -27,8 +27,8 @@
                             <thead>
                             <tr>
                                 <th width="10%" style="text-align: center">序号</th>
-                                <th width="40%">名称</th>
-                                <th width="10%" style="text-align: center">难度</th>
+                                <th width="30%">名称</th>
+                                <th width="10%" style="text-align: center">支持评测</th>
                                 <th width="20%">创建时间</th>
                                 <th>操作</th>
                             </tr>
@@ -39,12 +39,20 @@
                                 <tr data-id="{{ program.id }}">
                                     <td style="text-align: center">{{ loop.index }}</td>
                                     <td class="overflow-ellipsis" data-toggle="tooltip" title="{{ program.title }}">{{ program.title }}</td>
-                                    <td style="text-align: center">{{ program.difficulty }}</td>
+                                    <td style="text-align: center">
+                                        {% if program.can_evaluate %}
+                                            是
+                                        {% else %}
+                                            否
+                                        {% endif %}
+                                    </td>
                                     <td>{{ program.createdTime }}</td>
                                     <td>
                                         <a href="{{ url_for('admin.program_edit', id=program.id) }}">编辑</a>
                                         <span class="divider"> | </span>
                                         <a href="javascript:void(0)" name="del-btn">删除</a>
+                                        <span class="divider"> | </span>
+                                        <a href="{{ url_for('admin.program_evaluate', id=program.id) }}">评测设置</a>
                                     </td>
                                 </tr>
                                 {% endfor %}
