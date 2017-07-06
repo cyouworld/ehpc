@@ -1071,3 +1071,17 @@ html, body {
     color: #46c37b !important;
 }
 /****************************************/
+
+.btn-primary {
+    border-color: #34a263;
+    background-color: #46c37b;
+    color: #fff;
+}
+
+.btn-primary:hover,
+.btn-primary:focus,
+.btn-primary.focus,
+.btn-primary.active {
+    color: #fff;
+    background-color: #37a967;
+}

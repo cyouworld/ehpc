@@ -21,45 +21,48 @@
 
 <body>
 <!-- 导航栏目开始 -->
-<nav class="content-header navbar" id="challenge-head">
-    <nav class="collapse navbar-collapse">
-        <ul class="nav navbar-nav">
-            <li>
-                <a class="lab-back btn btn-primary" href="{{ url_for('lab.detail', kid=kid) }}">
-                    <span class="glyphicon glyphicon-chevron-left"></span>返回虚拟实验室
-                </a>
-            </li>
-        </ul>
-
-        <div class="navbar-user left">
+{% block nav %}
+    <nav class="content-header navbar" id="challenge-head">
+        <nav class="collapse navbar-collapse">
             <ul class="nav navbar-nav">
                 <li>
-                    <a id="progress-btn">实验进度</a>
-                </li>
-                <li>
-                    <a href="{{ url_for('group.index') }}">社区讨论</a>
-                </li>
-                <li class="nav-hover">
-                    <a href="javascript:;" class="dropdown-toggle" style="padding: 20px 30px">
-                        <img class="avatar-sm" src="{{ current_user.avatar_url | get_avatar_path }}">
+                    <a class="lab-back btn btn-primary" href="{{ url_for('lab.detail', kid=kid) }}">
+                        <span class="glyphicon glyphicon-chevron-left"></span>返回虚拟实验室
                     </a>
-                    <ul class="dropdown-menu" role="menu">
-                        <li>
-                            <a href="{{ url_for('user.view', uid=current_user.id) }}">
-                                <i class="es-icon es-icon-person"></i>{{ _('Personal Page') }}
-                            </a>
-                        </li>
-                        <li><a href=""><i class="es-icon es-icon-homework"></i>学习进度</a></li>
-                        <li><a href="{{ url_for('user.setting') }}"><i
-                                class="es-icon es-icon-setting"></i>{{ _('Setting') }}</a></li>
-                        <li><a href="{{ url_for('user.signout') }}"><i
-                                class="es-icon es-icon-power"></i>{{ _('Logout') }}</a></li>
-                    </ul>
                 </li>
             </ul>
-        </div>
+
+            <div class="navbar-user left">
+                <ul class="nav navbar-nav">
+                    <li>
+                        <a id="progress-btn" href="javascript:void(0);">实验进度</a>
+                    </li>
+                    <li>
+                        <a href="{{ url_for('group.index') }}">社区讨论</a>
+                    </li>
+                    <li class="nav-hover">
+                        <a href="javascript:;" class="dropdown-toggle" style="padding: 20px 30px">
+                            <img class="avatar-sm" src="{{ current_user.avatar_url | get_avatar_path }}">
+                        </a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li>
+                                <a href="{{ url_for('user.view', uid=current_user.id) }}">
+                                    <i class="es-icon es-icon-person"></i>{{ _('Personal Page') }}
+                                </a>
+                            </li>
+                            <li><a href=""><i class="es-icon es-icon-homework"></i>学习进度</a></li>
+                            <li><a href="{{ url_for('user.setting') }}"><i
+                                    class="es-icon es-icon-setting"></i>{{ _('Setting') }}</a></li>
+                            <li><a href="{{ url_for('user.signout') }}"><i
+                                    class="es-icon es-icon-power"></i>{{ _('Logout') }}</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </nav>
     </nav>
-</nav>
+{% endblock %}
+
 <!-- 导航栏目结束 -->
 
 <div class="lab-content-wrap" id="challenge-body">
@@ -85,6 +88,7 @@
     $(function () {
         $('form[method=post]').append('<input type="hidden" name="csrf_token" value="' + csrf_token + '"/>');
     });
+    {% block progress %}
     $(function () {
         $("#progress-btn").click(function () {
             $.get("{{ url_for('lab.my_progress', kid=kid) }}", function (html) {
@@ -92,6 +96,7 @@
             });
         });
     });
+    {% endblock %}
 </script>
 
 {% block footer_ext %}{% endblock %}
