@@ -379,7 +379,7 @@ class ehpc_client:
         返回值为字符串
         """
         compile_command = {
-            "openmp": "icc -openmp -o %s %s" % (output_filename, input_filename),
+            "openmp": "g++ -fopenmp -o %s %s" % (output_filename, input_filename),
             "c++": "g++ -o %s %s" % (output_filename, input_filename),
             "mpi": "mpicc -o %s %s" % (output_filename, input_filename)
         }
