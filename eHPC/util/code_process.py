@@ -323,7 +323,8 @@ class ehpc_client:
 #SBATCH --partition=%s
 #SBATCH --nodes=%s
 #SBATCH --ntasks=%s
-    srun -c %s ./%s
+#SBATCH --cpus-per-task=%s
+    srun ./%s
 """ % (partition, node_number, task_number, cpu_number_per_task, output_filename)
 
         if not self.upload(myPath, job_filename, jobscript):
