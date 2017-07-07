@@ -25,6 +25,7 @@ class User(UserMixin, db.Model):
     phone = db.Column(db.String(128), nullable=False)
     university = db.Column(db.String(128), nullable=False)
     student_id = db.Column(db.String(64))
+    student_type = db.Column(db.Integer, default=-1, nullable=False)
 
     is_password_reset_link_valid = db.Column(db.Boolean, default=True)
     last_login = db.Column(db.DateTime(), default=datetime.now)

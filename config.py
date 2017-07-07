@@ -107,7 +107,7 @@ class Config:
 
     SSH_PASSWORD = "123456"  # 虚拟实验室
 
-    SSH_PROXY_SERVER = "114.67.37.197:8080"  # 机时申请
+    SSH_PROXY_SERVER = "114.67.37.197:10008"  # 机时申请
 
 
     @staticmethod

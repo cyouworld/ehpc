@@ -136,8 +136,10 @@ def reg():
             if _form.get('type') == '0':
                 gender = _form.get('gender', 1)
                 student_id = _form.get('student_id', 0)
+                student_type = _form.get('student_type', 0)
                 reg_user.gender = gender
                 reg_user.student_id = student_id
+                reg_user.student_type = student_type
 
             db.session.add(reg_user)
             db.session.commit()
