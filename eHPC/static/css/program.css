@@ -1,0 +1,15 @@
+#result-show {
+    background-color: #303030;
+}
+
+#result-show .markdown-body {
+    color: rgb(240,240,240);
+}
+
+#result-show #compiler {
+    border-right: 2px solid #25282c;
+}
+
+#result-show .markdown-body .text-large {
+    border-bottom: 1px solid #25282c;
+}
