@@ -494,12 +494,14 @@ class ehpc_client:
         return compile_out
 
     def submit_job_multi(self, myPath, problem_id, user_id, job_filename, output_filename, node_number=1,
-                         task_number=1, partition="nsfc1"):
+                         task_number=1, step_num=1, partition="nsfc1"):
         jobscript = """#!/bin/bash
 #SBATCH --partition=%s
 #SBATCH --nodes=%s
-    ./%s 1 %s 20
-""" % (partition, node_number, output_filename, task_number)
+    ./%s 1 %s %s
+""" % (partition, node_number, output_filename, task_number, step_num)
+
+        print jobscript
 
         if not self.upload(myPath + "/" + problem_id + "/" + user_id, job_filename, jobscript):
             return "ERROR"
@@ -507,7 +509,7 @@ class ehpc_client:
         jobPath = myPath + "/" + problem_id + "/" + user_id + "/" + job_filename
 
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript": jobscript, "jobfilepath": jobPath})
-
+        print tmpdata
         return tmpdata["output"]["jobid"]
 
     """
@@ -677,7 +679,7 @@ def del_evaluate_program(myPath, problem_id):
     client.del_program_dir(myPath, problem_id)
 
 
-def run_evaluate_program(problem_id, user_id, input_code):
+def run_evaluate_program(problem_id, user_id, input_code, cpu_num, step_num):
     """
     用户提交自己的代码参与评测，并返回评测结果
     (用户提交代码的默认文件名为 program.cpp 输出编译文件名为 program
@@ -705,10 +707,10 @@ def run_evaluate_program(problem_id, user_id, input_code):
     # 编译用户程序
     print client.mpi_complie(myPath + "/" + problem_id + "/" + user_id, "program.cpp", "program")
     # 提交运行脚本与用户程序
-    job_id = client.submit_job_multi(myPath, problem_id, user_id, "job.sh", "PI", 1, 1, 'debug')
+    job_id = client.submit_job_multi(myPath, problem_id, user_id, "job.sh", "PI", 1, cpu_num, step_num, "debug")
     print client.get_job_status(job_id)
     # 下载运行结果
-    time.sleep(3)
+    time.sleep(4)
     run_output = client.download(myPath + "/" + problem_id + "/" + user_id, job_id, isSmallApiServer=True, isjob=True)
     return run_output
 

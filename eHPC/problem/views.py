@@ -193,11 +193,15 @@ def evaluate(pid):
     uid = current_user.id
     cpu_num = request.form['cpu_number']
     source_code = request.form['source_code']
+    if request.form['step_num']:
+        step_num = int(request.form['step_num'])
+    else:
+        step_num = 1
 
     result = dict()
     result['status'] = 'error'
 
-    result['run_out'] = run_evaluate_program(str(pid), str(uid), source_code)
+    result['run_out'] = run_evaluate_program(str(pid), str(uid), source_code, cpu_num, step_num)
     result['status'] = 'success'
 
     return jsonify(**result)

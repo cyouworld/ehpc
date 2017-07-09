@@ -17,7 +17,13 @@
 <!-- 大屏幕下导航栏 -->
 <header class="content-header navbar">
 
-    <div class="navbar-header">
+    <div style="position: relative;left: 30px;" class="navbar-header visible-xs">
+        <a href="{{ url_for('main.index') }}" class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}">
+        </a>
+    </div>
+
+    <div class="navbar-header hidden-xs">
         <a href="{{ url_for('main.index') }}" class="navbar-brand">
             <img src="{{ url_for('static', filename='images/logo.png') }}">
         </a>

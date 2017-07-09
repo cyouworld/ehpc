@@ -95,6 +95,12 @@
 
 
             <div class="row form-group">
+                {% if problem.can_evaluate %}
+                <div class="pull-left">
+                    <label for="step_num">评测迭代次数（建议取值 1~28）：</label>
+                    <input name="step_num" type="number" value="1" min="1" max="100">
+                </div>
+                {% endif %}
                 <div class="pull-right">
                     <button id="submit" class="btn btn-primary"
                             type="submit">{{ _('Submit Solution') }}
@@ -116,11 +122,7 @@
             <input id="source_code" name="source_code" value="" type="hidden">
 
         </form>
-        <div class="row form-group">
-            <div class="pull-right">
 
-            </div>
-        </div>
 
 
         {#  keep the result #}
