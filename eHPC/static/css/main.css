@@ -5186,3 +5186,8 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     text-decoration : none;
     color: #464646;
 }
+
+.col-md-10 > .container {
+    max-width: 1170px;
+    width: auto;
+}
