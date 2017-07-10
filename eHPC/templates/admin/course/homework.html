@@ -9,7 +9,7 @@
                 <div class="panel panel-default panel-col">
                     <div class="panel-heading">
                         <div class="pull-right">
-                            <a href="{{ url_for('admin.course_homework_create', course_id=course.id) }}" class="btn btn-info btn-sm" id="homework-create-btn"
+                            <a href="{{ url_for('admin.course_homework_create', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5" class="btn btn-info btn-sm" id="homework-create-btn"
                                     data-toggle="modal">
                                 <i class="glyphicon glyphicon-plus"></i> 新建作业
                             </a>
@@ -31,15 +31,15 @@
                                          {{ h.title }}
                                     </div>
                                     <div class="col-md-8">
-                                        <a href="{{ url_for('admin.course_homework_edit', course_id=course.id, homework_id=h.id) }}" class="btn btn-link pull-right" data-toggle="modal" name="edit-btn">
+                                        <a href="{{ url_for('admin.course_homework_edit', course_id=course.id, homework_id=h.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5" class="btn btn-link pull-right" data-toggle="modal" name="edit-btn">
                                             <i class="es-icon es-icon-edit"></i>编辑</a>
                                         <a class="btn btn-link pull-right" href="javascript:void(0)" name="del-btn">
                                             <i class="es-icon es-icon-delete"></i>删除</a>
-                                        <a class="btn btn-link pull-right" href="{{ url_for('admin.course_homework_upload_list', course_id=course.id, homework_id=h.id) }}">
+                                        <a class="btn btn-link pull-right" href="{{ url_for('admin.course_homework_upload_list', course_id=course.id, homework_id=h.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5">
                                             <i class="glyphicon glyphicon-eye-open"></i>上交情况</a>
-                                        <a class="btn btn-link pull-right" href="{{ url_for('admin.course_homework_not_uploaded', course_id=course.id, homework_id=h.id) }}">
+                                        <a class="btn btn-link pull-right" href="{{ url_for('admin.course_homework_not_uploaded', course_id=course.id, homework_id=h.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5">
                                             <i class="glyphicon glyphicon-floppy-remove"></i> 未交名单</a>
-                                        <a class="btn btn-link pull-right" href="{{ url_for('admin.course_homework_correct', course_id=course.id, homework_id=h.id) }}">
+                                        <a class="btn btn-link pull-right" href="{{ url_for('admin.course_homework_correct', course_id=course.id, homework_id=h.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5">
                                             <i class="glyphicon glyphicon-check"></i> 批改作业</a>
                                     </div>
                                 </li>

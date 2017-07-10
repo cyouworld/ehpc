@@ -4754,7 +4754,7 @@ table.fixed-table {
     position: relative;
 }
 
-#back-to-homework-list {
+.back-to-homework-list {
     color: #616161;
     position: absolute;
     top: 15px;

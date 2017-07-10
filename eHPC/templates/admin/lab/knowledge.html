@@ -13,7 +13,7 @@
                 <div class="list-group">
                     {% for k in current_user.teacher_knowledge %}
                     <a class="list-group-item{% if k.id == knowledge.id %} active{% endif %}"
-                    href="{{ url_for('admin.lab_view', knowledge_id=k.id) }}">{{ k.title }}</a>
+                    href="{{ url_for('admin.lab_view', knowledge_id=k.id) }}?tag2={{ request.args.get('tag2') }}">{{ k.title }}</a>
                     {% endfor %}
                 </div>
             </div>
@@ -25,7 +25,7 @@
                         <span class="pull-right">
                             <button id="edit-seq" class="btn btn-info btn-sm">调整顺序</button>
                             <a class="btn btn-info btn-sm" id="challenge-create-btn"
-                                    href="{{ url_for('admin.lab_create', knowledge_id=knowledge.id) }}">
+                                    href="{{ url_for('admin.lab_create', knowledge_id=knowledge.id) }}?tag2={{ request.args.get('tag2') }}">
                                 <span class="glyphicon glyphicon-plus"></span>新建任务
                             </a>
                         </span>

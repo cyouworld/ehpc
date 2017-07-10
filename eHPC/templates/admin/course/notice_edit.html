@@ -11,13 +11,12 @@
     <div id="content-container" class="container">
     <div class="row">
 
-            <div class="panel panel-default">
-
-                    <div class="panel-heading text-center" style="font-size: 18px">
-                        {{ course.title }}——公告内容编辑
-                        <a id="back-to-homework-list" href="{{ url_for('admin.course_notice', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-7">
-                        <i class="glyphicon glyphicon-chevron-left"></i>返回公告列表</a>
-                    </div>
+            <div class="panel panel-default" style="position: relative;">
+                <a class="back-to-homework-list" href="{{ url_for('admin.course_notice', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-7">
+                    <i class="glyphicon glyphicon-chevron-left"></i>返回公告列表</a>
+                <div class="panel-heading text-center">
+                    {{ course.title }}——公告内容编辑
+                </div>
                 <div class="panel-body">
                     <form action="#" method="POST" data-parsley-validate="">
                         <div class="form-group">

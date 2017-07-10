@@ -621,7 +621,14 @@ def course_homework_create(course_id):
                                      'homework_%d' % curr_homework.id))
                 os.makedirs(os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], 'course_%d' % curr_course.id,
                                      'homework_%d' % curr_homework.id))
-            return redirect(url_for("admin.course_homework_edit", course_id=curr_course.id, homework_id=curr_homework.id))
+
+            tag1 = "course-%d" % course_id
+            tag2 = "course-%d-5" % course_id
+            return redirect(url_for("admin.course_homework_edit",
+                                    course_id=curr_course.id,
+                                    homework_id=curr_homework.id,
+                                    tag1=tag1,
+                                    tag2=tag2))
 
 
 @admin.route('/course/<int:course_id>/homework/<int:homework_id>/edit', methods=['GET', 'POST'])
@@ -712,11 +719,14 @@ def course_homework_edit(course_id, homework_id):
             curr_homework.description = request.form['description']
             curr_homework.deadline = request.form['deadline']
             db.session.commit()
-
+            tag1 = "course-%d" % course_id
+            tag2 = "course-%d-5" % course_id
             return render_template('admin/course/homework_edit.html',
                                    course=curr_course,
                                    option="edit",
                                    homework=curr_homework,
+                                   tag1=tag1,
+                                   tag2=tag2,
                                    msg=gettext("save homework successfully"),
                                    title=gettext('Course Homework Edit'))
 
@@ -930,7 +940,14 @@ def paper_edit(course_id, paper_id):
     if request.method == 'GET':
         curr_cour = Course.query.filter_by(id=course_id).first_or_404()
         curr_paper = curr_cour.papers.filter_by(id=paper_id).first_or_404()
-        return render_template('admin/course/question.html', course=curr_cour, paper=curr_paper)
+        tag1 = "course-%d" % course_id
+        tag2 = "course-%d-6" % course_id
+        return render_template('admin/course/question.html',
+                               tag1=tag1,
+                               tag2=tag2,
+                               course=curr_cour,
+                               paper=curr_paper,
+                               title=gettext('Course Paper'))
     elif request.method == 'POST':
         # 试题的增删查改
         if os.path.exists(os.path.join(current_app.config['DOWNLOAD_FOLDER'], 'paper%d.pdf' % paper_id)):
@@ -985,7 +1002,8 @@ def paper_edit(course_id, paper_id):
 def problem():
     return render_template('admin/problem/index.html', classify=current_user.teacher_classify,
                            questions=current_user.teacher_questions,
-                           programs=current_user.teacher_program)
+                           programs=current_user.teacher_program,
+                           title=gettext("Question Manage"))
 
 
 @admin.route('/problem/<question_type>/', methods=['GET', 'POST'])
@@ -1404,7 +1422,8 @@ def lab_edit(knowledge_id, challenge_id):
         print curr_challenge.language, curr_challenge.task_number, curr_challenge.cpu_number_per_task, curr_challenge.node_number
         return render_template('admin/lab/knowledge_detail.html',
                                title=gettext('Lab Edit'),
-                               op='edit', knowledge=curr_knowledge,
+                               op='edit',
+                               knowledge=curr_knowledge,
                                challenge=curr_challenge,
                                materials=materials)
     elif request.method == 'POST':

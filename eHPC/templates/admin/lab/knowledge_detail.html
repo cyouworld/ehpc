@@ -16,7 +16,11 @@
         <div class="row">
             <div class="col-md-12">
                 <div class="panel panel-default panel-col">
-                    <div class="panel-heading">任务详情</div>
+                    <a class="back-to-homework-list" href="{{ url_for('admin.lab_view', knowledge_id=knowledge.id) }}?tag2={{ request.args.get('tag2') }}">
+                        <i class="glyphicon glyphicon-chevron-left"></i>返回任务列表</a>
+                    <div class="panel-heading text-center">
+                        任务详情
+                    </div>
                     <div id="content" class="panel-body">
                         <div class="form-group row">
                             <label class="col-md-2" style="text-align: right;">标题</label>

@@ -16,7 +16,7 @@
             <td class="overflow-ellipsis" data-toggle="tooltip" title="{{ c.material.name }}">{{ c.material.name }}</td>
             <td>
                 <a class="btn btn-link"
-                   href="{{ url_for('admin.lab_edit', knowledge_id=knowledge.id, challenge_id=c.id) }}">
+                   href="{{ url_for('admin.lab_edit', knowledge_id=knowledge.id, challenge_id=c.id) }}?tag2={{ request.args.get('tag2') }}">
                     <i class="es-icon es-icon-edit"></i>编辑</a>
                 <a class="btn btn-link" href="javascript:void(0);" name="challenge-del-btn">
                     <i class="es-icon es-icon-delete"></i>删除</a>

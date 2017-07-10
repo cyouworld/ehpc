@@ -151,7 +151,7 @@ msgstr "创建试题"
 
 #: admin/teacher_views.py:1225
 msgid "Lab Manage"
-msgstr "实验室管理"
+msgstr "实验管理"
 
 #: admin/teacher_views.py:1266
 msgid "Lab tasks"

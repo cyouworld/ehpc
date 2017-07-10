@@ -13,7 +13,7 @@
                 <div class="list-group">
                     {% for k in current_user.teacher_vnc_knowledge %}
                         <a class="list-group-item{% if k.id == cur_vnc_knowledge.id %} active{% endif %}"
-                           href="{{ url_for('admin.vnc_lab_view', vnc_knowledge_id=k.id) }}">{{ k.title }}</a>
+                           href="{{ url_for('admin.vnc_lab_view', vnc_knowledge_id=k.id) }}?tag2={{ request.args.get('tag2') }}">{{ k.title }}</a>
                     {% endfor %}
                 </div>
             </div>
@@ -25,7 +25,7 @@
                         <span class="pull-right">
                             <button id="edit-seq" class="btn btn-info btn-sm">调整顺序</button>
                             <a class="btn btn-info btn-sm"
-                               href="{{ url_for("admin.vnc_lab_create", vnc_knowledge_id=cur_vnc_knowledge.id) }}">
+                               href="{{ url_for("admin.vnc_lab_create", vnc_knowledge_id=cur_vnc_knowledge.id) }}?tag2={{ request.args.get('tag2') }}">
                                 <span class="glyphicon glyphicon-plus"></span>新建任务
                             </a>
                         </span>
@@ -49,7 +49,7 @@
                                         <td>{{ c.title }}</td>
                                         <td>
                                             <a class="btn btn-link"
-                                               href="{{ url_for("admin.vnc_lab_edit", vnc_knowledge_id=cur_vnc_knowledge.id, vnc_task_id=c.id) }}">
+                                               href="{{ url_for("admin.vnc_lab_edit", vnc_knowledge_id=cur_vnc_knowledge.id, vnc_task_id=c.id) }}?tag2={{ request.args.get('tag2') }}">
                                                 <i class="es-icon es-icon-edit"></i>编辑</a>
                                             <a class="btn btn-link" href="javascript:void(0);" name="vnc-task-del-btn">
                                                 <i class="es-icon es-icon-delete"></i>删除</a>

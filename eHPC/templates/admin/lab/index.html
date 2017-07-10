@@ -38,7 +38,7 @@
                                             <td>
                                                 <a class="btn btn-link" href="javascript:void(0);" name="knowledge-edit-btn">
                                                     <i class="es-icon es-icon-edit"></i>编辑信息</a>
-                                                <a class="btn btn-link" href="{{ url_for('admin.lab_view', knowledge_id=k.id) }}">
+                                                <a class="btn btn-link" href="{{ url_for('admin.lab_view', knowledge_id=k.id) }}?tag2={{ request.args.get('tag2') }}">
                                                     <i class="es-icon es-icon-edit"></i>编辑任务</a>
                                                 <a class="btn btn-link" href="javascript:void(0);" name="knowledge-del-btn">
                                                 <i class="es-icon es-icon-delete"></i>删除</a>

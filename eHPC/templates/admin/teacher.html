@@ -12,7 +12,7 @@
                     <div class="admin-item">
                         <div class="info">共有 {{ current_user.teacher_courses.count() }} 课程</div>
                         <div class="bottom">
-                            <a class="btn btn-primary" href="{{ url_for('admin.course') }}" data-id="3">课程管理</a>
+                            <a class="btn btn-primary" href="{{ url_for('admin.course') }}?tag2=course-manage" data-id="3">课程管理</a>
                         </div>
                     </div>
                 </div>

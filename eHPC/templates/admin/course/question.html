@@ -5,19 +5,21 @@
 
         <div class="row">
 
-                <div class="panel panel-default panel-col">
-                    <div class="panel-heading">
+                <div class="panel panel-default panel-col" style="position: relative;">
+                    <a class="back-to-homework-list" href="{{ url_for('admin.course_paper', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-6">
+                        <i class="glyphicon glyphicon-chevron-left"></i>返回试卷列表</a>
+                    <div class="panel-heading text-center">
                         <div class="pull-right">
-                            <a href="{{ url_for('admin.paper_question_create', paper_id=paper.id, question_type='choice') }}" class="btn btn-sm">
+                            <a href="{{ url_for('admin.paper_question_create', paper_id=paper.id, question_type='choice') }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-6" class="btn btn-sm">
                                 <span class="glyphicon glyphicon-plus"></span>选择题</a>
-                            <a href="{{ url_for('admin.paper_question_create', paper_id=paper.id, question_type='judge') }}" class="btn btn-sm">
+                            <a href="{{ url_for('admin.paper_question_create', paper_id=paper.id, question_type='judge') }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-6" class="btn btn-sm">
                                 <span class="glyphicon glyphicon-plus"></span>判断题</a>
-                            <a href="{{ url_for('admin.paper_question_create', paper_id=paper.id, question_type='fill') }}" class="btn btn-sm">
+                            <a href="{{ url_for('admin.paper_question_create', paper_id=paper.id, question_type='fill') }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-6" class="btn btn-sm">
                                 <span class="glyphicon glyphicon-plus"></span>填空题</a>
-                            <a href="{{ url_for('admin.paper_question_create', paper_id=paper.id, question_type='essay') }}" class="btn btn-sm">
+                            <a href="{{ url_for('admin.paper_question_create', paper_id=paper.id, question_type='essay') }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-6" class="btn btn-sm">
                                 <span class="glyphicon glyphicon-plus"></span>问答题</a>
                         </div>
-                        题目管理
+                        {{ paper.title }}——题目管理
                     </div>
 
                     <div class="panel-body " id="quiz-table-container">
