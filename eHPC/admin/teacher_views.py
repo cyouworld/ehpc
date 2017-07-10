@@ -365,6 +365,25 @@ def course_member(course_id):
         return send_file(uri, as_attachment=True, attachment_filename=download_file_name)
 
 
+@admin.route('/course/kick/<int:cid>/<int:uid>/')
+@teacher_login
+def public_kick_student(cid, uid):
+    u = User.query.filter_by(id=uid).first_or_404()
+    course_joined = Course.query.filter_by(id=cid).first_or_404()
+
+    course_joined.users.remove(u)
+    course_joined.studentNum -= 1
+
+    if u in course_joined.group.members:
+        course_joined.group.members.remove(u)
+        course_joined.group.memberNum -= 1
+
+    db.session.commit()
+
+    return redirect(url_for('admin.course_member', course_id=cid))
+
+
+
 @admin.route('/course/<int:apply_id>/approved/')
 @teacher_login
 def course_approved(apply_id):
