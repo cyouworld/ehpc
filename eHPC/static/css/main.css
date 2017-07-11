@@ -3746,41 +3746,37 @@ textarea {
 
 .swiper-container {
     position: relative;
+    width: 100%;
 }
 
 .swiper-container .userLoginPart {
-    width: 1180px;
-    margin: 0px auto;
+    width: 100%;
+    height: 90%;
     position: absolute;
-    top: 0px;
-    left: 50%;
-    margin-left: -590px;
+    top: 5%;
     z-index: 7;
 }
 
 .swiper-container .userLoginPart .innerPart {
-    width: 1180px;
+    width: 100%;
+    height: 100%;
     position: relative;
 }
 
 .swiper-container .userLoginPart .loginContent {
-    width: 300px;
-    height: 500px;
+    width: 16%;
+    height: 100%;
     position: absolute;
-    right: 0px;
+    left: 70%;
 }
 
 #inputLogin li {
     list-style: none;
 }
 
-.swiper-container .userLoginPart .loginContent .loginInput {
-    margin: 80px 0px 0px 0px;
-}
-
 .loginInput .parsley-errors-list {
-    margin-top: 0;
-    padding-left: 35px;
+    margin-top: -10px;
+    padding-left: 10%;
 }
 
 .loginContent .loginInput {
@@ -3788,10 +3784,14 @@ textarea {
     filter: alpha(opacity=42);
     background: none repeat scroll 0 0 rgba(0, 0, 0, 0.42);
     float: right;
-    width: 300px;
-    height: 360px;
-    margin: 20px 85px 0px 0px;
+    width: 100%;
+    height: 100%;
+    margin: 0px 0px 0px 0px;
     padding-left: 0px;
+}
+
+.loginContent .loginInput li.login-input-item {
+    height: 18%;
 }
 
 .loginContent .loginInput input[type='text']:focus {
@@ -3817,39 +3817,35 @@ textarea {
     border: 1px solid #ffffff;
     border-radius: 3px;
     color: #767f88;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: normal;
-    height: 40px;
-    width: 240px;
+    height: 60%;
+    width: 80%;
     line-height: 20px;
     line-height: 40px \9;
-    margin: 20px 0 10px 30px;
-    padding: 0 30px;
+    margin: 5% 0 5% 10%;
+    padding: 0 10%;
 }
 
 .loginContent .loginInput .logineHPC {
-    margin: 16px 0 0 30px;
+    margin: 5% 0 0 10%;
     font-size: 16px;
     display: inline-block;
     color: #ffffff;
 }
 
 .adminImg {
-    width: 18px;
-    height: 18px;
     display: inline-block;
     z-index: 1;
     position: absolute;
-    margin: 30px 0 0 40px;
+    margin: 8% 0 0 12%;
 }
 
 .passwordImg {
-    width: 18px;
-    height: 18px;
-    display: block;
+    display: inline-block;
     z-index: 1;
     position: absolute;
-    margin: 30px 0 0 40px;
+    margin: 8% 0 0 12%;
 }
 
 .loginContent .loginInput .loginButton {
@@ -3863,10 +3859,10 @@ textarea {
     color: #ffffff;
     display: inline-block;
     font-size: 16px;
-    height: 40px;
+    height: 60%;
     text-align: center;
-    margin: 20px 0 10px 30px;
-    width: 240px;
+    margin: 5% 0 5% 10%;
+    width: 80%;
 }
 
 .loginContent .loginInput .loginButton:hover {
@@ -3875,14 +3871,14 @@ textarea {
 }
 
 .loginContent .loginInput .register {
-    margin: 0 0 0 30px;
+    margin: 0 0 0 10%;
     color: #e5e5e5;
 }
 
 .loginContent .loginInput .forget {
     color: #e5e5e5;
     float: right;
-    margin-right: 30px;
+    margin-right: 10%;
 }
 
 .loginContent .register:hover, .loginContent .forget:hover {

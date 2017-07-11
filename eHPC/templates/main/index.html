@@ -39,7 +39,7 @@
 		 	<div class="innerPart">
 			 	<div class="loginContent" id="indexLoginContent" style="">
 					<form id="inputLogin" method="post"
-                      action="{{ url_for('user.signin', next=request.args.get('next')) }}" data-parsley-validate="">
+                      action="{{ url_for('user.signin', next=request.args.get('next')) }}" data-parsley-validate="" style="height: inherit;">
                         {% if config.CAPTCHA %}
 						<ul class="loginInput">
                         {% else %}
@@ -48,14 +48,14 @@
 							<li>
 								<span class="logineHPC">登录EasyHPC</span>
 							</li>
-							<li>
+							<li class="login-input-item">
                                 <span class="adminImg"><i class="es-icon es-icon-mail"></i></span>
 								<input id="indexLoginEmail" class="loginAdmin ui-autocomplete-input" type="text"
                                        name="email" placeholder="请输入邮箱地址" value="" autocomplete="off"
                                        data-parsley-required-message="请输入您的登录邮箱"
                                        data-parsley-type="email" data-parsley-maxlength="128" required="required">
 							</li>
-							<li>
+							<li class="login-input-item">
 								<span class="passwordImg"><i class="es-icon es-icon-lock"></i></span>
 								<input id="indexLoginPwd" class="loginPassword" type="password" placeholder="请输入密码"
                                            name="password" placeholder="{{ _('Password') }}"
@@ -63,15 +63,15 @@
                                            data-parsley-maxlength="128" required="required">
 							</li>
                             {% if config.CAPTCHA %}
-                            <li style="margin: 20px 0 10px 30px;">
-                                <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="240px"></div>
+                            <li class="login-input-item" style="margin: 5% 0 0 10%;">
+                                <div class="l-captcha" data-site-key="{{ config.CAPTCHA_SITE_KEY }}" data-width="90%"></div>
                             </li>
                             {% endif %}
-							<li>
+							<li class="login-input-item">
 								<p class="errorbg0" id="indexLoginTips" style="display: none;"></p>
 								<input class="loginButton" type="submit" value="登录" id="indexLoginSubmit">
 							</li>
-							<li>
+							<li class="login-input-item">
 								<input type="hidden" id="numberClick" value="1">
 								<a href="{{ url_for('user.reg') }}" rel="nofollow" class="register">免费注册</a>
 								<a href="{{ url_for('user.password_reset_request') }}" rel="nofollow" class="forget">忘记密码</a>
