@@ -24,8 +24,8 @@ https://github.com/xuelangZF/ehpc/wiki/%E8%B6%85%E7%AE%97%E6%8E%A5%E5%8F%A3%E8%A
 TH2_BASE_URL = os.environ.get("EHPC_BASE_URL")
 TH2_LOGIN_URL = "/auth"
 TH2_ASYNC_URL = "/async"
-TH2_ASYNC_FIRST_WAIT_TIME = 1
-TH2_ASYNC_WAIT_TIME = 5
+TH2_ASYNC_FIRST_WAIT_TIME = 2
+TH2_ASYNC_WAIT_TIME = 10
 TH2_USERNAME = os.environ.get("EHPC_USERNAME")
 TH2_PASSWORD = os.environ.get("EHPC_PASSWORD")
 TH2_LOGIN_DATA = {"username": TH2_USERNAME, "password": TH2_PASSWORD}
