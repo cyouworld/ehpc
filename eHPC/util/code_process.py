@@ -16,7 +16,7 @@ from config import TH2_MAX_NODE_NUMBER, TH2_BASE_URL, TH2_ASYNC_WAIT_TIME, TH2_L
 
 th2_logger = logging.getLogger('th2')
 th2_logger.setLevel(logging.DEBUG)
-file_handler = logging.FileHandler('app_logs/email.log')
+file_handler = logging.FileHandler('app_logs/TH2.log')
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s'))
 th2_logger.addHandler(file_handler)
@@ -333,6 +333,9 @@ class ehpc_client:
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript": jobscript, "jobfilepath": jobPath})
 
         th2_logger.debug("Submit job returned data: %s" % tmpdata)
+        #th2_logger.debug("Submit job returned data url: %s" % TH2_BASE_URL)
+        #th2_logger.debug("Submit job returned data machine: %s" % TH2_MACHINE_NAME)
+        #th2_logger.debug("Submit job returned data partition: %s" % partition)
 
         return tmpdata["output"]["jobid"]
 
@@ -355,14 +358,16 @@ class ehpc_client:
 
         th2_logger.debug("Get job status data: %s" % tmpdata)
 
+        if tmpdata["status_code"] == 500 :
+            return abort(500)
+
         times = 10
         while tmpdata["status_code"] == 100 and times > 0:
             times -= 1
             tmpdata = self.open(TH2_ASYNC_URL + '/' + self.output["output"])
         # print tmpdata
 
-        if tmpdata["output"]["status"][str(job_id)] == "Success" or tmpdata["output"]["status"][
-            str(job_id)] == "Failed":
+        if tmpdata["output"]["status"][str(job_id)] == "Success" or tmpdata["output"]["status"][str(job_id)] == "Failed":
             return "Finished"
         elif tmpdata["output"]["status"][str(job_id)] == "Pending":
             return "Pending"
@@ -501,7 +506,7 @@ class ehpc_client:
     ./%s 1 %s %s
 """ % (partition, node_number, output_filename, task_number, step_num)
 
-        print jobscript
+        #print jobscript
 
         if not self.upload(myPath + "/" + problem_id + "/" + user_id, job_filename, jobscript):
             return "ERROR"
@@ -509,7 +514,7 @@ class ehpc_client:
         jobPath = myPath + "/" + problem_id + "/" + user_id + "/" + job_filename
 
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript": jobscript, "jobfilepath": jobPath})
-        print tmpdata
+        #print tmpdata
         return tmpdata["output"]["jobid"]
 
     """
@@ -651,17 +656,17 @@ def init_evaluate_program(problem_id, input_filenames=[], input_data=[], output_
     client = ehpc_client()
     if not client.login():
         return jsonify(status="fail", msg="连接超算主机失败!")
-    print "login success"
+    #print "login success"
 
     client.del_program_dir(myPath, problem_id)
     client.create_program_dir(myPath, problem_id)
 
     if not client.upload_multi(myPath, problem_id, input_filenames, input_data):
-        print("upload failed")
+        #print("upload failed")
         exit(-1)
-    print "upload success"
+    #print "upload success"
 
-    print client.mpi_compile_multi(myPath, problem_id, input_filenames, output_filenames)
+    #print client.mpi_compile_multi(myPath, problem_id, input_filenames, output_filenames)
 
     rm_command = "cd %s; rm *.cpp" % (myPath + "/" + problem_id)
     client.run_command( rm_command )
@@ -675,7 +680,7 @@ def del_evaluate_program(myPath, problem_id):
     client = ehpc_client()
     if not client.login():
         return jsonify(status="fail", msg="连接超算主机失败!")
-    print "login success"
+    #print "login success"
     client.del_program_dir(myPath, problem_id)
 
 
@@ -689,26 +694,26 @@ def run_evaluate_program(problem_id, user_id, input_code, cpu_num, step_num):
     client = ehpc_client()
     if not client.login():
         return jsonify(status="fail", msg="连接超算主机失败!")
-    print "login success"
+    #print "login success"
     # 若有原用户文件夹则删除
     rm_command = "cd %s;if [ -d \"./%s\" ]; then rm -rf \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
-    print client.run_command( rm_command )
+    #print client.run_command( rm_command )
     # 新建用户文件夹
     mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
-    print client.run_command( mkdir_command )
+    #print client.run_command( mkdir_command )
     # 复制公用编译文件到用户文件夹
     cp_command = "cd %s;cp ../* ./" % (myPath + "/" + problem_id + "/" + user_id )
-    print client.run_command( cp_command )
+    #print client.run_command( cp_command )
     # 上传用户程序到用户文件夹
     if not client.upload(myPath + "/" + problem_id + "/" + user_id, "program.cpp", input_code):
-        print("upload failed")
+        #print("upload failed")
         exit(-1)
-    print "user code upload success"
+    #print "user code upload success"
     # 编译用户程序
-    print client.mpi_complie(myPath + "/" + problem_id + "/" + user_id, "program.cpp", "program")
+    #print client.mpi_complie(myPath + "/" + problem_id + "/" + user_id, "program.cpp", "program")
     # 提交运行脚本与用户程序
     job_id = client.submit_job_multi(myPath, problem_id, user_id, "job.sh", "PI", 1, cpu_num, step_num, "debug")
-    print client.get_job_status(job_id)
+    #print client.get_job_status(job_id)
     # 下载运行结果
     time.sleep(4)
     run_output = client.download(myPath + "/" + problem_id + "/" + user_id, job_id, isSmallApiServer=True, isjob=True)
