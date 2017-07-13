@@ -233,65 +233,66 @@
 
 {% block footer_ext %}
     <script type="text/javascript">
-        {% if data %}
-            $("#register-form").children().eq(0).hide();
-            $("#register-form").children().eq(1).show();
-            {% if data.type == '1' %}
-                $("#register-form").children().eq(1).children().eq(6).remove();
-                $("#register-form").children().eq(1).children().eq(3).remove();
+        $(function () {
+            {% if data %}
+                $("#register-form").children().eq(0).hide();
+                $("#register-form").children().eq(1).show();
+                {% if data.type == '1' %}
+                    $("#register-form").children().eq(1).children().eq(7).remove();
+                    $("#register-form").children().eq(1).children().eq(6).remove();
+                    $("#register-form").children().eq(1).children().eq(3).remove();
+                {% endif %}
             {% endif %}
-        {% endif %}
 
 
-        $("#next-step").click(function () {
-            var form = $("#register-form");
-            if(first_form_validate()){
-                var mail = $("#register_email").val();
-                $.ajax({
-                    url:'{{ url_for('user.reg_valid') }}?mail='+mail,
-                    success: function(data){
-                        if(data['status']=="success"){
-                            form.children().eq(0).hide();
-                            form.children().eq(1).show();
-                            if($("input[name='type']:checked").val()=="1"){
-                                form.children().eq(1).children().eq(6).remove();
-                                form.children().eq(1).children().eq(3).remove();
+            $("#next-step").click(function () {
+                var form = $("#register-form");
+                if (first_form_validate()) {
+                    var mail = $("#register_email").val();
+                    $.ajax({
+                        url: '{{ url_for('user.reg_valid') }}?mail=' + mail,
+                        success: function (data) {
+                            if (data['status'] == "success") {
+                                form.children().eq(0).hide();
+                                form.children().eq(1).show();
+                                if ($("input[name='type']:checked").val() == "1") {
+                                    form.children().eq(1).children().eq(7).remove();
+                                    form.children().eq(1).children().eq(6).remove();
+                                    form.children().eq(1).children().eq(3).remove();
+                                }
                             }
+                            else {
+                                $('#register_email').parent().append('<p class="help-block"><span class="text-danger">该邮箱已被注册，请使用新的邮箱</span></p>');
+                            }
+                        }
+                    });
+                }
+            });
 
-                        }
-                        else{
-                            $('#register_email').parent().append('<p class="help-block"><span class="text-danger">该邮箱已被注册，请使用新的邮箱</span></p>');
-                        }
-                     }
-                });
-            }
         });
 
-
         // 验证第一张表单
-        function first_form_validate(){
+        function first_form_validate() {
             $('#register_email').parent().children('p:last-child').remove();
             $("#type_message").html('');
 
             var status = 1;
             var email_instance = $('#register_email').parsley();
             email_instance.validate();
-            if(!email_instance.isValid())status=0;
+            if (!email_instance.isValid()) status = 0;
             var pwd1_instance = $('#register_password1').parsley();
             pwd1_instance.validate();
-            if(!pwd1_instance.isValid())status=0;
+            if (!pwd1_instance.isValid()) status = 0;
             var pwd2_instance = $('#register_password2').parsley();
             pwd2_instance.validate();
-             if(!pwd2_instance.isValid())status=0;
+            if (!pwd2_instance.isValid()) status = 0;
 
-            if($("input[type=radio][name=type]:checked").length == 0)
-            {
+            if ($("input[type=radio][name=type]:checked").length == 0) {
                 $("#type_message").html('<span class="text-danger">请选择注册用户类型</span>');
-                status=0;
+                status = 0;
             }
 
-            if(status==1)return true;
-            else return false;
+            return status === 1;
         }
 
 
