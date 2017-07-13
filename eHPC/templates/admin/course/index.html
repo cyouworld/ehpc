@@ -34,7 +34,7 @@
                     </tr>
                     </thead>
                     <tbody id="tb">
-                    {% if all_courses.count() > 0 %}
+                    {% if all_courses | length > 0 %}
                         {% for c in all_courses %}
                         <tr data-id="{{ c.id }}" style="">
                             <td  title="{{ c.title }}">

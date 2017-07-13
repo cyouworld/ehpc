@@ -111,6 +111,10 @@ course_users = db.Table('course_users',
                         db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
                         db.Column('course_id', db.Integer, db.ForeignKey('courses.id')))
 
+course_assistants = db.Table('course_assistants',
+                             db.Column('user_id', db.Integer, db.ForeignKey('users.id')),
+                             db.Column('course_id', db.Integer, db.ForeignKey('courses.id')))
+
 
 class Course(db.Model):
     __tablename__ = 'courses'
@@ -146,6 +150,9 @@ class Course(db.Model):
     # 加入该课程的用户, 多对多的关系
     users = db.relationship('User', secondary=course_users,
                             backref=db.backref('courses', lazy='dynamic'))
+    # 课程助理，多对多的关系
+    assistants = db.relationship('User', secondary=course_assistants,
+                                 backref=db.backref('assistant_courses', lazy='dynamic'))
     # 二维码，一对一的关系
     qrcode = db.relationship('QRcode', uselist=False, backref='course')
 

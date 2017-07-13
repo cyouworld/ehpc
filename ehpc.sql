@@ -328,6 +328,23 @@ INSERT INTO `courses` VALUES ('12', '并行计算基础', '以下内容仅用于
 INSERT INTO `courses` VALUES ('14', '并行程序设计', '北京大学信息科学技术学院余华山老师主讲', '[课程网页](http://course.pku.edu.cn)', '2016-12-31 20:45:39', '14', '0', 'upload/course/cover_14.png', null, null, '0.00', '1', null, null, '3', '26', '11');
 INSERT INTO `courses` VALUES ('32', '云计算概论', '中山大学数据科学与计算机学院，2017年春', '本课程讲授内容包括云计算基础概念、原理和应用。', '2017-03-21 21:20:01', '3', '23', 'upload/course/cover_32.png', null, null, '0.00', '0', '2017-02-23 21:35:42', '2017-06-30 23:55:42', '15', '27', '1');
 
+--
+-- Table structure for table `course_assistants`
+--
+DROP TABLE IF EXISTS `course_assistants`;
+CREATE TABLE `course_assistants` (
+  `user_id` int(11) DEFAULT NULL,
+  `course_id` int(11) DEFAULT NULL,
+  KEY `user_id` (`user_id`),
+  KEY `course_id` (`course_id`),
+  CONSTRAINT `course_assistants_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `course_assistants_ibfk_2` FOREIGN KEY (`course_id`) REFERENCES `courses` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `course_assistants`
+--
+
 -- ----------------------------
 -- Table structure for `course_users`
 -- ----------------------------

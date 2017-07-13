@@ -34,7 +34,8 @@ from ..util.course_filter import check_upload
 @admin.context_processor
 def add_sidebar():
     if current_user.is_authenticated and current_user.permissions == 2:
-        courses = current_user.teacher_courses.order_by(Course.nature_order.asc())
+        courses = current_user.teacher_courses.order_by(Course.nature_order.asc()).all()
+        courses += current_user.assistant_courses.all()
         classifies = current_user.teacher_classify
         return {'sidebar_courses': courses, 'sidebar_classifies': classifies}
     else:
@@ -45,10 +46,9 @@ def add_sidebar():
 @teacher_login
 def course():
     if request.method == 'GET':
-        all_courses = current_user.teacher_courses.order_by(Course.nature_order.asc())
-        return render_template('admin/course/index.html',
-                               all_courses=all_courses,
-                               title=gettext('Course Admin'))
+        all_courses = current_user.teacher_courses.order_by(Course.nature_order.asc()).all()
+        all_courses += current_user.assistant_courses.all()
+        return render_template('admin/course/index.html', all_courses=all_courses, title=gettext('Course Admin'))
     elif request.method == 'POST':
         if request.form['op'] == 'del':
             # 删除课程
