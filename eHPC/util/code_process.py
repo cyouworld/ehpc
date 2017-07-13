@@ -8,7 +8,8 @@ import time
 import urllib
 import urllib2
 
-from flask import jsonify
+from datetime import datetime
+from flask import jsonify, abort
 
 from config import TH2_MAX_NODE_NUMBER, TH2_BASE_URL, TH2_ASYNC_WAIT_TIME, TH2_LOGIN_DATA, TH2_MACHINE_NAME, \
     TH2_DEBUG_ASYNC, TH2_MY_PATH, TH2_ASYNC_FIRST_WAIT_TIME, TH2_ASYNC_URL, TH2_LOGIN_URL, \
@@ -332,6 +333,12 @@ class ehpc_client:
         jobPath = myPath + "/" + job_filename
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript": jobscript, "jobfilepath": jobPath})
 
+        times = 10
+        while tmpdata["status_code"] == 100 and times > 0:
+            #print 100
+            times -= 1
+            tmpdata = self.open(TH2_ASYNC_URL + '/' + self.output["output"])
+
         th2_logger.debug("Submit job returned data: %s" % tmpdata)
         #th2_logger.debug("Submit job returned data url: %s" % TH2_BASE_URL)
         #th2_logger.debug("Submit job returned data machine: %s" % TH2_MACHINE_NAME)
@@ -363,6 +370,7 @@ class ehpc_client:
 
         times = 10
         while tmpdata["status_code"] == 100 and times > 0:
+            #print 100
             times -= 1
             tmpdata = self.open(TH2_ASYNC_URL + '/' + self.output["output"])
         # print tmpdata
@@ -573,22 +581,27 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
     client = ehpc_client()
     is_success = [False]
 
-    is_success[0] = client.login()
-    if not is_success[0]:
-        return jsonify(status="fail", msg="连接超算主机失败!")
+    #print "Login start: " + str(datetime.now())
+    #is_success[0] = client.login()
+    #print "Login end: " + str(datetime.now())
+    #if not is_success[0]:
+        #return jsonify(status="fail", msg="连接超算主机失败!")
 
     result = dict()
 
-    if op == "1":
-        is_success[0] = client.upload(TH2_MY_PATH, input_filename, source_code)
+    #print "Start: " + str(datetime.now())
 
+    if op == "1":
+        #print "Upload start: " + str(datetime.now())
+        is_success[0] = client.upload(TH2_MY_PATH, input_filename, source_code)
+        #print "Upload end: " + str(datetime.now())
         job_status = "Compiling"
 
         if not is_success[0]:
             return jsonify(status="fail", msg="上传程序到超算主机失败!")
-
+        #print "Compile start: " + str(datetime.now())
         compile_out = client.ehpc_compile(is_success, TH2_MY_PATH, input_filename, output_filename, language)
-
+        #print "Compile end: " + str(datetime.now())
         compile_success = is_success
 
         if is_success[0]:
@@ -598,10 +611,11 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
 
         if is_success[0]:
 
+            #print "Submit job start: " + str(datetime.now())
             jobid = client.submit_job(TH2_MY_PATH, job_filename, output_filename, node_number=node_number,
                                       task_number=task_number,
                                       cpu_number_per_task=cpu_number_per_task, partition=partition)
-
+            #print "Submit job end: " + str(datetime.now())
             run_out = "脚本任务排队中，请稍候！"
         else:
             run_out = "编译失败，无法运行！"
@@ -626,8 +640,9 @@ def submit_code(pid, uid, source_code, task_number, cpu_number_per_task, node_nu
                 time.sleep(0.2)
                 job_status = client.get_job_status(jobid)
                 # print job_status
-
+            #print "Download result start: " + str(datetime.now())
             run_output = client.download(TH2_MY_PATH, jobid, isSmallApiServer=isSmallApiServer, isjob=True)
+            #print "Download result end: " + str(datetime.now())
             run_out = run_output or "No output."
 
             if run_output is None:
@@ -654,8 +669,8 @@ def init_evaluate_program(problem_id, input_filenames=[], input_data=[], output_
     """
     myPath = TH2_MY_PATH
     client = ehpc_client()
-    if not client.login():
-        return jsonify(status="fail", msg="连接超算主机失败!")
+    #if not client.login():
+        #return jsonify(status="fail", msg="连接超算主机失败!")
     #print "login success"
 
     client.del_program_dir(myPath, problem_id)
@@ -692,8 +707,8 @@ def run_evaluate_program(problem_id, user_id, input_code, cpu_num, step_num):
     """
     myPath = TH2_MY_PATH
     client = ehpc_client()
-    if not client.login():
-        return jsonify(status="fail", msg="连接超算主机失败!")
+    #if not client.login():
+        #return jsonify(status="fail", msg="连接超算主机失败!")
     #print "login success"
     # 若有原用户文件夹则删除
     rm_command = "cd %s;if [ -d \"./%s\" ]; then rm -rf \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
