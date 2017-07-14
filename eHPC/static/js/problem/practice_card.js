@@ -77,7 +77,25 @@ $(function () {
     });
 
     $('#confirm-submit').click(function () {
-        window.location.href=address;
+        var status = {};
+        for(var k in corNum){
+            status[$('div[class=panel][data-id=' + k + ']').eq(0).data('q-id')] = corNum[k];
+        }
+        $.ajax({
+            url: statistic_address,
+            type: "post",
+            data: {
+                status: JSON.stringify(status),
+                classify_id: classify_id
+            },
+            success: function (data) {
+                if(data["status"] === "success"){
+                    window.location.href=address;
+                } else{
+                    alert_modal("提交失败请重试！");
+                }
+            }
+        })
     });
 
     $('#cancel-submit').click(function () {

@@ -1,6 +1,6 @@
-{% for judge in essays %}
-    <div class="panel" data-name="essay" data-id="{{loop.index}}" data-type="{{ judge.type }}" style="display: {% if loop.index != 1 %}none{% endif %}">
-        {% with question=judge %}
+{% for essay in essays %}
+    <div class="panel" data-q-id="{{ essay.id }}" data-name="essay" data-id="{{loop.index}}" data-type="{{ essay.type }}" style="display: {% if loop.index != 1 %}none{% endif %}">
+        {% with question=essay %}
             <div class="panel-heading media" style="border-bottom: solid 1px #ddd">
                 {% with index=loop.index %}
                     {% include 'problem/widget_practice_title.html' %}
@@ -16,7 +16,7 @@
                 确认
             </a>
         </div>
-        <div class="practice-solution" data-id="solution">参考答案： {{ judge.solution }}</div>
+        <div class="practice-solution" data-id="solution">参考答案： {{ essay.solution }}</div>
     </div>
 {% endfor %}
 
@@ -24,6 +24,8 @@
 <script>
     var practice_count = {{ essays | count }};
     var address = "{{ url_for('problem.show_question') }}";
+    var statistic_address = "{{ url_for('problem.question_submit_result') }}";
+    var classify_id = {{ classify_id }};
 </script>
 
 <script src="{{ url_for('static', filename='js/problem/utility_func.js') }}" ></script>

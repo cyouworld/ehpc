@@ -9,7 +9,7 @@ from flask_babel import gettext
 from flask_login import current_user, login_required
 from .. import db
 import random, string
-
+from io import open
 
 @machine_apply.route('/', methods=['GET', 'POST'])
 @login_required
@@ -176,11 +176,20 @@ def get_machine_info():
         if machine_account is None:
             return jsonify(status='fail', msg='Invalid token')
 
-        return jsonify(status='success',
-                       hostname=machine_account.ip,
-                       port=str(machine_account.port),
-                       username=machine_account.username,
-                       password=machine_account.password)
+        if machine_account.key is not None:
+            with open(machine_account.key, 'r') as f:
+                private_key = f.read()
+            return jsonify(status='success',
+                           hostname=machine_account.ip,
+                           port=str(machine_account.port),
+                           username=machine_account.username,
+                           private_key=private_key)
+        else:
+            return jsonify(status='success',
+                           hostname=machine_account.ip,
+                           port=str(machine_account.port),
+                           username=machine_account.username,
+                           password=machine_account.password)
 
 
 @machine_apply.route('/machine_apply/todo/')

@@ -10,7 +10,7 @@ from flask_login import login_required, current_user
 
 from eHPC.util.code_process import ehpc_client, submit_code
 from . import lab
-from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerHolder, DockerImage
+from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerHolder, DockerImage, Statistic
 
 from .vnc_util import is_token_unique, create_new_image, start_vnc_server, start_ssh_server
 from .lab_util import get_cur_progress, increase_progress, get_cur_vnc_progress, increase_vnc_progress
@@ -18,6 +18,7 @@ from config import TH2_MY_PATH
 import random, string
 import requests, threading
 from .. import db
+import json
 
 
 @lab.route('/')
@@ -48,8 +49,13 @@ def index():
 def detail(kid):
     cur_knowledge = Knowledge.query.filter_by(id=kid).first_or_404()
     cur_level = get_cur_progress(kid)
-
     if request.method == 'GET':
+        # 记录用户浏览编程实验
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.MODULE_LAB,
+                                 Statistic.ACTION_LAB_VISIT_PROGRAMING_LAB,
+                                 json.dumps(dict(lab_id=cur_knowledge.id))))
+        db.session.commit()
         return render_template("lab/detail.html",
                                title=cur_knowledge.title,
                                knowledge=cur_knowledge,
@@ -133,10 +139,15 @@ def knowledge(kid):
                                  task_number=task_number, cpu_number_per_task=cpu_number_per_task, node_number=node_number,
                                  language=language, op=op, jobid=job_id, compile_success=compile_success)
 
-
             # 代码成功通过编译, 则认为已完成该知识点学习
             if compile_success[0]:
                 increase_progress(kid=kid, k_num=k_num, challenges_count=challenges_count)
+                # 记录用户通过编程实验小任务
+                db.session.add(Statistic(current_user.id,
+                                         Statistic.MODULE_LAB,
+                                         Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK,
+                                         json.dumps(dict(task_id=cur_challenge.id))))
+                db.session.commit()
 
             return result
         elif request.form['op'] == 'get_source_code':
@@ -169,6 +180,13 @@ def tasks_list(vnc_knowledge_id):
     all_tasks = cur_vnc_knowledge.vnc_tasks.order_by(VNCTask.vnc_task_num).all()
 
     if request.method == 'GET':
+        # 记录用户浏览配置实验
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.MODULE_LAB,
+                                 Statistic.ACTION_LAB_VISIT_CONFIGURATION_LAB,
+                                 json.dumps(dict(lab_id=cur_vnc_knowledge.id))))
+        db.session.commit()
+
         return render_template('lab/vnc_tasks_lists.html',
                                cur_vnc_knowledge=cur_vnc_knowledge,
                                cur_vnc_level=cur_vnc_level,
@@ -211,6 +229,13 @@ def vnc_task(vnc_knowledge_id):
 
         response_vnc_task = VNCTask.query.filter_by(vnc_knowledge_id=vnc_knowledge_id).filter_by(vnc_task_num=response_vnc_task_num).first()
         if response_vnc_task is not None:
+            # 记录用户通过配置实验小任务
+            db.session.add(Statistic(current_user.id,
+                                     Statistic.MODULE_LAB,
+                                     Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK,
+                                     json.dumps(dict(task_id=response_vnc_task.id))))
+            db.session.commit()
+
             return render_template('lab/vnc.html',
                                    title=gettext('vnc'),
                                    response_vnc_task=response_vnc_task,

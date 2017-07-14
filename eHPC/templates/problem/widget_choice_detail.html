@@ -1,5 +1,5 @@
 {% for choice in choices %}
-    <div class="panel" data-name="choice" data-id="{{loop.index}}" data-type="{{ choice.type }}" style="display: {% if loop.index != 1 %}none{% endif %}">
+    <div class="panel" data-q-id="{{ choice.id }}" data-name="choice" data-id="{{loop.index}}" data-type="{{ choice.type }}" style="display: {% if loop.index != 1 %}none{% endif %}">
             {% with question=choice %}
             <div class="panel-heading media" data-id="choice-title" style="border-bottom: solid 1px #e1e1e1">
                 {% with index=loop.index %}
@@ -24,6 +24,8 @@
 <script>
     var practice_count = {{ practices | count }};
     var address = "{{ url_for('problem.show_question') }}";
+    var statistic_address = "{{ url_for('problem.question_submit_result') }}";
+    var classify_id = {{ classify_id }};
 </script>
 
 <script src="{{ url_for('static', filename='js/problem/utility_func.js') }}" ></script>

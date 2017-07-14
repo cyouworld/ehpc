@@ -14,7 +14,8 @@ from config import TH2_MY_PATH, TH2_MAX_NODE_NUMBER
 from eHPC.util.code_process import submit_code, ehpc_client, run_evaluate_program
 from . import problem
 from .. import db
-from ..models import Program, Classify, SubmitProblem, Question, UserQuestion, CodeCache
+from ..models import Program, Classify, SubmitProgram, Question, CodeCache, Statistic
+import json
 
 
 @problem.route('/')
@@ -27,7 +28,7 @@ def index():
 @login_required
 def show_program():
     pro = Program.query.all()
-    submission = SubmitProblem.query.filter_by(uid=current_user.id).all()
+    submission = SubmitProgram.query.filter_by(uid=current_user.id).all()
     cnt = {}
     for i in submission:
         cnt[i.pid] = 0
@@ -35,7 +36,7 @@ def show_program():
         cnt[i.pid] += 1
     return render_template('problem/show_program.html',
                            title=gettext('Program Practice'),
-                           problems=pro,
+                           programs=pro,
                            count=cnt)
 
 
@@ -43,7 +44,7 @@ def show_program():
 @problem.route('/program/submits/<int:pid>/')
 @login_required
 def show_my_submits(pid):
-    my_submits = SubmitProblem.query.filter_by(pid=pid, uid=current_user.id).all()
+    my_submits = SubmitProgram.query.filter_by(pid=pid, uid=current_user.id).all()
     pro = Program.query.filter_by(id=pid).first_or_404()
     return render_template('problem/show_my_submits.html',
                            title=gettext('My Submit'),
@@ -55,7 +56,7 @@ def show_my_submits(pid):
 @problem.route('/program/submit/<int:sid>/')
 @login_required
 def view_code(sid):
-    cur_submit = SubmitProblem.query.filter_by(id=sid).first_or_404()
+    cur_submit = SubmitProgram.query.filter_by(id=sid).first_or_404()
     cur_problem = Program.query.filter_by(id=cur_submit.pid).first_or_404()
     return render_template('problem/view_code.html',
                            title=gettext('Program Practice'),
@@ -86,7 +87,15 @@ def program_view(pid):
     if request.method == 'GET':
         cache = CodeCache.query.filter_by(user_id=current_user.id).filter_by(program_id=pid).first()
         pro = Program.query.filter_by(id=pid).first_or_404()
-        return render_template('problem/program_detail.html', title=pro.title, problem=pro, cache=cache)
+
+        # 记录用户浏览编程题
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.MODULE_PROGRAM,
+                                 Statistic.ACTION_PROGRAM_VISIT_PROGRAM_PAGE,
+                                 json.dumps(dict(pragram_id=pid))))
+        db.session.commit()
+
+        return render_template('problem/program_detail.html', title=pro.title, program=pro, cache=cache)
     elif request.method == 'POST':
         if request.form['op'] == 'save':
             program_id = request.form['program_id']
@@ -127,23 +136,41 @@ def question_view(cid, question_type):
     else:
         abort(404)
 
-    if current_user.is_authenticated:
-        user_question = UserQuestion.query.filter_by(user_id=current_user.id, classify_id=cid,
-                                                     question_type=question_type).first()
-        if user_question:
-            user_question.last_time = datetime.now()
-            db.session.commit()
-        else:
-            user_question = UserQuestion(user_id=current_user.id, classify_id=cid,
-                                         question_type=question_type, last_time=datetime.now())
-            db.session.add(user_question)
-            db.session.commit()
+    # 记录用户浏览题库问题
+    db.session.add(Statistic(current_user.id,
+                             Statistic.MODULE_QUESTION,
+                             Statistic.ACTION_QUESTION_VISIT_QUESTION_PAGE,
+                             json.dumps(dict(question_type=question_type,
+                                             classify_id=classify_name.id,
+                                             question_ids=[p.id for p in practices]))))
+    db.session.commit()
 
     return render_template('problem/practice_detail.html',
                            classify_id=classify_name.id,
                            title=classify_name.name,
                            practices=practices,
                            q_type=question_type)
+
+
+@problem.route('/question/submit_result/', methods=['POST'])
+@login_required
+def question_submit_result():
+    classify_id = request.form.get('classify_id', None)
+    status = json.loads(request.form.get('status', None))
+
+    try:
+        classify_id = int(classify_id)
+    except TypeError:
+        return jsonify(status='fail')
+
+    # 记录用户提交题库问题作答
+    db.session.add(Statistic(current_user.id,
+                             Statistic.MODULE_QUESTION,
+                             Statistic.ACTION_QUESTION_SUBMIT_ANSWER,
+                             json.dumps(dict(classify_id=classify_id,
+                                             status=status))))
+    db.session.commit()
+    return jsonify(status='success')
 
 
 @problem.route('/<int:pid>/submit/', methods=['POST'])
@@ -163,11 +190,18 @@ def submit(pid):
 
     if op == '1':
         uid = current_user.id
-        problem_id = request.form['problem_id']
+        program_id = request.form['program_id']
         source_code = request.form['source_code']
         language = request.form['language']
-        submit_problem = SubmitProblem(uid, problem_id, source_code, language)
-        db.session.add(submit_problem)
+        submit_program = SubmitProgram(uid, program_id, source_code, language)
+        db.session.add(submit_program)
+        db.session.commit()
+
+        # 记录用户提交编程题代码
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.MODULE_PROGRAM,
+                                 Statistic.ACTION_PROGRAM_SUBMIT_CODE,
+                                 json.dumps(dict(submission_id=submit_program.id))))
         db.session.commit()
 
         if language == "openmp" :

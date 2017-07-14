@@ -13,12 +13,13 @@ from datetime import datetime, timedelta
 
 from eHPC.util.captcha import verify_captcha
 from . import user
-from ..models import User, Notification
+from ..models import User, Statistic
 from ..util.email import send_email
 from .. import db
 from ..util.file_manage import get_file_type
 from ..user.authorize import system_login
 from ..util.notifications import read_message
+import json
 
 alphanumeric = re.compile(r'^[0-9a-zA-Z\_]*$')
 email_address = re.compile(r'[a-zA-z0-9]+\@[a-zA-Z0-9]+\.+[a-zA-Z]')
@@ -162,6 +163,14 @@ def reg():
 @user.route('/<int:uid>/')
 def view(uid):
     cur_user = User.query.filter_by(id=uid).first_or_404()
+
+    if current_user.is_authenticated and current_user.id != uid:
+        # 访问个人主页记录
+        db.session.add(Statistic(uid,
+                                 Statistic.MODULE_USER,
+                                 Statistic.ACTION_USER_VISIT_PERSONAL_HOME_PAGE,
+                                 json.dumps(dict(visiter_id=current_user.id))))
+        db.session.commit()
     return render_template('user/detail.html',
                            title=gettext('Personal Page'),
                            user=cur_user)
@@ -237,29 +246,6 @@ def password_reset(token):
                 reset_result = "Failed"
 
             return render_template('user/passwd_reset_done.html', message=reset_result)
-
-
-@user.route('/<int:uid>/')
-def info(uid):
-    u = User.query.filter_by(id=uid, deleted=False).first_or_404()
-
-    per_page = current_app.config['PER_PAGE']
-    page = int(request.args.get('page', 1))
-    offset = (page - 1) * per_page
-    topics_all = list(filter(lambda t: not t.deleted, u.extract_topics()))
-    topics_all.sort(key=lambda t: (t.reply_count, t.click), reverse=True)
-    topics = topics_all[offset:offset + per_page]
-    pagination = Pagination(page=page, total=len(topics_all),
-                            per_page=per_page,
-                            record_name='topics',
-                            CSS_FRAMEWORK='bootstrap',
-                            bs_version=3)
-    return render_template('user/info.html',
-                           topics=topics,
-                           title=u.username + gettext("'s Topics"),
-                           post_list_title=u.username + gettext("'s Topics"),
-                           pagination=pagination,
-                           user=u)
 
 
 @user.route('/setting/')

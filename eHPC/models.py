@@ -8,7 +8,6 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
 from . import db, login_manager
-import json
 
 """ 用户管理模块 """
 
@@ -68,6 +67,8 @@ class User(UserMixin, db.Model):
 
     notifications_sent = db.relationship('Notification', backref='sender', lazy='dynamic', cascade='delete, delete-orphan')
 
+    statistics = db.relationship('Statistic', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -99,6 +100,49 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
+
+
+class Statistic(db.Model):
+    MODULE_USER = 10001
+    MODULE_COURSE = 10002
+    MODULE_QUESTION = 10003
+    MODULE_PROGRAM = 10004
+    MODULE_TOPIC = 10005
+    MODULE_LAB = 10006
+
+    ACTION_USER_VISIT_PERSONAL_HOME_PAGE = 20001
+
+    ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO = 30001
+    ACTION_COURSE_ATTEND_QUIZ = 30002
+    ACTION_COURSE_SUBMIT_QUIZ_ANSWER = 30003
+    ACTION_COURSE_COMMENT = 30004
+
+    ACTION_QUESTION_VISIT_QUESTION_PAGE = 40001
+    ACTION_QUESTION_SUBMIT_ANSWER = 40002
+
+    ACTION_PROGRAM_VISIT_PROGRAM_PAGE = 50001
+    ACTION_PROGRAM_SUBMIT_CODE = 50002
+
+    ACTION_TOPIC_CREATE_TOPIC = 60001
+
+    ACTION_LAB_VISIT_PROGRAMING_LAB = 70001
+    ACTION_LAB_PASS_A_PROGRAMING_TASK = 70002
+    ACTION_LAB_VISIT_CONFIGURATION_LAB = 70003
+    ACTION_LAB_PASS_A_CONFIGURATION_TASK = 70004
+
+    def __init__(self, user_id, module_type, action, data):
+        self.user_id = user_id
+        self.module_type = module_type
+        self.action = action
+        self.data = data
+
+    __tablename__ = 'statistics'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    module_type = db.Column(db.Integer, nullable=False)
+    action = db.Column(db.Integer, nullable=False)
+    data = db.Column(db.Text(), default=None)
+    timestamp = db.Column(db.DateTime(), default=datetime.now)
 
 
 """ 在线课堂模块
@@ -283,7 +327,7 @@ class Post(db.Model):
 
 """ 试题中心模块
 @Program:           对应在线编程题
-@SubmitProblem:     对应编程题目提交记录
+@SubmitProgram:     对应编程题目提交记录
 @Choice:            对应选择题
 @Classify:          选择题目所属的分类
 @PaperQuestion:     试卷和题目是多对多的关系, 并且试卷中的题目有自己的分值, 因此需要建一个关联表
@@ -313,19 +357,19 @@ class Program(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
-    submit_problems = db.relationship('SubmitProblem', backref='program', lazy='dynamic')
+    submit_programs = db.relationship('SubmitProgram', backref='program', lazy='dynamic')
 
 
-class SubmitProblem(db.Model):
+class SubmitProgram(db.Model):
     # 一个题目可以有很多人提交,一个人可以提交多个题目。所以题目和用户是多对多的关系
-    def __init__(self, user_id, problem_id, source_code, language):
+    def __init__(self, user_id, program_id, source_code, language):
         self.uid = user_id
-        self.pid = problem_id
+        self.pid = program_id
         self.code = source_code
         self.language = language
         self.submit_time = datetime.now()
 
-    __tablename__ = "submit_problem"
+    __tablename__ = "submit_programs"
     id = db.Column(db.Integer, primary_key=True)                    # 提交记录id
     pid = db.Column(db.Integer, db.ForeignKey('programs.id'))       # 本次提交的题目ID
     uid = db.Column(db.Integer, nullable=False)                     # 本次提交的用户ID
@@ -382,7 +426,6 @@ class Classify(db.Model):
     id = db.Column(db.Integer, primary_key=True)        # 分类 ID
     name = db.Column(db.String(128), nullable=False)    # 分类名字
 
-    user_questions = db.relationship('UserQuestion', backref='classify', lazy='dynamic')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
@@ -584,19 +627,6 @@ class QRcode(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     end_time = db.Column(db.DateTime, nullable=False)
     course_id = db.Column(db.Integer, db.ForeignKey('courses.id'))
-
-
-class UserQuestion(db.Model):
-    """ 记录用户最近浏览的题目类型
-
-    定制化首页中需要知道用户最近浏览的题目
-    """
-    __tablename__ = "user_questions"
-    user_id = db.Column(db.Integer, nullable=False, primary_key=True)
-    classify_id = db.Column(db.Integer, db.ForeignKey('classifies.id'), primary_key=True)
-    # 浏览的题目类型, 可以是 choice fill judge essay
-    question_type = db.Column(db.String(128), nullable=False, primary_key=True)
-    last_time = db.Column(db.DateTime, nullable=False)
 
 
 class CodeCache(db.Model):

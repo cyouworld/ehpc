@@ -19,7 +19,7 @@
         <div class="row">
             <div class="panel panel-default">
                 <div class="panel-body">
-                    <table class="ui celled table" cellspacing="0" id="problem">
+                    <table class="ui celled table" cellspacing="0" id="program">
                         <thead>
                         <tr>
                             <th>{{ _('ID') }}</th>
@@ -30,7 +30,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                        {% for p in problems %}
+                        {% for p in programs %}
                             <tr>
                                 <td><a href="{{ p.id }}">{{ p.id }}</a></td>
                                 <td><a href="{{ p.id }}">{{ p.title }}</a></td>
@@ -56,7 +56,7 @@
     <script>
         $(document).ready(
                 function () {
-                    $('#problem').DataTable({
+                    $('#program').DataTable({
                         language: {
                             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
                         },
@@ -66,5 +66,5 @@
 
 {% endblock %}
 
-{#problems#}
+{#programs#}
 {#count数组:记录当前用户每道题的提交次数，作为参数从show_program传递过来#}

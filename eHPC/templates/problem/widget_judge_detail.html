@@ -1,5 +1,5 @@
 {% for judge in judges %}
-    <div class="panel" data-name="judge" data-id="{{loop.index}}" data-type="{{ judge.type }}" style="display: {% if loop.index != 1 %}none{% endif %}">
+    <div class="panel" data-q-id="{{ judge.id }}" data-name="judge" data-id="{{loop.index}}" data-type="{{ judge.type }}" style="display: {% if loop.index != 1 %}none{% endif %}">
         {% with question=judge %}
             <div class="panel-heading media" style="border-bottom: solid 1px #ddd">
                 {% with index=loop.index %}
@@ -23,6 +23,8 @@
 <script>
     var practice_count = {{ practices | count }};
     var address = "{{ url_for('problem.show_question') }}";
+    var statistic_address = "{{ url_for('problem.question_submit_result') }}";
+    var classify_id = {{ classify_id }};
 </script>
 
 <script src="{{ url_for('static', filename='js/problem/utility_func.js') }}" ></script>

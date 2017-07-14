@@ -1,5 +1,5 @@
 {% for fill in fills %}
-    <div class="panel" data-name="fill" data-id="{{loop.index}}" data-type="{{ fill.type }}" style="display: {% if loop.index != 1 %}none{% endif %}">
+    <div class="panel" data-q-id="{{ fill.id }}" data-name="fill" data-id="{{loop.index}}" data-type="{{ fill.type }}" style="display: {% if loop.index != 1 %}none{% endif %}">
         {% with question=fill %}
             <div class="panel-heading media" data-id="fill-title" style="border-bottom: solid 1px #ddd">
                 {% with index=loop.index %}
@@ -23,6 +23,8 @@
 <script>
     var practice_count = {{ practices | count }};
     var address = "{{ url_for('problem.show_question') }}";
+    var statistic_address = "{{ url_for('problem.question_submit_result') }}";
+    var classify_id = {{ classify_id }};
 </script>
 
 <script src="{{ url_for('static', filename='js/problem/utility_func.js') }}" ></script>

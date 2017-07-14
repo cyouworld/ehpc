@@ -5,11 +5,12 @@ from flask import render_template, abort, jsonify, request, redirect, url_for
 from flask_login import current_user, login_required
 from datetime import datetime
 from . import group
-from ..models import Group, Topic, Post
+from ..models import Group, Topic, Post, Statistic
 from flask_babel import gettext
 from ..group.group_util import user_in_group, user_not_in_group
 from ..util.text_process import add_user_links_in_content
 from .. import db
+import json
 
 
 @group.route('/')
@@ -88,7 +89,14 @@ def topic_in_course_new(gid):
         current_user.topicNum += 1
         cur_group.topics.append(new_topic)
         cur_group.topicNum += 1
+
+        # 记录用户创建话题
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.MODULE_TOPIC,
+                                 Statistic.ACTION_TOPIC_CREATE_TOPIC,
+                                 json.dumps(dict(topic_id=new_topic.id))))
         db.session.commit()
+
         return jsonify(status='success')
 
 
