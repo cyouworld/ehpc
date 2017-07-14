@@ -5,7 +5,7 @@
         <section class="admin-list">
             <div class="row">
                 <div class="col-sm-6 col-md-4 ">
-                    <a style="text-decoration: none;" href="{{ url_for('admin.question', question_type='choice') }}">
+                    <a style="text-decoration: none;" href="{{ url_for('admin.question', question_type='choice') }}?tag2=problem-all">
                         <div class="admin-item">
                             <div style="padding-top: 40px;font-size: 20px"> 所有分类 </div>
                             <div class="info">共有 {{ questions.count() }} 题</div>
@@ -14,7 +14,7 @@
                 </div>
                 {% for c in classify %}
                 <div class="col-sm-6 col-md-4 ">
-                    <a style="text-decoration: none;" href="{{ url_for('admin.question_filter_by_classify', question_type='choice', question_classify=c.id) }}">
+                    <a style="text-decoration: none;" href="{{ url_for('admin.question_filter_by_classify', question_type='choice', question_classify=c.id) }}?tag2=problem-{{ c.id }}">
                     <div class="admin-item">
                         <div style="padding-top: 40px;font-size: 20px">{{ c.name }}</div>
                         <div class="info">共有 {{ c.questions.filter_by(user_id=current_user.id).count() }} 题</div>

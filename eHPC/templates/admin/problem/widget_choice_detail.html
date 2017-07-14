@@ -72,13 +72,13 @@
     {% include 'widget/load_img_progress.html' %}
 </div>
 
-<div class="form-control" style="margin-top:-30px;border: none;">
-    <span id="choice-save-info" class="hide pull-left" style="color: red;">
+<div class="form-submit text-right">
+    <span id="choice-save-info" class="hide" style="display:inline-block;margin-right:20px;color: red;">
         <i class="es-icon es-icon-warning"></i>&nbsp;
         <span></span>
     </span>
+    <button id="save-problem" class="btn btn-primary" style="margin-top: 15px">保存提交</button>
 </div>
-<button id="save-problem" class="btn btn-primary btn-block" style="margin-top: 15px">保存提交</button>
 
 <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
 <script language=javascript src='{{ url_for("static", filename="js/custom_simplemde.js") }}'></script>

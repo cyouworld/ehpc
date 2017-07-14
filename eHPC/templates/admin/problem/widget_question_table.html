@@ -1,6 +1,6 @@
 <div class="panel-heading">
     <span class="pull-right">
-        <a id="create-choice" href="{{ url_for('admin.question_create', question_type=question_type, question_classify=question_classify) }}"
+        <a id="create-choice" href="{{ url_for('admin.question_create', question_type=question_type, question_classify=question_classify) }}&tag2={{ request.args.get('tag2') }}"
            class="btn btn-info btn-sm">
             <span class="glyphicon glyphicon-plus"></span>
             新建题目
@@ -26,7 +26,7 @@
                 <td class="overflow-ellipsis" data-toggle="tooltip" title="{{ q | get_question_content }}">{{ q | get_question_content }}</td>
                 <td class="overflow-ellipsis" data-toggle="tooltip" title="{{ q | get_question_solution }}">{{ q | get_question_solution }}</td>
                 <td>
-                    <a href="{{ url_for('admin.question_edit', question_type=question_type, question_id=q.id, question_classify=question_classify) }}">编辑</a>
+                    <a href="{{ url_for('admin.question_edit', question_type=question_type, question_id=q.id, question_classify=question_classify) }}&tag2={{ request.args.get('tag2') }}">编辑</a>
                     <span class="divider"> | </span>
                     <a href="javascript:void(0)" name="del-btn">删除</a>
                 </td>

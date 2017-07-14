@@ -331,7 +331,10 @@ def paper_result(pid):
                         sol = ";".join(temp)
                         solution[key] = sol
                     elif i.questions.type == 4:
-                        solution[key] = u"正确" if sol == '1' else u"错误"
+                        if sol == '1':
+                            solution[key] = u"True"
+                        else:
+                            solution[key] = u"Flase"
                     else:
                         solution[key] = sol
                     break

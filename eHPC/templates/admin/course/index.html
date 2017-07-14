@@ -26,7 +26,8 @@
                 <table class="table fixed-table" id="course-table">
                     <thead>
                     <tr>
-                        <th width="40%">名称</th>
+                        <th width="170px">名称</th>
+                        <th width=""> </th>
                         <th width="10%">课程数</th>
                         <th width="10%">学生数</th>
                         <th width="20%">创建时间</th>
@@ -37,14 +38,14 @@
                     {% if all_courses | length > 0 %}
                         {% for c in all_courses %}
                         <tr data-id="{{ c.id }}" style="">
-                            <td  title="{{ c.title }}">
+                            <td title="{{ c.title }}">
                                 <a href="{{ url_for('admin.course_edit', course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-0"><img src="/static/{{ c.smallPicture }}" width="160px" height="90px"></a>
-                                <span class="overflow-ellipsis" data-toggle="tooltip">{{ c.title }}</span>
                             </td>
-                            <td>{{ c.lessonNum }}</td>
-                            <td>{{ c.studentNum }}</td>
-                            <td>{{ c.createdTime }}</td>
-                            <td>
+                            <td style="vertical-align: middle;"><span class="overflow-ellipsis" title="{{ c.title }}" style="display: inline-block;width: 100%;">{{ c.title }}</span></td>
+                            <td style="vertical-align: middle;">{{ c.lessonNum }}</td>
+                            <td style="vertical-align: middle;">{{ c.studentNum }}</td>
+                            <td style="vertical-align: middle;">{{ c.createdTime }}</td>
+                            <td style="vertical-align: middle;">
                                 <a href="{{ url_for('admin.course_edit', course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-0">管理</a>
                                 <span class="divider"> | </span>
                                 <a href="javascript:void(0)" name="del-btn">删除</a>
