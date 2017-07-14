@@ -261,9 +261,10 @@ group_members = db.Table('group_members',
 
 
 class Group(db.Model):
-    def __init__(self, title, about):
+    def __init__(self, title, about, logo):
         self.title = title
         self.about = about
+        self.logo = logo
         self.createdTime = datetime.now()
 
     __tablename__ = 'groups'

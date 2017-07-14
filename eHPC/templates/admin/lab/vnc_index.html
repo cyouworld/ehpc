@@ -85,7 +85,7 @@
                             <div class="col-md-9 controls" style="margin-top: 10px;">
                                 <input id="lab-picture-field" type="file" name="cover" accept="image/bmp,image/jpeg,image/png">
                             </div>
-                            <div class="col-md-9 controls" style="margin-top: 10px;">
+                            <div class="col-md-9 controls col-md-offset-2" style="margin-top: 10px;">
                                 <img id="lab-picture" src="#" style="height: 171px;width: 304px;">
                             </div>
                         </div>
@@ -127,6 +127,7 @@
             $("#vnc-knowledge-create-btn").click(function () {
                 $("#knowledge-title-field").val("");
                 $("#knowledge-content-field").val("");
+                $("#lab-picture").attr("src","{{ url_for('static',filename='upload/lab/default.jpg') }}");
                 kid = -1;
                 op = "create";
             });

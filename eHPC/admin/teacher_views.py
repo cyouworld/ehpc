@@ -101,7 +101,8 @@ def course_create():
     elif request.method == 'POST':
         # 创建课程
         idx = Course.query.count()
-        course_group = Group(title=request.form['title'], about=request.form['title'] + u' 的课程讨论')
+        course_group = Group(title=request.form['title'], about=request.form['title'] + u' 的课程讨论',
+                             logo='/static/upload/group_logo/default.png')
         db.session.add(course_group)
         db.session.commit()
 
@@ -1322,6 +1323,9 @@ def lab():
                 cover_path = os.path.join(current_app.config['LAB_COVER_FOLDER'], filename)
                 upload_img(request.files['cover'], 171, 304, cover_path)
                 db.session.commit()
+            else:
+                curr_knowledge.cover_url = "upload/lab/default.jpg"
+                db.session.commit()
             return jsonify(status='success')
         elif request.form['op'] == 'edit':
             curr_knowledge = Knowledge.query.filter_by(id=request.form['knowledge_id']).first_or_404()
@@ -1474,11 +1478,10 @@ def vnc_lab():
                 else:
                     return jsonify(status='fail')
             if op == 'edit':
-                print request.form
                 title = request.form.get('title', None)
                 about = request.form.get('about', None)
                 vnc_knowledge_id = request.form.get('vnc_knowledge_id', None)
-                cover = request.files.get('cover', None)
+                cover = request.files['cover']
 
                 if title is not None and about is not None and vnc_knowledge_id is not None:
                     vnc_knowledge_to_edit = current_user.teacher_vnc_knowledge.filter_by(id=vnc_knowledge_id).first()
@@ -1487,7 +1490,7 @@ def vnc_lab():
                         vnc_knowledge_to_edit.about = about
                     else:
                         return jsonify(status='fail')
-                    if cover is not None:
+                    if cover:
                         vnc_knowledge_to_edit.cover_url = os.path.join('upload/vnc_lab/', "cover_%d.png" % vnc_knowledge_to_edit.id)
                         filename = "cover_%d.png" % vnc_knowledge_to_edit.id
                         cover_path = os.path.join(current_app.config['VNC_LAB_COVER_FOLDER'], filename)
@@ -1500,20 +1503,22 @@ def vnc_lab():
                 title = request.form.get('title', None)
                 about = request.form.get('about', None)
                 vnc_knowledge_id = request.form.get('vnc_knowledge_id', None)
-                cover = request.files.get('cover', None)
+                cover = request.files['cover']
                 if title is not None and about is not None and vnc_knowledge_id is not None:
                     vnc_knowledge_to_create = VNCKnowledge(title=title, about=about)
                     vnc_knowledge_to_create.teacher = current_user
                     db.session.add(vnc_knowledge_to_create)
                     db.session.commit()
 
-                    if cover is not None:
+                    if cover:
                         vnc_knowledge_to_create.cover_url = os.path.join('upload/vnc_lab/', "cover_%d.png" % vnc_knowledge_to_create.id)
                         filename = "cover_%d.png" % vnc_knowledge_to_create.id
                         cover_path = os.path.join(current_app.config['VNC_LAB_COVER_FOLDER'], filename)
                         upload_img(cover, 171, 304, cover_path)
                         db.session.commit()
-
+                    else:
+                        vnc_knowledge_to_create.cover_url = "upload/vnc_lab/default.jpg"
+                        db.session.commit()
                     return jsonify(status='success')
 
                 else:
@@ -1536,7 +1541,6 @@ def vnc_lab_view(vnc_knowledge_id):
                 if vnc_task_id is not None:
                     cur_vnc_knowledge = current_user.teacher_vnc_knowledge.filter_by(id=vnc_knowledge_id).first()
                     if cur_vnc_knowledge is not None:
-                        print cur_vnc_knowledge
                         vnc_task_to_del = cur_vnc_knowledge.vnc_tasks.filter_by(id=vnc_task_id).first()
                         if vnc_task_to_del is not None:
                             for task in cur_vnc_knowledge.vnc_tasks:
