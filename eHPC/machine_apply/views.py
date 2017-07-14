@@ -56,7 +56,9 @@ def machine_applying():
 @login_required
 def machine_apply_create():
     if request.method == "GET":
-        return render_template('machine_apply/create.html', op="create", title=gettext('My Machine Hour Apply'))
+        return render_template('machine_apply/create.html',
+                               op="create", title=gettext('My Machine Hour Apply'),
+                               proxy_server=current_app.config['SSH_PROXY_SERVER'])
     elif request.method == 'POST':
         curr_apply = MachineApply()
         curr_apply.applicant_name = request.form.get('applicant_name')
