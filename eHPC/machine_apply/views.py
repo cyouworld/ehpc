@@ -11,6 +11,7 @@ from .. import db
 import random, string
 from io import open
 
+
 @machine_apply.route('/', methods=['GET', 'POST'])
 @login_required
 def index():
@@ -144,7 +145,7 @@ def machine_apply_edit(apply_id):
                                    title=gettext('My Machine Hour Apply'))
 
 
-@machine_apply.route('/machine_apply/ssh/ask-connect/', methods=['POST'])
+@machine_apply.route('/ssh/ask-connect/', methods=['POST'])
 @login_required
 def ask_connect():
     while True:
@@ -161,7 +162,7 @@ def ask_connect():
     return jsonify(status='success', token=token)
 
 
-@machine_apply.route('/machine_apply/ssh/', methods=['GET', 'POST'])
+@machine_apply.route('/ssh/', methods=['GET', 'POST'])
 def get_machine_info():
     op = request.form.get('op', None)
     if op is None:
@@ -192,7 +193,7 @@ def get_machine_info():
                            password=machine_account.password)
 
 
-@machine_apply.route('/machine_apply/todo/')
+@machine_apply.route('/todo/')
 def issue_unsubmit():
     issue_list = MachineApply.query.filter_by(user_id=current_user.id, submit_status=0).all()
     return render_template('machine_apply/issue_list.html',
@@ -201,7 +202,7 @@ def issue_unsubmit():
                            title=gettext('TODO List'))
 
 
-@machine_apply.route('/machine_apply/waiting/')
+@machine_apply.route('/waiting/')
 def issue_waiting():
     issue_list = MachineApply.query.filter_by(user_id=current_user.id, submit_status=1).all()
     return render_template('machine_apply/issue_list.html',
@@ -210,7 +211,7 @@ def issue_waiting():
                            title=gettext('Waiting List'))
 
 
-@machine_apply.route('/machine_apply/finished')
+@machine_apply.route('/finished/')
 def issue_finished():
     issue_list = MachineApply.query.filter_by(user_id=current_user.id, submit_status=2).all()
     return render_template('machine_apply/issue_list.html',

@@ -324,7 +324,7 @@
 
                             display = document.getElementById("display");
                             guac = new Guacamole.Client(
-                                new Guacamole.HTTPTunnel("http://" + "{{ proxy_server }}" + "/tunnel")
+                                new Guacamole.HTTPTunnel("http://" + "{{ proxy_server }}" + "/server/tunnel")
                             );
                             display.appendChild(guac.getDisplay().getElement());
                             guac.onerror = function (error) {
