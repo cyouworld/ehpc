@@ -89,7 +89,7 @@ def unbind(open_id):
 
 
 @wechat.route('/qr-code/', methods=['GET', 'POST'])
-@teacher_login
+@login_required
 def qr_code():
     """get方法用于处理用户使用二维码扫描加入课程的逻辑
        post方法用于生成课程二维码并返回前端
@@ -107,6 +107,9 @@ def qr_code():
             return render_template('wechat/result.html', text=u'二维码已失效！')
 
     if request.method == 'POST':
+        if current_user.permissions != 2:
+            return redirect(url_for('main.index'))
+
         cur_course = Course.query.filter_by(id=request.form['course_id']).first_or_404()
         qr = qrcode.QRCode(
             version=1,

@@ -52,6 +52,23 @@
                                 </div>
                                 <input name="end" id="dtp_input2" value="{{ course.endTime }}" type="hidden"><br>
                             </div>
+
+                            <div class="form-group">
+                                <label for="dtp_input1" class="col-md-2 control-label">共同管理</label>
+                                <div class="col-md-8">
+                                    <div style="margin-top: 8px;">
+                                    {% if course.assistants | length == 0 %}
+                                        暂无共同管理者
+                                    {% else %}
+                                        {% for a in course.assistants %}
+                                            <span style="margin-right: 10px;">{{ a.name }}</span>
+                                        {% endfor %}
+                                    {% endif %}
+                                        <a href="javascript:void(0);" data-toggle="modal" data-target="#teacher-list">修改</a>
+                                    </div>
+                                </div>
+                            </div>
+
                         </form>
                         <div class="col-md-offset-2 col-md-8">
                             <button id="course-permission-save" class="btn btn-fat btn-primary">保存</button>
@@ -65,6 +82,51 @@
         </div>
     </div>
 
+    <div class="modal fade" id="teacher-list" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+         aria-hidden="true">
+        <div class="modal-dialog" style="width: 50%">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">教师列表</h4>
+                </div>
+                <div class="modal-body">
+
+                    <table class="table table-striped fixed-table">
+                        <thead><!--表格头-->
+                        <tr>
+                            <th width="30%">姓名</th>
+                            <th width="30%">邮箱</th>
+                            <th width="30">学校</th>
+                            <th width="10%">操作</th>
+                        </tr>
+                        </thead>
+                        <tbody><!--表格主体-->
+                        {% for teacher in teachers if teacher %}
+                            {% if teacher != current_user %}
+                            <tr data-id="{{ teacher.id }}">
+                                <td>{{ teacher.name }}</td>
+                                <td>{{ teacher.email }}</td>
+                                <td>{{ teacher.university }}</td>
+                                <td>
+                                {% if teacher in course.assistants %}
+                                    <a data-op="del">删除</a>
+                                {% else %}
+                                    <a data-op="add">添加</a>
+                                {% endif %}
+                                </td>
+                            </tr>
+                            {% endif %}
+                        {% endfor %}
+                        </tbody>
+                    </table>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-info" data-dismiss="modal">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}
 
@@ -129,6 +191,28 @@
                         }
                     }
                 });
+            });
+
+            $("#teacher-list").find("table a").click(function () {
+                var id = $(this).parent().parent().data("id");
+                var op = $(this).data("op");
+                $.ajax({
+                    type: "post",
+                    url: window.href,
+                    data: {
+                        user_id: id,
+                        op: op
+                    },
+                    success: function (data) {
+                        if (data["status"] === "success") {
+                            location.reload();
+                        }
+                        else {
+                            alert_modal("操作失败，请稍后重试");
+                        }
+
+                    }
+                })
             });
         });
 

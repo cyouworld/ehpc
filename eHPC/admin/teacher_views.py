@@ -324,17 +324,28 @@ def lesson_material(course_id, lesson_id):
 def course_permission(course_id):
     if request.method == 'GET':
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
-        return render_template('admin/course/permission.html', course=curr_course, title=u'权限管理')
+        teachers = User.query.filter_by(permissions=2).all()
+        return render_template('admin/course/permission.html', course=curr_course, teachers=teachers, title=u'权限管理')
     elif request.method == 'POST':
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
-        curr_course.public = int(request.form['public'])
-        if curr_course.public:
-            curr_course.beginTime = None
-            curr_course.endTime = None
+        if request.form.get('op') is not None:
+            op = request.form.get('op')
+            user_id = request.form.get('user_id')
+            u = User.query.filter_by(id=user_id).first()
+            if op == 'add':
+                curr_course.assistants.append(u)
+            elif op == 'del':
+                curr_course.assistants.remove(u)
+            db.session.commit()
         else:
-            curr_course.beginTime = datetime.strptime(request.form['begin'], '%Y-%m-%d %X')
-            curr_course.endTime = datetime.strptime(request.form['end'], '%Y-%m-%d %X')
-        db.session.commit()
+            curr_course.public = int(request.form['public'])
+            if curr_course.public:
+                curr_course.beginTime = None
+                curr_course.endTime = None
+            else:
+                curr_course.beginTime = datetime.strptime(request.form['begin'], '%Y-%m-%d %X')
+                curr_course.endTime = datetime.strptime(request.form['end'], '%Y-%m-%d %X')
+            db.session.commit()
         return jsonify(status="success", course_id=course_id)
 
 
