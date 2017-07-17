@@ -4,7 +4,7 @@ $(document).ready(function () {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
         },
         "order": [[0, 'asc']],
-        "lengthMenu": [[ 10, 30, 50, 100, -1],[ 10, 30, 50, 100, 'ALL']]
+        "lengthMenu": [[ 10, 30, 50, 100, -1],[ 10, 30, 50, 100, '全部']]
     });
 
     $('.submit-score').click(function () {

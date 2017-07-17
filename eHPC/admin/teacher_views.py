@@ -512,6 +512,17 @@ def course_homework(course_id):
             uri = get_allscore_xlsx(all_users, all_homework, curr_course.id)
             download_file_name = "%s_score" % curr_course.title.encode('utf-8')
             return jsonify(status="success", download_file_name=download_file_name)
+        elif request.form['op'] == 'search':
+            #查找某位学生的未交作业情况
+            stu_info = request.form['stu_info']
+            curr_stu = curr_course.users.filter_by(student_id=stu_info).first_or_404()
+            all_homework = curr_course.homeworks.order_by(Homework.id.asc())
+            not_upload = []
+            for h in all_homework:
+                if check_upload(curr_stu, h.id) == 2:
+                    not_upload.append(h.title)
+
+            return jsonify(status="success", stu_name=curr_stu.name, not_upload=not_upload)
         else:
             return abort(404)
 

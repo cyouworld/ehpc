@@ -192,7 +192,7 @@ class Course(db.Model):
     homeworks = db.relationship('Homework', backref='course', lazy='dynamic')
     comments = db.relationship('Comment', backref='course', lazy='dynamic')
     # 加入该课程的用户, 多对多的关系
-    users = db.relationship('User', secondary=course_users,
+    users = db.relationship('User', secondary=course_users, lazy='dynamic',
                             backref=db.backref('courses', lazy='dynamic'))
     # 课程助理，多对多的关系
     assistants = db.relationship('User', secondary=course_assistants,

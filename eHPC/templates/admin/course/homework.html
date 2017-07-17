@@ -18,6 +18,12 @@
                             <i class="glyphicon glyphicon-floppy-save"></i>
                             导出所有成绩
                         </button>
+                        <div class="col-md-4 input-group pull-right" style="margin-right:10px">
+                            <input id="search-unupload-info" type="text" class="form-control" placeholder="输入学号查找未交的作业" style="border:1px solid #2DB7F5">
+                            <span class="input-group-btn">
+                                <button id="search-unupload-btn" class="btn btn-info" type="button">查找</button>
+                            </span>
+                        </div><!-- /input-group -->
                         {{ course.title }}——作业管理
                     </div>
 
@@ -53,81 +59,29 @@
                 </div>
         </div>
     </div>
+    <!-- 模态框（Modal） -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel"><span id="student-name"></span> -- 未交作业</h4>
+                </div>
+                <div class="modal-body">
+                    <ul id="unupload-list">
+                    </ul>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal -->
+    </div>
 
     {% include "admin/widget-del-warning.html" %}
 
 {% endblock %}
 {% block footer_ext %}
-    <script type="text/javascript" language="JavaScript">
-        var obj = null;
-        $("#homework-item-list").find("a[name=del-btn]").click(function () {
-            obj = this;
-            $("#del-warning").modal("show");
-        });
-
-        $("#del-confirm").click(function () {
-            $.ajax({
-                type: "post",
-                url: location.href,
-                data: {
-                    op: 'del',
-                    homework_id: $(obj).parent().parent().data('homework_id')
-                },
-                async: false,
-                success: function (data) {
-                    if (data["status"] == "success") {
-                        $(obj).parent().parent().remove();
-                        $("#del-warning").modal("hide");
-                    }
-                    else {
-                        alert_modal("删除失败");
-                    }
-                }
-            });
-        });
-
-        $("#download-score-btn").click(function () {
-            $.ajax({
-                type: "post",
-                url: location.href,
-                data: {
-                    op: "download-score",
-                },
-                success: function (data) {
-                    if(data.status=="success"){
-                        var score_path = $("input[name='score-path']").val();
-                        var a = document.createElement('a');
-                        a.href = score_path;
-                        a.target = '_parent';
-                        // Use a.download if available, it prevents plugins from opening.
-                        if ('download' in a) {
-                            var cur_time = new Date();
-                            var cur_year = cur_time.getFullYear();
-                            // 得到两位数的时间， 比如 20170302-11_01.zip
-                            var cur_month = ("0" + (cur_time.getMonth() + 1)).slice(-2);
-                            var cur_day = ("0" + cur_time.getDate()).slice(-2);
-                            var cur_hour = ("0" + cur_time.getHours()).slice(-2);
-                            var cur_min = ("0" + cur_time.getMinutes()).slice(-2);
-                            a.download = '' + data['download_file_name'] + '_' + cur_year
-                            + cur_month + cur_day + '-' + cur_hour + '-' + cur_min + '.xlsx';
-                        }
-                        // Add a to the doc for click to work.
-                        (document.body || document.documentElement).appendChild(a);
-                        if (a.click) {
-                            a.click(); // The click method is supported by most browsers.
-                        }
-                        else {
-                            $(a).click(); // Backup using jquery
-                        }
-                        // Delete the temporary link.
-                        a.parentNode.removeChild(a);
-                    }
-                },
-                error: function() {
-                    alert_modal("文件下载失败");
-                    setTimeout(function() {$("#modal-alert").modal("hide");}, 1500);
-                }
-            });
-        });
-    </script>
+    <script src="{{ url_for('static',filename='js/admin/course/homework.js') }}"></script>
 {% endblock %}

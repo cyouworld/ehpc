@@ -13,56 +13,54 @@
     <div class="container" id="content-container">
 
         <div class="row">
-
-                <div class="panel panel-default panel-col homework-content-box">
-                    <a class="back-to-homework-list" href="{{ url_for('admin.course_homework', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5">
-                        <i class="glyphicon glyphicon-chevron-left"></i>返回作业列表</a>
-                    <div class="panel-heading text-center">
-                        {{ homework.title }}
+            <div class="panel panel-default panel-col homework-content-box">
+                <a class="back-to-homework-list" href="{{ url_for('admin.course_homework', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5">
+                    <i class="glyphicon glyphicon-chevron-left"></i>返回作业列表</a>
+                <div class="panel-heading text-center">
+                    {{ homework.title }}
+                    <div class="op-btn pull-right">
+                        <button class="btn btn-danger btn-sm pull-right" id="del-homework-btn">
+                            <i class="glyphicon glyphicon-trash"></i>
+                            删除作业
+                        </button>
+                        <button class="btn btn-info btn-sm pull-right" id="download-homework-btn" style="margin-right:10px">
+                            <i class="es-icon es-icon-filedownload"></i>
+                            下载作业
+                        </button>
                     </div>
-
-                    <div class="panel-body" id="homework-manage-panel">
-                        <table id="homework-uploaded-table" class="table table-striped table-hover">
-                            <thead>
-                                <tr>
-                                    <th id="checkbox-col" width="5%">
-                                        <input id="all-homework-select" type="checkbox"></th>
-                                    <th class="text-center" width="40%">文件名</th>
-                                    <th class="text-center" width="20%">学号</th>
-                                    <th class="text-center" width="15%">姓名</th>
-                                    <th class="text-center" width="20%">提交时间</th>
+                </div>
+                <div class="panel-body" id="homework-manage-panel">
+                    <table id="homework-uploaded-table" class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th id="checkbox-col" width="5%">
+                                <input id="all-homework-select" type="checkbox"></th>
+                            <th class="text-center" width="40%">文件名</th>
+                            <th class="text-center" width="20%">学号</th>
+                            <th class="text-center" width="15%">姓名</th>
+                            <th class="text-center" width="20%">提交时间</th>
+                        </tr>
+                        </thead>
+                        <tbody id="homework-table-body">
+                        {% if uploads.count() > 0 %}
+                            {% for u in uploads | sort_materials() %}
+                                <tr data-upload_id="{{ u.id }}" data-user_id="{{ u.user.id }}" style="{% if u.submit_time > homework.deadline %}background-color:rgb(255,241,240);{% endif %}">
+                                    <td><input type="checkbox"></td>
+                                    <td class="text-center"><a href="{{ url_for('static',filename='homework/upload/'+u.uri) }}"
+                                                               download="{{ u.user.student_id }}_{{ u.user.name }}_{{ u.name }}">{{ u.name }}</a></td>
+                                    <td class="text-center">{{ u.user.student_id }}</td>
+                                    <td class="text-center">{{ u.user.name }}</td>
+                                    <td class="text-center">{{ u.submit_time }}</td>
                                 </tr>
-                            </thead>
-                            <tbody id="homework-table-body">
-                                {% if uploads.count() > 0 %}
-                                    {% for u in uploads | sort_materials() %}
-                                        <tr data-upload_id="{{ u.id }}" data-user_id="{{ u.user.id }}" style="{% if u.submit_time > homework.deadline %}background-color:rgb(255,241,240);{% endif %}">
-                                            <td><input type="checkbox"></td>
-                                            <td class="text-center"><a href="{{ url_for('static',filename='homework/upload/'+u.uri) }}"
-                                           download="{{ u.user.student_id }}_{{ u.user.name }}_{{ u.name }}">{{ u.name }}</a></td>
-                                            <td class="text-center">{{ u.user.student_id }}</td>
-                                            <td class="text-center">{{ u.user.name }}</td>
-                                            <td class="text-center">{{ u.submit_time }}</td>
-                                        </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr class="text-center"><td colspan="5">本次作业暂未有人提交</td></tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                        <input type="hidden" name="zip-path" value="{{ url_for('static',filename='homework/upload/course_%d/homework_%d/homework_%d.zip' % (course.id,homework.id,homework.id)) }}">
-                    </div>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="text-center"><td colspan="5">本次作业暂未有人提交</td></tr>
+                        {% endif %}
+                        </tbody>
+                    </table>
+                    <input type="hidden" name="zip-path" value="{{ url_for('static',filename='homework/upload/course_%d/homework_%d/homework_%d.zip' % (course.id,homework.id,homework.id)) }}">
                 </div>
-                <div class="op-btn">
-                    <button class="btn btn-danger btn-sm pull-right" id="del-homework-btn">
-                        <i class="glyphicon glyphicon-trash"></i>
-                        删除
-                    </button>
-                    <button class="btn btn-info btn-sm pull-right" id="download-homework-btn" style="margin-right:10px">
-                        <i class="es-icon es-icon-filedownload"></i>
-                        下载
-                    </button>
-                </div>
+            </div>
         </div>
     </div>
 

@@ -18,7 +18,7 @@
         <div class="row">
 
                 <div class="panel panel-default panel-col homework-content-box">
-                    <a id="back-to-homework-list" href="{{ url_for('admin.course_homework', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5">
+                    <a class="back-to-homework-list" href="{{ url_for('admin.course_homework', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5">
                         <i class="glyphicon glyphicon-chevron-left"></i>返回作业列表</a>
                     <div class="panel-heading text-center" style="font-size: 18px">
                         作业内容编辑
@@ -127,7 +127,7 @@
 
 {% block footer_ext %}
     <script src='{{ url_for("static", filename="js/custom_simplemde.js") }}'></script>
-    <script src='{{ url_for("static", filename="js/admin/course/homework.js") }}'></script>
+    <script src='{{ url_for("static", filename="js/admin/course/homework_edit.js") }}'></script>
     <script type="text/javascript" language="JavaScript">
         var back_to_list = "{{ url_for('admin.course_homework', course_id=course.id) }}";
         var options = $("#homework-op").val();

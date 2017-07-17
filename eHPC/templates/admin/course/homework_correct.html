@@ -12,12 +12,21 @@
     <div class="container" id="content-container">
 
         <div class="row">
-
                 <div class="panel panel-default panel-col homework-content-box">
                     <a class="back-to-homework-list" href="{{ url_for('admin.course_homework', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-5">
                         <i class="glyphicon glyphicon-chevron-left"></i>返回作业列表</a>
                     <div class="panel-heading text-center">
                         {{ homework.title }}批改
+                        <div class="op-btn pull-right">
+                            <button class="btn btn-info btn-sm pull-right" id="download-score-btn" style="margin-right:10px">
+                                <i class="glyphicon glyphicon-floppy-save"></i>
+                                导出成绩模板
+                            </button>
+                            <button class="btn btn-info btn-sm pull-right" id="upload-score-btn" style="margin-right:10px" onclick="$('input[id=score-file]').click();">
+                                <i class="es-icon es-icon-fileupdate"></i>
+                                导入成绩
+                            </button>
+                        </div>
                     </div>
 
                     <div class="panel-body" id="homework-manage-panel">
@@ -71,17 +80,6 @@
                                data-parsley-max-file-size="1024" data-parsley-required-message="请选择要上传的文件" required>
                     </form>
                 </div>
-                <div class="op-btn">
-                    <button class="btn btn-info btn-sm pull-right" id="download-score-btn" style="margin-right:10px">
-                        <i class="glyphicon glyphicon-floppy-save"></i>
-                        导出成绩模板
-                    </button>
-                    <button class="btn btn-info btn-sm pull-right" id="upload-score-btn" style="margin-right:10px" onclick="$('input[id=score-file]').click();">
-                        <i class="es-icon es-icon-fileupdate"></i>
-                        导入成绩
-                    </button>
-                </div>
-
         </div>
     </div>
 
