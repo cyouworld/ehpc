@@ -95,10 +95,6 @@ def join(cid, u=current_user):
         course_joined.studentNum += 1
         db.session.commit()
         msg = 'success'
-        send_message(u.name + u' 已加入您的 ' + course_joined.title + u' 课程',
-                     url_for('admin.course_member', course_id=course_joined.id),
-                     User.query.filter_by(id=u.id).first(),
-                     [course_joined.teacher])
     elif course_joined.beginTime < datetime.now() < course_joined.endTime:  # 判断是否在规定时间内
         curr_apply = Apply.query.filter_by(user_id=current_user.id).filter_by(course_id=cid).first()
         if curr_apply is None:
@@ -110,7 +106,7 @@ def join(cid, u=current_user):
             db.session.commit()
             msg = 'pending'
             send_message(u.name + u' 申请加入您的 ' + course_joined.title + u' 课程',
-                         url_for('admin.course_member', course_id=course_joined.id),
+                         url_for('admin.course_member', course_id=course_joined.id, search_content=u.name),
                          User.query.filter_by(id=u.id).first(),
                          [course_joined.teacher])
         else:

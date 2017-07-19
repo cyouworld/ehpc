@@ -420,7 +420,7 @@ CREATE TABLE `docker_images` (
   `user_id` int(11) NOT NULL,
   `docker_holder_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `user_id` (`user_id`),
+  UNIQUE KEY `user_id` (`user_id`),
   KEY `docker_holder_id` (`docker_holder_id`),
   CONSTRAINT `docker_images_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
   CONSTRAINT `docker_images_ibfk_2` FOREIGN KEY (`docker_holder_id`) REFERENCES `docker_holders` (`id`)
@@ -2047,6 +2047,7 @@ CREATE TABLE `users` (
   `postNum` int(11) NOT NULL,
   `commentNum` int(11) NOT NULL,
   `open_id` varchar(64) DEFAULT NULL,
+  `experience` int(11) DEFAULT 0,
   PRIMARY KEY (`id`),
   UNIQUE KEY `ix_users_email` (`email`),
   UNIQUE KEY `ix_users_username` (`username`)
@@ -2055,22 +2056,22 @@ CREATE TABLE `users` (
 -- ----------------------------
 -- Records of users
 -- ----------------------------
-INSERT INTO `users` VALUES ('1', 'root', 'pbkdf2:sha1:1000$xBnOyGu0$2265b81c262f0438d80348748b24db1f66a65425', '1291023320@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-03-24 09:24:17', '2016-09-29 03:14:30', '', '1.png?t=1475844478.0', '1', '知其然，知其所以然。知识广度是深度的副产品！', '6', '1', '3', null);
-INSERT INTO `users` VALUES ('2', 'test', 'pbkdf2:sha1:1000$JZE0rscV$a7b07ad8602a608e76dc583142b1aaf2c378c55b', '1@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2017-01-04 14:13:35', '2016-09-29 03:35:29', null, 'none.jpg', '1', '好好学习，天天向上', '0', '0', '1', null);
-INSERT INTO `users` VALUES ('3', 'teacher', 'pbkdf2:sha1:1000$ZRqJzJuR$ec4e50db6eb3eaae92e7cb8bd9468fd2743c3505', 'teacher@qq.com', '张三丰', '0', '13800138000', '中山大学', '150101102', -1, '0', '2017-04-14 16:30:44', '2016-09-29 03:36:08', 'http://sdcs.sysu.edu.cn', '3.png?t=1489327909.05', '2', '混吃等死不舒服', '0', '4', '6', null);
-INSERT INTO `users` VALUES ('4', 'abc', 'pbkdf2:sha1:1000$Z0hb47ZO$8cc84309e6a696c6deb28d6ebb910fa828d16e3d', '3@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2016-10-23 10:40:03', '2016-10-17 03:00:38', null, 'none.jpg', '1', null, '1', '2', '0', null);
-INSERT INTO `users` VALUES ('5', 'admin', 'pbkdf2:sha1:1000$h9IWWCJh$78e5c725ab15124732c7b19dbe43775df4e823e1', 'admin@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2017-03-23 15:23:28', '2016-10-22 11:41:15', null, 'none.jpg', '0', null, '0', '0', '0', null);
-INSERT INTO `users` VALUES ('6', 'wudi', 'pbkdf2:sha1:1000$6eg5KT1A$36731eb6b025347439f6f333050fa727f7d74d94', 'wudi27@mail.sysu.edu.cn', '吴迪测试2', '0', '13800138000', '中山大学', '14312412', -1, '0', '2017-03-22 23:09:29', '2016-10-18 02:57:55', 'netlab.sysu.edu.cn', '6.png?t=1490195402.92', '2', null, '1', '1', '0', null);
-INSERT INTO `users` VALUES ('7', 'yongyi_yang', 'pbkdf2:sha1:1000$qeUp02pL$088fe9b296a054b622d5b3826045d9c7dbd28e9c', '18826073128@163.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2016-12-15 12:03:44', '2016-10-18 15:03:29', null, 'none.jpg', '1', null, '2', '0', '0', null);
-INSERT INTO `users` VALUES ('8', 'alexhanbing', 'pbkdf2:sha1:1000$MsiV0RcE$b9d0794fd92ce0f1d6c3432f4a68614ec60294ca', '565613352@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2016-10-21 14:18:52', '2016-10-21 14:18:52', null, null, '1', null, '0', '3', '0', null);
-INSERT INTO `users` VALUES ('9', 'forest80', 'pbkdf2:sha1:1000$34jYf26A$3f6f628bd4e48ed8492219171920e9d498d5023b', 'forest80@163.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2016-12-05 14:04:15', '2016-12-05 14:04:15', null, 'none.jpg', '1', null, '0', '0', '0', null);
-INSERT INTO `users` VALUES ('10', 'Zouzhp', 'pbkdf2:sha1:1000$fzjFGAmb$30667cca608819c147c04d5a49671989dd66cefd', '503951764@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-03-16 10:29:13', '2016-12-12 10:22:07', null, '10.png?t=1481509362.88', '1', null, '0', '0', '0', null);
-INSERT INTO `users` VALUES ('11', 'test1', 'pbkdf2:sha1:1000$3fdjJ0du$b93a90b23e1365bd53962cf7339ff69d7c6e0423', 'test@163.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2016-12-15 12:15:14', '2016-12-15 12:15:14', null, 'none.jpg', '1', null, '0', '0', '0', null);
-INSERT INTO `users` VALUES ('12', 'test_nscc', 'pbkdf2:sha1:1000$ANtf20qe$a3f467c203a80abde2b126307f04af5affb50164', 'lijianggs@126.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-03-12 21:06:06', '2017-01-03 15:14:08', null, 'none.jpg', '1', null, '0', '0', '0', null);
-INSERT INTO `users` VALUES ('13', '111', 'pbkdf2:sha1:1000$DaD5XWyO$c00d0caab874bac4e3ef1328bdcfc0408a5974b9', '1970025901@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-03-21 16:32:50', '2017-01-09 18:47:36', null, 'none.jpg', '1', null, '0', '0', '0', null);
-INSERT INTO `users` VALUES ('14', '233', 'pbkdf2:sha1:1000$OdRDanMv$0def1b35ce8cb669df1034d4a2c2bb1d057bbae6', '50395@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-01-14 21:42:28', '2017-01-14 21:42:28', null, 'none.jpg', '1', null, '0', '0', '0', null);
-INSERT INTO `users` VALUES ('15', 'dwu', 'pbkdf2:sha1:1000$99UY1dEj$fe3e2848ca6be8d45783b7d2047ad83a1d38d9c8', 'wudi.cuhk@foxmail.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2017-03-25 22:07:05', '2017-03-05 12:22:41', null, '15.png?t=1490194462.8', '2', null, '0', '0', '0', null);
-INSERT INTO `users` VALUES ('16', 'hpc', 'pbkdf2:sha1:1000$AsXJJ16h$52545c65a85e4b4b1e2010ca0223bd7ebbe4d87d', 'hpc@qq.com', 'hpc', '1', '0', '0', '0', -1, '1', '2017-05-31 05:12:37', '2017-05-16 07:14:30', null, 'none.jpg', '3', null, '0', '0', '0', null);
+INSERT INTO `users` VALUES ('1', 'root', 'pbkdf2:sha1:1000$xBnOyGu0$2265b81c262f0438d80348748b24db1f66a65425', '1291023320@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-03-24 09:24:17', '2016-09-29 03:14:30', '', '1.png?t=1475844478.0', '1', '知其然，知其所以然。知识广度是深度的副产品！', '6', '1', '3', null, 0);
+INSERT INTO `users` VALUES ('2', 'test', 'pbkdf2:sha1:1000$JZE0rscV$a7b07ad8602a608e76dc583142b1aaf2c378c55b', '1@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2017-01-04 14:13:35', '2016-09-29 03:35:29', null, 'none.jpg', '1', '好好学习，天天向上', '0', '0', '1', null, 0);
+INSERT INTO `users` VALUES ('3', 'teacher', 'pbkdf2:sha1:1000$ZRqJzJuR$ec4e50db6eb3eaae92e7cb8bd9468fd2743c3505', 'teacher@qq.com', '张三丰', '0', '13800138000', '中山大学', '150101102', -1, '0', '2017-04-14 16:30:44', '2016-09-29 03:36:08', 'http://sdcs.sysu.edu.cn', '3.png?t=1489327909.05', '2', '混吃等死不舒服', '0', '4', '6', null, 0);
+INSERT INTO `users` VALUES ('4', 'abc', 'pbkdf2:sha1:1000$Z0hb47ZO$8cc84309e6a696c6deb28d6ebb910fa828d16e3d', '3@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2016-10-23 10:40:03', '2016-10-17 03:00:38', null, 'none.jpg', '1', null, '1', '2', '0', null, 0);
+INSERT INTO `users` VALUES ('5', 'admin', 'pbkdf2:sha1:1000$h9IWWCJh$78e5c725ab15124732c7b19dbe43775df4e823e1', 'admin@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2017-03-23 15:23:28', '2016-10-22 11:41:15', null, 'none.jpg', '0', null, '0', '0', '0', null, 0);
+INSERT INTO `users` VALUES ('6', 'wudi', 'pbkdf2:sha1:1000$6eg5KT1A$36731eb6b025347439f6f333050fa727f7d74d94', 'wudi27@mail.sysu.edu.cn', '吴迪测试2', '0', '13800138000', '中山大学', '14312412', -1, '0', '2017-03-22 23:09:29', '2016-10-18 02:57:55', 'netlab.sysu.edu.cn', '6.png?t=1490195402.92', '2', null, '1', '1', '0', null, 0);
+INSERT INTO `users` VALUES ('7', 'yongyi_yang', 'pbkdf2:sha1:1000$qeUp02pL$088fe9b296a054b622d5b3826045d9c7dbd28e9c', '18826073128@163.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2016-12-15 12:03:44', '2016-10-18 15:03:29', null, 'none.jpg', '1', null, '2', '0', '0', null, 0);
+INSERT INTO `users` VALUES ('8', 'alexhanbing', 'pbkdf2:sha1:1000$MsiV0RcE$b9d0794fd92ce0f1d6c3432f4a68614ec60294ca', '565613352@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2016-10-21 14:18:52', '2016-10-21 14:18:52', null, null, '1', null, '0', '3', '0', null, 0);
+INSERT INTO `users` VALUES ('9', 'forest80', 'pbkdf2:sha1:1000$34jYf26A$3f6f628bd4e48ed8492219171920e9d498d5023b', 'forest80@163.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2016-12-05 14:04:15', '2016-12-05 14:04:15', null, 'none.jpg', '1', null, '0', '0', '0', null, 0);
+INSERT INTO `users` VALUES ('10', 'Zouzhp', 'pbkdf2:sha1:1000$fzjFGAmb$30667cca608819c147c04d5a49671989dd66cefd', '503951764@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-03-16 10:29:13', '2016-12-12 10:22:07', null, '10.png?t=1481509362.88', '1', null, '0', '0', '0', null, 0);
+INSERT INTO `users` VALUES ('11', 'test1', 'pbkdf2:sha1:1000$3fdjJ0du$b93a90b23e1365bd53962cf7339ff69d7c6e0423', 'test@163.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2016-12-15 12:15:14', '2016-12-15 12:15:14', null, 'none.jpg', '1', null, '0', '0', '0', null, 0);
+INSERT INTO `users` VALUES ('12', 'test_nscc', 'pbkdf2:sha1:1000$ANtf20qe$a3f467c203a80abde2b126307f04af5affb50164', 'lijianggs@126.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-03-12 21:06:06', '2017-01-03 15:14:08', null, 'none.jpg', '1', null, '0', '0', '0', null, 0);
+INSERT INTO `users` VALUES ('13', '111', 'pbkdf2:sha1:1000$DaD5XWyO$c00d0caab874bac4e3ef1328bdcfc0408a5974b9', '1970025901@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-03-21 16:32:50', '2017-01-09 18:47:36', null, 'none.jpg', '1', null, '0', '0', '0', null, 0);
+INSERT INTO `users` VALUES ('14', '233', 'pbkdf2:sha1:1000$OdRDanMv$0def1b35ce8cb669df1034d4a2c2bb1d057bbae6', '50395@qq.com', 'name', '1', '13800138000', 'university', '0', -1, '1', '2017-01-14 21:42:28', '2017-01-14 21:42:28', null, 'none.jpg', '1', null, '0', '0', '0', null, 0);
+INSERT INTO `users` VALUES ('15', 'dwu', 'pbkdf2:sha1:1000$99UY1dEj$fe3e2848ca6be8d45783b7d2047ad83a1d38d9c8', 'wudi.cuhk@foxmail.com', 'name', '1', '13800138000', 'university', '0', -1, '0', '2017-03-25 22:07:05', '2017-03-05 12:22:41', null, '15.png?t=1490194462.8', '2', null, '0', '0', '0', null, 0);
+INSERT INTO `users` VALUES ('16', 'hpc', 'pbkdf2:sha1:1000$AsXJJ16h$52545c65a85e4b4b1e2010ca0223bd7ebbe4d87d', 'hpc@qq.com', 'hpc', '1', '0', '0', '0', -1, '1', '2017-05-31 05:12:37', '2017-05-16 07:14:30', null, 'none.jpg', '3', null, '0', '0', '0', null, 0);
 
 -- ----------------------------
 -- Table structure for `vnc_knowledge`

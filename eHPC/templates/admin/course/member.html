@@ -160,6 +160,11 @@
                 },
                 "lengthMenu": [[ 30, 50, 100, -1], [30, 50, 100, "全部"]]
             });
+
+            {% if search_content %}
+                $('#user-table').DataTable().search("{{ search_content }}");
+            {% endif %}
+
             $("#select-all").click(function () {
                 if ($(this).prop("checked")) {
                     $("input[name=select]").prop("checked", true);

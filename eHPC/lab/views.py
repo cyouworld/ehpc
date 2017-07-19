@@ -19,6 +19,7 @@ import random, string
 import requests, threading
 from .. import db
 import json
+from sqlalchemy import exc
 
 
 @lab.route('/')
@@ -229,13 +230,6 @@ def vnc_task(vnc_knowledge_id):
 
         response_vnc_task = VNCTask.query.filter_by(vnc_knowledge_id=vnc_knowledge_id).filter_by(vnc_task_num=response_vnc_task_num).first()
         if response_vnc_task is not None:
-            # 记录用户通过配置实验小任务
-            db.session.add(Statistic(current_user.id,
-                                     Statistic.MODULE_LAB,
-                                     Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK,
-                                     json.dumps(dict(task_id=response_vnc_task.id))))
-            db.session.commit()
-
             return render_template('lab/vnc.html',
                                    title=gettext('vnc'),
                                    response_vnc_task=response_vnc_task,
@@ -309,22 +303,21 @@ def vnc_ready_to_connect():
             continue
         break
 
-    # result, docker_image = is_reconnection()
-    # if result is True:
-    #     print("reconnect")
-    #     token = docker_image.token
-    #     docker_image.status = DockerImage.READY_TO_CONNECT
-    #     db.session.commit()
-    #     return jsonify(status='success',
-    #                    token=token,
-    #                    address=docker_image.docker_holder.ip + ':' + str(docker_image.docker_holder.public_port))
+    try:
+        docker_image = DockerImage(vnc_password=''.join(random.sample(string.ascii_letters + string.digits, 8)),
+                                   ssh_password=current_app.config['SSH_PASSWORD'],
+                                   name='image_' + str(current_user.id),
+                                   user_id=current_user.id)
+        db.session.add(docker_image)
+        db.session.commit()
 
-    docker_image = current_user.docker_image
-
-    if docker_image is None:
-        result, message, docker_image = create_new_image()
+        result, message, docker_image = create_new_image(docker_image)
         if result is False:
             return jsonify(status='fail', msg=message)
+
+    except exc.IntegrityError as e:
+        db.session.rollback()
+        docker_image = DockerImage.query.filter_by(user_id=current_user.id)
 
     if protocol == 'vnc':
         if docker_image.is_vnc_running is False:
@@ -339,7 +332,6 @@ def vnc_ready_to_connect():
 
     docker_image.token = token
     docker_image.status = DockerImage.READY_TO_CONNECT
-
     db.session.commit()
     return jsonify(status='success',
                    token=token,
@@ -441,18 +433,20 @@ def db_controller():
         return jsonify(status='success')
 
     elif op == 'reset_information':
+        image_id = request.form.get('image_id', None)
         tunnel_id = request.form.get('tunnel_id', None)
 
-        if tunnel_id is None:
+        if image_id is None or tunnel_id is None:
             return jsonify(status='fail')
 
-        cur_image = DockerImage.query.filter_by(tunnel_id=tunnel_id).first()
+        cur_image = DockerImage.query.filter_by(image_id=image_id).first()
         if cur_image is None:
             return jsonify(status='fail')
 
-        cur_image.tunnel_id = None
-        cur_image.status = DockerImage.DISCONNECTED
-        cur_image.token = None
+        if cur_image.tunnel_id == tunnel_id:
+            cur_image.tunnel_id = None
+            cur_image.status = DockerImage.DISCONNECTED
+            cur_image.token = None
 
         cur_image.docker_holder.running_container_count -= 1
         db.session.commit()

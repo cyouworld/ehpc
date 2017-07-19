@@ -388,3 +388,11 @@ def notification_read(note_info_id):
     if not status:
         return jsonify(status='fail')
     return jsonify(status='success')
+
+
+@user.route('/statistics/')
+@login_required
+def statistics():
+    return render_template('user/statistics.html',
+                           statistics=current_user.statistics,
+                           Statistic=Statistic)

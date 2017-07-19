@@ -1,359 +1,69 @@
 {% extends 'base.html' %}
 
 {% block header_ext %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/statistics.css') }}">
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link href="{{ url_for('static', filename='css/problem.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-    <div class="container">
-        <div class="text-line">
-            <h5><span>最近活动</span>
-                <div class="line"></div>
-            </h5>
-            <div class="subtitle">记录您的足迹</div>
+    <section class="course-list-section">
+        <div class="container">
+            <div class="text-line">
+                <h5><span>最近活动</span>
+                    <div class="line"></div>
+                </h5>
+                <div class="subtitle">记录您的足迹</div>
+            </div>
+            {% if user_courses %}
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">已加入的课程</h3></div>
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="course-list">
+                                {% with courses=user_courses %}
+                                    {% include 'course/widget_course_list.html' %}
+                                {% endwith %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if user_topics %}
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">最近评论过的话题</h3></div>
+                    <div class="panel-body">
+                        {% with latest_topics=user_topics %}
+                            {% include 'group/widget_topic_list.html' %}
+                        {% endwith %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if user_program %}
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">最近提交过的编程题</h3></div>
+                    <div class="panel-body">
+                        {% for problem in user_program %}
+                            <a class="media choice-options btn-block color-primary"
+                               href="{{ url_for('problem.program_view', pid=problem.id) }}">{{ problem.title }}</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+
+            {% if user_challenges %}
+                <div class="panel panel-default">
+                    <div class="panel-heading"><h3 class="panel-title">正在进行的实验小任务</h3></div>
+                    <div class="panel-body">
+                        {% for challenge in user_challenges %}
+                            <a class="media choice-options btn-block color-primary"
+                               href="{{ url_for('lab.knowledge', kid=challenge.knowledge_id, progress=challenge.cur_progress+1)}}">
+                                {{ challenge.knowledge.title }}(已通过 {{ challenge.cur_progress }}个)</a>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
         </div>
-
-
-        <div id="today" class="row panel">
-            <h2 class="panel-heading"><span>本日</span></h2>
-            <div class="panel-body">
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 today-block">
-                    <h5 class="today-text">有 {{ statistics | statistic_action_count(20001) }} 位用户访问了您的个人主页</h5>
-                    <h5 class="today-text">创建了 {{ statistics | statistic_action_count(60001) }} 个新的话题</h5>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 today-block">
-                    <h5 class="today-text">浏览了 {{ statistics | statistic_action_count(30001) }} 个课程相关文档或视频</h5>
-                    <h5 class="today-text">参与了 {{ statistics | statistic_action_count(30002) }} 个课程测试</h5>
-                    <h5 class="today-text">并成功提交了 {{ statistics | statistic_action_count(30003) }} 份答卷</h5>
-                    <h5 class="today-text">对 {{ statistics | statistic_action_count(30004) }} 个课程发表了评论</h5>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 today-block">
-                    <h5 class="today-text">浏览了涉及 {{ statistics | statistic_action_count(40001) }} 个知识点的题目</h5>
-                    <h5 class="today-text">并提交了 {{ statistics | statistic_action_count(40002) }} 份作答</h5>
-                    <h5 class="today-text">浏览了 {{ statistics | statistic_action_count(50001) }} 道编程题目</h5>
-                    <h5 class="today-text">并发起了 {{ statistics | statistic_action_count(50002) }} 次代码提交</h5>
-                </div>
-                <div class="col-xs-12 col-sm-6 col-md-6 col-lg-6 today-block">
-                    <h5 class="today-text">浏览了 {{ statistics | statistic_action_count(70001) }} 个编程实验</h5>
-                    <h5 class="today-text">并完成了 {{ statistics | statistic_action_count(70002) }} 个实验小任务</h5>
-                    <h5 class="today-text">浏览了 {{ statistics | statistic_action_count(70003) }} 个配置实验</h5>
-                    <h5 class="today-text">并完成了 {{ statistics | statistic_action_count(70004) }} 个实验小任务</h5>
-                </div>
-            </div>
-        </div>
-        <div id="this-week" class="row panel">
-            <h2 class="panel-heading"><span>本周</span></h2>
-            <div id="week-action-topic-create-topic" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                <canvas></canvas>
-            </div>
-            <div id="week-action-course-visit-document-or-video" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                <canvas></canvas>
-            </div>
-            <div id="week-action-course-submit-quiz-answer" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                <canvas></canvas>
-            </div>
-            <div id="week-action-question-submit-answer" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                <canvas></canvas>
-            </div>
-            <div id="week-action-program-submit-code" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                <canvas></canvas>
-            </div>
-            <div id="week-action-lab-pass-a-programing-task" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                <canvas></canvas>
-            </div>
-            <div id="week-action-lab-pass-a-configuration-task" class="col-xs-12 col-sm-6 col-md-6 col-lg-6">
-                <canvas></canvas>
-            </div>
-        </div>
-    </div>
-{% endblock %}
-
-{% block footer_ext %}
-    <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
-    <script>
-        var statistics = {{ statistics | statistic_get_data | safe }};
-        $(function () {
-            var week_label = ["日", "一", "二", "三", "四", "五", "六"];
-            var series = [0, 0, 0, 0, 0, 0, 0];
-            var temp = statistics["60001"];
-            for(var i in temp){
-                series[new Date(temp[i]["time"]).getDay()]++;
-            }
-
-            var chart1 = new Chart($("#week-action-topic-create-topic").find("canvas").eq(0), {
-                type: 'bar',
-                data: {
-                    labels: week_label,
-                    datasets: [{
-                        data: series,
-                        backgroundColor: 'rgba(51, 122, 183, 0.3)',
-                        borderColor: 'rgba(46, 109, 164, 0.3)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        fontSize: 16,
-                        text: "发起话题(个)"
-                    },
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        xAxes: [{
-                            barPercentage: 0.5
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }]
-                    }
-                }
-            });
-
-            series = [0, 0, 0, 0, 0, 0, 0];
-            temp = statistics["30001"];
-            for(i in temp){
-                series[new Date(temp[i]["time"]).getDay()]++;
-            }
-
-            var chart2 = new Chart($("#week-action-course-visit-document-or-video").find("canvas").eq(0), {
-                type: 'bar',
-                data: {
-                    labels: week_label,
-                    datasets: [{
-                        data: series,
-                        backgroundColor: 'rgba(51, 122, 183, 0.3)',
-                        borderColor: 'rgba(46, 109, 164, 0.3)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        fontSize: 16,
-                        text: "课程内容浏览(次)"
-                    },
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        xAxes: [{
-                            barPercentage: 0.5
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }]
-                    }
-                }
-            });
-
-            series = [0, 0, 0, 0, 0, 0, 0];
-            temp = statistics["30003"];
-            for(i in temp){
-                series[new Date(temp[i]["time"]).getDay()]++;
-            }
-
-            var chart3 = new Chart($("#week-action-course-submit-quiz-answer").find("canvas").eq(0), {
-                type: 'bar',
-                data: {
-                    labels: week_label,
-                    datasets: [{
-                        data: series,
-                        backgroundColor: 'rgba(51, 122, 183, 0.3)',
-                        borderColor: 'rgba(46, 109, 164, 0.3)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        fontSize: 16,
-                        text: "完成课程小测(个)"
-                    },
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        xAxes: [{
-                            barPercentage: 0.5
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }]
-                    }
-                }
-            });
-
-            series = [0, 0, 0, 0, 0, 0, 0];
-            temp = statistics["40002"];
-            for(i in temp){
-                series[new Date(temp[i]["time"]).getDay()]++;
-            }
-
-            var chart4 = new Chart($("#week-action-question-submit-answer").find("canvas").eq(0), {
-                type: 'bar',
-                data: {
-                    labels: week_label,
-                    datasets: [{
-                        data: series,
-                        backgroundColor: 'rgba(51, 122, 183, 0.3)',
-                        borderColor: 'rgba(46, 109, 164, 0.3)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        fontSize: 16,
-                        text: "提交题库题目作答(次)"
-                    },
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        xAxes: [{
-                            barPercentage: 0.5
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }]
-                    }
-                }
-            });
-
-            series = [0, 0, 0, 0, 0, 0, 0];
-            temp = statistics["50002"];
-            for(i in temp){
-                series[new Date(temp[i]["time"]).getDay()]++;
-            }
-
-            var chart5 = new Chart($("#week-action-program-submit-code").find("canvas").eq(0), {
-                type: 'bar',
-                data: {
-                    labels: week_label,
-                    datasets: [{
-                        data: series,
-                        backgroundColor: 'rgba(51, 122, 183, 0.3)',
-                        borderColor: 'rgba(46, 109, 164, 0.3)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        fontSize: 16,
-                        text: "提交运行编程题代码(次)"
-                    },
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        xAxes: [{
-                            barPercentage: 0.5
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }]
-                    }
-                }
-            });
-
-            series = [0, 0, 0, 0, 0, 0, 0];
-            temp = statistics["70002"];
-            for(i in temp){
-                series[new Date(temp[i]["time"]).getDay()]++;
-            }
-
-            var chart6 = new Chart($("#week-action-lab-pass-a-programing-task").find("canvas").eq(0), {
-                type: 'bar',
-                data: {
-                    labels: week_label,
-                    datasets: [{
-                        data: series,
-                        backgroundColor: 'rgba(51, 122, 183, 0.3)',
-                        borderColor: 'rgba(46, 109, 164, 0.3)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        fontSize: 16,
-                        text: "完成编程实验(个)"
-                    },
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        xAxes: [{
-                            barPercentage: 0.5
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }]
-                    }
-                }
-            });
-
-            series = [0, 0, 0, 0, 0, 0, 0];
-            temp = statistics["70004"];
-            for(i in temp){
-                series[new Date(temp[i]["time"]).getDay()]++;
-            }
-
-            var chart7 = new Chart($("#week-action-lab-pass-a-configuration-task").find("canvas").eq(0), {
-                type: 'bar',
-                data: {
-                    labels: week_label,
-                    datasets: [{
-                        data: series,
-                        backgroundColor: 'rgba(51, 122, 183, 0.3)',
-                        borderColor: 'rgba(46, 109, 164, 0.3)',
-                        borderWidth: 2
-                    }]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        fontSize: 16,
-                        text: "完成配置实验(个)"
-                    },
-                    legend: {
-                        display: false
-                    },
-                    scales: {
-                        xAxes: [{
-                            barPercentage: 0.5
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }]
-                    }
-                }
-            });
-        });
-
-    </script>
+    </section>
 {% endblock %}

@@ -1,15 +1,12 @@
 from . import filter_blueprint
 from ..models import Statistic
 import json
-
-
-@filter_blueprint.app_template_filter('statistic_action_count')
-def statistic_action_count(statistics, action):
-    return len(statistics.filter_by(action=action).all())
+from datetime import datetime, timedelta
+from sqlalchemy import and_
 
 
 @filter_blueprint.app_template_filter('statistic_get_data')
-def statistic_get_data(statistics):
+def statistic_get_data(statistics, time_str='month'):
     actions = [Statistic.ACTION_USER_VISIT_PERSONAL_HOME_PAGE, Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO,
                Statistic.ACTION_COURSE_ATTEND_QUIZ, Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER,
                Statistic.ACTION_COURSE_COMMENT, Statistic.ACTION_QUESTION_VISIT_QUESTION_PAGE,
@@ -17,11 +14,24 @@ def statistic_get_data(statistics):
                Statistic.ACTION_PROGRAM_SUBMIT_CODE, Statistic.ACTION_TOPIC_CREATE_TOPIC,
                Statistic.ACTION_LAB_VISIT_PROGRAMING_LAB, Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK,
                Statistic.ACTION_LAB_VISIT_CONFIGURATION_LAB, Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK]
-
     data = {}
+    today_start = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
 
     for action in actions:
-        s = statistics.filter_by(action=action).all()
+        s = None
+        if time_str == 'month':
+            m_start = today_start - timedelta(days=today_start.day) + timedelta(days=1)
+            s = statistics.filter_by(action=action).filter(Statistic.timestamp >= m_start).all()
+        elif time_str == 'this-week':
+            this_w_start = today_start - timedelta(days=today_start.weekday())
+            s = statistics.filter_by(action=action).filter(Statistic.timestamp >= this_w_start).all()
+        elif time_str == 'last-week':
+            this_w_start = today_start - timedelta(days=today_start.weekday())
+            last_w_start = this_w_start - timedelta(days=7)
+            s = statistics.filter_by(action=action).filter(and_(Statistic.timestamp >= last_w_start,
+                                                                Statistic.timestamp < this_w_start)).all()
+        elif time_str == 'today':
+            s = statistics.filter_by(action=action).filter(Statistic.timestamp >= today_start).all()
         temp = []
         for statistic in s:
             temp.append(dict(data=json.loads(statistic.data), time=str(statistic.timestamp)))

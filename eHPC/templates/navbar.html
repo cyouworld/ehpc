@@ -36,12 +36,12 @@
                     <img class="avatar-sm" src="{{ current_user.avatar_url | get_avatar_path }}">
                 </a>
                 <ul class="dropdown-menu" role="menu">
-                    <li role="presentation" class="dropdown-header">{{ current_user.username }}</li>
+                    <li role="presentation" class="dropdown-header">{{ current_user.username }} <div style="font-size: 12px;color: #a2a2a2;border: solid 1px #c7c7c7;padding: 0 1px;border-radius: 5px;background: #f1f1f1;display: inline-block">Lv. 999</div></li>
                     <li><a href="{{ url_for('user.view', uid=current_user.id) }}">
                         <i class="es-icon es-icon-person"></i>{{ _('Personal Page') }}</a>
                     </li>
-                    <li><a href="{{ url_for('lab.index') }}">
-                        <i class="es-icon es-icon-homework"></i>学习进度</a>
+                    <li><a href="{{ url_for('user.statistics') }}">
+                        <i class="es-icon es-icon-homework"></i>学习统计</a>
                     </li>
                     <li><a href="{{ url_for('user.notifications') }}">
                         <i class="es-icon es-icon-notifications"></i>通知</a>

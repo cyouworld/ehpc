@@ -22,15 +22,7 @@ def is_token_unique(token):
 #     return False, None
 
 
-def create_new_image():
-    new_image = DockerImage(vnc_password=''.join(random.sample(string.ascii_letters + string.digits, 8)),
-                            ssh_password=current_app.config['SSH_PASSWORD'],
-                            name='image_' + str(current_user.id))
-    new_image.user = current_user
-
-    db.session.add(new_image)
-    db.session.commit()
-
+def create_new_image(new_image):
     if new_image.docker_holder_id is None:
         db.session.delete(new_image)
         db.session.commit()

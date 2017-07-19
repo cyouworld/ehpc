@@ -48,6 +48,8 @@ class User(UserMixin, db.Model):
     commentNum = db.Column(db.Integer, default=0, nullable=False)
     open_id = db.Column(db.String(64), default=None)
 
+    experience = db.Column(db.Integer, default=0)
+
     homeworks = db.relationship('HomeworkUpload', backref='user', lazy='dynamic')
     homework_appendix = db.relationship('HomeworkAppendix', backref='user', lazy='dynamic')
 
@@ -100,49 +102,6 @@ class User(UserMixin, db.Model):
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
-
-
-class Statistic(db.Model):
-    MODULE_USER = 10001
-    MODULE_COURSE = 10002
-    MODULE_QUESTION = 10003
-    MODULE_PROGRAM = 10004
-    MODULE_TOPIC = 10005
-    MODULE_LAB = 10006
-
-    ACTION_USER_VISIT_PERSONAL_HOME_PAGE = 20001
-
-    ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO = 30001
-    ACTION_COURSE_ATTEND_QUIZ = 30002
-    ACTION_COURSE_SUBMIT_QUIZ_ANSWER = 30003
-    ACTION_COURSE_COMMENT = 30004
-
-    ACTION_QUESTION_VISIT_QUESTION_PAGE = 40001
-    ACTION_QUESTION_SUBMIT_ANSWER = 40002
-
-    ACTION_PROGRAM_VISIT_PROGRAM_PAGE = 50001
-    ACTION_PROGRAM_SUBMIT_CODE = 50002
-
-    ACTION_TOPIC_CREATE_TOPIC = 60001
-
-    ACTION_LAB_VISIT_PROGRAMING_LAB = 70001
-    ACTION_LAB_PASS_A_PROGRAMING_TASK = 70002
-    ACTION_LAB_VISIT_CONFIGURATION_LAB = 70003
-    ACTION_LAB_PASS_A_CONFIGURATION_TASK = 70004
-
-    def __init__(self, user_id, module_type, action, data):
-        self.user_id = user_id
-        self.module_type = module_type
-        self.action = action
-        self.data = data
-
-    __tablename__ = 'statistics'
-    id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    module_type = db.Column(db.Integer, nullable=False)
-    action = db.Column(db.Integer, nullable=False)
-    data = db.Column(db.Text(), default=None)
-    timestamp = db.Column(db.DateTime(), default=datetime.now)
 
 
 """ 在线课堂模块
@@ -738,7 +697,7 @@ class DockerImage(db.Model):
     MESSAGE_START_VNC_SERVER_WITH_RESOLUTION_FAIL = \
         "Failed to start the vnc server with given resolution when setting resolution"
 
-    def __init__(self, vnc_password, ssh_password, name):
+    def __init__(self, vnc_password, ssh_password, name, user_id):
         self.last_connect_time = None
         self.remaining_time_today = 14400
         self.tunnel_id = None
@@ -750,6 +709,7 @@ class DockerImage(db.Model):
         self.is_ssh_running = False
         self.token = None
         self.name = name
+        self.user_id = user_id
 
     __tablename__ = "docker_images"
     id = db.Column(db.Integer, nullable=False, primary_key=True)
@@ -767,7 +727,7 @@ class DockerImage(db.Model):
     token = db.Column(db.String(64), default=None)
     name = db.Column(db.String(64), nullable=False)
 
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False, unique=True)
     docker_holder_id = db.Column(db.Integer, db.ForeignKey('docker_holders.id'), default=None)
 
 
@@ -795,4 +755,48 @@ class Notification(db.Model):
     event_content = db.Column(db.Text(), nullable=False)
 
     sender_id = db.Column(db.Integer, db.ForeignKey('users.id'), default=None)
+
+
+class Statistic(db.Model):
+    MODULE_USER = 10001
+    MODULE_COURSE = 10002
+    MODULE_QUESTION = 10003
+    MODULE_PROGRAM = 10004
+    MODULE_TOPIC = 10005
+    MODULE_LAB = 10006
+
+    ACTION_USER_VISIT_PERSONAL_HOME_PAGE = 20001
+
+    ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO = 30001
+    ACTION_COURSE_ATTEND_QUIZ = 30002
+    ACTION_COURSE_SUBMIT_QUIZ_ANSWER = 30003
+    ACTION_COURSE_COMMENT = 30004
+
+    ACTION_QUESTION_VISIT_QUESTION_PAGE = 40001
+    ACTION_QUESTION_SUBMIT_ANSWER = 40002
+
+    ACTION_PROGRAM_VISIT_PROGRAM_PAGE = 50001
+    ACTION_PROGRAM_SUBMIT_CODE = 50002
+
+    ACTION_TOPIC_CREATE_TOPIC = 60001
+
+    ACTION_LAB_VISIT_PROGRAMING_LAB = 70001
+    ACTION_LAB_PASS_A_PROGRAMING_TASK = 70002
+    ACTION_LAB_VISIT_CONFIGURATION_LAB = 70003
+    ACTION_LAB_PASS_A_CONFIGURATION_TASK = 70004
+
+    def __init__(self, user_id, module_type, action, data):
+        self.user_id = user_id
+        self.module_type = module_type
+        self.action = action
+        self.data = data
+
+    __tablename__ = 'statistics'
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    module_type = db.Column(db.Integer, nullable=False)
+    action = db.Column(db.Integer, nullable=False)
+    data = db.Column(db.Text(), default=None)
+    timestamp = db.Column(db.DateTime(), default=datetime.now)
+
 

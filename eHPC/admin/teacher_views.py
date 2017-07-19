@@ -354,7 +354,18 @@ def course_permission(course_id):
 def course_member(course_id):
     if request.method == 'GET':
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
-        return render_template('admin/course/member.html', course=curr_course, applies=curr_course.applies, title=u'成员管理')
+        search_content = request.args.get("search_content", None)
+        if search_content is None:
+            return render_template('admin/course/member.html',
+                                   course=curr_course,
+                                   applies=curr_course.applies,
+                                   title=u'成员管理')
+        else:
+            return render_template('admin/course/member.html',
+                                   course=curr_course,
+                                   applies=curr_course.applies,
+                                   title=u'成员管理',
+                                   search_content=search_content)
     elif request.method == 'POST':
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
 
