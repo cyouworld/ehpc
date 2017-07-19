@@ -54,7 +54,7 @@
                             </table>
                         </div>
                         <div class="text-center" style="margin-top: 20px;">
-                            <a href="{{ url_for('machine_apply.machine_applying') }}" class="btn btn-primary">开始办理</a>
+                            <a href="{% if op == "create" %}{{ url_for('machine_apply.machine_apply_create') }}{% else %}{{ url_for('machine_apply.machine_apply_edit', apply_id=apply_id) }}{% endif %}?tag={{ request.args.get('tag') }}" class="btn btn-primary">开始办理</a>
                         </div>
                     </div>
                 </div>

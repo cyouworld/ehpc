@@ -112,11 +112,11 @@
                                     <td>
                                         <select id="sc_center" name="sc_center" data-width="100%"
                                                 data-parsley-required-message="请选择超算单位" required
-                                                value="{% if apply %}{{ apply.sc_center | get_sc_center }}{% endif %}">
-                                            <option value="0" selected>国家超级计算广州中心</option>
-                                            <option value="1">国家超级计算长沙中心</option>
-                                            <option value="2">中科院级计算中心</option>
-                                            <option value="3">国家超级计算上海中心</option>
+                                                value="{% if apply %}{{ apply.sc_center | get_sc_center }}{% elif request.args.get('tag') %}{{ request.args.get('tag') }}{% endif %}">
+                                            <option value="0" {% if apply %}{% if apply.sc_center | get_sc_center == "0" %}selected{% endif %}{% elif request.args.get('tag') == "0" %}selected{% endif %}>国家超级计算广州中心</option>
+                                            <option value="1" {% if apply %}{% if apply.sc_center | get_sc_center == "1" %}selected{% endif %}{% elif request.args.get('tag') == "1" %}selected{% endif %}>国家超级计算长沙中心</option>
+                                            <option value="2" {% if apply %}{% if apply.sc_center | get_sc_center == "2" %}selected{% endif %}{% elif request.args.get('tag') == "2" %}selected{% endif %}>中科院级计算中心</option>
+                                            <option value="3" {% if apply %}{% if apply.sc_center | get_sc_center == "3" %}selected{% endif %}{% elif request.args.get('tag') == "3" %}selected{% endif %}>国家超级计算上海中心</option>
                                         </select>
                                     </td>
                                 </tr>

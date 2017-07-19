@@ -1,5 +1,50 @@
-<ul class="list-group">
-    <li>
-        <a href="{{ url_for('machine_apply.machine_apply_information') }}">超算机时申请</a>
-    </li>
-</ul>
+<div id="sc-center-list">
+    <div class="sc-link text-center">
+        <a href="{{ url_for('machine_apply.machine_apply_information') }}?tag=0" class="link-dark">
+            <div class="sc-center-item">
+                <div class="sc-center-img">
+                    <img src="{{ url_for('static', filename='images/apply.png')}}" alt="广州超算" class="img-responsive">
+                </div>
+                <div class="sc-name">
+                    申请广州超算
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="sc-link text-center">
+        <a href="{{ url_for('machine_apply.machine_apply_information') }}?tag=1" class="link-dark">
+            <div class="sc-center-item">
+                <div class="sc-center-img">
+                    <img src="{{ url_for('static', filename='images/apply.png')}}" alt="长沙超算" class="img-responsive">
+                </div>
+                <div class="sc-name">
+                    申请长沙超算
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="sc-link text-center">
+        <a href="{{ url_for('machine_apply.machine_apply_information') }}?tag=2" class="link-dark">
+            <div class="sc-center-item">
+                <div class="sc-center-img">
+                    <img src="{{ url_for('static', filename='images/apply.png')}}" alt="中科院超算" class="img-responsive">
+                </div>
+                <div class="sc-name">
+                    申请中科院超算
+                </div>
+            </div>
+        </a>
+    </div>
+    <div class="sc-link text-center">
+        <a href="{{ url_for('machine_apply.machine_apply_information') }}?tag=3" class="link-dark">
+            <div class="sc-center-item">
+                <div class="sc-center-img">
+                    <img src="{{ url_for('static', filename='images/apply.png')}}" alt="上海超算" class="img-responsive">
+                </div>
+                <div class="sc-name">
+                    申请上海超算
+                </div>
+            </div>
+        </a>
+    </div>
+</div>

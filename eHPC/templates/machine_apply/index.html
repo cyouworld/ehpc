@@ -20,15 +20,15 @@
                         <div id="apply-process-status" class="text-center">
                             <div class="process-status">
                                 <div class="status-title">待办理</div>
-                                <a href="{{ url_for('machine_apply.issue_unsubmit') }}"><img src="{{ url_for('static',filename='images/status_1.png') }}"><span class="badge">{{ unsubmit }}</span></a>
+                                <a href="{{ url_for('machine_apply.issue_unsubmit') }}"><img src="{{ url_for('static',filename='images/status_1.png') }}">{% if unsubmit > 0 %}<span class="badge">{{ unsubmit }}</span>{% endif %}</a>
                             </div>
                             <div class="process-status">
                                 <div class="status-title">待审批</div>
-                                <a href="{{ url_for('machine_apply.issue_waiting') }}"><img src="{{ url_for('static',filename='images/status_2.png') }}"><span class="badge">{{ waiting }}</span></a>
+                                <a href="{{ url_for('machine_apply.issue_waiting') }}"><img src="{{ url_for('static',filename='images/status_2.png') }}">{% if waiting >0 %}<span class="badge">{{ waiting }}</span>{% endif %}</a>
                             </div>
                             <div class="process-status">
                                 <div class="status-title">已完成</div>
-                                <a href="{{ url_for('machine_apply.issue_finished') }}"><img src="{{ url_for('static',filename='images/status_3.png') }}"><span class="badge">{{ finished }}</span></a>
+                                <a href="{{ url_for('machine_apply.issue_finished') }}"><img src="{{ url_for('static',filename='images/status_3.png') }}">{% if finished > 0 %}<span class="badge">{{ finished }}</span>{% endif %}</a>
                             </div>
                         </div>
                     </div>
@@ -40,9 +40,9 @@
                                 </div>
                                 <div class="panel-body">
                                     <ul class="list-group">
-                                        <li class="list-group-item active"><i class="glyphicon glyphicon-time"></i> 机时申请</li>
-                                        <li class="list-group-item"><i class="glyphicon glyphicon-briefcase"></i> 活动申请</li>
-                                        <li class="list-group-item"><i class="glyphicon glyphicon-calendar"></i> 其他事项</li>
+                                        <li class="list-group-item active" data-option="apply"><i class="glyphicon glyphicon-time"></i> 机时申请</li>
+                                        <li class="list-group-item" data-option="use"><i class="glyphicon glyphicon-wrench"></i> 使用机时</li>
+                                        <li class="list-group-item" data-option="other"><i class="glyphicon glyphicon-calendar"></i> 其他事项</li>
                                     </ul>
                                 </div>
                             </div>
@@ -52,10 +52,6 @@
                                 <div id="apply-issue-box" class="panel-body">
                                     {% include "machine_apply/machine_apply.html" %}
                                 </div>
-                                <!--a id="create-machine-apply" href="{{ url_for('machine_apply.machine_apply_create') }}"
-                                data-toggle="tooltip"  title="新增申请" target="_blank">
-                                    <span class="glyphicon glyphicon-plus"></span>
-                                </a-->
                             </div>
                         </div>
                     </div>

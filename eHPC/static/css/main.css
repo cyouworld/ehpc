@@ -5104,7 +5104,7 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
 
 #apply-process-status .process-status {
     display: inline-block;
-    width: 80px;
+    width: 60px;
     height: 110px;
     margin: 0 30px;
 }
@@ -5145,9 +5145,9 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
 
 #apply-process-status .process-status a .badge {
     position: absolute;
-    top: -5px;
-    right: -5px;
-    background-color: #B22222 ;
+    top: -8px;
+    right: -8px;
+    background-color: #FF4040 ;
 }
 
 #apply-process-status .process-status .status-title {
@@ -5186,4 +5186,50 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
 .col-md-10 > .container {
     max-width: 1170px;
     width: auto;
+}
+
+#sc-center-list .sc-link {
+    display: inline-block;
+    padding: 10px;
+}
+
+#sc-center-list .sc-link a .sc-center-img {
+    display: inline-block;
+    position: relative;
+	-webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+#sc-center-list .sc-link a .sc-center-img:hover {
+    cursor: pointer;
+    transform: translateY(-4px);
+    -webkit-transform: translateY(-4px);
+    -moz-transform: translateY(-4px);
+    box-shadow: 0 26px 40px -24px rgba(0, 36, 100, 0.3);
+    -webkit-box-shadow: 0 26px 40px -24px rgba(0, 36, 100, 0.3);
+    -moz-box-shadow: 0 26px 40px -24px rgba(0, 36, 100, 0.3);
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+#sc-center-list .sc-link a,#sc-center-list .sc-link a:hover,#sc-center-list .sc-link a:active {
+    text-decoration: none;
+}
+
+#sc-center-list .sc-link .sc-center-item {
+    text-align: center;
+}
+
+.sc-center-item .sc-center-img {
+    width: 60px;
+    padding: 5px;
+    margin: 0 auto;
+}
+
+.sc-center-item .sc-center-img .img-responsive {
+    width: 100%;
 }

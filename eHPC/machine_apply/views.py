@@ -32,24 +32,32 @@ def index():
                                waiting=waiting,
                                unsubmit=unsubmit,
                                title=gettext('Resource Apply'))
+    elif request.method == "POST":
+        if request.form['op'] == "apply":
+            return jsonify(status='success', html=render_template('machine_apply/machine_apply.html'))
+        elif request.form['op'] == "use":
+            return jsonify(status='success', html=render_template('machine_apply/machine_use.html'))
+        elif request.form['op'] == "other":
+            return jsonify(status='success', html=render_template('machine_apply/machine_other.html'))
+        else:
+            return jsonify(status='fail')
 
 
 @machine_apply.route('/information/')
 @login_required
 def machine_apply_information():
-    return render_template('machine_apply/machine_apply_information.html', title=gettext('Resource Apply Information'))
-
-
-@machine_apply.route('/machine_applying/')
-@login_required
-def machine_applying():
     my_apply = MachineApply.query.filter_by(user_id=current_user.id).first()
     if not my_apply:
-        # 若此用户还未创建过申请，则显示新建申请界面
-        return redirect(url_for('machine_apply.machine_apply_create'))
+        # 若此用户还未创建过申请，则跳转到新建申请界面
+        return render_template('machine_apply/machine_apply_information.html',
+                               op="create",
+                               title=gettext('Resource Apply Information'))
     else:
         # 若此用户已创建过申请，则直接跳转到编辑申请界面
-        return redirect(url_for('machine_apply.machine_apply_edit', apply_id=my_apply.id))
+        return render_template('machine_apply/machine_apply_information.html',
+                               op="edit",
+                               apply_id=my_apply.id,
+                               title=gettext('Resource Apply Information'))
 
 
 @machine_apply.route('/create/', methods=['GET', 'POST'])
