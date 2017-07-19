@@ -21,7 +21,7 @@ from ..util.notifications import send_message
 
 @course.route('/')
 def index():
-    all_courses = Course.query.order_by(Course.nature_order.asc())
+    all_courses = Course.query.filter(Course.is_hidden!=True).order_by(Course.nature_order.asc())
     return render_template('course/index.html', title=gettext('Courses'), courses=all_courses)
 
 

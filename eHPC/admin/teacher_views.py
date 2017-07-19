@@ -134,6 +134,19 @@ def course_edit(course_id):
         return jsonify(status="success", course_id=curr_course.id)
 
 
+@admin.route('/course/<int:course_id>/hide/')
+@teacher_login
+def course_hide(course_id):
+    # 隐藏或显示课程
+    curr_course = Course.query.filter_by(id=course_id).first_or_404()
+    if not curr_course.is_hidden:
+        curr_course.is_hidden = True
+    else:
+        curr_course.is_hidden = False
+    db.session.commit()
+    return redirect(url_for('admin.course'))
+
+
 @admin.route('/course/<int:course_id>/picture/', methods=['GET', 'POST'])
 @teacher_login
 def course_picture(course_id):

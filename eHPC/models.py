@@ -130,6 +130,8 @@ class Course(db.Model):
     beginTime = db.Column(db.DateTime(), nullable=True)
     endTime = db.Column(db.DateTime(), nullable=True)
 
+    is_hidden = db.Column(db.Boolean, default=False)            # 课程是否隐藏
+
     lessonNum = db.Column(db.Integer, nullable=False)           # 课时数
     studentNum = db.Column(db.Integer, default=0)               # 学生数目
 

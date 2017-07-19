@@ -3,69 +3,63 @@
 {% block content %}
     <div class="container" id="content-container">
         <div class="row">
-            <div class="col-md-3">
-                {% with type='program' %}
-                    {% include 'admin/problem/widget_nav_left.html' %}
-                {% endwith %}
-            </div>
 
-            <div class="col-md-9">
-                <div class="panel panel-default panel-col">
-                    <div class="panel-heading">
-                    <span class="pull-right">
-                        <a id="create-program" href="{{ url_for('admin.program_create') }}"
-                           class="btn btn-info btn-sm">
-                            <span class="glyphicon glyphicon-plus"></span>
-                            新建题目
-                        </a>
-                    </span>
-                        题目列表
-                    </div>
+            <div class="panel panel-default panel-col">
+                <div class="panel-heading">
+                <span class="pull-right">
+                    <a id="create-program" href="{{ url_for('admin.program_create') }}"
+                       class="btn btn-info btn-sm">
+                        <span class="glyphicon glyphicon-plus"></span>
+                        新建题目
+                    </a>
+                </span>
+                    题目列表
+                </div>
 
-                    <div class="panel-body">
-                        <table class="table fixed-table">
-                            <thead>
-                            <tr>
-                                <th width="10%" style="text-align: center">序号</th>
-                                <th width="30%">名称</th>
-                                <th width="10%" style="text-align: center">支持评测</th>
-                                <th width="20%">创建时间</th>
-                                <th>操作</th>
+                <div class="panel-body">
+                    <table class="table fixed-table">
+                        <thead>
+                        <tr>
+                            <th width="10%" style="text-align: center">序号</th>
+                            <th width="30%">名称</th>
+                            <th width="10%" style="text-align: center">支持评测</th>
+                            <th width="20%">创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead><!--表格头-->
+                        <tbody id="tb">
+                        {% if current_user.teacher_program.count() > 0 %}
+                            {% for program in current_user.teacher_program %}
+                            <tr data-id="{{ program.id }}">
+                                <td style="text-align: center">{{ loop.index }}</td>
+                                <td class="overflow-ellipsis" data-toggle="tooltip" title="{{ program.title }}">{{ program.title }}</td>
+                                <td style="text-align: center">
+                                    {% if program.can_evaluate %}
+                                        是
+                                    {% else %}
+                                        否
+                                    {% endif %}
+                                </td>
+                                <td>{{ program.createdTime }}</td>
+                                <td>
+                                    <a href="{{ url_for('admin.program_edit', id=program.id) }}">编辑</a>
+                                    <span class="divider"> | </span>
+                                    <a href="javascript:void(0)" name="del-btn">删除</a>
+                                    <span class="divider"> | </span>
+                                    <a href="{{ url_for('admin.program_evaluate', id=program.id) }}">评测设置</a>
+                                </td>
                             </tr>
-                            </thead><!--表格头-->
-                            <tbody id="tb">
-                            {% if current_user.teacher_program.count() > 0 %}
-                                {% for program in current_user.teacher_program %}
-                                <tr data-id="{{ program.id }}">
-                                    <td style="text-align: center">{{ loop.index }}</td>
-                                    <td class="overflow-ellipsis" data-toggle="tooltip" title="{{ program.title }}">{{ program.title }}</td>
-                                    <td style="text-align: center">
-                                        {% if program.can_evaluate %}
-                                            是
-                                        {% else %}
-                                            否
-                                        {% endif %}
-                                    </td>
-                                    <td>{{ program.createdTime }}</td>
-                                    <td>
-                                        <a href="{{ url_for('admin.program_edit', id=program.id) }}">编辑</a>
-                                        <span class="divider"> | </span>
-                                        <a href="javascript:void(0)" name="del-btn">删除</a>
-                                        <span class="divider"> | </span>
-                                        <a href="{{ url_for('admin.program_evaluate', id=program.id) }}">评测设置</a>
-                                    </td>
-                                </tr>
-                                {% endfor %}
-                            {% else %}
-                                <tr class="text-center"><td colspan="5">暂无编程题</td></tr>
-                            {% endif %}
-                            </tbody><!--表格主体-->
-                        </table>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="text-center"><td colspan="5">暂无编程题</td></tr>
+                        {% endif %}
+                        </tbody><!--表格主体-->
+                    </table>
 
-                    </div>
                 </div>
             </div>
         </div>
+
     </div>
 
     {% include "admin/widget-del-warning.html" %}

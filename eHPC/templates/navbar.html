@@ -1,6 +1,6 @@
 <!-- 小屏幕下导航栏 -->
-<ul class="navbar-mobile visible-xs nav">
-    <li class="dropdown">
+<ul class="navbar-mobile visible-xs nav" style="width:100%;">
+    <li class="dropdown" style="display: inline-block;">
         <a href="#" data-toggle="dropdown" class="navbar-more dropdown-toggle">
             <i class="es-icon es-icon-menu"></i></a>
         <ul class="dropdown-menu">
@@ -12,12 +12,46 @@
             <li><a href="{{ url_for('machine_apply.index') }}">{{ _('Machine Hour Apply') }}</a></li>
         </ul>
     </li>
+
+    {% if current_user.is_authenticated %}
+        <li class="user-avatar-li nav-hover" style="display:inline-block; float:right; margin-top:10px;">
+            <a href="javascript:;" class="dropdown-toggle">
+                <img class="avatar-sm" src="{{ current_user.avatar_url | get_avatar_path }}">
+            </a>
+            <ul class="dropdown-menu" role="menu" style="left:auto;right:0">
+                <li role="presentation" class="dropdown-header">{{ current_user.username }}</li>
+                <li><a href="{{ url_for('user.view', uid=current_user.id) }}">
+                    <i class="es-icon es-icon-person"></i>{{ _('Personal Page') }}</a>
+                </li>
+                <li><a href="{{ url_for('lab.index') }}">
+                    <i class="es-icon es-icon-homework"></i>学习进度</a>
+                </li>
+                <li><a href="{{ url_for('user.notifications') }}">
+                    <i class="es-icon es-icon-notifications"></i>通知</a>
+                </li>
+                <li> <a href="{{ url_for('user.setting') }}">
+                    <i class="es-icon es-icon-setting"></i>{{ _('Setting') }}</a>
+                </li>
+                <li><a href="{{ url_for('user.signout') }}">
+                    <i class="es-icon es-icon-power"></i>{{ _('Logout') }}</a>
+                </li>
+            </ul>
+        </li>
+    {% else %}
+        <li style="display:inline-block;  float:right; font-size:20px; text-decoration:none; line-height:60px">
+            <a style="color:black;" href="{{ url_for('user.signin', next=request.path) }}">{{ _('Sign In') }}</a>
+        </li>
+    {% endif %}
 </ul>
+
+
+
+
 
 <!-- 大屏幕下导航栏 -->
 <header class="content-header navbar">
 
-    <div style="position: relative;left: 30px;" class="navbar-header visible-xs">
+    <div style="position: relative;left: 25px;" class="navbar-header visible-xs">
         <a href="{{ url_for('main.index') }}" class="navbar-brand">
             <img src="{{ url_for('static', filename='images/logo.png') }}">
         </a>
