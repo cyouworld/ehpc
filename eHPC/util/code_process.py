@@ -192,7 +192,6 @@ class ehpc_client:
     # 登录，返回值为是否成功（布尔型）
     # POST /api/auth
     def login(self):
-        # print self.login_data
         tmpdata = self.open(TH2_LOGIN_URL, data=self.login_data, login=False)
         self.login_cookie = 'newt_sessionid=' + tmpdata["output"]["newt_sessionid"]
         self.username = self.login_data['username']
@@ -246,9 +245,9 @@ class ehpc_client:
         """
         if isjob:
             filename = "slurm-%s.out" % filename
+        print "download url:  /file/" + TH2_MACHINE_NAME + myPath + '/' + filename + "?download=True"
         tmpdata = self.open("/file/" + TH2_MACHINE_NAME + myPath + '/' + filename + "?download=True")
 
-        # print tmpdata
         if isSmallApiServer:
             tmpdata = tmpdata
         else:
@@ -522,7 +521,7 @@ class ehpc_client:
         jobPath = myPath + "/" + problem_id + "/" + user_id + "/" + job_filename
 
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript": jobscript, "jobfilepath": jobPath})
-        #print tmpdata
+        print tmpdata
         return tmpdata["output"]["jobid"]
 
     """
@@ -667,24 +666,23 @@ def init_evaluate_program(problem_id, input_filenames=[], input_data=[], output_
     默认提交的程序文件名分别为PI.cpp、program.cpp、ref.cpp、serial.cpp、hello.cpp
     默认输出的编译文件名分别为PI、program、ref、serial、hello
     """
+    print "init_evaluate_program"
+
     myPath = TH2_MY_PATH
     client = ehpc_client()
-    #if not client.login():
-        #return jsonify(status="fail", msg="连接超算主机失败!")
-    #print "login success"
 
     client.del_program_dir(myPath, problem_id)
     client.create_program_dir(myPath, problem_id)
 
     if not client.upload_multi(myPath, problem_id, input_filenames, input_data):
-        #print("upload failed")
+        print("upload failed")
         exit(-1)
-    #print "upload success"
+    print "upload success"
 
-    #print client.mpi_compile_multi(myPath, problem_id, input_filenames, output_filenames)
+    print client.mpi_compile_multi(myPath, problem_id, input_filenames, output_filenames)
 
     rm_command = "cd %s; rm *.cpp" % (myPath + "/" + problem_id)
-    client.run_command( rm_command )
+    client.run_command(rm_command)
     return True
 
 
@@ -693,9 +691,6 @@ def del_evaluate_program(myPath, problem_id):
     删除评测目录
     """
     client = ehpc_client()
-    if not client.login():
-        return jsonify(status="fail", msg="连接超算主机失败!")
-    #print "login success"
     client.del_program_dir(myPath, problem_id)
 
 
@@ -705,34 +700,51 @@ def run_evaluate_program(problem_id, user_id, input_code, cpu_num, step_num):
     (用户提交代码的默认文件名为 program.cpp 输出编译文件名为 program
     评测默认运行脚本名为 job.sh)
     """
+    print "run_evaluate_program"
+
     myPath = TH2_MY_PATH
     client = ehpc_client()
-    #if not client.login():
-        #return jsonify(status="fail", msg="连接超算主机失败!")
-    #print "login success"
+
     # 若有原用户文件夹则删除
     rm_command = "cd %s;if [ -d \"./%s\" ]; then rm -rf \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
-    #print client.run_command( rm_command )
+    print client.run_command(rm_command)
+
     # 新建用户文件夹
     mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
-    #print client.run_command( mkdir_command )
+    print client.run_command(mkdir_command)
+
     # 复制公用编译文件到用户文件夹
     cp_command = "cd %s;cp ../* ./" % (myPath + "/" + problem_id + "/" + user_id )
-    #print client.run_command( cp_command )
+    print client.run_command(cp_command)
+
     # 上传用户程序到用户文件夹
     if not client.upload(myPath + "/" + problem_id + "/" + user_id, "program.cpp", input_code):
-        #print("upload failed")
+        print("upload failed")
         exit(-1)
-    #print "user code upload success"
+    print "user code upload success"
+
     # 编译用户程序
-    #print client.mpi_complie(myPath + "/" + problem_id + "/" + user_id, "program.cpp", "program")
+    print client.mpi_complie(myPath + "/" + problem_id + "/" + user_id, "program.cpp", "program")
     # 提交运行脚本与用户程序
     job_id = client.submit_job_multi(myPath, problem_id, user_id, "job.sh", "PI", 1, cpu_num, step_num, "debug")
-    #print client.get_job_status(job_id)
+    print "job_id:%s" % job_id
+
+    job_status = client.get_job_status(job_id)
+
+    # 等待直到作业完成
+    while True:
+        if job_status == "Finished":
+            print job_status
+            break
+        time.sleep(1)
+        job_status = client.get_job_status(job_id)
+        print job_status
+
     # 下载运行结果
-    time.sleep(4)
+    print "downloading"
+    time.sleep(5)
     run_output = client.download(myPath + "/" + problem_id + "/" + user_id, job_id, isSmallApiServer=True, isjob=True)
-    return run_output
+    return "{" + run_output + "}"
 
 
 """提交并行代码以及对应评测程序，提交时本地目录下需有对应的文件，并设置好本地参数

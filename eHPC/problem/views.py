@@ -234,8 +234,9 @@ def evaluate(pid):
 
     result = dict()
     result['status'] = 'error'
-
     result['run_out'] = run_evaluate_program(str(pid), str(uid), source_code, cpu_num, step_num)
     result['status'] = 'success'
+    result['cpu_num'] = cpu_num
+    result['step_num'] = step_num
 
     return jsonify(**result)
