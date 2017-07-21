@@ -24,7 +24,7 @@ from ..util.code_process import init_evaluate_program
 from ..util.pdf import get_paper_pdf
 from ..util.file_manage import remove_dirs
 from ..util.xlsx import get_member_xlsx, get_score_xlsx, get_allscore_xlsx, get_not_uploaded_xlsx
-from ..util.course_filter import check_upload
+from ..util.course_filter import check_upload, homework_uploaded
 
 
 '''add_sidebar():定义上下文处理器，便于把数据导入后台管理模板中的sidebar
@@ -530,6 +530,18 @@ def course_homework(course_id):
                 curr_homework.uploads.remove(u)
                 db.session.delete(u)
 
+            for s in curr_homework.homework_scores:
+                curr_homework.homework_scores.remove(s)
+                db.session.delete(s)
+
+            for p in curr_homework.program:
+                curr_homework.program.remove(p)
+                if request.form["program"] == "del":
+                    for s in p.submit_programs:
+                        p.submit_programs.remove(s)
+                        db.session.delete(s)
+                    db.session.delete(p)
+
             homework_path = os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'], "course_%d/homework_%d" %
                                          (curr_homework.course.id, curr_homework.id))
             homework_upload_path = os.path.join(current_app.config['HOMEWORK_UPLOAD_FOLDER'], "course_%d/homework_%d" %
@@ -550,11 +562,13 @@ def course_homework(course_id):
         elif request.form['op'] == 'search':
             #查找某位学生的未交作业情况
             stu_info = request.form['stu_info']
-            curr_stu = curr_course.users.filter_by(student_id=stu_info).first_or_404()
+            curr_stu = curr_course.users.filter_by(student_id=stu_info).first()
+            if not curr_stu:
+                return jsonify(status="not-found")
             all_homework = curr_course.homeworks.order_by(Homework.id.asc())
             not_upload = []
             for h in all_homework:
-                if check_upload(curr_stu, h.id) == 2:
+                if not homework_uploaded(h.id, curr_stu.id):
                     not_upload.append(h.title)
 
             return jsonify(status="success", stu_name=curr_stu.name, not_upload=not_upload)
@@ -568,12 +582,15 @@ def course_homework_create(course_id):
     """ 课程的作业新创建入口页面 """
     if request.method == 'GET':
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        all_program = Program.query.filter_by(user_id=current_user.id).all()
         return render_template('admin/course/homework_edit.html',
                                course=curr_course,
                                option="create",
+                               all_program=all_program,
                                title=gettext('Course Homework Create'))
     elif request.method == 'POST':
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        all_program = Program.query.filter_by(user_id=current_user.id).all()
         if request.form['op'] == "del":
             curr_appendix = HomeworkAppendix.query.filter_by(id=request.form['appendix_id']).first_or_404()
             curr_homework = curr_appendix.homework
@@ -654,15 +671,29 @@ def course_homework_create(course_id):
                 curr_homework.deadline = request.form["deadline"]
                 curr_homework.description = request.form["description"]
                 curr_homework.title = request.form["title"]
+                curr_homework.h_type = request.form['homework-type']
+                if request.form["homework-type"] == "1":
+                    program_list = request.form.getlist("homework-program")
+                    for p_id in program_list:
+                        curr_program = Program.query.filter_by(id=p_id).first_or_404()
+                        curr_homework.program.append(curr_program)
                 db.session.commit()
             else:
-                curr_homework = Homework(title=request.form['title'], description=request.form['description'],
+                curr_homework = Homework(title=request.form['title'],
+                                         h_type=request.form['homework-type'],
+                                         description=request.form['description'],
                                          course_id=course_id)
                 curr_course.homeworks.append(curr_homework)
                 db.session.add(curr_homework)
                 db.session.commit()
                 if request.form["deadline"]:
                     curr_homework.deadline = request.form['deadline']
+                    db.session.commit()
+                if request.form["homework-type"] == "1":
+                    program_list = request.form.getlist("homework-program")
+                    for p_id in program_list:
+                        curr_program = Program.query.filter_by(id=p_id).first_or_404()
+                        curr_homework.program.append(curr_program)
                     db.session.commit()
                 os.makedirs(os.path.join(current_app.config['HOMEWORK_UPLOAD_FOLDER'], 'course_%d' % curr_course.id,
                                      'homework_%d' % curr_homework.id))
@@ -671,9 +702,8 @@ def course_homework_create(course_id):
 
             tag1 = "course-%d" % course_id
             tag2 = "course-%d-5" % course_id
-            return redirect(url_for("admin.course_homework_edit",
+            return redirect(url_for("admin.course_homework",
                                     course_id=curr_course.id,
-                                    homework_id=curr_homework.id,
                                     tag1=tag1,
                                     tag2=tag2))
 
@@ -685,10 +715,12 @@ def course_homework_edit(course_id, homework_id):
     if request.method == 'GET':
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         curr_homework = Homework.query.filter_by(id=homework_id).first_or_404()
+        all_program = Program.query.filter_by(user_id=current_user.id).all()
         return render_template('admin/course/homework_edit.html',
                                course=curr_course,
                                option="edit",
                                homework=curr_homework,
+                               all_program=all_program,
                                title=gettext('Course Homework Edit'))
 
     elif request.method == 'POST':
@@ -765,13 +797,28 @@ def course_homework_edit(course_id, homework_id):
             curr_homework.title = request.form['title']
             curr_homework.description = request.form['description']
             curr_homework.deadline = request.form['deadline']
+            curr_homework.h_type = request.form["homework-type"]
+            if request.form["homework-type"] == "1":
+                for p in curr_homework.program:
+                    curr_homework.program.remove(p)
+                db.session.commit()
+                program_list = request.form.getlist("homework-program")
+                for p_id in program_list:
+                    curr_program = Program.query.filter_by(id=p_id).first_or_404()
+                    curr_homework.program.append(curr_program)
+            else:
+                curr_programs = curr_homework.program
+                for p in curr_programs:
+                    curr_homework.program.remove(p)
             db.session.commit()
             tag1 = "course-%d" % course_id
             tag2 = "course-%d-5" % course_id
+            all_program = Program.query.filter_by(user_id=current_user.id).all()
             return render_template('admin/course/homework_edit.html',
                                    course=curr_course,
                                    option="edit",
                                    homework=curr_homework,
+                                   all_program=all_program,
                                    tag1=tag1,
                                    tag2=tag2,
                                    msg=gettext("save homework successfully"),
@@ -843,7 +890,7 @@ def course_homework_not_uploaded(course_id, homework_id):
     not_uploaded = []
     all_members = curr_course.users
     for u in all_members:
-        if check_upload(u, homework_id) == 2:
+        if not homework_uploaded(homework_id, u.id):
             not_uploaded.append(u)
     if request.method == "GET":
         return render_template('admin/course/homework_not_uploaded.html',
@@ -872,16 +919,21 @@ def course_homework_correct(course_id, homework_id):
             score = request.form['homework_score']
             comment = request.form['homework_comment']
             user_id = request.form['user_id']
-            his_upload = HomeworkUpload.query.filter_by(user_id=user_id, homework_id=homework_id).order_by(
-                HomeworkUpload.submit_time.asc()).first()
             upload_status = 2
-            if not his_upload:
-                upload_status = 2
-            else:
-                if his_upload.submit_time > curr_homework.deadline:
-                    upload_status = 1
-                else:
+            if curr_homework.h_type == 1:
+                if homework_uploaded(homework_id, user_id):
                     upload_status = 0
+                else:
+                    upload_status = 2
+            else:
+                his_upload = HomeworkUpload.query.filter_by(user_id=user_id, homework_id=homework_id).order_by(HomeworkUpload.submit_time.asc()).first()
+                if not his_upload:
+                    upload_status = 2
+                else:
+                    if his_upload.submit_time > curr_homework.deadline:
+                        upload_status = 1
+                    else:
+                        upload_status = 0
             curr_homework_score = HomeworkScore(user_id=user_id, homework_id=homework_id, score=score, comment=comment, status=upload_status)
             db.session.add(curr_homework_score)
             db.session.commit()
@@ -918,16 +970,21 @@ def course_homework_correct(course_id, homework_id):
                     homework_score = HomeworkScore.query.filter_by(user_id=curr_student.id, homework_id=homework_id).first()
                     if not homework_score:
                         if curr_student in curr_course.users:
-                            his_upload = HomeworkUpload.query.filter_by(user_id=curr_student.id, homework_id=homework_id).order_by(
-                                HomeworkUpload.submit_time.asc()).first()
                             upload_status = 2
-                            if not his_upload:
-                                upload_status = 2
-                            else:
-                                if his_upload.submit_time > curr_homework.deadline:
-                                    upload_status = 1
-                                else:
+                            if curr_homework.h_type == 1:
+                                if homework_uploaded(homework_id, curr_student.id):
                                     upload_status = 0
+                                else:
+                                    upload_status = 2
+                            else:
+                                his_upload = HomeworkUpload.query.filter_by(user_id=curr_student.id, homework_id=homework_id).order_by(HomeworkUpload.submit_time.asc()).first()
+                                if not his_upload:
+                                    upload_status = 2
+                                else:
+                                    if his_upload.submit_time > curr_homework.deadline:
+                                        upload_status = 1
+                                    else:
+                                        upload_status = 0
                             homework_score = HomeworkScore(user_id=curr_student.id, homework_id=homework_id,
                                                            score=curr_row[2], comment=curr_row[3], status=upload_status)
                             db.session.add(homework_score)
@@ -1114,6 +1171,9 @@ def program_filter_by_classify(question_classify):
     elif request.method == 'POST':
         # 删除编程题目
         curr_program = Program.query.filter_by(id=request.form['id']).first_or_404()
+        for s in curr_program.submit_programs:
+            curr_program.submit_programs.remove(s)
+            db.session.delete(s)
         db.session.delete(curr_program)
         db.session.commit()
         return unicode(curr_program.id)
@@ -1259,8 +1319,19 @@ def program():
     elif request.method == 'POST':
         # 删除编程题目
         curr_program = Program.query.filter_by(id=request.form['id']).first_or_404()
-        db.session.delete(curr_program)
-        db.session.commit()
+        if request.form['op'] == 'before-del':
+            has_homework = 0
+            if len(curr_program.homework) > 0:
+                has_homework = 1
+            return jsonify(status="success", has=has_homework)
+        else:
+            for s in curr_program.submit_programs:
+                curr_program.submit_programs.remove(s)
+                db.session.delete(s)
+            for h in curr_program.homework:
+                h.program.remove(curr_program)
+            db.session.delete(curr_program)
+            db.session.commit()
         return unicode(curr_program.id)
 
 
@@ -1280,6 +1351,7 @@ def program_create():
         curr_program.teacher = current_user
         db.session.add(curr_program)
         db.session.commit()
+
         return redirect(url_for('admin.program'))
 
 

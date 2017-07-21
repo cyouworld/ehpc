@@ -3,64 +3,58 @@
 {% block header_ext %}
     <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
     <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
-    <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
-    <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
     <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery-editable-select.min.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/jquery-editable-select.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
     <div class="container" id="content-container">
         <div class="row">
-            <div class="col-md-3">
-                {% with type='program' %}
-                    {% include 'admin/problem/widget_nav_left.html' %}
-                {% endwith %}
-            </div><!--左侧导航栏-->
+            <div class="panel panel-default panel-col" style="position: relative">
+                 <a class="back-to-homework-list" href="{{ url_for('admin.program') }}?tag2=lab-2">
+                    <i class="glyphicon glyphicon-chevron-left"></i>返回题目列表</a>
+                <div class="panel-heading text-center">
+                    题目编辑
+                </div>
 
-            <div class="col-md-9">
-                <div class="panel panel-default panel-col">
-                    <div class="panel-heading">
-                        题目编辑
-                    </div>
-
-                    <div class="panel-body">
-                        <form id="form" action="{{ url_for('admin.program_create') if op == 'create' else url_for('admin.program_edit')}}"
-                               data-parsley-validate="" method="post">
-                            <div class="form-group">
-                                <div style="margin-bottom: 5px">
-                                    <label>标题</label>
-                                    <div><input required type="text" class="form-control" name="title" placeholder="请输入题目标题"
+                <div class="panel-body">
+                    <form id="form" action="{{ url_for('admin.program_create') if op == 'create' else url_for('admin.program_edit')}}"
+                          data-parsley-validate="" method="post">
+                        <div class="form-group">
+                            <div style="margin-bottom: 15px">
+                                <label>标题</label>
+                                <div><input required type="text" class="form-control" name="title" placeholder="请输入题目标题"
                                         {% if op == 'edit' %}value="{{ program_problem.title }}"{% endif %}
                                                 data-parsley-required-message="请输入题目标题" data-parsley-maxlength="128">
-                                    </div>
                                 </div>
+                            </div>
 
-                                <label>题干</label>
-                                <textarea name="content" id="target-editor"
+                            <label>题干</label>
+                            <textarea name="content" id="target-editor"
                                           data-img-upload-url="{{ url_for("markdown_files.images") }}"
                                           data-parsley-required-message="请输入题目题干" data-parsley-errors-container=".textarea-errors" required
-                                >{% if op == 'edit' %}{{ program_problem.detail }}{% endif %}</textarea>
-                                <div class="textarea-errors"></div>
+                            >{% if op == 'edit' %}{{ program_problem.detail }}{% endif %}</textarea>
+                            <div class="textarea-errors"></div>
 
-                                <label>参考代码</label>
-                                <div class="row form-group" style="padding: 10px">
-                                    <div id="reference-code-editor" class="code-editor"></div>
-                                </div>
+                            <label>参考代码</label>
+                            <div class="row form-group" style="padding: 10px">
+                                <div id="reference-code-editor" class="code-editor"></div>
                             </div>
-                            <input type="hidden" name="op" value="{{ op }}">
-                            {% if op == 'edit' and program_problem.default_code %}
-                                <input type="hidden" name="default-code" value="{{ program_problem.default_code }}">
-                            {% else %}
-                                <input type="hidden" name="default-code" value="">
-                            {% endif %}
-                            {% if op == 'edit' %}<input type="hidden" name="id" value="{{ program_problem.id }}">{% endif %}
+                        </div>
+                        <input type="hidden" name="op" value="{{ op }}">
+                        {% if op == 'edit' and program_problem.default_code %}
+                            <input type="hidden" name="default-code" value="{{ program_problem.default_code }}">
+                        {% else %}
+                            <input type="hidden" name="default-code" value="">
+                        {% endif %}
+                        {% if op == 'edit' %}<input type="hidden" name="id" value="{{ program_problem.id }}">{% endif %}
 
-                            <div class="form-submit text-right">
-                                <input type="submit" class="btn btn-primary" value="保存提交">
-                            </div>
-                        </form>
-                    </div>
+                        <div class="form-submit text-right">
+                            <input type="submit" class="btn btn-primary" value="保存提交">
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -95,6 +89,11 @@
                 else {
                     $(".textarea-errors")[0].innerHTML = '<ul class="parsley-errors-list filled" style="color: red;" id="parsley-id-9"><li class="parsley-required">请输入题目题干</li></ul>';
                 }
+            });
+
+            $("#course-id").editableSelect({
+                filter: false,
+                effects: "fade"
             });
         });
     </script>

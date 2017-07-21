@@ -3,7 +3,7 @@ $(document).ready(function () {
         language: {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
         },
-        "order": [[4, 'asc']],
+        "order": [[4, 'dec']],
         "pageLength": 100,
         "lengthMenu": [[ 10, 30, 50, 100, -1],[ 10, 30, 50, 100, '全部']]
     });

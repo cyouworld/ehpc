@@ -4,15 +4,40 @@
 var obj = null;
 $("#homework-item-list").find("a[name=del-btn]").click(function () {
     obj = this;
+    $("#del-warning .modal-body")
     $("#del-warning").modal("show");
 });
 
-$("#del-confirm").click(function () {
+$("#del-program").click(function () {
     $.ajax({
         type: "post",
         url: location.href,
         data: {
             op: 'del',
+            program: 'del',
+            homework_id: $(obj).parent().parent().data('homework_id')
+        },
+        async: false,
+        success: function (data) {
+            if (data["status"] == "success") {
+                $(obj).parent().parent().remove();
+                $("#del-warning").modal("hide");
+            }
+            else {
+                alert_modal("删除失败，请刷新后重试！");
+                setTimeout(function() {$("#modal-alert").modal("hide");}, 1500);
+            }
+        }
+    });
+});
+
+$("#del-homework").click(function () {
+    $.ajax({
+        type: "post",
+        url: location.href,
+        data: {
+            op: 'del',
+            program: 'save',
             homework_id: $(obj).parent().parent().data('homework_id')
         },
         async: false,
@@ -51,6 +76,10 @@ $("#search-unupload-btn").click(function() {
                 }
                 $("#unupload-list")[0].innerHTML = html_content;
                 $("#myModal").modal("show");
+            }
+            else if(data["status"] == "not-found") {
+                alert_modal("当前学生不存在，请输入正确的学号！");
+                setTimeout(function() {$("#modal-alert").modal("hide");}, 1500);
             }
             else {
                 alert_modal("查询失败，请稍后重试！");

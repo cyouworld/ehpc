@@ -24,6 +24,14 @@ function delete_appendix(e) {
     }
 }
 
+function show_table() {
+    $("#program-select-box").removeClass("hide");
+}
+
+function hide_table() {
+    $("#program-select-box").addClass("hide");
+}
+
 $(document).ready(function () {
     $('#dtp').datetimepicker({
         format: "yyyy-mm-dd hh:ii",
@@ -56,8 +64,19 @@ $(document).ready(function () {
 
     $("#save-homework-info").click(function() {
         $("#homework-save-op").val("save");
+        if ($("#type2").prop("checked")) {
+            $("input[name='homework-program']").prop("required",true);
+        }
+        else {
+            $("input[name='homework-program']").removeAttr("required");
+        }
         var p_instance = $('#course-homework-form').parsley();
         p_instance.validate();
+    });
+
+    $("#all-program-select").click(function () {
+        var obj = this;
+        $("#program-list-body").find("input[type=checkbox]").prop("checked", $(obj).prop("checked"));
     });
 
     // Get the template HTML and remove it from the doumenthe template HTML and remove it from the doument

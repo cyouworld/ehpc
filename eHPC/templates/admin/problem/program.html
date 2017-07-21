@@ -3,19 +3,17 @@
 {% block content %}
     <div class="container" id="content-container">
         <div class="row">
-
             <div class="panel panel-default panel-col">
                 <div class="panel-heading">
-                <span class="pull-right">
-                    <a id="create-program" href="{{ url_for('admin.program_create') }}"
-                       class="btn btn-info btn-sm">
-                        <span class="glyphicon glyphicon-plus"></span>
-                        新建题目
-                    </a>
-                </span>
-                    题目列表
+                    <span class="pull-right">
+                        <a id="create-program" href="{{ url_for('admin.program_create') }}?tag2=lab-2"
+                           class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            新建题目
+                        </a>
+                    </span>
+                        题目列表
                 </div>
-
                 <div class="panel-body">
                     <table class="table fixed-table">
                         <thead>
@@ -42,11 +40,11 @@
                                 </td>
                                 <td>{{ program.createdTime }}</td>
                                 <td>
-                                    <a href="{{ url_for('admin.program_edit', id=program.id) }}">编辑</a>
+                                    <a href="{{ url_for('admin.program_edit', id=program.id) }}&tag2=lab-2">编辑</a>
                                     <span class="divider"> | </span>
                                     <a href="javascript:void(0)" name="del-btn">删除</a>
                                     <span class="divider"> | </span>
-                                    <a href="{{ url_for('admin.program_evaluate', id=program.id) }}">评测设置</a>
+                                    <a href="{{ url_for('admin.program_evaluate', id=program.id) }}&tag2=lab-2">评测设置</a>
                                 </td>
                             </tr>
                             {% endfor %}
@@ -55,7 +53,6 @@
                         {% endif %}
                         </tbody><!--表格主体-->
                     </table>
-
                 </div>
             </div>
         </div>
@@ -72,7 +69,20 @@
             var obj = null;
             $("#tb").find("a[name=del-btn]").click(function () {
                 obj = this;
-                $("#del-warning").modal("show");
+                $.ajax({
+                    type: "post",
+                    url: "{{ url_for('admin.program') }}",
+                    data: {op: 'before-del', id: $(obj).parent().parent().data('id')},
+                    success: function (data) {
+                        if (data['has'] == 1) {
+                            $("#del-warning .modal-body")[0].innerHTML = "本题已绑定课程作业，删除后不可恢复，是否确认删除？";
+                        }
+                        else {
+                            $("#del-warning .modal-body")[0].innerHTML = "删除后不可恢复，是否确认删除？";
+                        }
+                        $("#del-warning").modal("show");
+                    }
+                });
             });
             $("#del-confirm").click(function () {
                 $.ajax({

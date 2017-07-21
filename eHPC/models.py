@@ -70,6 +70,7 @@ class User(UserMixin, db.Model):
     notifications_sent = db.relationship('Notification', backref='sender', lazy='dynamic', cascade='delete, delete-orphan')
 
     statistics = db.relationship('Statistic', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
+    submit_programs = db.relationship('SubmitProgram', backref='user', lazy='dynamic')
 
     @property
     def password(self):
@@ -298,6 +299,11 @@ class Post(db.Model):
 """
 
 
+homework_program = db.Table('homework_program',
+                               db.Column('homework_id', db.Integer, db.ForeignKey('homework.id'), primary_key=True),
+                               db.Column('program_id', db.Integer, db.ForeignKey('programs.id'), primary_key=True))
+
+
 class Program(db.Model):
     __tablename__ = "programs"
     id = db.Column(db.Integer, primary_key=True)        # 题目 ID
@@ -318,7 +324,7 @@ class Program(db.Model):
     createdTime = db.Column(db.DateTime(), default=datetime.now)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-
+    homework = db.relationship('Homework', secondary=homework_program, backref=db.backref('program', lazy='dynamic'))
     submit_programs = db.relationship('SubmitProgram', backref='program', lazy='dynamic')
 
 
@@ -334,7 +340,7 @@ class SubmitProgram(db.Model):
     __tablename__ = "submit_programs"
     id = db.Column(db.Integer, primary_key=True)                    # 提交记录id
     pid = db.Column(db.Integer, db.ForeignKey('programs.id'))       # 本次提交的题目ID
-    uid = db.Column(db.Integer, nullable=False)                     # 本次提交的用户ID
+    uid = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)   # 本次提交的用户ID
     code = db.Column(db.Text(), nullable=False)                     # 本次提交的提交代码
     language = db.Column(db.String(128), nullable=False)            # 本次提交的代码语言
     submit_time = db.Column(db.DateTime(), default=datetime.now)    # 本次提交的提交时间
@@ -540,6 +546,7 @@ class Homework(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(256), nullable=True)
+    h_type = db.Column(db.Integer, default=0, nullable=False)    #作业类型：0--理论作业；1--编程作业
     description = db.Column(db.Text(), nullable=True)
     publish_time = db.Column(db.DateTime, default=datetime.now, nullable=False)
     deadline = db.Column(db.DateTime, nullable=True)
@@ -547,6 +554,7 @@ class Homework(db.Model):
 
     uploads = db.relationship('HomeworkUpload', backref='homework', lazy='dynamic', cascade='delete, delete-orphan')
     appendix = db.relationship('HomeworkAppendix', backref='homework', lazy='dynamic', cascade='delete, delete-orphan')
+    homework_scores = db.relationship("HomeworkScore", backref='homework', lazy='dynamic', cascade='delete, delete-orphan')
 
 
 class HomeworkUpload(db.Model):

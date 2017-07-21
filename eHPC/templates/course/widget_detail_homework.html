@@ -17,10 +17,10 @@
                     <b>作业内容：</b>
                     <div id="homework-description" data-to-render="{{ homework.description }}"></div>
                 </div>
-                <div class="homework-content">
-                    <div style="margin-bottom: 10px;"><b>作业附件(点击可下载)：</b></div>
-                    <div id="homework-appendix-list">
-                        {% if homework.appendix.count() > 0 %}
+                {% if homework.appendix.count() > 0 %}
+                    <div class="homework-content">
+                        <div style="margin-bottom: 10px;"><b>作业附件(点击可下载)：</b></div>
+                        <div id="homework-appendix-list">
                             {% for a in homework.appendix %}
                                 <div id="appendix{{ a.id }}" class="alert alert-info alert-dismissable uploaded" role="alert"
                                      data-appendix-name="{{ a.name }}" data-appendix-id="{{ a.id }}">
@@ -28,14 +28,14 @@
                                     <a href="{{ url_for('static', filename='homework/appendix/' + a.uri) }}" download="{{ a.name }}">{{ a.name }}</a>
                                 </div>
                             {% endfor %}
-                        {% else %}
-                            <div class="text-center">本次作业未提供附件</div>
-                        {% endif %}
+                        </div>
                     </div>
-                </div>
+                {% endif %}
+
                 <div id="my-uploads" class="homework-content">
-                    <div style="margin-bottom: 10px;"><b>我的提交(点击可下载)：</b></div>
-                    {% for a in my_upload %}
+                    {% if homework.h_type == 0 %}
+                        <div style="margin-bottom: 10px;"><b>我的提交(点击可下载)：</b></div>
+                        {% for a in my_upload %}
                         <div id="my-submit{{ a.id }}" class="alert {% if a.submit_time < homework.deadline %}alert-success{% else %}alert-danger{% endif %} alert-dismissable" role="alert"
                              data-upload-name="{{ a.name }}" data-upload-id="{{ a.id }}">
                             <button type="button" class="close" aria-label="Close">
@@ -44,9 +44,23 @@
                             <a href="{{ url_for('static', filename='homework/upload/' + a.uri) }}" download="{{ a.name }}" class="col-md-8 col-sm-8">{{ a.name }}</a>
                             <span>提交于：{{ a.submit_time | unite_time_format }}</span>
                         </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <div style="margin-bottom: 10px;">
+                            <b>我的提交：</b>
+                            <ul id="homework-submit-list" class="homework-program-list">
+                                {% for p in homework.program %}
+                                    <li>
+                                        <span style="display: inline-block;margin-right: 20px;">{{ p.title }}</span>
+                                        <a href="{{ url_for('problem.show_my_submits', pid=p.id) }}" target="_blank" class="btn btn-xs btn-primary">查看我的提交</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="homework-content">
+                    {% if homework.h_type == 0 %}
                     <b>作业提交：</b>
                     <form id="homework-file-form">
                         <div class="form-group">
@@ -61,6 +75,16 @@
                         {% endif %}
                         <input type="hidden" name="op" value="upload">
                     </form>
+                    {% else %}
+                        <b>作业题目列表（点击跳转到题目）：</b>
+                        <div>
+                            <ul class="homework-program-list">
+                                {% for p in homework.program %}
+                                    <li><a href="{{ url_for('problem.program_view',pid=p.id) }}" target="_blank">{{ p.title }}</a></li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

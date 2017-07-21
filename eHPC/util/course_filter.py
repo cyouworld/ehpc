@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from . import filter_blueprint
-from ..models import Course, User, PaperQuestion, Homework, HomeworkUpload, HomeworkScore
+from ..models import Course, User, PaperQuestion, Homework, HomeworkUpload, HomeworkScore, SubmitProgram
 from sqlalchemy import *
 from .. import db
 import json
@@ -134,8 +134,35 @@ def get_comment(user, homework_id):
 @filter_blueprint.app_template_filter('homework_uploaded')
 def homework_uploaded(homework_id, user_id):
     curr_user = User.query.filter_by(id=user_id).first_or_404()
-    curr_user_upload = curr_user.homeworks.filter_by(homework_id=homework_id).first()
-    if curr_user_upload:
+    curr_homework = Homework.query.filter_by(id=homework_id).first_or_404()
+    if curr_homework.h_type == 0:
+        curr_user_upload = curr_user.homeworks.filter_by(homework_id=homework_id).first()
+        if curr_user_upload:
+            return True
+        else:
+            return False
+    else:
+        for p in curr_homework.program:
+            his_submit = SubmitProgram.query.filter_by(pid=p.id, uid=user_id).all()
+            if len(his_submit) == 0:
+                return False
+        return True
+
+
+@filter_blueprint.app_template_filter('get_course_name')
+def get_course_name(c_id):
+    curr_course = Course.query.filter_by(id=c_id).first()
+    if curr_course:
+        return curr_course.title
+    else:
+        return ""
+
+
+@filter_blueprint.app_template_filter('is_checked')
+def is_checked(p_id, h_id):
+    curr_homework = Homework.query.filter_by(id=h_id).first_or_404()
+    found = curr_homework.program.filter_by(id=p_id).first()
+    if found:
         return True
     else:
         return False

@@ -39,10 +39,10 @@
                                       {% endif %}" data-parsley-validate="">
                             <div class="form-group">
                                 <div class="col-md-2 col-sm-2  control-label">
-                                    <label for="title">作业标题</label>
+                                    <label for="homework-title">作业标题</label>
                                 </div>
                                 <div class="col-md-9 col-sm-9 controls">
-                                    <input id="homework-title" class="form-control" name="title" type="text"
+                                    <input id="homework-title" class="form-control" name="title" type="text" data-parsley-group="first"
                                            required data-parsley-required-message="请输入作业标题" data-parsley-maxlength="256"
                                            value="{% if option == "edit" %}{{ homework.title }}{% endif %}">
                                 </div>
@@ -52,7 +52,7 @@
                                 <label for="deadline" class="col-md-2 col-sm-2  control-label">截止时间</label>
                                 <div class="col-md-9 col-sm-9">
                                     <div id="dtp" class="input-group date form_datetime col-md-8" data-link-field="homework-deadline" >
-                                        <input class="form-control" size="16" readonly=""
+                                        <input class="form-control" size="16" readonly="" data-parsley-group="first"
                                                required data-parsley-required-message="请设置作业截止日期"
                                                data-parsley-errors-container="#deadline-errors"
                                                value="{% if option == "edit"  %}{{ homework.deadline | unite_time_format }}{% endif %}" type="text" onchange="hide_validate_info('#deadline-errors');">
@@ -66,13 +66,54 @@
                             </div>
 
                             <div class="form-group">
+                                <label for="homework-type" class="col-md-2 col-sm-2  control-label">作业类型</label>
+                                <div class="col-md-9 col-sm-9">
+                                    <div class="radio-inline">
+                                        <label for="type1" style="font-weight: normal"><input id="type1" name="homework-type" type="radio" required data-parsley-required-message="请选择作业类型" data-parsley-group="first"
+                                               data-parsley-errors-container="#homework-type-errors" value="0" {% if option == "edit" %}{% if homework.h_type == 0 %}checked{% endif %}{% endif %} onclick="hide_table();">理论作业</label>
+                                    </div>
+                                    <div class="radio-inline">
+                                        <label for="type2" style="font-weight: normal"><input id="type2" name="homework-type" type="radio" value="1" {% if option == "edit" %}{% if homework.h_type == 1 %}checked{% endif %}{% endif %} onclick="show_table();">编程作业</label>
+                                    </div>
+                                    <div id="homework-type-errors"></div>
+                                </div>
+                            </div>
+
+                            <div id="program-select-box" class="form-group {% if option == "create" %}hide{% else %}{% if homework.h_type == 0 %}hide{% endif %}{% endif %}">
+                                <label class="col-md-2 col-sm-2  control-label">选择题目</label>
+                                <div class="col-md-9 col-sm-9">
+                                    <table id="program-list-table" class="table fixed-table table-hover table-bordered">
+                                        <thead>
+                                            <tr>
+                                                <th width="10%"><input id="all-program-select" type="checkbox"></th>
+                                                <th width="30%">题目标题</th>
+                                                <th width="60%">题目描述</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="program-list-body">
+                                            {% for p in all_program %}
+                                                <tr data-program-id="{{ p.id }}">
+                                                    <td><input name="homework-program" type="checkbox" value="{{ p.id }}"
+                                                               required data-parsley-required-message="请选择编程题目"
+                                                               data-parsley-errors-container="#homework-program-errors" {% if option == "edit" %}{% if p.id | is_checked(homework.id) %}checked{% endif %}{% endif %}></td>
+                                                    <td>{{ p.title }}</td>
+                                                    <td class="overflow-ellipsis" title="{{ p.detail }}">{{ p.detail }}</td>
+                                                </tr>
+                                            {% endfor %}
+                                        </tbody>
+                                    </table>
+                                    <div id="homework-program-errors"></div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
                                 <div class="col-md-2 col-sm-2  control-label">
                                     <label for="description">作业内容</label>
                                 </div>
                                 <div class="col-md-9 col-sm-9 controls">
                                     <textarea class="form-control" id="homework-description" name="description" data-provide="markdown"
                                                 rows="10" data-img-upload-url="{{ url_for("markdown_files.images") }}"
-                                                data-parsley-required-message="请输入作业内容"
+                                                data-parsley-required-message="请输入作业内容" data-parsley-group="first"
                                                 data-parsley-errors-container="#content-errors" required>{% if option == "edit"  %}{{ homework.description }}{% endif %}</textarea>
                                     <div id="content-errors" class="textarea-errors"></div>
                                 </div>
