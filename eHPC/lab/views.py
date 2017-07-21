@@ -317,8 +317,7 @@ def vnc_ready_to_connect():
 
     except exc.IntegrityError as e:
         db.session.rollback()
-        docker_image = DockerImage.query.filter_by(user_id=current_user.id)
-
+        docker_image = DockerImage.query.filter_by(user_id=current_user.id).first()
     if protocol == 'vnc':
         if docker_image.is_vnc_running is False:
             result, message = start_vnc_server(docker_image)
@@ -439,7 +438,7 @@ def db_controller():
         if image_id is None or tunnel_id is None:
             return jsonify(status='fail')
 
-        cur_image = DockerImage.query.filter_by(image_id=image_id).first()
+        cur_image = DockerImage.query.filter_by(id=image_id).first()
         if cur_image is None:
             return jsonify(status='fail')
 
