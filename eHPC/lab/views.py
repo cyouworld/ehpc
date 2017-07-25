@@ -191,7 +191,8 @@ def tasks_list(vnc_knowledge_id):
         return render_template('lab/vnc_tasks_lists.html',
                                cur_vnc_knowledge=cur_vnc_knowledge,
                                cur_vnc_level=cur_vnc_level,
-                               all_tasks=all_tasks)
+                               all_tasks=all_tasks,
+                               title=u'当前学习进度')
 
 
 @lab.route('/vnc/task/<int:vnc_knowledge_id>/', methods=['GET', 'POST'])

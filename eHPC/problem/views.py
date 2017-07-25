@@ -78,7 +78,7 @@ def show_question():
                      c.id])
 
     return render_template('problem/show_question.html',
-                           rows=rows)
+                           rows=rows, title=u'知识点选择列表')
 
 
 @problem.route('/program/<int:pid>/', methods=['GET', 'POST'])

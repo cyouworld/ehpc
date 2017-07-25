@@ -296,7 +296,7 @@ def paper_detail(pid):
                              Statistic.ACTION_COURSE_ATTEND_QUIZ,
                              json.dumps(dict(paper_id=pid))))
     db.session.commit()
-    return render_template('course/paper_detail.html', paper=paper, head_id=head_id, name=name, div_id=div_id)
+    return render_template('course/paper_detail.html', paper=paper, head_id=head_id, name=name, div_id=div_id, title=u'课程试卷')
 
 
 @course.route('/paper/<int:pid>/result/', methods=['POST'])
@@ -406,7 +406,8 @@ def notice_index(cid):
     notices = Notice.query.filter_by(course=curr_course).order_by(Notice.createdTime.desc()).all()
     return render_template('course/notice_index.html',
                            course=curr_course,
-                           notices=notices)
+                           notices=notices,
+                           title=u'课程公告')
 
 
 @course.route('/<int:cid>/notice/<int:nid>')
@@ -415,7 +416,8 @@ def notice_detail(cid, nid):
     curr_notice = Notice.query.filter_by(id=nid).first_or_404()
     return render_template('course/notice_detail.html',
                            course=curr_course,
-                           notice=curr_notice)
+                           notice=curr_notice,
+                           title=u'课程公告')
 
 
 def send_file_partial(path):

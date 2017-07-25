@@ -45,7 +45,7 @@ def user():
 def user_edit(uid):
     u = User.query.filter_by(id=uid).first_or_404()
     if request.method == "GET":
-        return render_template('admin/user/edit.html', user=u)
+        return render_template('admin/user/edit.html', user=u, title=u'修改用户权限')
     elif request.method == "POST":
         u.permissions = request.form["permission"]
         db.session.commit()
@@ -60,7 +60,7 @@ def user_edit(uid):
 def reg_teacher(user_id):
     if request.method == 'GET':
         u = User.query.filter_by(id=user_id).first_or_404()
-        return render_template('user/reg_teacher.html', user=u)
+        return render_template('user/reg_teacher.html', user=u, title=u'教师注册')
     elif request.method == 'POST':
         if request.form.get('op') == 'approve':
             u = User.query.filter_by(id=user_id).first_or_404()
@@ -417,7 +417,7 @@ def case_version_material(case_id, version_id):
 @admin.route('/hpc/')
 @hpc_login
 def machine_apply_index():
-    return render_template('admin/hpc/index.html', applies=MachineApply.query.all())
+    return render_template('admin/hpc/index.html', applies=MachineApply.query.all(), title=u'机时申请')
 
 
 @admin.route('/hpc/<int:apply_id>/', methods=['GET', 'POST'])
@@ -425,7 +425,7 @@ def machine_apply_index():
 def machine_apply(apply_id):
     if request.method == 'GET':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
-        return render_template('admin/hpc/detail.html', apply=curr_apply)
+        return render_template('admin/hpc/detail.html', apply=curr_apply, title=u'机时申请')
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
         op = request.form.get('op')
@@ -455,7 +455,7 @@ def machine_download(apply_id):
         'encoding': 'UTF-8'
     }
     path = os.path.join(current_app.config['DOWNLOAD_FOLDER'], 'apply%d.pdf' % apply_id)
-    pdfkit.from_string(render_template('admin/hpc/apply_pdf.html', apply=curr_apply), path, options=opt)
+    pdfkit.from_string(render_template('admin/hpc/apply_pdf.html', apply=curr_apply), path, options=opt, title=u'机时申请')
     return send_file(path, as_attachment=True, attachment_filename='apply%d.pdf' % apply_id)
 
 
@@ -464,7 +464,7 @@ def machine_download(apply_id):
 def machine_apply_password(apply_id):
     if request.method == 'GET':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
-        return render_template('admin/hpc/password.html', apply=curr_apply)
+        return render_template('admin/hpc/password.html', apply=curr_apply, title=u'机时申请')
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
 
@@ -504,7 +504,7 @@ def machine_apply_password(apply_id):
 def machine_apply_edit(apply_id):
     if request.method == 'GET':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
-        return render_template('admin/hpc/edit.html', apply=curr_apply)
+        return render_template('admin/hpc/edit.html', apply=curr_apply, title=u'编辑机时申请')
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
         curr_apply.applicant_name = request.form.get('applicant_name')

@@ -1352,7 +1352,7 @@ def program_create():
         db.session.add(curr_program)
         db.session.commit()
 
-        return redirect(url_for('admin.program'))
+        return redirect(url_for('admin.program', tag2="lab-2"))
 
 
 @admin.route('/problem/program/edit/', methods=['GET', 'POST'])
@@ -1382,7 +1382,8 @@ def program_evaluate():
     if request.method == 'GET':
         curr_program = Program.query.filter_by(id=request.args['id']).first_or_404()
         return render_template('admin/problem/program_evaluate_edit.html',
-                               program=curr_program)
+                               program=curr_program,
+                               title=u'评测设置')
     elif request.method == 'POST':
         curr_program = Program.query.filter_by(id=request.form['id']).first_or_404()
         if request.form['can_evaluate'] == 'on':

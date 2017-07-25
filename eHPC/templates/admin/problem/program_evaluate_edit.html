@@ -12,68 +12,61 @@
 {% block content %}
     <div class="container" id="content-container">
         <div class="row">
-            <div class="col-md-3">
-                {% with type='program' %}
-                    {% include 'admin/problem/widget_nav_left.html' %}
-                {% endwith %}
-            </div><!--左侧导航栏-->
+            <div class="panel panel-default panel-col" style="position: relative">
+                <a class="back-to-homework-list" href="{{ url_for('admin.program') }}?tag2=lab-2">
+                    <i class="glyphicon glyphicon-chevron-left"></i>返回题目列表</a>
+                <div class="panel-heading text-center">
+                    代码评测设置--{{ program.title }}
+                </div>
 
-            <div class="col-md-9">
-                <div class="panel panel-default panel-col">
-                    <div class="panel-heading">
-                        代码评测设置--{{ program.title }}
-                    </div>
-
-                    <div class="panel-body">
-                        <form id="form" action="{{ url_for('admin.program_evaluate') }}"
+                <div class="panel-body">
+                    <form id="form" action="{{ url_for('admin.program_evaluate') }}"
                                data-parsley-validate="" method="post">
-                            <div class="form-group">
-                                <label>评测开启设置</label>
-                                <div class="row form-group" style="padding: 10px">
-                                    {% if program.can_evaluate %}
-                                        <input type="radio" name="can_evaluate" checked value="on">ON
-                                        <br><br>
-                                        <input type="radio" name="can_evaluate" value="off">Off
-                                    {% else %}
-                                        <input type="radio" name="can_evaluate" value="on">On
-                                        <br><br>
-                                        <input type="radio" name="can_evaluate" checked value="off">OFF
-                                    {% endif %}
-
-                                </div>
-
-                                <label>参考串行代码</label>
-                                <div class="row form-group" style="padding: 10px">
-                                    <div id="serial-code-editor" class="code-editor"></div>
-                                </div>
-
-                                <label>参考并行代码</label>
-                                <div class="row form-group" style="padding: 10px">
-                                    <div id="ref-code-editor" class="code-editor"></div>
-                                </div>
-
-                                <label>参考空代码</label>
-                                <div class="row form-group" style="padding: 10px">
-                                    <div id="null-code-editor" class="code-editor"></div>
-                                </div>
-
-                                <label>主评测代码</label>
-                                <div class="row form-group" style="padding: 10px">
-                                    <div id="pi-code-editor" class="code-editor"></div>
-                                </div>
+                        <div class="form-group">
+                            <label>评测开启设置</label>
+                            <div class="row form-group" style="padding: 10px">
+                                {% if program.can_evaluate %}
+                                    <input type="radio" name="can_evaluate" checked value="on">ON
+                                    <br><br>
+                                    <input type="radio" name="can_evaluate" value="off">Off
+                                {% else %}
+                                    <input type="radio" name="can_evaluate" value="on">On
+                                    <br><br>
+                                    <input type="radio" name="can_evaluate" checked value="off">OFF
+                                {% endif %}
                             </div>
 
-                            <input type="hidden" name="serial-code" value="{% if program.serial_code %}{{ program.serial_code }}{% endif %}">
-                            <input type="hidden" name="ref-code" value="{% if program.ref_code %}{{ program.ref_code }}{% endif %}">
-                            <input type="hidden" name="null-code" value="{% if program.null_code %}{{ program.null_code }}{% endif %}">
-                            <input type="hidden" name="pi-code" value="{% if program.pi_code %}{{ program.pi_code }}{% endif %}">
-                            <input type="hidden" name="id" value="{{ program.id }}">
-
-                            <div class="form-submit text-right">
-                                <input type="submit" class="btn btn-primary" value="保存提交">
+                            <label>参考串行代码</label>
+                            <div class="row form-group" style="padding: 10px">
+                                <div id="serial-code-editor" class="code-editor"></div>
                             </div>
-                        </form>
-                    </div>
+
+                            <label>参考并行代码</label>
+                            <div class="row form-group" style="padding: 10px">
+                                <div id="ref-code-editor" class="code-editor"></div>
+                            </div>
+
+                            <label>参考空代码</label>
+                            <div class="row form-group" style="padding: 10px">
+                                <div id="null-code-editor" class="code-editor"></div>
+                            </div>
+
+                            <label>主评测代码</label>
+                            <div class="row form-group" style="padding: 10px">
+                                <div id="pi-code-editor" class="code-editor"></div>
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="serial-code" value="{% if program.serial_code %}{{ program.serial_code }}{% endif %}">
+                        <input type="hidden" name="ref-code" value="{% if program.ref_code %}{{ program.ref_code }}{% endif %}">
+                        <input type="hidden" name="null-code" value="{% if program.null_code %}{{ program.null_code }}{% endif %}">
+                        <input type="hidden" name="pi-code" value="{% if program.pi_code %}{{ program.pi_code }}{% endif %}">
+                        <input type="hidden" name="id" value="{{ program.id }}">
+
+                        <div class="form-submit text-right">
+                            <input type="submit" class="btn btn-primary" value="保存提交">
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
