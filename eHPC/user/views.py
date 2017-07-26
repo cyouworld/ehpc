@@ -529,7 +529,7 @@ def collect_statistics():
             start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
             end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
 
-            if (start_time - end_time).seconds < 10:
+            if (end_time - start_time).seconds < 10:
                 return jsonify(status='success')
         except ValueError:
             return jsonify(status='fail')
@@ -555,7 +555,7 @@ def collect_statistics():
             start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
             end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
 
-            if (start_time - end_time).seconds < 60:
+            if (end_time - start_time).seconds < 60:
                 return jsonify(status='success')
         except ValueError:
             return jsonify(status='fail')
@@ -582,7 +582,7 @@ def collect_statistics():
             start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
             end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
 
-            if (start_time - end_time).seconds < 30:
+            if (end_time - start_time).seconds < 30:
                 return jsonify(status='success')
         except ValueError:
             return jsonify(status='fail')
@@ -612,7 +612,7 @@ def collect_statistics():
             start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
             end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
 
-            if (start_time - end_time).seconds < 30:
+            if (end_time - start_time).seconds < 30:
                 return jsonify(status='success')
         except ValueError:
             return jsonify(status='fail')
@@ -641,7 +641,7 @@ def collect_statistics():
             start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
             end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
 
-            if (start_time - end_time).seconds < 10:
+            if (end_time - start_time).seconds < 10:
                 return jsonify(status='success')
         except ValueError:
             return jsonify(status='fail')
@@ -669,7 +669,7 @@ def collect_statistics():
             start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
             end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
 
-            if (start_time - end_time).seconds < 10:
+            if (end_time - start_time).seconds < 10:
                 return jsonify(status='success')
         except ValueError:
             return jsonify(status='fail')
