@@ -18,12 +18,12 @@
 
         <!--Challenge的内容展示-->
         <div class="markdown-body">
-            <p class="text-center text-xlarge"> {{ title }}</p>
-            <div id="c_content" data-to-render="{{ c_content }}"></div>
+            <p class="text-center text-xlarge"> {{ cur_challenge.title }}</p>
+            <div id="c_content" data-to-render="{{ cur_challenge.content }}"></div>
         </div>
         <br>
         <!-- 如果 challenge 没有 material, 则不显示 material 的区域。-->
-        {% if cur_material %}
+        {% if cur_challenge.material %}
             <hr>
             <div id="player-content" class="col-md-12 material-container"></div>
         {% endif %}
@@ -99,6 +99,16 @@
 {% endblock %}
 
 {% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/moment-with-locales.min.js') }}"></script>
+    <script>moment.locale('zh-CN');</script>
+    <script>
+        var page_start_time = moment();
+        var statistic_address = "{{ url_for('user.collect_statistics') }}";
+        var page_end_time;
+        var challenge_id = {{ cur_challenge.id }};
+        var kid = {{ kid }};
+    </script>
+
     <script type="text/javascript" src="{{ url_for('static', filename='js/markdown_latex_support.js') }}"></script>
     <script>
         $(document).ready(function () {
@@ -146,6 +156,24 @@
         var $run = $("#run");
         $(function () {
             $("#continue").click(function () {
+                page_end_time = moment();
+                $.ajax({
+                    url: statistic_address,
+                    type: "post",
+                    async: false,
+                    data: {
+                        challenge_id: challenge_id,
+                        kid: kid,
+                        start_time: page_start_time.format("YYYY-MM-DD HH:mm:ss"),
+                        end_time: page_end_time.format("YYYY-MM-DD HH:mm:ss"),
+                        action_code: "60002"
+                    },
+                    success: function (data) {
+                        if(data["status"] === "success"){
+                            page_start_time = moment();
+                        }
+                    }
+                });
                 location.href = next_challenge_uri;
             });
             var time_out = 20;
@@ -280,9 +308,9 @@
     </script>
 
     <script>
-        var js_material_type = "{{ cur_material.m_type if cur_material else "None" }}";
-        var js_pdf_src = "{{ url_for('static', filename='js/pdfjs/web/viewer.html') }}?file={{ url_for('static', filename='resource') }}/" + "{{cur_material.uri}}";
-        var js_material_src = "{{ url_for('static', filename='resource') }}/" + "{{cur_material.uri}}";
+        var js_material_type = "{{ cur_challenge.material.m_type if cur_challenge.material else "None" }}";
+        var js_pdf_src = "{{ url_for('static', filename='js/pdfjs/web/viewer.html') }}?file={{ url_for('static', filename='resource') }}/" + "{{cur_challenge.material.uri}}";
+        var js_material_src = "{{ url_for('static', filename='resource') }}/" + "{{cur_challenge.material.uri}}";
 
         $(function () {
             var video_player = '<div id="player" style="height:90%"></div>';
@@ -316,9 +344,9 @@
     <script src="//cdn.bootcss.com/clappr/0.2.64/clappr.min.js"></script>
 {% endblock %}
 
-{#title#}
-{#c_content#}
-{#cur_material: 可能为空, 也就是说当前 challenge 并没有引用 material #}
+{#cur_challenge.title#}
+{#cur_challenge.content#}
+{#cur_challenge.material: 可能为空, 也就是说当前 challenge 并没有引用 material #}
 {#program#}
 {#kid#}
 {#next_progress#}

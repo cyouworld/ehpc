@@ -101,6 +101,16 @@
 {% endblock %}
 
 {% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/moment-with-locales.min.js') }}"></script>
+    <script>moment.locale('zh-CN');</script>
+    <script>
+        var page_start_time = moment();
+        var statistic_address = "{{ url_for('user.collect_statistics') }}";
+        var page_end_time;
+        var vnc_knowledge_id = {{ vnc_knowledge_id }};
+        var vnc_task_id = {{ response_vnc_task.id }};
+    </script>
+
     <script src="//cdn.bootcss.com/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
     <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/markdown_latex_support.js') }}"></script>
@@ -117,10 +127,29 @@
                      type: "post",
                      data: {
                          op: "next task",
-                         vnc_task_num: cur_task_num.toString()
+                         vnc_task_num: cur_task_num
                      },
                      success: function (data) {
                          if(data["status"] === "success"){
+                             page_end_time = moment();
+                             $.ajax({
+                                 url: statistic_address,
+                                 type: "post",
+                                 async: false,
+                                 data: {
+                                     vnc_knowledge_id: vnc_knowledge_id,
+                                     vnc_task_id: vnc_task_id,
+                                     start_time: page_start_time.format("YYYY-MM-DD HH:mm:ss"),
+                                     end_time: page_end_time.format("YYYY-MM-DD HH:mm:ss"),
+                                     action_code: "60004"
+                                 },
+                                 success: function (data) {
+                                     if(data["status"] === "success"){
+                                         page_start_time = moment();
+                                     }
+                                 }
+                             });
+
                              document_title.text(data["title"]);
                              document_content.html(latex_support(data["content"]));
                              cur_task_num++;
@@ -389,8 +418,6 @@
                                 success: function (data) {
                                     if(data['status'] === "success"){
                                         $("#display").empty();
-                                        do_event_unbind();
-                                        do_event_bind(data["token"], address);
                                         do_connect_vnc_server(data["token"], address, "vnc");
                                     }
                                     else if(data['status'] === 'fail'){

@@ -151,13 +151,6 @@ def material(mid):
     cur_lesson = cur_material.lesson
     cur_course = cur_lesson.course
 
-    # 记录用户访问课程文档或视频
-    db.session.add(Statistic(current_user.id,
-                             Statistic.MODULE_COURSE,
-                             Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO,
-                             json.dumps(dict(material_id=mid))))
-    db.session.commit()
-
     return render_template('course/player.html',
                            type=cur_material.m_type,
                            title=gettext('Course Materials'),
@@ -171,13 +164,6 @@ def get_material_src():
     if request.form['op'] == "type":
         cur_material = Material.query.filter_by(id=request.form['id']).first_or_404()
         if cur_material:
-
-            # 记录用户访问课程文档或视频
-            db.session.add(Statistic(current_user.id,
-                                     Statistic.MODULE_COURSE,
-                                     Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO,
-                                     json.dumps(dict(material_id=cur_material.id))))
-            db.session.commit()
             return jsonify(status='success', type=cur_material.m_type, uri=cur_material.uri)
         else:
             return jsonify(status='fail')
@@ -290,12 +276,6 @@ def paper_detail(pid):
     div_id = ['question-single-choice', 'question-multiple-choice', 'question-uncertain-choice',
               'question-fill', 'question-judge', 'question-essay']
 
-    # 记录用户参与课程测试
-    db.session.add(Statistic(current_user.id,
-                             Statistic.MODULE_COURSE,
-                             Statistic.ACTION_COURSE_ATTEND_QUIZ,
-                             json.dumps(dict(paper_id=pid))))
-    db.session.commit()
     return render_template('course/paper_detail.html', paper=paper, head_id=head_id, name=name, div_id=div_id, title=u'课程试卷')
 
 
@@ -341,12 +321,6 @@ def paper_result(pid):
         elif q_type != 5:
             result[key] = 'F'
 
-    # 记录课堂测试结果
-    db.session.add(Statistic(current_user.id,
-                             Statistic.MODULE_COURSE,
-                             Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER,
-                             json.dumps(dict(paper_id=pid, result=result))))
-    db.session.commit()
     return jsonify(status='success', result=result, correct_num=correct_num, solution=solution)
 
 
@@ -363,13 +337,6 @@ def process_comment():
         current_user.comments.append(curr_comment)
         current_user.commentNum += 1
 
-        # 记录用户课程评论
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.MODULE_COURSE,
-                                 Statistic.ACTION_COURSE_COMMENT,
-                                 json.dumps(dict(comment_id=curr_comment.id))))
-
-        db.session.commit()
         return jsonify(status='success', rank=curr_course.rank,
                        html=render_template('course/widget_course_comment.html', course=curr_course, user=current_user))
     elif request.form['op'] == 'edit':

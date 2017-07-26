@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block header_ext %}
-
+    <link href="//cdn.bootcss.com/bootstrap-select/1.12.1/css/bootstrap-select.min.css" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -31,39 +31,86 @@
             </div>
         </div>
 
+        <div class="es-section">
+            <ul class="nav nav-tabs" role="tablist" id="tab-list2">
+                <li class="active"><a href="#course-statistic" role="tab" data-toggle="tab">课程统计</a></li>
+            </ul>
+            <div class="tab-content">
+                <div id="course-statistic" class="tab-pane active">
+                    <div class="panel-heading">
+                        <label style="margin-right: 20px" for="courses">课程</label>
+                        <select id="courses" class="selectpicker" data-live-search="true">
+                            {% for course in current_user.courses %}
+                                <option value="{{ course.id }}">{{ course.title }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="panel-body">
+                        <h3 id="course-name"></h3>
+                        <div class="row">
+                            <div class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                                <h4 id="course-statistic-info1">
+                                    <span data-id="quiz-attend">
+                                        您在加入课程后，一共参与了
+                                        <span data-id="total-attend" style="color: #48d48a"></span>
+                                        次课程测试，超越了同课程中
+                                        <span data-id="rank-percentage" style="color: #48d48a"></span>
+                                        的同学
+                                    </span>
+                                </h4>
+                                <h4 id="course-statistic-info2">
+                                    <span data-id="quiz-submit">
+                                        您在加入课程后，一共提交了
+                                        <span data-id="total-submit" style="color: #48d48a"></span>
+                                        份课程测试答卷，正确率达到了
+                                        <span data-id="accuracy-submit" style="color: #48d48a"></span>超越了同课程中
+                                        <span data-id="rank-percentage" style="color: #48d48a"></span>
+                                        的同学
+                                    </span>
+                                </h4>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
 
     </div>
 {% endblock %}
 
 {% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/moment-with-locales.min.js') }}"></script>
+    <script>moment.locale('zh-CN');</script>
+    <script src="//cdn.bootcss.com/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
     <script>
         var statistics_this_week = {{ statistics | statistic_get_data('this-week') | safe }};
         var statistics_last_week = {{ statistics | statistic_get_data('last-week') | safe }};
         var statistics_month = {{ statistics | statistic_get_data('month') | safe }};
+        var statistics_all = {{ statistics | statistic_get_data('all') | safe }}
 
         $(function () {
             var quiz_status = statistics_this_week["{{ Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER }}"];
             var correct_counts = {}, wrong_counts = {};
             for (var i = 0; i < quiz_status.length; i++) {
                 var c_sum = 0, w_sum = 0;
-                for (var j in quiz_status[i]["data"]["result"]) {
-                    if (quiz_status[i]["data"]["result"][j] === "T")
+                var result = JSON.parse(quiz_status[i]["data"]["result"]);
+                for (var j in result) {
+                    if (result[j] === "T")
                         c_sum++;
                     else
                         w_sum++;
                 }
                 var paper_id = quiz_status[i]["data"]["paper_id"].toString();
                 if (correct_counts.hasOwnProperty(paper_id)) {
-                    if (correct_counts[paper_id] < c_sum)
-                        correct_counts[paper_id] = c_sum;
+                    correct_counts[paper_id] += c_sum;
                 } else {
                     correct_counts[paper_id] = c_sum;
                 }
                 if (wrong_counts.hasOwnProperty(paper_id)) {
-                    if (wrong_counts[paper_id] > w_sum)
-                        wrong_counts[paper_id] = w_sum;
+                    wrong_counts[paper_id] += w_sum;
                 } else {
                     wrong_counts[paper_id] = w_sum;
                 }
@@ -78,47 +125,53 @@
             }
 
             new Chart($("#week-quiz-status").find("canvas").eq(0), {
-                type: "doughnut",
-                data: {
-                    datasets: [{
-                        data: [total_correct, total_wrong],
-                        backgroundColor: ['#8cd21b', '#ff6384']
-                    }],
-                    labels: [
-                        "正确",
-                        "错误"
-                    ]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        fontSize: 16,
-                        text: "课程测试答题正确比例"
+                    type: "doughnut",
+                    data: {
+                        datasets: [{
+                            data: [total_correct, total_wrong],
+                            backgroundColor: ['#8cd21b', '#ff6384']
+                        }],
+                        labels: [
+                            "正确",
+                            "错误"
+                        ]
                     },
-                    tooltips: {
-                        callbacks: {
-                            label: function (tooltipItem, data) {
-                                var dataSet = data.datasets[tooltipItem.datasetIndex];
-                                var labels = data.labels[tooltipItem.datasetIndex];
-                                var currentValue = dataSet.data[tooltipItem.index];
-                                return " " + labels + " " + (currentValue / (total_correct + total_wrong)).toFixed(2) * 100 + "%";
+                    options: {
+                        title: {
+                            display: true,
+                            fontSize: 16,
+                            text: quiz_status.length + "场课程测试答题情况"
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function (tooltipItem, data) {
+                                    var dataSet = data.datasets[tooltipItem.datasetIndex];
+                                    var labels = data.labels[tooltipItem.datasetIndex];
+                                    var currentValue = dataSet.data[tooltipItem.index];
+                                    return " " + labels + " " + (currentValue / (total_correct + total_wrong)).toFixed(2) * 100 + "%";
+                                }
                             }
                         }
                     }
-                }
-            });
+                });
         });
         $(function () {
             var this_week_document_status = statistics_this_week["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
             var last_week_document_status = statistics_last_week["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
-
             var status_data_this_week = [0, 0, 0, 0, 0, 0, 0], status_data_last_week = [0, 0, 0, 0, 0, 0, 0];
+            var index, start_time, end_time;
 
-            for(i=0;i<this_week_document_status.length;i++){
-                status_data_this_week[(new Date(this_week_document_status[i]["time"]).getDay() + 6) % 7]++;
+            for(var i=0;i<this_week_document_status.length;i++){
+                index = (new Date(this_week_document_status[i]["data"]["end_time"]).getDay() + 6) % 7;
+                start_time = new Date(this_week_document_status[i]["data"]["start_time"]);
+                end_time = new Date(this_week_document_status[i]["data"]["end_time"]);
+                status_data_this_week[index] += Math.floor((end_time.getTime() - start_time.getTime()) / 60000);
             }
             for(i=0;i<last_week_document_status.length;i++){
-                status_data_last_week[(new Date(last_week_document_status[i]["time"]).getDay() + 6) % 7]++;
+                index = (new Date(last_week_document_status[i]["data"]["end_time"]).getDay() + 6) % 7;
+                start_time = new Date(last_week_document_status[i]["data"]["start_time"]);
+                end_time = new Date(last_week_document_status[i]["data"]["end_time"]);
+                status_data_last_week[index] += Math.floor((end_time.getTime() - start_time.getTime()) / 60000);
             }
 
             new Chart($("#week-course-document-status").find("canvas").eq(0), {
@@ -126,7 +179,7 @@
                 data: {
                     labels: ["一", "二", "三", "四", "五", "六", "日"],
                     datasets: [{
-                        label: "文档浏览次数（本周）",
+                        label: "文档浏览时间（分钟）（本周）",
                         data: status_data_this_week,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.2)',
@@ -148,7 +201,7 @@
                         ],
                         borderWidth: 1
                     },{
-                        label: "文档浏览次数（上周）",
+                        label: "文档浏览时间（分钟）（上周）",
                         data: status_data_last_week,
                         backgroundColor: [
                             'rgba(255, 99, 132, 0.5)',
@@ -190,6 +243,53 @@
                     }
                 }
             });
+        });
+        $(function () {
+            var courses_quiz_attend_status = statistics_all["{{ Statistic.ACTION_COURSE_ATTEND_QUIZ }}"];
+            var courses_quiz_submit_status = statistics_all["{{ Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER }}"];
+            var courses_document_visit_status = statistics_all["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
+
+            $("#courses").change(function () {
+                $("#course-name").text($("#courses").find("option:selected").text());
+
+                var cur_course_id = $(this).val();
+                $.ajax({
+                    url: location.href,
+                    type: "post",
+                    data: {
+                        action_code: "{{ Statistic.ACTION_COURSE_ATTEND_QUIZ }}",
+                        op: "percentage",
+                        course_id: cur_course_id
+                    },
+                    success: function (data) {
+                        if(data["status"] === "success"){
+                            $("#course-statistic-info1").find("span[data-id=quiz-attend]").find("span[data-id=total-attend]").eq(0).text(data["attend_times"]);
+                            $("#course-statistic-info1").find("span[data-id=quiz-attend]").find("span[data-id=rank-percentage]").eq(0).text(data["data"] + "%");
+                        }
+                    }
+                });
+
+                $.ajax({
+                    url: location.href,
+                    type: "post",
+                    data: {
+                        action_code: "{{ Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER }}",
+                        op: "percentage",
+                        course_id: cur_course_id
+                    },
+                    success: function (data) {
+                        if(data["status"] === "success"){
+                            $("#course-statistic-info2").find("span[data-id=quiz-submit]").find("span[data-id=total-submit]").eq(0).text(data["submit_count"]);
+                            $("#course-statistic-info2").find("span[data-id=quiz-submit]").find("span[data-id=accuracy-submit]").eq(0).text(data["accuracy"] + "%");
+                            $("#course-statistic-info2").find("span[data-id=quiz-submit]").find("span[data-id=rank-percentage]").eq(0).text(data["data"] + "%");
+                        }
+                    }
+                });
+
+
+            });
+            $("#courses").change();
+
         });
     </script>
 {% endblock %}

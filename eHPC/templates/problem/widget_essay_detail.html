@@ -24,7 +24,7 @@
 <script>
     var practice_count = {{ essays | count }};
     var address = "{{ url_for('problem.show_question') }}";
-    var statistic_address = "{{ url_for('problem.question_submit_result') }}";
+    var statistic_address = "{{ url_for('user.collect_statistics') }}";
     var classify_id = {{ classify_id }};
 </script>
 

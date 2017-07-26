@@ -169,14 +169,6 @@ def reg():
 @user.route('/<int:uid>/')
 def view(uid):
     cur_user = User.query.filter_by(id=uid).first_or_404()
-
-    if current_user.is_authenticated and current_user.id != uid:
-        # 访问个人主页记录
-        db.session.add(Statistic(uid,
-                                 Statistic.MODULE_USER,
-                                 Statistic.ACTION_USER_VISIT_PERSONAL_HOME_PAGE,
-                                 json.dumps(dict(visiter_id=current_user.id))))
-        db.session.commit()
     return render_template('user/detail.html',
                            title=gettext('Personal Page'),
                            user=cur_user)
@@ -396,12 +388,300 @@ def notification_read(note_info_id):
     return jsonify(status='success')
 
 
-@user.route('/statistics/')
+@user.route('/statistics/', methods=['POST', 'GET'])
 @login_required
 def statistics():
-    return render_template('user/statistics.html',
-                           statistics=current_user.statistics,
-                           Statistic=Statistic)
+    if request.method == 'GET':
+        return render_template('user/statistics.html',
+                               statistics=current_user.statistics,
+                               Statistic=Statistic)
+    elif request.method == 'POST':
+        action_code = request.form.get('action_code')
+        try:
+            action_code = int(action_code)
+        except ValueError:
+            return jsonify(status='fail')
+
+        if action_code == Statistic.ACTION_COURSE_ATTEND_QUIZ:
+            op = request.form.get('op')
+            course_id = request.form.get('course_id')
+
+            if not (op and course_id):
+                return jsonify(status='fail')
+            try:
+                course_id = int(course_id)
+            except ValueError:
+                return jsonify(status='fail')
+
+            if op == 'percentage':
+                all_statistics = Statistic.query.filter_by(action=action_code).\
+                    filter(Statistic.user_id != current_user.id).all()
+                status = {}
+                for s in all_statistics:
+                    if s.user_id not in status.keys():
+                        status[s.user_id] = 0
+
+                for s in all_statistics:
+                    if json.loads(s.data)['course_id'] == course_id:
+                        status[s.user_id] += 1
+
+                my_statistic = current_user.statistics.filter_by(action=action_code).all()
+                my_status = 0
+                for s in my_statistic:
+                    if json.loads(s.data)['course_id'] == course_id:
+                        my_status += 1
+
+                count = 0
+                for (k,v) in status.items():
+                    if my_status > v:
+                        count += 1
+
+                return jsonify(status='success',
+                               data=int(round(1.0 * count / (len(status) + 1), 2) * 100),
+                               attend_times=my_status)
+        elif action_code == Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER:
+            op = request.form.get('op')
+            course_id = request.form.get('course_id')
+
+            if not (op and course_id):
+                return jsonify(status='fail')
+            try:
+                course_id = int(course_id)
+            except ValueError:
+                return jsonify(status='fail')
+
+            if op == 'percentage':
+                my_statistic = current_user.statistics.filter_by(action=action_code).all()
+                correct_count, wrong_count, submit_count = 0, 0, 0
+                for s in my_statistic:
+                    data = json.loads(s.data)
+                    if data['course_id'] == course_id:
+                        submit_count += 1
+                        result = json.loads(data['result'])
+                        for (k, v) in result.items():
+                            if v == 'T':
+                                correct_count += 1
+                            elif v == 'F':
+                                wrong_count += 1
+
+                if correct_count + wrong_count == 0:
+                    accuracy = 0
+                else:
+                    accuracy = int(round(1.0 * correct_count / (correct_count + wrong_count), 2) * 100)
+
+                all_statistics = Statistic.query.filter_by(action=action_code). \
+                    filter(Statistic.user_id != current_user.id).all()
+                correct_status, wrong_status = {}, {}
+
+                for s in all_statistics:
+                    if s.user_id not in correct_status.keys():
+                        correct_status[s.user_id] = 0
+                    if s.user_id not in wrong_status.keys():
+                        wrong_status[s.user_id] = 0
+
+                for s in all_statistics:
+                    data = json.loads(s.data)
+                    if data['course_id'] == course_id:
+                        result = json.loads(data['result'])
+                        for (k, v) in result.items():
+                            if v == 'T':
+                                correct_status[s.user_id] += 1
+                            elif v == 'F':
+                                wrong_status[s.user_id] += 1
+
+                count = 0
+                for k in correct_status.keys():
+                    if correct_status[k] + wrong_status[k] == 0:
+                        k_accuracy = 0
+                    else:
+                        k_accuracy = int(round(1.0 * correct_status[k] / (correct_status[k] + wrong_status[k]), 2) * 100)
+                    if accuracy > k_accuracy:
+                        count += 1
+
+                return jsonify(status='success',
+                               submit_count=submit_count,
+                               accuracy=accuracy,
+                               data=int(round(1.0 * count / (len(correct_status) + 1), 2) * 100))
+
+
+@user.route('/statistics/collect/', methods=['POST'])
+@login_required
+def collect_statistics():
+    action_code = request.form.get('action_code')
+
+    try:
+        action_code = int(action_code)
+    except ValueError:
+        return jsonify(status='fail')
+
+    if action_code == Statistic.ACTION_QUESTION_SUBMIT_ANSWER:
+        classify_id = request.form.get('classify_id')
+        status = request.form.get('status')
+        start_time = request.form.get('start_time')
+        end_time = request.form.get('end_time')
+
+        if not (classify_id and status and start_time and end_time):
+            return jsonify(status='fail')
+
+        try:
+            json.loads(status)
+            classify_id = int(classify_id)
+            start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+
+            if (start_time - end_time).seconds < 10:
+                return jsonify(status='success')
+        except ValueError:
+            return jsonify(status='fail')
+
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.ACTION_QUESTION_SUBMIT_ANSWER,
+                                 json.dumps(dict(classify_id=classify_id,
+                                                 status=status,
+                                                 start_time=str(start_time),
+                                                 end_time=str(end_time)))))
+        db.session.commit()
+        return jsonify(status='success')
+    elif action_code == Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO:
+        material_id = request.form.get("material_id")
+        start_time = request.form.get('start_time')
+        end_time = request.form.get('end_time')
+
+        if not (material_id and start_time and end_time):
+            return jsonify(status='fail')
+
+        try:
+            material_id = int(material_id)
+            start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+
+            if (start_time - end_time).seconds < 60:
+                return jsonify(status='success')
+        except ValueError:
+            return jsonify(status='fail')
+
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO,
+                                 json.dumps(dict(material_id=material_id,
+                                                 start_time=str(start_time),
+                                                 end_time=str(end_time)))))
+        db.session.commit()
+        return jsonify(status='success')
+    elif action_code == Statistic.ACTION_COURSE_ATTEND_QUIZ:
+        course_id = request.form.get('course_id')
+        paper_id = request.form.get('paper_id')
+        start_time = request.form.get('start_time')
+        end_time = request.form.get('end_time')
+
+        if not (course_id and paper_id and start_time and end_time):
+            return jsonify(status='fail')
+
+        try:
+            course_id = int(course_id)
+            paper_id = int(paper_id)
+            start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+
+            if (start_time - end_time).seconds < 30:
+                return jsonify(status='success')
+        except ValueError:
+            return jsonify(status='fail')
+
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.ACTION_COURSE_ATTEND_QUIZ,
+                                 json.dumps(dict(paper_id=paper_id,
+                                                 course_id=course_id,
+                                                 start_time=str(start_time),
+                                                 end_time=str(end_time)))))
+        db.session.commit()
+        return jsonify(status='success')
+    elif action_code == Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER:
+        course_id = request.form.get('course_id')
+        paper_id = request.form.get('paper_id')
+        result = request.form.get('result')
+        start_time = request.form.get('start_time')
+        end_time = request.form.get('end_time')
+
+        if not (course_id and paper_id and result and start_time and end_time):
+            return jsonify(status='fail')
+
+        try:
+            json.loads(result)
+            course_id = int(course_id)
+            paper_id = int(paper_id)
+            start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+
+            if (start_time - end_time).seconds < 30:
+                return jsonify(status='success')
+        except ValueError:
+            return jsonify(status='fail')
+
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER,
+                                 json.dumps(dict(paper_id=paper_id,
+                                                 course_id=course_id,
+                                                 result=result,
+                                                 start_time=str(start_time),
+                                                 end_time=str(end_time)))))
+        db.session.commit()
+        return jsonify(status='success')
+    elif action_code == Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK:
+        knowledge_id = request.form.get('kid')
+        challenge_id = request.form.get('challenge_id')
+        start_time = request.form.get('start_time')
+        end_time = request.form.get('end_time')
+
+        if not (knowledge_id and challenge_id and start_time and end_time):
+            return jsonify(status='fail')
+
+        try:
+            knowledge_id = int(knowledge_id)
+            challenge_id = int(challenge_id)
+            start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+
+            if (start_time - end_time).seconds < 10:
+                return jsonify(status='success')
+        except ValueError:
+            return jsonify(status='fail')
+
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK,
+                                 json.dumps(dict(knowledge_id=knowledge_id,
+                                                 challenge_id=challenge_id,
+                                                 start_time=str(start_time),
+                                                 end_time=str(end_time)))))
+        db.session.commit()
+        return jsonify(status='success')
+    elif action_code == Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK:
+        vnc_knowledge_id = request.form.get('vnc_knowledge_id')
+        vnc_task_id = request.form.get('vnc_task_id')
+        start_time = request.form.get('start_time')
+        end_time = request.form.get('end_time')
+
+        if not (vnc_knowledge_id and vnc_task_id and start_time and end_time):
+            return jsonify(status='fail')
+
+        try:
+            vnc_knowledge_id = int(vnc_knowledge_id)
+            vnc_task_id = int(vnc_task_id)
+            start_time = datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strptime(end_time, '%Y-%m-%d %H:%M:%S')
+
+            if (start_time - end_time).seconds < 10:
+                return jsonify(status='success')
+        except ValueError:
+            return jsonify(status='fail')
+
+        db.session.add(Statistic(current_user.id,
+                                 Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK,
+                                 json.dumps(dict(vnc_knowledge_id=vnc_knowledge_id,
+                                                 vnc_task_id=vnc_task_id,
+                                                 start_time=str(start_time),
+                                                 end_time=str(end_time)))))
+        db.session.commit()
+        return jsonify(status='success')
 
 
 @user.route('/verify/<int:user_id>/', methods=['GET', 'POST'])

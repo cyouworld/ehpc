@@ -7,13 +7,9 @@ from sqlalchemy import and_
 
 @filter_blueprint.app_template_filter('statistic_get_data')
 def statistic_get_data(statistics, time_str='month'):
-    actions = [Statistic.ACTION_USER_VISIT_PERSONAL_HOME_PAGE, Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO,
-               Statistic.ACTION_COURSE_ATTEND_QUIZ, Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER,
-               Statistic.ACTION_COURSE_COMMENT, Statistic.ACTION_QUESTION_VISIT_QUESTION_PAGE,
-               Statistic.ACTION_QUESTION_SUBMIT_ANSWER, Statistic.ACTION_PROGRAM_VISIT_PROGRAM_PAGE,
-               Statistic.ACTION_PROGRAM_SUBMIT_CODE, Statistic.ACTION_TOPIC_CREATE_TOPIC,
-               Statistic.ACTION_LAB_VISIT_PROGRAMING_LAB, Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK,
-               Statistic.ACTION_LAB_VISIT_CONFIGURATION_LAB, Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK]
+    actions = [Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO, Statistic.ACTION_COURSE_ATTEND_QUIZ,
+               Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER, Statistic.ACTION_QUESTION_SUBMIT_ANSWER,
+               Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK, Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK]
     data = {}
     today_start = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
 
@@ -32,8 +28,12 @@ def statistic_get_data(statistics, time_str='month'):
                                                                 Statistic.timestamp < this_w_start)).all()
         elif time_str == 'today':
             s = statistics.filter_by(action=action).filter(Statistic.timestamp >= today_start).all()
+
+        elif time_str == 'all':
+            s = statistics.filter_by(action=action).all()
         temp = []
         for statistic in s:
             temp.append(dict(data=json.loads(statistic.data), time=str(statistic.timestamp)))
         data[action] = temp
     return json.dumps(data)
+

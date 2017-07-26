@@ -149,14 +149,18 @@
 {% endblock %}
 
 {% block footer_ext %}
-<script>
-    $(function () {
-        $("[data-id=question-title]").each(function () {
-            $(this).html(latex_support($(this).data("to-render")));
-            $(this).attr('data-to-render', null);
+    <script src="{{ url_for('static', filename='js/moment-with-locales.min.js') }}"></script>
+    <script>moment.locale('zh-CN');</script>
+    <script>
+        var page_start_time = moment();
+        var page_end_time;
+            $(function () {
+            $("[data-id=question-title]").each(function () {
+                $(this).html(latex_support($(this).data("to-render")));
+                $(this).attr('data-to-render', null);
+            });
         });
-    });
-</script>
+    </script>
 {% endblock %}
 
 {# classify_id #}

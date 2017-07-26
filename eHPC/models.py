@@ -103,7 +103,7 @@ class User(UserMixin, db.Model):
         return None
 
     def generate_email_token(self):
-        expiration = 3600*7
+        expiration = 3600*24*7
         s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
         return s.dumps({'id': self.id})
 
@@ -788,43 +788,34 @@ class Notification(db.Model):
 
 
 class Statistic(db.Model):
-    MODULE_USER = 10001
-    MODULE_COURSE = 10002
-    MODULE_QUESTION = 10003
-    MODULE_PROGRAM = 10004
-    MODULE_TOPIC = 10005
-    MODULE_LAB = 10006
+    # ACTION_USER_VISIT_PERSONAL_HOME_PAGE = 10001
 
-    ACTION_USER_VISIT_PERSONAL_HOME_PAGE = 20001
+    ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO = 20001
+    ACTION_COURSE_ATTEND_QUIZ = 20002
+    ACTION_COURSE_SUBMIT_QUIZ_ANSWER = 20003
+    # ACTION_COURSE_COMMENT = 20004
 
-    ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO = 30001
-    ACTION_COURSE_ATTEND_QUIZ = 30002
-    ACTION_COURSE_SUBMIT_QUIZ_ANSWER = 30003
-    ACTION_COURSE_COMMENT = 30004
+    # ACTION_QUESTION_VISIT_QUESTION_PAGE = 30001
+    ACTION_QUESTION_SUBMIT_ANSWER = 30002
 
-    ACTION_QUESTION_VISIT_QUESTION_PAGE = 40001
-    ACTION_QUESTION_SUBMIT_ANSWER = 40002
+    # ACTION_PROGRAM_VISIT_PROGRAM_PAGE = 40001
+    # ACTION_PROGRAM_SUBMIT_CODE = 40002
 
-    ACTION_PROGRAM_VISIT_PROGRAM_PAGE = 50001
-    ACTION_PROGRAM_SUBMIT_CODE = 50002
+    # ACTION_TOPIC_CREATE_TOPIC = 50001
 
-    ACTION_TOPIC_CREATE_TOPIC = 60001
+    # ACTION_LAB_VISIT_PROGRAMING_LAB = 60001
+    ACTION_LAB_PASS_A_PROGRAMING_TASK = 60002
+    # ACTION_LAB_VISIT_CONFIGURATION_LAB = 60003
+    ACTION_LAB_PASS_A_CONFIGURATION_TASK = 60004
 
-    ACTION_LAB_VISIT_PROGRAMING_LAB = 70001
-    ACTION_LAB_PASS_A_PROGRAMING_TASK = 70002
-    ACTION_LAB_VISIT_CONFIGURATION_LAB = 70003
-    ACTION_LAB_PASS_A_CONFIGURATION_TASK = 70004
-
-    def __init__(self, user_id, module_type, action, data):
+    def __init__(self, user_id, action, data):
         self.user_id = user_id
-        self.module_type = module_type
         self.action = action
         self.data = data
 
     __tablename__ = 'statistics'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    module_type = db.Column(db.Integer, nullable=False)
     action = db.Column(db.Integer, nullable=False)
     data = db.Column(db.Text(), default=None)
     timestamp = db.Column(db.DateTime(), default=datetime.now)

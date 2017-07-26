@@ -142,7 +142,35 @@
     </div>
 {% endblock %}
 
-{% block footer_ext %}<script language=javascript src='{{ url_for("static" , filename="js/custom_simplemde.js") }}'></script>
+{% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/moment-with-locales.min.js') }}"></script>
+    <script>moment.locale('zh-CN');</script>
+    <script>
+        var page_start_time = moment();
+        var statistic_address = "{{ url_for('user.collect_statistics') }}";
+        var page_end_time;
+        var paper_id = {{ paper.id }};
+        var course_id = {{ paper.courseId }};
+    </script>
+    <script>
+        $(window).bind('beforeunload', function (e) {
+            page_end_time = moment();
+            $.ajax({
+                url: statistic_address,
+                type: "post",
+                async: false,
+                data: {
+                    paper_id: paper_id,
+                    course_id: course_id,
+                    start_time: page_start_time.format("YYYY-MM-DD HH:mm:ss"),
+                    end_time: page_end_time.format("YYYY-MM-DD HH:mm:ss"),
+                    action_code: "20002"
+                }
+            });
+        });
+    </script>
+
+    <script language=javascript src='{{ url_for("static" , filename="js/custom_simplemde.js") }}'></script>
     <script>
         $(function () {
             $(".markdown-body").each(function () {

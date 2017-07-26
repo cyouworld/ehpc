@@ -65,10 +65,4 @@ def increase_vnc_progress(kid, vnc_task_num, tasks_count):
     pro = get_vnc_progress_class(kid)
     if int(vnc_task_num) == (pro.have_done + 1) <= tasks_count:
         pro.have_done += 1
-        # 记录用户通过配置实验小任务
-        response_vnc_task = VNCTask.query.filter_by(vnc_knowledge_id=kid).filter_by(vnc_task_num=vnc_task_num).first()
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.MODULE_LAB,
-                                 Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK,
-                                 json.dumps(dict(task_id=response_vnc_task.id))))
         db.session.commit()

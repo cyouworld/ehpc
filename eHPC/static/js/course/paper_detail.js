@@ -295,6 +295,20 @@ $(document).ready(function () {
             data: your_answer,
             success: function (data) {
                 if (data['status'] == 'success') {//若状态为成功
+                    page_end_time = moment();
+                    $.ajax({
+                        url: statistic_address,
+                        type: "post",
+                        data: {
+                            paper_id: paper_id,
+                            course_id: course_id,
+                            result: JSON.stringify(data['result']),
+                            start_time: page_start_time.format("YYYY-MM-DD HH:mm:ss"),
+                            end_time: page_end_time.format("YYYY-MM-DD HH:mm:ss"),
+                            action_code: "20003"
+                        }
+                    });
+
                     var count=0;
 
                     //取出每种题型回答正确的题目数量

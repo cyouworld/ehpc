@@ -51,12 +51,6 @@ def detail(kid):
     cur_knowledge = Knowledge.query.filter_by(id=kid).first_or_404()
     cur_level = get_cur_progress(kid)
     if request.method == 'GET':
-        # 记录用户浏览编程实验
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.MODULE_LAB,
-                                 Statistic.ACTION_LAB_VISIT_PROGRAMING_LAB,
-                                 json.dumps(dict(lab_id=cur_knowledge.id))))
-        db.session.commit()
         return render_template("lab/detail.html",
                                title=cur_knowledge.title,
                                knowledge=cur_knowledge,
@@ -105,9 +99,7 @@ def knowledge(kid):
 
         # challenge 可能没有相应的 material 存在, cur_material 对应为空。
         return render_template('lab/knowledge.html',
-                               title=cur_challenge.title,
-                               c_content=cur_challenge.content,
-                               cur_material=cur_challenge.material,
+                               cur_challenge=cur_challenge,
                                kid=kid,
                                next_progress=cur_progress+1,
                                challenges_count=challenges_count)
@@ -143,12 +135,6 @@ def knowledge(kid):
             # 代码成功通过编译, 则认为已完成该知识点学习
             if compile_success[0]:
                 increase_progress(kid=kid, k_num=k_num, challenges_count=challenges_count)
-                # 记录用户通过编程实验小任务
-                db.session.add(Statistic(current_user.id,
-                                         Statistic.MODULE_LAB,
-                                         Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK,
-                                         json.dumps(dict(task_id=cur_challenge.id))))
-                db.session.commit()
 
             return result
         elif request.form['op'] == 'get_source_code':
@@ -181,13 +167,6 @@ def tasks_list(vnc_knowledge_id):
     all_tasks = cur_vnc_knowledge.vnc_tasks.order_by(VNCTask.vnc_task_num).all()
 
     if request.method == 'GET':
-        # 记录用户浏览配置实验
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.MODULE_LAB,
-                                 Statistic.ACTION_LAB_VISIT_CONFIGURATION_LAB,
-                                 json.dumps(dict(lab_id=cur_vnc_knowledge.id))))
-        db.session.commit()
-
         return render_template('lab/vnc_tasks_lists.html',
                                cur_vnc_knowledge=cur_vnc_knowledge,
                                cur_vnc_level=cur_vnc_level,
@@ -266,7 +245,7 @@ def vnc_task(vnc_knowledge_id):
 
             try:
                 vnc_task_num = int(vnc_task_num)
-            except TypeError:
+            except ValueError:
                 return jsonify(status='fail')
 
             cur_vnc_knowledge = VNCKnowledge.query.filter_by(id=vnc_knowledge_id).first()
@@ -353,8 +332,6 @@ def vnc_set_resolution():
         if width < 800 or width > 2560 or height < 600 or height > 1440:
             return jsonify(status='fail')
     except ValueError:
-        return jsonify(status='fail')
-    except TypeError:
         return jsonify(status='fail')
 
     try:

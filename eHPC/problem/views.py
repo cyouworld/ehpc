@@ -87,14 +87,6 @@ def program_view(pid):
     if request.method == 'GET':
         cache = CodeCache.query.filter_by(user_id=current_user.id).filter_by(program_id=pid).first()
         pro = Program.query.filter_by(id=pid).first_or_404()
-
-        # 记录用户浏览编程题
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.MODULE_PROGRAM,
-                                 Statistic.ACTION_PROGRAM_VISIT_PROGRAM_PAGE,
-                                 json.dumps(dict(pragram_id=pid))))
-        db.session.commit()
-
         return render_template('problem/program_detail.html', title=pro.title, program=pro, cache=cache)
     elif request.method == 'POST':
         if request.form['op'] == 'save':
@@ -135,42 +127,11 @@ def question_view(cid, question_type):
         practices = classify_name.questions.filter_by(type=5).all()
     else:
         abort(404)
-
-    # 记录用户浏览题库问题
-    db.session.add(Statistic(current_user.id,
-                             Statistic.MODULE_QUESTION,
-                             Statistic.ACTION_QUESTION_VISIT_QUESTION_PAGE,
-                             json.dumps(dict(question_type=question_type,
-                                             classify_id=classify_name.id,
-                                             question_ids=[p.id for p in practices]))))
-    db.session.commit()
-
     return render_template('problem/practice_detail.html',
                            classify_id=classify_name.id,
                            title=classify_name.name,
                            practices=practices,
                            q_type=question_type)
-
-
-@problem.route('/question/submit_result/', methods=['POST'])
-@login_required
-def question_submit_result():
-    classify_id = request.form.get('classify_id', None)
-    status = json.loads(request.form.get('status', None))
-
-    try:
-        classify_id = int(classify_id)
-    except TypeError:
-        return jsonify(status='fail')
-
-    # 记录用户提交题库问题作答
-    db.session.add(Statistic(current_user.id,
-                             Statistic.MODULE_QUESTION,
-                             Statistic.ACTION_QUESTION_SUBMIT_ANSWER,
-                             json.dumps(dict(classify_id=classify_id,
-                                             status=status))))
-    db.session.commit()
-    return jsonify(status='success')
 
 
 @problem.route('/<int:pid>/submit/', methods=['POST'])
@@ -196,14 +157,6 @@ def submit(pid):
         submit_program = SubmitProgram(uid, program_id, source_code, language)
         db.session.add(submit_program)
         db.session.commit()
-
-        # 记录用户提交编程题代码
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.MODULE_PROGRAM,
-                                 Statistic.ACTION_PROGRAM_SUBMIT_CODE,
-                                 json.dumps(dict(submission_id=submit_program.id))))
-        db.session.commit()
-
         if language == "openmp" :
             cpu_number_per_task = cpu_number
             task_number = 1

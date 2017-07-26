@@ -77,6 +77,7 @@ $(function () {
     });
 
     $('#confirm-submit').click(function () {
+        page_end_time = moment();
         var status = {};
         for(var k in corNum){
             status[$('div[class=panel][data-id=' + k + ']').eq(0).data('q-id')] = corNum[k];
@@ -86,7 +87,10 @@ $(function () {
             type: "post",
             data: {
                 status: JSON.stringify(status),
-                classify_id: classify_id
+                classify_id: classify_id,
+                start_time: page_start_time.format("YYYY-MM-DD HH:mm:ss"),
+                end_time: page_end_time.format("YYYY-MM-DD HH:mm:ss"),
+                action_code: "30002"
             },
             success: function (data) {
                 if(data["status"] === "success"){

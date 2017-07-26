@@ -8,6 +8,29 @@
 {% endblock %}
 
 {% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/moment-with-locales.min.js') }}"></script>
+    <script>moment.locale('zh-CN');</script>
+    <script>
+        var page_start_time = moment();
+        var statistic_address = "{{ url_for('user.collect_statistics') }}";
+        var page_end_time;
+    </script>
+    <script>
+        $(window).bind('beforeunload', function (e) {
+            page_end_time = moment();
+            $.ajax({
+                url: statistic_address,
+                type: "post",
+                async: false,
+                data: {
+                    material_id: $('#accordion').find('a.active').eq(0).parent().attr('id').substr(8),
+                    start_time: page_start_time.format("YYYY-MM-DD HH:mm:ss"),
+                    end_time: page_end_time.format("YYYY-MM-DD HH:mm:ss"),
+                    action_code: "20001"
+                }
+            });
+        });
+    </script>
     <script>
         var js_material_selector = '#material' + '{{ cur_material.id }}';
         var js_material_type = "{{ cur_material.m_type }}";
