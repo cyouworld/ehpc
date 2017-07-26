@@ -34,7 +34,13 @@ def signin():
                                title=gettext('User Sign In'),
                                form=None)
     elif request.method == 'POST':
-        u = User.query.filter_by(email=request.form['email']).first()
+        _form = request.form
+        u = User.query.filter_by(email=_form['email']).first()
+
+        if u is None:
+            message = gettext('Invalid username or password.')
+            return render_template('user/signin.html', title=gettext('User Sign In'), form=_form, message=message)
+
         if not u.is_verify_email:
             return redirect(url_for('user.verify_email', user_id=u.id))
 
@@ -43,14 +49,13 @@ def signin():
         next_url = request.args.get('next')
         if next_url:
             next_url = None if request.args.get('next')[:6] == '/user/' else request.args.get('next')
-        _form = request.form
+
         resp = _form.get('luotest_response')
         if not verify_captcha(resp):
             message = u'人机识别验证失败'
             return render_template('user/signin.html', title=gettext('User Sign In'),
                                    form=_form, message=message)
 
-        u = User.query.filter_by(email=_form['email']).first()
         if u and u.verify_password(_form['password']):
             login_user(u)
             u.last_login = datetime.now()
@@ -58,8 +63,7 @@ def signin():
             return redirect(next_url or url_for('main.index'))
         else:
             message = gettext('Invalid username or password.')
-            return render_template('user/signin.html', title=gettext('User Sign In'),
-                                   form=_form, message=message)
+            return render_template('user/signin.html', title=gettext('User Sign In'), form=_form, message=message)
 
 
 @user.route('/signout/')
