@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block header_ext %}
+    <link href="{{ url_for('static', filename='css/lab.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="page-message-panel container" style="margin-top: 15px">
+        <div class="page-message-heading">
+            <h2 class="page-message-title text-center" > 您尚未验证邮箱 </h2>
+        </div>
+
+        <div class="page-message-body">
+            <p class="text-center">
+                请先验证邮箱后在进行登陆<br>
+                如果没有收到邮件，可以点此<a href="#">重新发送</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+    $(function () {
+        $(".page-message-body a").click(function () {
+            $.ajax({
+                type: "post",
+                url: location.href,
+                data: {
+                    op: "verify"
+                },
+                success: function (data) {
+                    if (data["status"] === "success") {
+                        alert_modal("邮件已发送，请到登陆注册邮箱进行验证");
+                    }
+                    else if (data["status"] === "too_frequently") {
+                        alert_modal("申请太频繁，请稍后再试");
+                    }
+                }
+            })
+        });
+    });
+    </script>
+{% endblock %}

@@ -1,0 +1,6 @@
+<p> 尊敬的 {{ user.username }}:</p>
+<p> 感谢您的注册，为了验证您的注册邮箱 <a href="{{ url_for('user.verify_email_check', token=token, _external=True) }}"> 请点击这里 </a></p>
+<p> 此外，您也可以复制下面链接到浏览器打开 </p>
+<p>{{ url_for('user.verify_email_check', token=token, _external=True) }}</p>
+<p> 如果您没有注册，请忽略此邮件 </p>
+<p> easyHPC 团队 </p>

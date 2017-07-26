@@ -34,6 +34,10 @@ def signin():
                                title=gettext('User Sign In'),
                                form=None)
     elif request.method == 'POST':
+        u = User.query.filter_by(email=request.form['email']).first()
+        if not u.is_verify_email:
+            return redirect(url_for('user.verify_email', user_id=u.id))
+
         session.permanent = True
         current_app.permanent_session_lifetime = timedelta(days=1)
         next_url = request.args.get('next')
@@ -144,20 +148,22 @@ def reg():
 
             db.session.add(reg_user)
             db.session.commit()
-            login_user(reg_user)
+
+            if request.headers.getlist("X-Forwarded-For"):
+                ip = request.headers.getlist("X-Forwarded-For")[0]
+            else:
+                ip = request.remote_addr
 
             if _form.get('type') == '1':
-                if request.headers.getlist("X-Forwarded-For"):
-                    ip = request.headers.getlist("X-Forwarded-For")[0]
-                else:
-                    ip = request.remote_addr
-
                 send_email(ip, current_app.config['MAIL_ADMIN_ADDR'], u'教师用户注册提醒', 'user/reg_teacher_email', user=reg_user)
                 return render_template('user/teacher_reg_note.html')
 
+            token = reg_user.generate_email_token()
+            send_email(ip, reg_user.email, u'EasyHPC邮箱验证', 'user/verify_email', user=reg_user, token=token)
+            reg_user.verify_email_time = datetime.now()
+            db.session.commit()
 
-            # TODO, Confirm the email.
-            return redirect(request.args.get('next') or url_for('main.index'))
+            return redirect(url_for('user.verify_email', user_id=reg_user.id))
 
 
 @user.route('/<int:uid>/')
@@ -257,7 +263,7 @@ def setting():
                                form=None)
 
 
-@user.route('/setting/info', methods=['GET', 'POST'])
+@user.route('/setting/info/', methods=['GET', 'POST'])
 @login_required
 def setting_info():
     if request.method == 'GET':
@@ -396,3 +402,47 @@ def statistics():
     return render_template('user/statistics.html',
                            statistics=current_user.statistics,
                            Statistic=Statistic)
+
+
+@user.route('/verify/<int:user_id>/', methods=['GET', 'POST'])
+def verify_email(user_id):
+    if request.method == 'GET':
+        u = User.query.get(user_id)
+        if u.is_verify_email:
+            return abort(503)
+        return render_template('user/verify.html')
+
+    elif request.method == 'POST':
+        u = User.query.get(user_id)
+        if u.is_verify_email:
+            return abort(503)
+        if (datetime.now() - u.verify_email_time).seconds < 10 * 60:
+            return jsonify(status='too_frequently')
+
+        if request.headers.getlist("X-Forwarded-For"):
+            ip = request.headers.getlist("X-Forwarded-For")[0]
+        else:
+            ip = request.remote_addr
+        token = u.generate_email_token()
+        send_email(ip, u.email, u'EasyHPC邮箱验证', 'user/verify_email', user=u, token=token)
+        u.verify_email_time = datetime.now()
+        db.session.commit()
+        return 'success'
+
+
+@user.route('/verify/email/<token>/')
+def verify_email_check(token):
+    u = User.verify_email_token(token)
+    if u is not None:
+        u.is_verify_email = True
+        u.verify_email_time = datetime.now()
+        db.session.commit()
+        login_user(u)
+        return redirect(url_for('user.verify_email_done'))
+    else:
+        return abort(503)
+
+
+@user.route('/verify/email/done/')
+def verify_email_done():
+    return render_template('user/verify_done.html')

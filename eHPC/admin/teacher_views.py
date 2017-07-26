@@ -419,7 +419,6 @@ def public_kick_student(cid, uid):
     return redirect(url_for('admin.course_member', course_id=cid))
 
 
-
 @admin.route('/course/<int:apply_id>/approved/')
 @teacher_login
 def course_approved(apply_id):

@@ -50,6 +50,9 @@ class User(UserMixin, db.Model):
 
     experience = db.Column(db.Integer, default=0)
 
+    is_verify_email = db.Column(db.Boolean, default=False)
+    verify_email_time = db.Column(db.DateTime())
+
     homeworks = db.relationship('HomeworkUpload', backref='user', lazy='dynamic')
     homework_appendix = db.relationship('HomeworkAppendix', backref='user', lazy='dynamic')
 
@@ -89,6 +92,23 @@ class User(UserMixin, db.Model):
 
     @staticmethod
     def verify_token(token):
+        s = Serializer(current_app.config['SECRET_KEY'])
+        try:
+            data = s.loads(token)
+        except:
+            return None
+        uid = data.get('id')
+        if uid:
+            return User.query.get(uid)
+        return None
+
+    def generate_email_token(self):
+        expiration = 3600*7
+        s = Serializer(current_app.config['SECRET_KEY'], expires_in=expiration)
+        return s.dumps({'id': self.id})
+
+    @staticmethod
+    def verify_email_token(token):
         s = Serializer(current_app.config['SECRET_KEY'])
         try:
             data = s.loads(token)

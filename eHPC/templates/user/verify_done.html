@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block header_ext %}
+    <link href="{{ url_for('static', filename='css/lab.css') }}" rel="stylesheet">
+{% endblock %}
+
+{% block content %}
+    <div class="page-message-panel container" style="margin-top: 15px">
+        <div class="page-message-heading">
+            <h2 class="page-message-title text-center" > 邮箱验证已完成 </h2>
+        </div>
+
+        <div class="page-message-body">
+            <p class="text-center">
+                5s后页面将自动跳转到主页<br>
+                如果没有自动跳转，可以点此<a href="{{ url_for('main.index') }}">回到主页</a>
+            </p>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script type="text/javascript">
+        $(function () {
+            setTimeout(function(){ window.location = "{{ url_for('main.index') }}"; }, 5*1000);
+        });
+    </script>
+{% endblock %}
