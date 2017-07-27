@@ -327,7 +327,7 @@
                 $.ajax({
                     type: "post",
                     cache: false,
-                    url: "{{ url_for('problem.submit', pid=problem.id) }}",
+                    url: "{{ url_for('problem.submit', pid=program.id) }}",
                     data: data,
                     success: function (data) {
                         if (data.status === 'success') {
@@ -352,7 +352,7 @@
                 $.ajax({
                     type: "post",
                     cache: false,
-                    url: "{{ url_for('problem.submit', pid=problem.id) }}",
+                    url: "{{ url_for('problem.submit', pid=program.id) }}",
                     data: data,
                     success: function (data) {
                         if (data.status === 'success') {
@@ -366,7 +366,7 @@
                                 $.ajax({
                                     type: "post",
                                     cache: false,
-                                    url: "{{ url_for('problem.submit', pid=problem.id) }}",
+                                    url: "{{ url_for('problem.submit', pid=program.id) }}",
                                     data: $.param({'job_op': '3', 'job_id': job_id, 'cpu_number': $("#cpu_number").find("option:selected").text()}),
                                     success: function (data) {
                                         if (data.status === 'success') {
@@ -399,7 +399,7 @@
                             $.ajax({
                                 type: "post",
                                 cache: false,
-                                url: "{{ url_for('problem.submit', pid=problem.id) }}",
+                                url: "{{ url_for('problem.submit', pid=program.id) }}",
                                 data: $.param({'job_op': '2', 'job_id': job_id, 'cpu_number': $("#cpu_number").find("option:selected").text()}),
                                 success: function (data) {
                                     if (data.status === 'success') {

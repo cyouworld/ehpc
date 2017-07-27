@@ -11,12 +11,6 @@ from datetime import datetime
 import six
 from six.moves.urllib import request, parse
 from six.moves.urllib.error import HTTPError, URLError
-import http.cookiejar
-
-if six.PY3:
-    from http.client import HTTPException
-else:
-    HTTPException = Exception
 
 from flask import jsonify
 
@@ -27,13 +21,14 @@ from config import TH2_MAX_NODE_NUMBER, TH2_BASE_URL, TH2_ASYNC_WAIT_TIME, TH2_L
 th2_logger = logging.getLogger('th2')
 th2_logger.setLevel(logging.DEBUG)
 file_handler = logging.FileHandler('app_logs/TH2.log')
-#file_handler = logging.FileHandler('../../app_logs/TH2.log')
+# file_handler = logging.FileHandler('../../app_logs/TH2.log')
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s'))
 th2_logger.addHandler(file_handler)
 
 global g__cookies
 global TH2_MY_PATH, TH2_BASE_URL, TH2_USERNAME, TH2_PASSWORD, TH2_MACHINE_NAME, TH2_LOGIN_DATA
+
 
 # 完成天河2号接口的功能的客户端
 class ehpc_client_new:
@@ -46,7 +41,6 @@ class ehpc_client_new:
         self.login_data = login_data
         self.async_wait_time = TH2_ASYNC_WAIT_TIME
         self.username = None
-        self.cookies = http.cookiejar.CookieJar()
         self.resp = request.urlopen("http://127.0.0.1")
 
         global g__cookies
@@ -54,7 +48,7 @@ class ehpc_client_new:
         try:
             if 'cookie' in g__cookies:
                 pass
-                if self.login_data == None:
+                if self.login_data is None:
                     self.login_data = g__cookies['cookie']
         except NameError:
             g__cookies = {}
@@ -71,14 +65,14 @@ class ehpc_client_new:
         try:
             g__cookies['cookie'] = self.login_cookie
         except NameError:
-            g__cookies = {}
-            g__cookies['cookie'] = self.login_cookie
+            g__cookies = {'cookie': self.login_cookie}
 
         th2_logger.debug("Login returned data: %s" % tmpdata)
 
         return self.ret200()
 
-    def open(self, url, data=None, method=None, login=True, async_get=True, async_wait=True, retjson=True, setcookies = False, headers = None, datajson= True):
+    def open(self, url, data=None, method=None, login=True, async_get=True, async_wait=True, retjson=True,
+             setcookies=False, headers=None, datajson=True):
         """ 入口函数，完成接收前端数据-发送请求到特定api接口-接收并保存返回数据的功能
 
         将接收的字典格式数据data封装进request请求，根据url参数发送到对应的api接口的地址，并对返回的数据进行
@@ -94,11 +88,11 @@ class ehpc_client_new:
         if data:
             try:
                 if method != 'PUT':
-                    if datajson :
+                    if datajson:
                         data = json.dumps(data).encode(encoding='UTF8')
                     else:
                         data = parse.urlencode(data).encode(encoding='UTF8')
-                else :
+                else:
                     data = data.encode('utf-8')
             except TypeError as ex:
                 th2_logger.debug(data)
@@ -115,11 +109,11 @@ class ehpc_client_new:
             if not self.login_cookie:
                 self.login()
 
-            #req.add_header("content-type", "application/json")
+            # req.add_header("content-type", "application/json")
             req.add_header("Cookie", self.login_cookie)
 
-        if headers :
-            for (k, v) in headers.items() :
+        if headers:
+            for (k, v) in headers.items():
                 req.add_header(k, v)
 
         # 添加其他头部信息
@@ -152,7 +146,7 @@ class ehpc_client_new:
             # print "Failed to reach the server. The reason:", e.reason
             th2_logger.debug("Failed to reach the server. The reason:", e.reason)
             return
-        except HTTPException as e:
+        except Exception as e:
             if six.PY3:
                 rdata = e.args[0]
             else:
@@ -178,13 +172,13 @@ class ehpc_client_new:
 
             if noerror:
                 if six.PY3:
-                    self.status_code =resp.status
+                    self.status_code = resp.status
                 else:
                     self.status_code = resp.code
 
             if self.status_code == 200:
                 self.status = "OK"
-            else :
+            else:
                 self.status = "ERROR"
 
         except ValueError as exc:
@@ -204,7 +198,7 @@ class ehpc_client_new:
                     self.status = 200
                 self.status = "unknown"
             self.output = self.data
-            if self.status_code == 200 : self.status = "OK"
+            if self.status_code == 200: self.status = "OK"
 
         if setcookies:
             self.login_cookie = self.resp.headers['Set-Cookie3']
@@ -295,8 +289,9 @@ class ehpc_client_new:
 
         返回值为是否成功（布尔型）
         """
-        mheaders = {'Content-Type' : "application/json"}
-        tmpdata = self.open("/file/" + TH2_MACHINE_NAME + myPath + '/' + filename + '?overwrite=true', method="PUT", data=data, headers= mheaders)
+        mheaders = {'Content-Type': "application/json"}
+        tmpdata = self.open("/file/" + TH2_MACHINE_NAME + myPath + '/' + filename + '?overwrite=true', method="PUT",
+                            data=data, headers=mheaders)
 
         th2_logger.debug("Upload returned data: %s" % tmpdata)
         return self.ret200()
@@ -324,15 +319,14 @@ class ehpc_client_new:
             is_success[0] = True
             return tmpdata["output"]
         # 命令错误
-        elif self.ret200() :
+        elif self.ret200():
             return tmpdata["error"]
-        # 无返回结果
-        #elif self.ret200():
-            #return None
+            # 无返回结果
+            # elif self.ret200():
+            # return None
         # 请求错误
         else:
             return "Request fail."
-
 
     def ehpc_compile(self, is_success, myPath, input_filename, output_filename, language):
         """ 提交代码到天河内部系统编译
@@ -405,9 +399,9 @@ class ehpc_client_new:
 
         mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (myPath, problem_id, problem_id)
 
-        output = self.run_command( mkdir_command )
+        output = self.run_command(mkdir_command)
 
-        for index in range( len(data) ) :
+        for index in range(len(data)):
             if not self.upload(myPath + "/" + problem_id, filename[index], data[index]):
                 return False
         return True
@@ -415,6 +409,7 @@ class ehpc_client_new:
     """
     在当前评测目录编译mpi程序
     """
+
     def mpi_complie(self, myPath, input_filename, output_filename):
         compile_command = "mpicc -O2 -o %s %s" % (output_filename, input_filename)
         commands = 'cd %s;%s' % (myPath, compile_command)
@@ -430,6 +425,7 @@ class ehpc_client_new:
     """
     初始化编程题评测目录:根据已经上传到评测目录中的源代码文件来编译评测程序、参考程序等
     """
+
     def mpi_compile_multi(self, myPath, problem_id, input_filenames=[], output_filenames=[]):
         compile_out = ""
         for index in range(len(input_filenames)):
@@ -445,7 +441,7 @@ class ehpc_client_new:
     ./%s 1 %s %s
 """ % (partition, node_number, output_filename, task_number, step_num)
 
-        #print jobscript
+        # print jobscript
 
         if not self.upload(myPath + "/" + problem_id + "/" + user_id, job_filename, jobscript):
             return "ERROR"
@@ -453,25 +449,27 @@ class ehpc_client_new:
         jobPath = myPath + "/" + problem_id + "/" + user_id + "/" + job_filename
 
         tmpdata = self.open("/job/" + TH2_MACHINE_NAME + "/", data={"jobscript": jobscript, "jobfilepath": jobPath})
-        #print tmpdata
+        # print tmpdata
         return tmpdata["output"]["jobid"]
 
     """
     建立编程题的评测目录
     """
+
     def create_program_dir(self, myPath, program_id):
         mkdir_command = "cd %s;mkdir %s" % (myPath, program_id)
-        self.run_command( mkdir_command )
+        self.run_command(mkdir_command)
 
     """
     删除编程题的评测目录
     """
+
     def del_program_dir(self, myPath, program_id):
         mkdir_command = "cd %s;if [ -d \"./%s\" ]; then rm -rf \"./%s\"; fi" % (myPath, program_id, program_id)
-        self.run_command( mkdir_command )
+        self.run_command(mkdir_command)
 
 
-def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, language, is_success = [False]):
+def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, language, is_success=[False]):
     """ 后台提交从前端获取的代码到天河系统，编译运行并返回结果
 
     @pid: 编程题ID（对于非编程题的代码，可自行赋予ID）,
@@ -499,11 +497,12 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
     elif language == "openmp":
         parameter_number = cpu_number_per_task
         parameter_language = "c.omp"
-    else :
+    else:
         parameter_number = 1
         parameter_language = "c"
 
-    sh_command = "cd %s;./%s %s %s %s" % (TH2_MY_PATH_NEW, "comprun.sh", input_filename, parameter_language, parameter_number)
+    sh_command = "cd %s;./%s %s %s %s" % (
+        TH2_MY_PATH_NEW, "comprun.sh", input_filename, parameter_language, parameter_number)
     run_out = mc.run_command(sh_command)
 
     is_success[0] = True
@@ -525,22 +524,22 @@ def init_evaluate_program(problem_id, input_filenames=[], input_data=[], output_
     """
     myPath = TH2_MY_PATH
     client = ehpc_client_new()
-    #if not client.login():
-    #return jsonify(status="fail", msg="连接超算主机失败!")
-    #print "login success"
+    # if not client.login():
+    # return jsonify(status="fail", msg="连接超算主机失败!")
+    # print "login success"
 
     client.del_program_dir(myPath, problem_id)
     client.create_program_dir(myPath, problem_id)
 
     if not client.upload_multi(myPath, problem_id, input_filenames, input_data):
-        #print("upload failed")
+        # print("upload failed")
         exit(-1)
-    #print "upload success"
+    # print "upload success"
 
-    #print client.mpi_compile_multi(myPath, problem_id, input_filenames, output_filenames)
+    # print client.mpi_compile_multi(myPath, problem_id, input_filenames, output_filenames)
 
     rm_command = "cd %s; rm *.cpp" % (myPath + "/" + problem_id)
-    client.run_command( rm_command )
+    client.run_command(rm_command)
     return True
 
 
@@ -549,9 +548,9 @@ def del_evaluate_program(myPath, problem_id):
     删除评测目录
     """
     client = ehpc_client_new()
-    #if not client.login():
-        #return jsonify(status="fail", msg="连接超算主机失败!")
-    #print "login success"
+    # if not client.login():
+    # return jsonify(status="fail", msg="连接超算主机失败!")
+    # print "login success"
     client.del_program_dir(myPath, problem_id)
 
 
@@ -563,28 +562,29 @@ def run_evaluate_program(problem_id, user_id, input_code, cpu_num, step_num):
     """
     myPath = TH2_MY_PATH
     client = ehpc_client_new()
-    #if not client.login():
-    #return jsonify(status="fail", msg="连接超算主机失败!")
-    #print "login success"
+    # if not client.login():
+    # return jsonify(status="fail", msg="连接超算主机失败!")
+    # print "login success"
     # 若有原用户文件夹则删除
     rm_command = "cd %s;if [ -d \"./%s\" ]; then rm -rf \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
-    #print client.run_command( rm_command )
+    # print client.run_command( rm_command )
     # 新建用户文件夹
-    mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (myPath + "/" + problem_id, user_id, user_id)
-    #print client.run_command( mkdir_command )
+    mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (
+        myPath + "/" + problem_id, user_id, user_id)
+    # print client.run_command( mkdir_command )
     # 复制公用编译文件到用户文件夹
-    cp_command = "cd %s;cp ../* ./" % (myPath + "/" + problem_id + "/" + user_id )
-    #print client.run_command( cp_command )
+    cp_command = "cd %s;cp ../* ./" % (myPath + "/" + problem_id + "/" + user_id)
+    # print client.run_command( cp_command )
     # 上传用户程序到用户文件夹
     if not client.upload(myPath + "/" + problem_id + "/" + user_id, "program.cpp", input_code):
-        #print("upload failed")
+        # print("upload failed")
         exit(-1)
-    #print "user code upload success"
+    # print "user code upload success"
     # 编译用户程序
-    #print client.mpi_complie(myPath + "/" + problem_id + "/" + user_id, "program.cpp", "program")
+    # print client.mpi_complie(myPath + "/" + problem_id + "/" + user_id, "program.cpp", "program")
     # 提交运行脚本与用户程序
     job_id = client.submit_job_multi(myPath, problem_id, user_id, "job.sh", "PI", 1, cpu_num, step_num, "debug")
-    #print client.get_job_status(job_id)
+    # print client.get_job_status(job_id)
     # 下载运行结果
     time.sleep(4)
     run_output = client.download(myPath + "/" + problem_id + "/" + user_id, job_id, isSmallApiServer=True, isjob=True)
@@ -593,6 +593,7 @@ def run_evaluate_program(problem_id, user_id, input_code, cpu_num, step_num):
 
 """提交并行代码以及对应评测程序，提交时本地目录下需有对应的文件，并设置好本地参数
 """
+
 
 def test(name):
     global TH2_MY_PATH, TH2_BASE_URL, TH2_USERNAME, TH2_PASSWORD, TH2_MACHINE_NAME, TH2_LOGIN_DATA
@@ -610,32 +611,32 @@ def test(name):
 
     text = open("mpicc_demo.c").read()
 
-    #mc.login()
-
+    # mc.login()
 
     for i in range(10):
-        print "%s: %d" %(name, i)
+        print "%s: %d" % (name, i)
         print datetime.now()
         if not mc.upload(TH2_MY_PATH_NEW, input_filename, text):
             print "Upload fail."
             pass
 
-            #compile_out = mc.ehpc_compile([True], TH2_MY_PATH_NEW, input_filename, output_filename, "mpi")
-            #run_out = mc.ehpc_run(output_filename, TH2_MY_PATH_NEW, 4, 1, 1)
+            # compile_out = mc.ehpc_compile([True], TH2_MY_PATH_NEW, input_filename, output_filename, "mpi")
+            # run_out = mc.ehpc_run(output_filename, TH2_MY_PATH_NEW, 4, 1, 1)
         sh_command = "cd %s;./%s %s %s %s" % (TH2_MY_PATH_NEW, "comprun.sh", input_filename, "c.mpi", "4")
         run_out = mc.run_command(sh_command)
 
-        #print compile_out
+        # print compile_out
         print run_out
         print datetime.now()
 
+
 if __name__ == '__main__':
     try:
-        a = threading.Thread(target=test, args=("a"));
-        b = threading.Thread(target=test, args=("b"));
-        c = threading.Thread(target=test, args=("c"));
-        d = threading.Thread(target=test, args=("d"));
-        e = threading.Thread(target=test, args=("e"));
+        a = threading.Thread(target=test, args=("a"))
+        b = threading.Thread(target=test, args=("b"))
+        c = threading.Thread(target=test, args=("c"))
+        d = threading.Thread(target=test, args=("d"))
+        e = threading.Thread(target=test, args=("e"))
 
         a.start()
         b.start()
