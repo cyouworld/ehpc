@@ -399,7 +399,6 @@
                 }
                 $("#select-resolution").modal("hide");
                 $("#loading").modal({backdrop: 'static', keyboard: false});
-                console.log(resolution_width, resolution_height);
                 $.ajax({
                     url: "{{ url_for('lab.vnc_set_resolution') }}",
                     type: "post",
@@ -418,7 +417,7 @@
                                 success: function (data) {
                                     if(data['status'] === "success"){
                                         $("#display").empty();
-                                        do_connect_vnc_server(data["token"], address, "vnc");
+                                        do_connect_vnc_server(data["token"], data["address"], "vnc");
                                     }
                                     else if(data['status'] === 'fail'){
                                         alert_modal(data['msg']);

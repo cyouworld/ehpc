@@ -7,6 +7,7 @@ from datetime import datetime
 from flask import render_template, request, jsonify, abort, current_app, url_for
 from flask_babel import gettext
 from flask_login import login_required, current_user
+from time import sleep
 
 from eHPC.util.code_process import ehpc_client, submit_code
 from . import lab
@@ -345,9 +346,7 @@ def vnc_set_resolution():
     else:
         result = req.json()
         if result['status'] == DockerImage.STATUS_SET_RESOLUTION_SUCCESSFULLY:
-            current_user.docker_image.status = DockerImage.READY_TO_CONNECT
-            current_user.docker_image.docker_holder.running_container_count -= 1
-            db.session.commit()
+            sleep(3)
             return jsonify(status='success')
         else:
             return jsonify(status='fail')
