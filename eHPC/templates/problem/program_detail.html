@@ -323,20 +323,103 @@
             $("#submit-status")[0].innerHTML = "代码提交中，请稍候....";
             $("#submit-status-box").removeClass("hide");
 
-            $.ajax({
-                type: "post",
-                cache: false,
-                url: "{{ url_for('problem.submit', pid=program.id) }}",
-                data: data,
-                success: function (data) {
-                    if (data.status === 'success') {
-                        $compiler_result.html(data.compile_out);
-                        $run_result.html(data.run_out);
+            if($("#cpu_number").find("option:selected").text() < 24) {
+                $.ajax({
+                    type: "post",
+                    cache: false,
+                    url: "{{ url_for('problem.submit', pid=problem.id) }}",
+                    data: data,
+                    success: function (data) {
+                        if (data.status === 'success') {
+                            $compiler_result.html('编译完毕');
+                            $run_result.html(data.run_out);
 
-                        var job_id = data.job_id;
-                        var sh;
+                        }
+                        else {
+                            $compiler_result.html(data.msg);
+                            $run_result.html("暂时无法运行...");
+                        }
+                        $("#submit-status").hide();
+                    },
+                    error: function (data) {
+                        $("#submit-status").hide();
+                        $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+                        $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    type: "post",
+                    cache: false,
+                    url: "{{ url_for('problem.submit', pid=problem.id) }}",
+                    data: data,
+                    success: function (data) {
+                        if (data.status === 'success') {
+                            $compiler_result.html(data.compile_out);
+                            $run_result.html(data.run_out);
 
-                        sh = setInterval(function () {
+                            var job_id = data.job_id;
+                            var sh;
+
+                            sh = setInterval(function () {
+                                $.ajax({
+                                    type: "post",
+                                    cache: false,
+                                    url: "{{ url_for('problem.submit', pid=problem.id) }}",
+                                    data: $.param({'job_op': '3', 'job_id': job_id, 'cpu_number': $("#cpu_number").find("option:selected").text()}),
+                                    success: function (data) {
+                                        if (data.status === 'success') {
+                                            var job_status = data.job_status;
+                                            $compiler_result.html(job_status);
+
+                                            if (job_status == 'Pending') {
+                                                $("#submit-status")[0].innerHTML = "正在排队中....";
+                                            }
+                                            else if (job_status == 'Running') {
+                                                $("#submit-status")[0].innerHTML = "正在运行....";
+                                            }
+                                            else if (job_status == 'Finished') {
+                                                $("#submit-status")[0].innerHTML = "运行完毕！";
+                                                //clearInterval(sh);
+                                            }
+                                        }
+                                        else {
+                                            $compiler_result.html(data.msg);
+                                            $run_result.html("暂时无法运行...");
+                                        }
+                                    },
+                                    error: function (data) {
+                                        {#                                    $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
+                                        {#                                    $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
+                                    }
+                                });
+                            }, 1000);
+
+                            $.ajax({
+                                type: "post",
+                                cache: false,
+                                url: "{{ url_for('problem.submit', pid=problem.id) }}",
+                                data: $.param({'job_op': '2', 'job_id': job_id, 'cpu_number': $("#cpu_number").find("option:selected").text()}),
+                                success: function (data) {
+                                    if (data.status === 'success') {
+                                        $compiler_result.html(data.compile_out);
+                                        $run_result.html(data.run_out);
+                                    }
+                                    else {
+                                        $compiler_result.html(data.msg);
+                                        $run_result.html("暂时无法运行...");
+                                    }
+
+                                    clearInterval(sh);
+                                },
+                                error: function (data) {
+                                    $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+                                    $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+                                    clearInterval(sh);
+                                }
+                            });
+
                             $.ajax({
                                 type: "post",
                                 cache: false,
@@ -364,81 +447,23 @@
                                     }
                                 },
                                 error: function (data) {
-{#                                    $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
-{#                                    $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
+                                    {#                                $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
+                                    {#                                $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
                                 }
                             });
-                        }, 1000);
-
-                        $.ajax({
-                            type: "post",
-                            cache: false,
-                            url: "{{ url_for('problem.submit', pid=program.id) }}",
-                            data: $.param({'job_op': '2', 'job_id': job_id, 'cpu_number': $("#cpu_number").find("option:selected").text()}),
-                            success: function (data) {
-                                if (data.status === 'success') {
-                                    $compiler_result.html(data.compile_out);
-                                    $run_result.html(data.run_out);
-                                }
-                                else {
-                                    $compiler_result.html(data.msg);
-                                    $run_result.html("暂时无法运行...");
-                                }
-
-                                clearInterval(sh);
-                            },
-                            error: function (data) {
-
-                                $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
-                                $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
-                                clearInterval(sh);
-                            }
-                        });
-
-                        $.ajax({
-                            type: "post",
-                            cache: false,
-                            url: "{{ url_for('problem.submit', pid=program.id) }}",
-                            data: $.param({'job_op': '3', 'job_id': job_id, 'cpu_number': $("#cpu_number").find("option:selected").text()}),
-                            success: function (data) {
-                                if (data.status === 'success') {
-                                    var job_status = data.job_status;
-                                    $compiler_result.html(job_status);
-
-                                    if (job_status == 'Pending') {
-                                        $("#submit-status")[0].innerHTML = "正在排队中....";
-                                    }
-                                    else if (job_status == 'Running') {
-                                        $("#submit-status")[0].innerHTML = "正在运行....";
-                                    }
-                                    else if (job_status == 'Finished') {
-                                        $("#submit-status")[0].innerHTML = "运行完毕！";
-                                        //clearInterval(sh);
-                                    }
-                                }
-                                else {
-                                    $compiler_result.html(data.msg);
-                                    $run_result.html("暂时无法运行...");
-                                }
-                            },
-                            error: function (data) {
-{#                                $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
-{#                                $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");#}
-                            }
-                        });
-
+                        }
+                        else {
+                            $compiler_result.html(data.msg);
+                            $run_result.html("暂时无法运行...");
+                        }
+                    },
+                    error: function (data) {
+                        $("#submit-status").hide();
+                        $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
+                        $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
                     }
-                    else {
-                        $compiler_result.html(data.msg);
-                        $run_result.html("暂时无法运行...");
-                    }
-                },
-                error: function (data) {
-                    $("#submit-status").hide();
-                    $compiler_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
-                    $run_result.html("<p class='text-center'> 暂时不能提交, 请稍后重试...</p>");
-                }
-            });
+                });
+            }
         }
     </script>
 

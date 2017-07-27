@@ -10,6 +10,7 @@ from flask_login import login_required, current_user
 from time import sleep
 
 from eHPC.util.code_process import ehpc_client, submit_code
+from eHPC.util.new_api import submit_code_new
 from . import lab
 from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerHolder, DockerImage, Statistic
 
@@ -108,17 +109,12 @@ def knowledge(kid):
     elif request.method == 'POST':
         if request.form['op'] == 'run':
 
-            op = request.form['job_op']
-            job_id = request.form['job_id']
             k_num = request.form['k_num']
 
             uid = current_user.id
             pid = str(kid) + '_' + str(k_num)
 
-            source_code = ''
-
-            if op == '1':
-                source_code = request.form['code']
+            source_code = request.form['code']
 
             cur_challenge = Challenge.query.filter_by(knowledgeId=kid).filter_by(knowledgeNum=k_num).first()
 
@@ -127,14 +123,13 @@ def knowledge(kid):
             node_number = cur_challenge.node_number
             language = cur_challenge.language
 
-            compile_success = [True]
+            is_success = [False]
 
-            result = submit_code(pid=pid, uid=uid, source_code=source_code,
-                                 task_number=task_number, cpu_number_per_task=cpu_number_per_task, node_number=node_number,
-                                 language=language, op=op, jobid=job_id, compile_success=compile_success)
+            result = submit_code_new(pid=pid, uid=uid, source_code=source_code, task_number=task_number,
+                                     cpu_number_per_task=cpu_number_per_task, language=language, is_success=is_success)
 
             # 代码成功通过编译, 则认为已完成该知识点学习
-            if compile_success[0]:
+            if is_success[0]:
                 increase_progress(kid=kid, k_num=k_num, challenges_count=challenges_count)
 
             return result
