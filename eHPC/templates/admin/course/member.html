@@ -86,7 +86,7 @@
                         </tr>
                         </thead><!--表格头-->
                         <tbody>
-                        {% if course.users | length > 0 %}
+                        {% if course.users.count() > 0 %}
                             {% for u in course.users %}
                                 <tr>
                                     <td>{{ u.name }}</td>
