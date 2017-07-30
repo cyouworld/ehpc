@@ -20,7 +20,7 @@ from ..models import Course, Lesson, Material, User, Apply, VNCKnowledge, VNCTas
 from ..models import Knowledge, Challenge, Group
 from ..user.authorize import teacher_login
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename, extension_to_file_type
-from ..util.code_process import init_evaluate_program
+from ..util.new_api import init_evaluate_program
 from ..util.pdf import get_paper_pdf
 from ..util.file_manage import remove_dirs
 from ..util.xlsx import get_member_xlsx, get_score_xlsx, get_allscore_xlsx, get_not_uploaded_xlsx

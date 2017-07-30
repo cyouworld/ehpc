@@ -11,8 +11,7 @@ from flask_login import current_user, login_required
 from sqlalchemy import or_
 
 from config import TH2_MY_PATH, TH2_MAX_NODE_NUMBER
-from eHPC.util.code_process import submit_code, ehpc_client, run_evaluate_program
-from eHPC.util.new_api import submit_code_new
+from eHPC.util.new_api import submit_code_new, run_evaluate_program
 from . import problem
 from .. import db
 from ..models import Program, Classify, SubmitProgram, Question, CodeCache, Statistic
@@ -201,9 +200,9 @@ def evaluate(pid):
 
     result = dict()
     result['status'] = 'error'
-    result['run_out'] = run_evaluate_program(str(pid), str(uid), source_code, cpu_num, step_num)
+    result['run_out'] = '{' + run_evaluate_program(str(pid), str(uid), source_code, cpu_num, step_num) + "}"
     result['status'] = 'success'
     result['cpu_num'] = cpu_num
     result['step_num'] = step_num
-
+    print result
     return jsonify(**result)
