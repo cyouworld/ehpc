@@ -19,7 +19,6 @@ from .lab_util import get_cur_progress, increase_progress, get_cur_vnc_progress,
 from config import TH2_MY_PATH
 import random, string
 import requests, threading
-from .. import db
 import json
 from sqlalchemy import exc
 

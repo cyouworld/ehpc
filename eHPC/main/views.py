@@ -2,12 +2,14 @@
 # -*- coding: utf-8 -*-
 # @Author: xuezaigds@gmail.com
 
-from flask import render_template
+from flask import render_template, url_for, redirect
 from . import main
-from ..models import Course, Group, Article, Post, SubmitProgram, Program, Progress
+from ..models import Course, Group, Article, Post, SubmitProgram, Program, Progress, Statistic
 from flask_babel import gettext
 from flask_wtf.csrf import CSRFError
 from flask_login import current_user
+from .. import db
+import requests
 
 
 @main.route('/')
@@ -47,6 +49,10 @@ def index():
                 count += 1
 
         if user_courses or user_topics or user_program or user_challenges:
+            db.session.add(Statistic(current_user.id,
+                                     Statistic.ACTION_USER_VISIT_MAIN_PAGE,
+                                     None))
+            db.session.commit()
             return render_template('main/personal_index.html',
                                    title=gettext('Education Practice Platform'),
                                    user_courses=user_courses,
@@ -54,12 +60,20 @@ def index():
                                    user_program=user_program,
                                    user_challenges=user_challenges)
         else:
+            db.session.add(Statistic(current_user.id,
+                                     Statistic.ACTION_USER_VISIT_MAIN_PAGE,
+                                     None))
+            db.session.commit()
             return render_template('main/index.html',
                                    title=gettext('Education Practice Platform'),
                                    courses=courses,
                                    groups=groups,
                                    articles=articles)
     else:
+        db.session.add(Statistic(None,
+                                 Statistic.ACTION_USER_VISIT_MAIN_PAGE,
+                                 None))
+        db.session.commit()
         return render_template('main/index.html',
                                title=gettext('Education Practice Platform'),
                                courses=courses,

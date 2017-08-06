@@ -383,13 +383,26 @@ def notifications():
             return jsonify(status='success', note=received)
 
 
-@user.route('/notifications/<int:note_info_id>/read/', methods=['POST'])
+@user.route('/notifications/read/', methods=['POST'])
 @login_required
-def notification_read(note_info_id):
-    status, note_info = read_message(note_info_id)
-    if not status:
-        return jsonify(status='fail')
-    return jsonify(status='success')
+def notification_read():
+    op = request.form.get('op')
+
+    if op == 'read-one-message':
+        note_info_id = request.form.get('note_info_id')
+        try:
+            note_info_id = int(note_info_id)
+        except ValueError:
+            return jsonify(status='fail')
+        status, note_info = read_message(note_info_id)
+        if not status:
+            return jsonify(status='fail')
+        return jsonify(status='success')
+    elif op == 'read-all':
+        not_read = current_user.note_info.filter_by(is_read=False).all()
+        for r in not_read:
+            read_message(r.id)
+        return jsonify(status='success')
 
 
 @user.route('/statistics/', methods=['POST', 'GET'])

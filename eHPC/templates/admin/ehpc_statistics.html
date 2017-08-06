@@ -1,0 +1,110 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block content %}
+    <div id="content-container" class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h3>网站数据统计</h3>
+            </div>
+            <div class="panel-body">
+                <div class="row">
+                    <div id="user-structure" class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="text-align: center">
+                        <div style="width: 70%;height: 70%;margin: 0 auto"><canvas></canvas></div>
+                    </div>
+                    <div id="visit-statistics" class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="text-align: center">
+                        <div style="width: 70%;height: 70%;margin: 0 auto"><canvas></canvas></div>
+                    </div>
+                    <div id="course-" class="col-xs-12 col-sm-6 col-md-6 col-lg-6" style="text-align: center">
+                        <div style="width: 70%;height: 70%;margin: 0 auto"><canvas></canvas></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+    <script>
+        $(function () {
+            new Chart($("#user-structure").find("canvas").eq(0), {
+                type: "pie",
+                data: {
+                    datasets: [{
+                        data: [{{ user_count['admin'] }}, {{ user_count['student'] }}, {{ user_count['teacher'] }}, {{ user_count['hpc_admin'] }}],
+                        backgroundColor: ['#ff6d8b', '#ffd060', '#9f6fff', '#43a8ec']
+                    }],
+                    labels: [
+                        "管理员",
+                        "学生",
+                        "教师",
+                        "高性能计算管理员"
+                    ]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        fontSize: 16,
+                        text: "网站用户构成(共{{ user_count['all'] }}位)"
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                var dataSet = data.datasets[tooltipItem.datasetIndex];
+                                var labels = data.labels[tooltipItem.index];
+                                var currentValue = dataSet.data[tooltipItem.index];
+                                return " " + labels + " " + ((currentValue / {{ user_count['all'] }}) * 100).toFixed(2) + "%" + "(" + currentValue + "人)";
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 3000,
+                        animateScale: true
+                    }
+                }
+            });
+            new Chart($("#visit-statistics").find("canvas").eq(0), {
+                type: "pie",
+                data: {
+                    datasets: [{
+                        data: [
+                            {{ visit_statistics['admin'] }},
+                            {{ visit_statistics['student'] }},
+                            {{ visit_statistics['teacher'] }},
+                            {{ visit_statistics['hpc_admin'] }},
+                            {{ visit_statistics['anonymous'] }}],
+                        backgroundColor: ['#ffd060', '#9f6fff', '#ff6d8b', '#43a8ec', '#d1d3d6']
+                    }],
+                    labels: [
+                        "管理员",
+                        "学生",
+                        "教师",
+                        "高性能计算管理员",
+                        "匿名用户"
+                    ]
+                },
+                options: {
+                    title: {
+                        display: true,
+                        fontSize: 16,
+                        text: "主页访问情况(共{{ visit_statistics['all'] }}人次)"
+                    },
+                    tooltips: {
+                        callbacks: {
+                            label: function (tooltipItem, data) {
+                                var dataSet = data.datasets[tooltipItem.datasetIndex];
+                                var labels = data.labels[tooltipItem.index];
+                                var currentValue = dataSet.data[tooltipItem.index];
+                                return " " + labels + " " + ((currentValue / {{ visit_statistics['all'] }}) * 100).toFixed(2) + "%" + "(" + currentValue + "人次)";
+                            }
+                        }
+                    },
+                    animation: {
+                        duration: 3000,
+                        animateScale: true
+                    }
+                }
+            });
+        });
+    </script>
+{% endblock %}

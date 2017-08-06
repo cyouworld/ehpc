@@ -146,9 +146,9 @@
                             callbacks: {
                                 label: function (tooltipItem, data) {
                                     var dataSet = data.datasets[tooltipItem.datasetIndex];
-                                    var labels = data.labels[tooltipItem.datasetIndex];
+                                    var labels = data.labels[tooltipItem.index];
                                     var currentValue = dataSet.data[tooltipItem.index];
-                                    return " " + labels + " " + (currentValue / (total_correct + total_wrong)).toFixed(2) * 100 + "%";
+                                    return " " + labels + " " + ((currentValue / (total_correct + total_wrong)) * 100).toFixed(2) + "%";
                                 }
                             }
                         }

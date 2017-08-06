@@ -788,6 +788,7 @@ class Notification(db.Model):
 
 
 class Statistic(db.Model):
+    ACTION_USER_VISIT_MAIN_PAGE = 10001
     # ACTION_USER_VISIT_PERSONAL_HOME_PAGE = 10001
 
     ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO = 20001

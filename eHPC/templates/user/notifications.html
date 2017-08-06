@@ -23,6 +23,9 @@
             </div>
             <div class="col-lg-9 col-md-9 col-sm-9">
                 <div class="panel">
+                    <div class="panel-heading">
+                        <button id="read-all" class="btn btn-primary pull-right">全部设为已读</button>
+                    </div>
                     <div class="panel-body" style="margin-top: 20px;min-height: 768px">
                         <ul id="note-list" style="list-style-type: none;padding: 0;">
                         </ul>
@@ -79,8 +82,12 @@
                              note_list.find("li").click(function () {
                                  var obj = $(this);
                                  $.ajax({
-                                     url: "/user/notifications/" + obj.data("note-info-id") + "/read/",
+                                     url: "{{ url_for('user.notification_read') }}",
                                      type: "post",
+                                     data: {
+                                        op: "read-one-message",
+                                        note_info_id: obj.data("note-info-id")
+                                     },
                                      success: function (data) {
                                          if(data["status"] === "success"){
                                              location.href = obj.data("url");
@@ -143,8 +150,12 @@
                             note_list.find("li").click(function () {
                                 var obj = $(this);
                                 $.ajax({
-                                    url: "/user/notifications/" + obj.data("note-info-id") + "/read/",
+                                    url: "{{ url_for('user.notification_read') }}",
                                     type: "post",
+                                    data: {
+                                        op: "read-one-message",
+                                        note_info_id: obj.data("note-info-id")
+                                    },
                                     success: function (data) {
                                         if(data["status"] === "success"){
                                             location.href = obj.data("url");
@@ -164,6 +175,25 @@
                 })
             });
             not_read.click();
+
+            $("#read-all").click(function () {
+                $.ajax({
+                    url: "{{ url_for('user.notification_read') }}",
+                    type: "post",
+                    data: {
+                        op: "read-all"
+                    },
+                    success: function (data) {
+                        if(data["status"] === "success"){
+                            not_read.find(".notifications-nav-number").eq(0).text(0);
+                            not_read.click();
+                        }
+                        else{
+                            alert_modal("出错，请重试");
+                        }
+                    }
+                });
+            });
         });
     </script>
 {% endblock %}

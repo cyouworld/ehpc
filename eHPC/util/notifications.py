@@ -41,10 +41,6 @@ def send_message(event_name, event_content, sender, receivers):
 
 
 def read_message(note_info_id):
-    if not isinstance(note_info_id, int):
-        print('note_info_id is not int type')
-        return False, None
-
     note_info = current_user.note_info.filter_by(id=note_info_id).first()
     if note_info is None:
         return False, None

@@ -9,7 +9,8 @@ from sqlalchemy import and_
 def statistic_get_data(statistics, time_str='month'):
     actions = [Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO, Statistic.ACTION_COURSE_ATTEND_QUIZ,
                Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER, Statistic.ACTION_QUESTION_SUBMIT_ANSWER,
-               Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK, Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK]
+               Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK, Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK,
+               Statistic.ACTION_USER_VISIT_MAIN_PAGE]
     data = {}
     today_start = datetime.today().replace(hour=0, minute=0, second=0, microsecond=0)
 
