@@ -310,7 +310,6 @@ $(document).ready(function () {
                     });
 
                     var count=0;
-
                     //取出每种题型回答正确的题目数量
                     $('#result').find('.text-success').find('small').each(function () {
                         $(this).text(data['correct_num'][count.toString()]);

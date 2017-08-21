@@ -11,6 +11,8 @@ from . import admin
 from .. import db
 from ..models import User, Article, Group, Case, Classify, Course
 from ..user.authorize import admin_login, system_login, teacher_login
+import threading
+from utils import save_address
 
 
 @admin.route('/auth/', methods=["GET", "POST"])
@@ -30,6 +32,10 @@ def auth():
             login_user(u)
             u.last_login = datetime.now()
             db.session.commit()
+
+            t = threading.Thread(target=save_address, args=(request.remote_addr,))
+            t.start()
+
             return redirect(request.args.get('next') or url_for('admin.system'))
         else:
             message = gettext('Invalid username or password.')

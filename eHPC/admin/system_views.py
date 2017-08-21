@@ -609,35 +609,52 @@ def images(docker_holder_id):
 @admin.route('/system/statistics/', methods=['POST', 'GET'])
 @system_login
 def ehpc_statistics():
-    # 用户
-    user_count = {'all': User.query.count(),
-                  'admin': User.query.filter_by(permissions=0).count(),
-                  'student': User.query.filter_by(permissions=1).count(),
-                  'teacher': User.query.filter_by(permissions=2).count(),
-                  'hpc_admin': User.query.filter_by(permissions=3).count()}
+    if request.method == 'GET':
+        user_count = {'all': User.query.count(),
+                      'admin': User.query.filter_by(permissions=0).count(),
+                      'student': User.query.filter_by(permissions=1).count(),
+                      'teacher': User.query.filter_by(permissions=2).count(),
+                      'hpc_admin': User.query.filter_by(permissions=3).count()}
 
-    visit_statistics_all = Statistic.query.filter_by(action=Statistic.ACTION_USER_VISIT_MAIN_PAGE).all()
-    visit_statistics_anonymous, visit_statistics_admin, visit_statistics_student, visit_statistics_teacher, visit_statistics_hpc_admin = 0, 0, 0, 0, 0
-    for v in visit_statistics_all:
-        if v.user is None:
-            visit_statistics_anonymous += 1
-        else:
-            if v.user.permissions == 0:
-                visit_statistics_admin += 1
-            elif v.user.permissions == 1:
-                visit_statistics_student += 1
-            elif v.user.permissions == 2:
-                visit_statistics_teacher += 1
-            elif v.user.permissions == 3:
-                visit_statistics_hpc_admin += 1
+        visit_statistics_all = Statistic.query.filter_by(action=Statistic.ACTION_USER_VISIT_MAIN_PAGE).all()
+        visit_statistics_anonymous, visit_statistics_admin, visit_statistics_student, visit_statistics_teacher, visit_statistics_hpc_admin = 0, 0, 0, 0, 0
+        for v in visit_statistics_all:
+            if v.user is None:
+                visit_statistics_anonymous += 1
+            else:
+                if v.user.permissions == 0:
+                    visit_statistics_admin += 1
+                elif v.user.permissions == 1:
+                    visit_statistics_student += 1
+                elif v.user.permissions == 2:
+                    visit_statistics_teacher += 1
+                elif v.user.permissions == 3:
+                    visit_statistics_hpc_admin += 1
 
-    visit_statistics = {'all': len(visit_statistics_all),
-                        'admin': visit_statistics_admin,
-                        'student': visit_statistics_student,
-                        'teacher': visit_statistics_teacher,
-                        'hpc_admin': visit_statistics_hpc_admin,
-                        'anonymous': visit_statistics_anonymous}
+        visit_statistics = {'all': len(visit_statistics_all),
+                            'admin': visit_statistics_admin,
+                            'student': visit_statistics_student,
+                            'teacher': visit_statistics_teacher,
+                            'hpc_admin': visit_statistics_hpc_admin,
+                            'anonymous': visit_statistics_anonymous}
 
-    return render_template('admin/ehpc_statistics.html',
-                           user_count=user_count,
-                           visit_statistics=visit_statistics)
+        learning_situation_statistics = Statistic.query.filter_by(
+            action=Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO)
+
+        return render_template('admin/ehpc_statistics.html',
+                               Statistic=Statistic,
+                               user_count=user_count,
+                               visit_statistics=visit_statistics,
+                               learning_situation_statistics=learning_situation_statistics)
+    elif request.method == 'POST':
+        all_user = User.query.all()
+        positions = {}
+        user_geo_data = {}
+        for u in all_user:
+            if u.city_name not in positions.keys():
+                positions[u.city_name] = dict(longitude=u.last_longitude, latitude=u.last_latitude)
+                user_geo_data[u.city_name] = 0
+            else:
+                user_geo_data[u.city_name] += 1
+
+        return jsonify(status='success', positions=positions, user_geo_data=user_geo_data)

@@ -53,6 +53,10 @@ class User(UserMixin, db.Model):
     is_verify_email = db.Column(db.Boolean, default=False)
     verify_email_time = db.Column(db.DateTime())
 
+    last_longitude = db.Column(db.FLOAT, default=113.28)
+    last_latitude = db.Column(db.FLOAT, default=23.12)
+    city_name = db.Column(db.String(64), default=u'广州')
+
     homeworks = db.relationship('HomeworkUpload', backref='user', lazy='dynamic')
     homework_appendix = db.relationship('HomeworkAppendix', backref='user', lazy='dynamic')
 

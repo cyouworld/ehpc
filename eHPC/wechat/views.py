@@ -119,12 +119,12 @@ def qr_code():
         )
 
         if cur_course.qrcode is None:
-            new_qrcode = QRcode(end_time=datetime.now() + timedelta(seconds=30), course_id=cur_course.id)
+            new_qrcode = QRcode(end_time=datetime.now() + timedelta(days=180), course_id=cur_course.id)
             db.session.add(new_qrcode)
             db.session.commit()
             qr.add_data(url_for('wechat.qr_code', id=new_qrcode.id, _external=True))
         else:
-            cur_course.qrcode.end_time = datetime.now() + timedelta(seconds=30)
+            cur_course.qrcode.end_time = datetime.now() + timedelta(days=180)
             db.session.commit()
             qr.add_data(url_for('wechat.qr_code', id=cur_course.qrcode.id, _external=True))
 

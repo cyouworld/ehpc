@@ -20,6 +20,8 @@ from ..util.file_manage import get_file_type
 from ..user.authorize import system_login
 from ..util.notifications import read_message
 import json
+import threading
+from ..admin.utils import save_address
 
 alphanumeric = re.compile(r'^[0-9a-zA-Z\_]*$')
 email_address = re.compile(r'[a-zA-z0-9]+\@[a-zA-Z0-9]+\.+[a-zA-Z]')
@@ -60,6 +62,8 @@ def signin():
             login_user(u)
             u.last_login = datetime.now()
             db.session.commit()
+            t = threading.Thread(target=save_address, args=(request.remote_addr,))
+            t.start()
             return redirect(next_url or url_for('main.index'))
         else:
             message = gettext('Invalid username or password.')

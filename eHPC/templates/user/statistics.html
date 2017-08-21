@@ -20,11 +20,11 @@
                 <div id="this-week" class="tab-pane active">
                     <div class="row">
                         <h2 class="panel-heading" style="text-align: center"><span>本周</span></h2>
-                        <div id="week-quiz-status" class="col-xs-12 col-sm-6 col-md-4 col-lg-4">
-                            <canvas></canvas>
+                        <div id="week-quiz-status" class="col-xs-12 col-sm-12 col-md-5 col-lg-5">
+                            <div style="height:400%;"></div>
                         </div>
-                        <div id="week-course-document-status" class="col-xs-12 col-sm-6 col-md-4 col-lg-8">
-                            <canvas></canvas>
+                        <div id="week-course-document-status" class="col-xs-12 col-sm-12 col-md-7 col-lg-7">
+                            <div style="height:400%;"></div>
                         </div>
                     </div>
                 </div>
@@ -84,166 +84,161 @@
     <script>moment.locale('zh-CN');</script>
     <script src="//cdn.bootcss.com/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-    <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>
+    {#    <script src="{{ url_for('static', filename='js/Chart.min.js') }}"></script>#}
+    <script src="{{ url_for('static', filename='js/echarts/echarts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/echarts/infographic.js') }}"></script>
     <script>
         var statistics_this_week = {{ statistics | statistic_get_data('this-week') | safe }};
         var statistics_last_week = {{ statistics | statistic_get_data('last-week') | safe }};
         var statistics_month = {{ statistics | statistic_get_data('month') | safe }};
         var statistics_all = {{ statistics | statistic_get_data('all') | safe }}
 
-        $(function () {
-            var quiz_status = statistics_this_week["{{ Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER }}"];
-            var correct_counts = {}, wrong_counts = {};
-            for (var i = 0; i < quiz_status.length; i++) {
-                var c_sum = 0, w_sum = 0;
-                var result = JSON.parse(quiz_status[i]["data"]["result"]);
-                for (var j in result) {
-                    if (result[j] === "T")
-                        c_sum++;
-                    else
-                        w_sum++;
+            $(function () {
+                var quiz_status = statistics_this_week["{{ Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER }}"];
+                var correct_counts = {}, wrong_counts = {};
+                for (var i = 0; i < quiz_status.length; i++) {
+                    var c_sum = 0, w_sum = 0;
+                    var result = JSON.parse(quiz_status[i]["data"]["result"]);
+                    for (var j in result) {
+                        if (result[j] === "T")
+                            c_sum++;
+                        else
+                            w_sum++;
+                    }
+                    var paper_id = quiz_status[i]["data"]["paper_id"].toString();
+                    if (correct_counts.hasOwnProperty(paper_id)) {
+                        correct_counts[paper_id] += c_sum;
+                    } else {
+                        correct_counts[paper_id] = c_sum;
+                    }
+                    if (wrong_counts.hasOwnProperty(paper_id)) {
+                        wrong_counts[paper_id] += w_sum;
+                    } else {
+                        wrong_counts[paper_id] = w_sum;
+                    }
                 }
-                var paper_id = quiz_status[i]["data"]["paper_id"].toString();
-                if (correct_counts.hasOwnProperty(paper_id)) {
-                    correct_counts[paper_id] += c_sum;
-                } else {
-                    correct_counts[paper_id] = c_sum;
-                }
-                if (wrong_counts.hasOwnProperty(paper_id)) {
-                    wrong_counts[paper_id] += w_sum;
-                } else {
-                    wrong_counts[paper_id] = w_sum;
-                }
-            }
 
-            var total_correct = 0, total_wrong = 0;
-            for (i in correct_counts) {
-                total_correct += correct_counts[i];
-            }
-            for (i in wrong_counts) {
-                total_wrong += wrong_counts[i];
-            }
+                var total_correct = 0, total_wrong = 0;
+                for (i in correct_counts) {
+                    total_correct += correct_counts[i];
+                }
+                for (i in wrong_counts) {
+                    total_wrong += wrong_counts[i];
+                }
 
-            new Chart($("#week-quiz-status").find("canvas").eq(0), {
-                    type: "doughnut",
-                    data: {
-                        datasets: [{
-                            data: [total_correct, total_wrong],
-                            backgroundColor: ['#8cd21b', '#ff6384']
-                        }],
-                        labels: [
-                            "正确",
-                            "错误"
-                        ]
+                var graph_week_quiz_status = echarts.init($("#week-quiz-status").find("div")[0], 'infographic');
+                graph_week_quiz_status.setOption({
+                    title: {
+                        text: quiz_status.length + "场课程测试答题情况",
+                        left: 'center'
                     },
-                    options: {
-                        title: {
-                            display: true,
-                            fontSize: 16,
-                            text: quiz_status.length + "场课程测试答题情况"
-                        },
-                        tooltips: {
-                            callbacks: {
-                                label: function (tooltipItem, data) {
-                                    var dataSet = data.datasets[tooltipItem.datasetIndex];
-                                    var labels = data.labels[tooltipItem.index];
-                                    var currentValue = dataSet.data[tooltipItem.index];
-                                    return " " + labels + " " + ((currentValue / (total_correct + total_wrong)) * 100).toFixed(2) + "%";
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: function (params) {
+                            var result = params.seriesName + "<br>";
+                            result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params.color + '"></span>';
+                            result += params.name + ": " + params.value + "题 ";
+                            result += "(" + params.percent + "%)";
+                            return result;
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'right',
+                        data: ['正确', '错误']
+                    },
+                    series: [
+                        {
+                            name: '答题情况',
+                            type: 'pie',
+                            radius: '55%',
+                            center: ['50%', '50%'],
+                            data: [
+                                {value: total_correct, name: '正确'},
+                                {value: total_wrong, name: '错误'}
+                            ],
+                            itemStyle: {
+                                emphasis: {
+                                    shadowBlur: 10,
+                                    shadowOffsetX: 0,
+                                    shadowColor: 'rgba(0, 0, 0, 0.5)'
                                 }
                             }
                         }
-                    }
+                    ]
                 });
-        });
-        $(function () {
-            var this_week_document_status = statistics_this_week["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
-            var last_week_document_status = statistics_last_week["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
-            var status_data_this_week = [0, 0, 0, 0, 0, 0, 0], status_data_last_week = [0, 0, 0, 0, 0, 0, 0];
-            var index, start_time, end_time;
 
-            for(var i=0;i<this_week_document_status.length;i++){
-                index = (new Date(this_week_document_status[i]["data"]["end_time"]).getDay() + 6) % 7;
-                start_time = new Date(this_week_document_status[i]["data"]["start_time"]);
-                end_time = new Date(this_week_document_status[i]["data"]["end_time"]);
-                status_data_this_week[index] += Math.floor((end_time.getTime() - start_time.getTime()) / 60000);
-            }
-            for(i=0;i<last_week_document_status.length;i++){
-                index = (new Date(last_week_document_status[i]["data"]["end_time"]).getDay() + 6) % 7;
-                start_time = new Date(last_week_document_status[i]["data"]["start_time"]);
-                end_time = new Date(last_week_document_status[i]["data"]["end_time"]);
-                status_data_last_week[index] += Math.floor((end_time.getTime() - start_time.getTime()) / 60000);
-            }
+                var this_week_document_status = statistics_this_week["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
+                var last_week_document_status = statistics_last_week["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
+                var status_data_this_week = [0, 0, 0, 0, 0, 0, 0], status_data_last_week = [0, 0, 0, 0, 0, 0, 0];
+                var index, start_time, end_time;
 
-            new Chart($("#week-course-document-status").find("canvas").eq(0), {
-                type: "bar",
-                data: {
-                    labels: ["一", "二", "三", "四", "五", "六", "日"],
-                    datasets: [{
-                        label: "文档浏览时间（分钟）（本周）",
-                        data: status_data_this_week,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.2)',
-                            'rgba(54, 162, 235, 0.2)',
-                            'rgba(255, 206, 86, 0.2)',
-                            'rgba(75, 192, 192, 0.2)',
-                            'rgba(153, 102, 255, 0.2)',
-                            'rgba(255, 159, 64, 0.2)',
-                            'rgba(204, 206, 209, 0.2)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(204, 206, 209, 1)'
-                        ],
-                        borderWidth: 1
-                    },{
-                        label: "文档浏览时间（分钟）（上周）",
-                        data: status_data_last_week,
-                        backgroundColor: [
-                            'rgba(255, 99, 132, 0.5)',
-                            'rgba(54, 162, 235, 0.5)',
-                            'rgba(255, 206, 86, 0.5)',
-                            'rgba(75, 192, 192, 0.5)',
-                            'rgba(153, 102, 255, 0.5)',
-                            'rgba(255, 159, 64, 0.5)',
-                            'rgba(204, 206, 209, 0.5)'
-                        ],
-                        borderColor: [
-                            'rgba(255, 99, 132, 1)',
-                            'rgba(54, 162, 235, 1)',
-                            'rgba(255, 206, 86, 1)',
-                            'rgba(75, 192, 192, 1)',
-                            'rgba(153, 102, 255, 1)',
-                            'rgba(255, 159, 64, 1)',
-                            'rgba(204, 206, 209, 1)'
-                        ],
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    title: {
-                        display: true,
-                        fontSize: 16,
-                        text: "课程文档学习情况"
-                    },
-                    scales: {
-                        xAxes: [{
-                            barPercentage: 0.618
-                        }],
-                        yAxes: [{
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 1
-                            }
-                        }]
-                    }
+                for (i = 0; i < this_week_document_status.length; i++) {
+                    index = (new Date(this_week_document_status[i]["data"]["end_time"]).getDay() + 6) % 7;
+                    start_time = new Date(this_week_document_status[i]["data"]["start_time"]);
+                    end_time = new Date(this_week_document_status[i]["data"]["end_time"]);
+                    status_data_this_week[index] += Math.floor((end_time.getTime() - start_time.getTime()) / 60000);
                 }
+                for (i = 0; i < last_week_document_status.length; i++) {
+                    index = (new Date(last_week_document_status[i]["data"]["end_time"]).getDay() + 6) % 7;
+                    start_time = new Date(last_week_document_status[i]["data"]["start_time"]);
+                    end_time = new Date(last_week_document_status[i]["data"]["end_time"]);
+                    status_data_last_week[index] += Math.floor((end_time.getTime() - start_time.getTime()) / 60000);
+                }
+
+                var graph_week_course_document_status = echarts.init($("#week-course-document-status").find("div")[0], 'infographic');
+                graph_week_course_document_status.setOption({
+                    title: {
+                        text: "课程文档学习情况",
+                        left: 'center'
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        formatter: function (params) {
+                            var result = "星期" + params[0].name + "<br>";
+                            result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params[0].color + '"></span>';
+                            result += params[0].seriesName + ": " + params[0].data + "分钟<br>";
+                            result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params[1].color + '"></span>';
+                            result += params[1].seriesName + ": " + params[1].data + "分钟";
+                            return result;
+                        }
+                    },
+                    legend: {
+                        orient: 'vertical',
+                        left: 'right',
+                        data: ['本周', '上周']
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: ["一", "二", "三", "四", "五", "六", "日"]
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value'
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '本周',
+                            type: 'bar',
+                            data: status_data_this_week
+                        },
+                        {
+                            name: '上周',
+                            type: 'bar',
+                            data: status_data_last_week
+                        }
+                    ]
+                });
+
+                $(window).resize(function () {
+                    graph_week_quiz_status.resize();
+                    graph_week_course_document_status.resize();
+                });
+
             });
-        });
         $(function () {
             var courses_quiz_attend_status = statistics_all["{{ Statistic.ACTION_COURSE_ATTEND_QUIZ }}"];
             var courses_quiz_submit_status = statistics_all["{{ Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER }}"];
@@ -262,7 +257,7 @@
                         course_id: cur_course_id
                     },
                     success: function (data) {
-                        if(data["status"] === "success"){
+                        if (data["status"] === "success") {
                             $("#course-statistic-info1").find("span[data-id=quiz-attend]").find("span[data-id=total-attend]").eq(0).text(data["attend_times"]);
                             $("#course-statistic-info1").find("span[data-id=quiz-attend]").find("span[data-id=rank-percentage]").eq(0).text(data["data"] + "%");
                         }
@@ -278,7 +273,7 @@
                         course_id: cur_course_id
                     },
                     success: function (data) {
-                        if(data["status"] === "success"){
+                        if (data["status"] === "success") {
                             $("#course-statistic-info2").find("span[data-id=quiz-submit]").find("span[data-id=total-submit]").eq(0).text(data["submit_count"]);
                             $("#course-statistic-info2").find("span[data-id=quiz-submit]").find("span[data-id=accuracy-submit]").eq(0).text(data["accuracy"] + "%");
                             $("#course-statistic-info2").find("span[data-id=quiz-submit]").find("span[data-id=rank-percentage]").eq(0).text(data["data"] + "%");

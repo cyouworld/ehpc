@@ -34,7 +34,10 @@ def statistic_get_data(statistics, time_str='month'):
             s = statistics.filter_by(action=action).all()
         temp = []
         for statistic in s:
-            temp.append(dict(data=json.loads(statistic.data), time=str(statistic.timestamp)))
+            if statistic.data is None:
+                temp.append(dict(time=str(statistic.timestamp)))
+            else:
+                temp.append(dict(data=json.loads(statistic.data), time=str(statistic.timestamp)))
         data[action] = temp
     return json.dumps(data)
 
