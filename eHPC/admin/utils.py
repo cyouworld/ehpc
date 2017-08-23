@@ -1,15 +1,15 @@
 import geoip2.database
 import geoip2.errors
+from flask import current_app
 from flask_login import current_user
 from .. import db
 
 
 def save_address(ip):
-    reader = geoip2.database.Reader('GeoLite2-City.mmdb')
-
     try:
-        response = reader.city(ip)
-    except geoip2.errors.AddressNotFoundError:
+        response = current_app.geoip_reader.city(ip)
+    except geoip2.errors.AddressNotFoundError as e:
+        print(e)
         return
 
     current_user.last_longitude = str(response.location.longitude)

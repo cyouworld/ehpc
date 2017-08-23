@@ -62,8 +62,13 @@ def signin():
             login_user(u)
             u.last_login = datetime.now()
             db.session.commit()
-            t = threading.Thread(target=save_address, args=(request.remote_addr,))
-            t.start()
+
+            if request.headers.getlist("X-Forwarded-For"):
+                ip = request.headers.getlist("X-Forwarded-For")[0]
+            else:
+                ip = request.remote_addr
+
+            save_address(ip)
             return redirect(next_url or url_for('main.index'))
         else:
             message = gettext('Invalid username or password.')

@@ -9,6 +9,8 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
 from config import config
 from datetime import timedelta
+import geoip2.database
+
 
 mail = Mail()
 db = SQLAlchemy()
@@ -33,6 +35,8 @@ def create_app(config_name):
     file_handler.setLevel(logging.INFO)
     file_handler.setFormatter(logging.Formatter('[%(asctime)s] %(message)s'))
     app.email_logger.addHandler(file_handler)
+
+    app.geoip_reader = geoip2.database.Reader('GeoLite2-City.mmdb')
 
     # Register all the filter.
     from .util import filter_blueprint

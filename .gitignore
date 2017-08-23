@@ -13,5 +13,8 @@ __pycache__/
 *.cpp
 *.o
 
+# geoip
+GeoLite2-City.mmdb
+
 # Resource fold
 eHPC/static/resource/*
