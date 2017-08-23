@@ -1,26 +1,23 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import os
+import random
+import string
 from datetime import datetime
+from time import sleep
 
+import requests
 from flask import render_template, request, jsonify, abort, current_app, url_for
 from flask_babel import gettext
 from flask_login import login_required, current_user
-from time import sleep
+from sqlalchemy import exc
 
-from eHPC.util.code_process import ehpc_client, submit_code
 from eHPC.util.new_api import submit_code_new
 from . import lab
-from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerHolder, DockerImage, Statistic
-
-from .vnc_util import is_token_unique, create_new_image, start_vnc_server, start_ssh_server
 from .lab_util import get_cur_progress, increase_progress, get_cur_vnc_progress, increase_vnc_progress
-from config import TH2_MY_PATH
-import random, string
-import requests, threading
-import json
-from sqlalchemy import exc
+from .vnc_util import is_token_unique, create_new_image, start_vnc_server, start_ssh_server
+from .. import db
+from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerImage
 
 
 @lab.route('/')

@@ -202,7 +202,7 @@
                         coordinateSystem: 'geo',
                         data: res,
                         symbolSize: function (val) {
-                            return val[2];
+                            return val[2]/8;
                         },
                         label: {
                             normal: {
@@ -225,10 +225,10 @@
                         type: 'effectScatter',
                         coordinateSystem: 'geo',
                         data: res.sort(function (a, b) {
-                            return b.value - a.value;
-                        }).slice(0, 6),
+                            return b.value[2] - a.value[2];
+                        }).slice(0, 5),
                         symbolSize: function (val) {
-                            return val[2];
+                            return val[2]/8;
                         },
                         showEffectOn: 'render',
                         rippleEffect: {

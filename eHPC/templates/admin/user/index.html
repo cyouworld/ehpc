@@ -19,17 +19,23 @@
                 <table class="table" id="user-table" style="word-break:break-all;">
                     <thead>
                     <tr>
-                        <th>用户名</th>
-                        <th>邮箱地址</th>
-                        <th>用户角色</th>
-                        <th>上次登录时间</th>
-                        <th>权限管理</th>
+                        <th width="12%">用户名</th>
+                        <th width="10%">姓名</th>
+                        <th width="15%">学校</th>
+                        <th width="12%">电话</th>
+                        <th width="20%">邮箱地址</th>
+                        <th width="8%">用户权限</th>
+                        <th width="15%">上次登录时间</th>
+                        <th width="8%">权限管理</th>
                     </tr>
                     </thead>
                     <tbody id="tb">
                     {% for u in users %}
                         <tr uid="{{ u.id }}">
                             <td>{{ u.username }}</td>
+                            <td>{{ u.name }}</td>
+                            <td>{{ u.university }}</td>
+                            <td>{{ u.phone }}</td>
                             <td>{{ u.email }}</td>
                             <td>{{ u | show_role }}</td>
                             <td>{{ u.last_login }}</td>
