@@ -5188,12 +5188,12 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     width: auto;
 }
 
-#sc-center-list .sc-link {
+.sc-center-list .sc-link {
     display: inline-block;
     padding: 10px;
 }
 
-#sc-center-list .sc-link a .sc-center-img {
+.sc-center-list .sc-link .sc-center-img {
     display: inline-block;
     position: relative;
 	-webkit-transition: all 0.3s ease;
@@ -5202,7 +5202,7 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     transition: all 0.3s ease;
 }
 
-#sc-center-list .sc-link a .sc-center-img:hover {
+.sc-center-list .sc-link .sc-center-img:hover {
     cursor: pointer;
     transform: translateY(-4px);
     -webkit-transform: translateY(-4px);
@@ -5216,11 +5216,11 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     transition: all 0.3s ease;
 }
 
-#sc-center-list .sc-link a,#sc-center-list .sc-link a:hover,#sc-center-list .sc-link a:active {
+.sc-center-list .sc-link a,.sc-center-list .sc-link a:hover,.sc-center-list .sc-link a:active {
     text-decoration: none;
 }
 
-#sc-center-list .sc-link .sc-center-item {
+.sc-center-list .sc-link .sc-center-item {
     text-align: center;
 }
 

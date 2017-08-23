@@ -790,8 +790,6 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `machine_account`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `machine_account` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(64) DEFAULT NULL,
@@ -801,6 +799,7 @@ CREATE TABLE `machine_account` (
   `port` int(11) DEFAULT NULL,
   `token` varchar(64) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
+  `sc_center` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `machine_account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)

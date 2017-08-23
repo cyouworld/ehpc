@@ -40,8 +40,7 @@
                                 </div>
                                 <div class="panel-body">
                                     <ul class="list-group">
-                                        <li class="list-group-item active" data-option="apply"><i class="glyphicon glyphicon-time"></i> 机时申请</li>
-                                        <li class="list-group-item" data-option="use"><i class="glyphicon glyphicon-wrench"></i> 使用机时</li>
+                                        <li class="list-group-item active" data-option="machine"><i class="glyphicon glyphicon-time"></i> 机时申请</li>
                                         <li class="list-group-item" data-option="other"><i class="glyphicon glyphicon-calendar"></i> 其他事项</li>
                                     </ul>
                                 </div>
@@ -62,5 +61,48 @@
 {% endblock %}
 
 {% block footer_ext %}
+    <script type="text/javascript">
+        function connect_machine(event) {
+            var has_account = 0;
+            var sc_center = event.getAttribute('data-sc-center');
+            {% if not current_user.machine_account %}
+                alert_modal("您还未申请任何超算账号，请申请相应超算账号之后再连接！");
+            {% else %}
+                {% for a in current_user.machine_account %}
+                    {% if a.sc_center == 0 %}
+                        if (sc_center == 0) {
+                            has_account = 1;
+                        }
+                    {% elif a.sc_center == 1 %}
+                        if (sc_center == 1) {
+                            has_account = 1;
+                        }
+                    {% elif a.sc_center == 2 %}
+                        if (sc_center == 2) {
+                            has_account = 1;
+                        }
+                    {% else %}
+                        if (sc_center == 3) {
+                            has_account = 1;
+                        }
+                    {% endif %}
+                {% endfor %}
+                if(has_account == 0) {
+                    if (sc_center == 0) {
+                        alert_modal("您还未申请广州超算账号，请申请之后再连接！");
+                    }
+                    else if (sc_center == 1) {
+                        alert_modal("您还未申请长沙超算账号，请申请之后再连接！");
+                    }
+                    else if (sc_center == 2) {
+                        alert_modal("您还未申请中科院超算账号，请申请之后再连接！");
+                    }
+                    else {
+                        alert_modal("您还未申请上海超算账号，请申请之后再连接！");
+                    }
+                }
+            {% endif %}
+        }
+    </script>
     <script src="{{ url_for('static',filename='js/machine_apply.js') }}"></script>
 {% endblock %}

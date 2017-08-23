@@ -31,7 +31,7 @@
                                 <li id="status0"class="active">开始申请</li>
                                 <li id="status1">已保存</li>
                                 <li id="status2">等待审批</li>
-                                {% if apply and apply.submit_status == 2 %}#}
+                                {% if apply and apply.submit_status == 2 %}
                                     <li id="status3">审批通过</li>
                                 {% elif apply and apply.submit_status == 3 %}
                                     <li id="status3">审批未通过</li>

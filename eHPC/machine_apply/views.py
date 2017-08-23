@@ -16,16 +16,16 @@ from io import open
 @login_required
 def index():
     if request.method == "GET":
-        my_apply = MachineApply.query.filter_by(user_id=current_user.id).first()
+        my_applies = MachineApply.query.filter_by(user_id=current_user.id).all()
         finiehed = 0
         waiting = 0
         unsubmit = 0
-        if my_apply:
-            if my_apply.submit_status == 0:
+        for a in my_applies:
+            if a.submit_status == 0:
                 unsubmit += 1
-            elif my_apply.submit_status == 1:
+            elif a.submit_status == 1:
                 waiting += 1
-            elif my_apply.submit_status == 2:
+            elif a.submit_status == 2 or a.submit_status == 3:
                 finiehed += 1
         return render_template('machine_apply/index.html',
                                finished=finiehed,
@@ -33,10 +33,8 @@ def index():
                                unsubmit=unsubmit,
                                title=gettext('Resource Apply'))
     elif request.method == "POST":
-        if request.form['op'] == "apply":
+        if request.form['op'] == "machine":
             return jsonify(status='success', html=render_template('machine_apply/machine_apply.html'))
-        elif request.form['op'] == "use":
-            return jsonify(status='success', html=render_template('machine_apply/machine_use.html'))
         elif request.form['op'] == "other":
             return jsonify(status='success', html=render_template('machine_apply/machine_other.html'))
         else:
@@ -46,18 +44,22 @@ def index():
 @machine_apply.route('/information/')
 @login_required
 def machine_apply_information():
-    my_apply = MachineApply.query.filter_by(user_id=current_user.id).first()
-    if not my_apply:
-        # 若此用户还未创建过申请，则跳转到新建申请界面
+    my_applies = MachineApply.query.filter_by(user_id=current_user.id).all()
+    if len(my_applies) == 0:
+        # 若此用户还未创建过任何机时申请，则跳转到申请说明界面
         return render_template('machine_apply/machine_apply_information.html',
                                op="create",
                                title=gettext('Resource Apply Information'))
     else:
-        # 若此用户已创建过申请，则直接跳转到编辑申请界面
-        return render_template('machine_apply/machine_apply_information.html',
-                               op="edit",
-                               apply_id=my_apply.id,
-                               title=gettext('Resource Apply Information'))
+        #若此用户已创建过机时申请
+        tag = request.args.get('tag')
+        curr_apply = MachineApply.query.filter_by(user_id=current_user.id, sc_center=tag).first()
+        if not curr_apply:
+            # 若此用户还未创建过当前超算中心的机时申请，则直接跳转到新建申请界面
+            return redirect(url_for('machine_apply.machine_apply_create', tag=tag))
+        else:
+            # 若此用户已创建过当前超算中心的机时申请，则直接跳转到编辑申请界面
+            return redirect(url_for('machine_apply.machine_apply_edit', apply_id=curr_apply.id))
 
 
 @machine_apply.route('/create/', methods=['GET', 'POST'])
@@ -223,7 +225,7 @@ def issue_waiting():
 
 @machine_apply.route('/finished/')
 def issue_finished():
-    issue_list = MachineApply.query.filter_by(user_id=current_user.id, submit_status=2).all()
+    issue_list = current_user.machine_apply.filter(MachineApply.submit_status.in_([2, 3]))
     return render_template('machine_apply/issue_list.html',
                            issue_list=issue_list,
                            status='finished',

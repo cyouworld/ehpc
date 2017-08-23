@@ -1,4 +1,4 @@
-<div id="sc-center-list">
+<div class="sc-center-list">
     <div class="sc-link text-center">
         <a href="{{ url_for('machine_apply.machine_apply_information') }}?tag=0" class="link-dark">
             <div class="sc-center-item">
@@ -46,5 +46,55 @@
                 </div>
             </div>
         </a>
+    </div>
+</div>
+<div id="connect-machine" class="sc-center-list">
+    <div class="sc-link text-center" data-sc-center="0" onclick="connect_machine(this);">
+        <div class="link-dark">
+            <div class="sc-center-item">
+                <div class="sc-center-img">
+                    <img src="{{ url_for('static', filename='images/ssh.png')}}" alt="广州超算" class="img-responsive">
+                </div>
+                <div class="sc-name">
+                    连接广州超算
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sc-link text-center" data-sc-center="1" onclick="connect_machine(this);">
+        <div class="link-dark">
+            <div class="sc-center-item">
+                <div class="sc-center-img">
+                    <img src="{{ url_for('static', filename='images/ssh.png')}}" alt="长沙超算" class="img-responsive">
+                </div>
+                <div class="sc-name">
+                    连接长沙超算
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sc-link text-center" data-sc-center="2" onclick="connect_machine(this);">
+        <div class="link-dark">
+            <div class="sc-center-item">
+                <div class="sc-center-img">
+                    <img src="{{ url_for('static', filename='images/ssh.png')}}" alt="中科院超算" class="img-responsive">
+                </div>
+                <div class="sc-name">
+                    连接中科院超算
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="sc-link text-center" data-sc-center="3" onclick="connect_machine(this);">
+        <div class="link-dark">
+            <div class="sc-center-item">
+                <div class="sc-center-img">
+                    <img src="{{ url_for('static', filename='images/ssh.png')}}" alt="上海超算" class="img-responsive">
+                </div>
+                <div class="sc-name">
+                    连接上海超算
+                </div>
+            </div>
+        </div>
     </div>
 </div>

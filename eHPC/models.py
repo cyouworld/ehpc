@@ -70,7 +70,7 @@ class User(UserMixin, db.Model):
     vnc_progresses = db.relationship('VNCProgress', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
 
     machine_apply = db.relationship("MachineApply", backref='user', lazy='dynamic', cascade="delete, delete-orphan")
-    machine_account = db.relationship("MachineAccount", uselist=False, backref='user')
+    machine_account = db.relationship("MachineAccount", backref='user')
 
     docker_image = db.relationship('DockerImage', uselist=False, backref='user', cascade="delete, delete-orphan")
 
@@ -679,6 +679,7 @@ class MachineAccount(db.Model):
     ip = db.Column(db.String(64))
     port = db.Column(db.Integer)
     token = db.Column(db.String(64), default=None)
+    sc_center = db.Column(db.Integer)     # 超算单位：0-广州超算，1-长沙超算，2-中科院超算，3-上海超算
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 

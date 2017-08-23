@@ -482,6 +482,7 @@ def machine_apply_password(apply_id):
         account.username = request.form.get('username')
         account.password = request.form.get('password')
         account.key = key_path
+        account.sc_center = curr_apply.sc_center
         db.session.commit()
 
         if request.headers.getlist("X-Forwarded-For"):
