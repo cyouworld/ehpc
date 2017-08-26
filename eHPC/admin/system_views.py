@@ -654,7 +654,7 @@ def ehpc_statistics():
         for u in all_user:
             if u.city_name not in positions.keys():
                 positions[u.city_name] = dict(longitude=u.last_longitude, latitude=u.last_latitude)
-                user_geo_data[u.city_name] = 0
+                user_geo_data[u.city_name] = 1
             else:
                 user_geo_data[u.city_name] += 1
 

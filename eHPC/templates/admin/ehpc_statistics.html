@@ -27,14 +27,12 @@
 {% endblock %}
 
 {% block footer_ext %}
-    <script src="{{ url_for('static', filename='js/echarts/echarts.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/echarts/infographic.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/echarts/walden.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/echarts/echarts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/echarts/wonderland.js') }}"></script>
     <script src="{{ url_for('static', filename='js/echarts/china.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/echarts/world.js') }}"></script>
     <script>
         $(function () {
-            var graph_user_structure = echarts.init($("#user-structure").find("div")[0], 'walden');
+            var graph_user_structure = echarts.init($("#user-structure").find("div")[0], 'wonderland');
             graph_user_structure.setOption({
                 title: {
                     text: "网站用户构成(共{{ user_count['all'] }}位)",
@@ -78,7 +76,7 @@
                 ]
             });
 
-            var graph_visit_statistics = echarts.init($("#visit-statistics").find("div")[0], 'walden');
+            var graph_visit_statistics = echarts.init($("#visit-statistics").find("div")[0], 'wonderland');
             graph_visit_statistics.setOption({
                 title: {
                     text: "主页访问情况(共{{ visit_statistics['all'] }}人次)",
@@ -143,11 +141,15 @@
                                 value: [positions[d]['longitude'], positions[d]['latitude'], user_geo_data[d]]
                             });
                         }
+                        res.sort(function (a, b) {
+                            return b.value[2] - a.value[2];
+                        });
                     }
                 }
             });
 
-            var graph_user_geo_distribution = echarts.init($("#user-geo-distribution").find("div")[0], 'walden');
+
+            var graph_user_geo_distribution = echarts.init($("#user-geo-distribution").find("div")[0], 'wonderland');
             graph_user_geo_distribution.setOption({
                 title: {
                     text: '用户地域分布',
@@ -174,7 +176,7 @@
                     orient: 'vertical',
                     y: 'bottom',
                     x:'right',
-                    data:['人数']
+                    data:['人数', '人数Top 5']
                 },
                 geo: {
                     map: 'china',
@@ -183,52 +185,34 @@
                             show: false
                         }
                     },
-                    roam: true,
-                    itemStyle: {
-                        normal: {
-                            areaColor: '#3fb1e3',
-                            borderColor: '#5d5d5d'
-                        },
-                        emphasis: {
-                            areaColor: '#3a99ca',
-                            borderColor: '#5d5d5d'
-                        }
-                    }
+                    roam: true
                 },
                 series : [
                     {
                         name: '人数',
                         type: 'scatter',
                         coordinateSystem: 'geo',
-                        data: res,
+                        data: res.slice(5),
                         symbolSize: function (val) {
-                            return val[2]/8;
+                            if(val === 0) return 0;
+                            else return 4 * Math.log(Math.log(val[2]+2) / Math.log(1.2));
                         },
                         label: {
                             normal: {
                                 formatter: '{b}',
                                 position: 'right',
-                                show: false
-                            },
-                            emphasis: {
                                 show: true
-                            }
-                        },
-                        itemStyle: {
-                            normal: {
-                                color: '#f4e925'
                             }
                         }
                     },
                     {
-                        name: 'Top 5',
+                        name: '人数Top 5',
                         type: 'effectScatter',
                         coordinateSystem: 'geo',
-                        data: res.sort(function (a, b) {
-                            return b.value[2] - a.value[2];
-                        }).slice(0, 5),
+                        data: res.slice(0, 5),
                         symbolSize: function (val) {
-                            return val[2]/8;
+                            if(val === 0) return 0;
+                            else return 4 * Math.log(Math.log(val[2]+2) / Math.log(1.2));
                         },
                         showEffectOn: 'render',
                         rippleEffect: {
@@ -244,9 +228,8 @@
                         },
                         itemStyle: {
                             normal: {
-                                color: '#f4e925',
                                 shadowBlur: 10,
-                                shadowColor: '#333'
+                                shadowColor: '#b6b6b6'
                             }
                         },
                         zlevel: 1
@@ -265,7 +248,7 @@
                 data_month[month] += Math.floor((end_time.getTime() - start_time.getTime()) / 36000) / 100;
             }
 
-            var graph_user_learning_situation = echarts.init($("#user-learning-situation").find("div")[0], 'walden');
+            var graph_user_learning_situation = echarts.init($("#user-learning-situation").find("div")[0], 'wonderland');
             graph_user_learning_situation.setOption({
                 title: {
                     text: '用户学习时间(' + (new Date()).getFullYear() + '年)'
