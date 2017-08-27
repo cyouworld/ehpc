@@ -69,6 +69,10 @@ def signin():
                 ip = request.remote_addr
 
             save_address(ip)
+
+            if u.permissions == 2 and (next_url == '/' or next_url is None):
+                return redirect(url_for('admin.teacher'))
+
             return redirect(next_url or url_for('main.index'))
         else:
             message = gettext('Invalid username or password.')

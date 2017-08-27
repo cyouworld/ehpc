@@ -10,6 +10,7 @@
             <li><a href="{{ url_for('lab.index') }}">{{ _('Virutal Lab') }}</a></li>
             <li><a href="{{ url_for('case.index') }}">{{ _('Case Display') }}</a></li>
             <li><a href="{{ url_for('machine_apply.index') }}">{{ _('Machine Hour Apply') }}</a></li>
+            <li><a class="manual">用户手册</a></li>
         </ul>
     </li>
 
@@ -115,6 +116,7 @@
             <li><a href="{{ url_for('lab.index') }}">{{ _('Virutal Lab') }}</a></li>
             <li><a href="{{ url_for('case.index') }}">{{ _('Case Display') }}</a></li>
             <li><a href="{{ url_for('machine_apply.index') }}">{{ _('Machine Hour Apply') }}</a></li>
+            <li><a class="manual">用户手册</a></li>
         </ul>
 
         <!-- 中屏幕下导航栏 -->
@@ -129,8 +131,40 @@
                     <li><a href="{{ url_for('lab.index') }}">{{ _('Virutal Lab') }}</a></li>
                     <li><a href="{{ url_for('case.index') }}">{{ _('Case Display') }}</a></li>
                     <li><a href="{{ url_for('machine_apply.index') }}">{{ _('Machine Hour Apply') }}</a></li>
+                    <li><a class="manual">用户手册</a></li>
                 </ul>
             </li>
         </ul>
     </nav>
 </header>
+
+<div class="modal fade" id="manual-download" tabindex="-1" role="dialog">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" id="myModalLabel">用户手册下载</h4>
+            </div>
+            <div class="modal-body">
+                    <div class="form-group clearfix">
+                        <div class="controls">
+                            <a href="{{ url_for('static', filename='download/ehpc_student_manual(v8.26).pdf') }}" target="_blank">学生使用手册</a>
+                        </div>
+                    </div>
+                    <div class="form-group clearfix">
+                        <div class="controls">
+                            <a href="{{ url_for('static', filename='download/ehpc_teacher_manual(v8.26).pdf') }}" target="_blank">教师使用手册</a>
+                        </div>
+                    </div>
+            </div>
+        </div><!--/.modal-content-->
+    </div><!--/.modal-->
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        $(".manual").click(function () {
+            $("#manual-download").modal("show");
+        });
+    });
+</script>
