@@ -27,4 +27,26 @@ $(function() {
             }
         });
     });
+
+    var id = -1, obj = null;
+    $(".del-apply").click(function () {
+        var id = $(obj).parent().parent().data('id');
+        obj = this;
+        $("#del-warning").modal("show");
+    });
+    $("#del-confirm").click(function () {
+        $.ajax({
+            type: "post",
+            url: location.href,
+            data: {
+                apply_id: $(obj).parent().parent().data('id') ,
+                op: "del"
+            },
+            async: false,
+            success: function (data) {
+                $(obj).parent().parent().remove();
+                $("#del-warning").modal("hide");
+            }
+        });
+    });
 });

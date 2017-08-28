@@ -49,8 +49,8 @@
     </div>
 </div>
 <div id="connect-machine" class="sc-center-list">
-    <div class="sc-link text-center" data-sc-center="0" onclick="connect_machine(this);">
-        <div class="link-dark">
+    <div class="sc-link text-center {% if current_user.machine_account | not_applied(0) %}not-applied{% endif %}" data-sc-center="0" onclick="connect_machine(this);">
+        <div class="">
             <div class="sc-center-item">
                 <div class="sc-center-img">
                     <img src="{{ url_for('static', filename='images/ssh.png')}}" alt="广州超算" class="img-responsive">
@@ -61,8 +61,8 @@
             </div>
         </div>
     </div>
-    <div class="sc-link text-center" data-sc-center="1" onclick="connect_machine(this);">
-        <div class="link-dark">
+    <div class="sc-link text-center {% if current_user.machine_account | not_applied(1) %}not-applied{% endif %}" data-sc-center="1" onclick="connect_machine(this);">
+        <div class="">
             <div class="sc-center-item">
                 <div class="sc-center-img">
                     <img src="{{ url_for('static', filename='images/ssh.png')}}" alt="长沙超算" class="img-responsive">
@@ -73,8 +73,8 @@
             </div>
         </div>
     </div>
-    <div class="sc-link text-center" data-sc-center="2" onclick="connect_machine(this);">
-        <div class="link-dark">
+    <div class="sc-link text-center {% if current_user.machine_account | not_applied(2) %}not-applied{% endif %}" data-sc-center="2" onclick="connect_machine(this);">
+        <div class="">
             <div class="sc-center-item">
                 <div class="sc-center-img">
                     <img src="{{ url_for('static', filename='images/ssh.png')}}" alt="中科院超算" class="img-responsive">
@@ -85,8 +85,8 @@
             </div>
         </div>
     </div>
-    <div class="sc-link text-center" data-sc-center="3" onclick="connect_machine(this);">
-        <div class="link-dark">
+    <div class="sc-link text-center {% if current_user.machine_account | not_applied(3) %}not-applied{% endif %}" data-sc-center="3" onclick="connect_machine(this);">
+        <div class="">
             <div class="sc-center-item">
                 <div class="sc-center-img">
                     <img src="{{ url_for('static', filename='images/ssh.png')}}" alt="上海超算" class="img-responsive">

@@ -5172,6 +5172,10 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     border-bottom: 2px solid #46C37B;
 }
 
+#issue-list-box a:hover {
+    cursor: pointer;
+}
+
 .noty-a{
     font-size: 15px;
     text-decoration : none;
@@ -5191,6 +5195,23 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
 .sc-center-list .sc-link {
     display: inline-block;
     padding: 10px;
+}
+
+.sc-center-list .sc-link:hover {
+    color: #46c37b;
+    -webkit-transition: all 0.3s ease;
+    -moz-transition: all 0.3s ease;
+    -o-transition: all 0.3s ease;
+    transition: all 0.3s ease;
+}
+
+.sc-center-list .not-applied {
+    opacity: 0.4;
+    cursor: no-drop;
+}
+
+.sc-center-list .not-applied:hover {
+    color: #313131;
 }
 
 .sc-center-list .sc-link .sc-center-img {
@@ -5214,6 +5235,13 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     -moz-transition: all 0.3s ease;
     -o-transition: all 0.3s ease;
     transition: all 0.3s ease;
+}
+
+.sc-center-list .not-applied .sc-center-img:hover {
+    cursor: no-drop;
+    transform: translateY(0px);
+    -webkit-transform: translateY(0px);
+    -moz-transform: translateY(0px);
 }
 
 .sc-center-list .sc-link a,.sc-center-list .sc-link a:hover,.sc-center-list .sc-link a:active {

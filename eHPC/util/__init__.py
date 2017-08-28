@@ -4,4 +4,4 @@ from flask import Blueprint
 filter_blueprint = Blueprint('filters', __name__)
 
 # Register all the filter.
-from . import course_filter, time_process, text_process, user_manage, group_filter, problem_filter, admin_filter, case_filter, statistics_filter
+from . import course_filter, time_process, text_process, user_manage, group_filter, problem_filter, admin_filter, case_filter, statistics_filter, machine_apply_filter

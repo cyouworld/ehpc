@@ -66,7 +66,8 @@
             var has_account = 0;
             var sc_center = event.getAttribute('data-sc-center');
             {% if not current_user.machine_account %}
-                alert_modal("您还未申请任何超算账号，请申请相应超算账号之后再连接！");
+                alert_modal("您还未申请超算账号，请申请相应超算账号之后再连接！");
+                setTimeout(function() {$("#modal-alert .close").click()}, 2000);
             {% else %}
                 {% for a in current_user.machine_account %}
                     {% if a.sc_center == 0 %}
@@ -90,15 +91,19 @@
                 if(has_account == 0) {
                     if (sc_center == 0) {
                         alert_modal("您还未申请广州超算账号，请申请之后再连接！");
+                        setTimeout(function() {$("#modal-alert .close").click()}, 2000);
                     }
                     else if (sc_center == 1) {
                         alert_modal("您还未申请长沙超算账号，请申请之后再连接！");
+                        setTimeout(function() {$("#modal-alert .close").click()}, 2000);
                     }
                     else if (sc_center == 2) {
                         alert_modal("您还未申请中科院超算账号，请申请之后再连接！");
+                        setTimeout(function() {$("#modal-alert .close").click()}, 2000);
                     }
                     else {
                         alert_modal("您还未申请上海超算账号，请申请之后再连接！");
+                        setTimeout(function() {$("#modal-alert .close").click()}, 2000);
                     }
                 }
             {% endif %}

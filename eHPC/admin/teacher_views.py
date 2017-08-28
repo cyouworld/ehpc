@@ -144,7 +144,7 @@ def course_hide(course_id):
     else:
         curr_course.is_hidden = False
     db.session.commit()
-    return redirect(url_for('admin.course'))
+    return redirect(url_for('admin.course', tag2='course-manage'))
 
 
 @admin.route('/course/<int:course_id>/picture/', methods=['GET', 'POST'])

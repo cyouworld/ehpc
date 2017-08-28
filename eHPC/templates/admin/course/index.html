@@ -53,9 +53,9 @@
                                 <a href="javascript:void(0)" name="qr-code">二维码</a>
                                 <span class="divider"> | </span>
                                 {% if c.is_hidden %}
-                                <a href="{{ url_for('admin.course_hide', course_id=c.id) }}">显示课程</a>
+                                <a href="{{ url_for('admin.course_hide', course_id=c.id) }}?tag2=course-manage">显示课程</a>
                                 {% else %}
-                                <a href="{{ url_for('admin.course_hide', course_id=c.id) }}">隐藏课程</a>
+                                <a href="{{ url_for('admin.course_hide', course_id=c.id) }}?tag2=course-manage">隐藏课程</a>
                                 {% endif %}
                             </td>
                         </tr>

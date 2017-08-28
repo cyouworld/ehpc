@@ -205,13 +205,20 @@ def get_machine_info():
                            password=machine_account.password)
 
 
-@machine_apply.route('/todo/')
+@machine_apply.route('/todo/', methods=['GET', 'POST'])
 def issue_unsubmit():
     issue_list = MachineApply.query.filter_by(user_id=current_user.id, submit_status=0).all()
-    return render_template('machine_apply/issue_list.html',
-                           issue_list=issue_list,
-                           status='unsubmit',
-                           title=gettext('TODO List'))
+    if request.method == 'GET':
+        return render_template('machine_apply/issue_list.html',
+                               issue_list=issue_list,
+                               status='unsubmit',
+                               title=gettext('TODO List'))
+    elif request.method == 'POST':
+        if request.form['op'] == 'del':
+            curr_apply = MachineApply.query.filter_by(id=request.form['apply_id']).first_or_404()
+            db.session.delete(curr_apply)
+            db.session.commit()
+            return jsonify(status="success")
 
 
 @machine_apply.route('/waiting/')
