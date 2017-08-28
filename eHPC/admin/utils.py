@@ -12,7 +12,8 @@ def save_address(ip):
         print(e)
         return
 
-    current_user.last_longitude = str(response.location.longitude)
-    current_user.last_latitude = str(response.location.latitude)
-    current_user.city_name = response.city.names['zh-CN']
-    db.session.commit()
+    if 'zh-CN' in response.city.names.keys():
+        current_user.last_longitude = str(response.location.longitude)
+        current_user.last_latitude = str(response.location.latitude)
+        current_user.city_name = response.city.names['zh-CN']
+        db.session.commit()
