@@ -166,3 +166,18 @@ def is_checked(p_id, h_id):
         return True
     else:
         return False
+
+
+@filter_blueprint.app_template_filter('has_score')
+def has_score(u_id, h_id):
+    homework_score = HomeworkScore.query.filter_by(user_id=u_id, homework_id=h_id).first()
+    if homework_score:
+        return True
+    else:
+        return False
+
+
+@filter_blueprint.app_template_filter('get_score')
+def get_score(u_id, h_id):
+    homework_score = HomeworkScore.query.filter_by(user_id=u_id, homework_id=h_id).first_or_404()
+    return homework_score.score

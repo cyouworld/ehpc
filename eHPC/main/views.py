@@ -81,6 +81,11 @@ def index():
                                articles=articles)
 
 
+@main.route('/user_manual/')
+def user_manual():
+    return render_template('main/user_manual.html', title=gettext('User Manual'))
+
+
 @main.app_errorhandler(404)
 def page_404(err):
     return render_template('404.html', title='404'), 404

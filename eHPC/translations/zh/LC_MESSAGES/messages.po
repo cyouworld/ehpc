@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PROJECT VERSION\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2017-06-21 13:59+0800\n"
+"POT-Creation-Date: 2017-09-02 09:53+0800\n"
 "PO-Revision-Date: 2016-10-08 15:35+0800\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: zh\n"
@@ -34,7 +34,7 @@ msgstr "修改权限成功"
 msgid "User Edit"
 msgstr "用户编辑"
 
-#: admin/system_views.py:79 admin/teacher_views.py:49
+#: admin/system_views.py:79 admin/teacher_views.py:51
 msgid "Course Admin"
 msgstr "课程管理"
 
@@ -74,130 +74,131 @@ msgstr "案例版本管理"
 msgid "Case Code Material"
 msgstr "案例代码管理"
 
-#: admin/teacher_views.py:98
+#: admin/teacher_views.py:100
 msgid "Create Course"
 msgstr "新建课程"
 
-#: admin/teacher_views.py:123
+#: admin/teacher_views.py:126
 msgid "Edit Course"
 msgstr "编辑课程"
 
-#: admin/teacher_views.py:140
+#: admin/teacher_views.py:156
 msgid "Course Picture"
 msgstr "课程图片"
 
-#: admin/teacher_views.py:162 admin/teacher_views.py:173
-#: admin/teacher_views.py:192
+#: admin/teacher_views.py:178 admin/teacher_views.py:189
+#: admin/teacher_views.py:208
 msgid "Course Notice"
 msgstr "课程公告"
 
-#: admin/teacher_views.py:218
+#: admin/teacher_views.py:234
 msgid "Course Lesson"
 msgstr "课程课时"
 
-#: admin/teacher_views.py:263
+#: admin/teacher_views.py:279
 msgid "Lesson Material"
 msgstr "课时资料"
 
-#: admin/teacher_views.py:462 admin/teacher_views.py:713
-#: admin/teacher_views.py:775
+#: admin/teacher_views.py:518 admin/teacher_views.py:837
+#: admin/teacher_views.py:899
 msgid "Course Homework"
 msgstr "课程作业"
 
-#: admin/teacher_views.py:506 admin/teacher_views.py:577
+#: admin/teacher_views.py:589 admin/teacher_views.py:661
 msgid "Course Homework Create"
 msgstr "新建课程作业"
 
-#: admin/teacher_views.py:576 admin/teacher_views.py:681
+#: admin/teacher_views.py:660 admin/teacher_views.py:787
 msgid "homework appendix upload failed"
 msgstr "课程作业附件上传失败！"
 
-#: admin/teacher_views.py:617 admin/teacher_views.py:700
+#: admin/teacher_views.py:723 admin/teacher_views.py:824
 msgid "Course Homework Edit"
 msgstr "修改课程作业信息"
 
-#: admin/teacher_views.py:682
+#: admin/teacher_views.py:788
 msgid "Course Homework edit"
 msgstr "修改课程作业信息"
 
-#: admin/teacher_views.py:699
+#: admin/teacher_views.py:823
 msgid "save homework successfully"
 msgstr "作业修改成功！"
 
-#: admin/teacher_views.py:791
+#: admin/teacher_views.py:915
 msgid "Homework Correct"
 msgstr "批改作业"
 
-#: admin/teacher_views.py:874
+#: admin/teacher_views.py:1008 admin/teacher_views.py:1053
 msgid "Course Paper"
 msgstr "课程测验"
 
-#: admin/teacher_views.py:984 admin/teacher_views.py:1010
+#: admin/teacher_views.py:1109 admin/teacher_views.py:1126
+#: admin/teacher_views.py:1152
 msgid "Question Manage"
 msgstr "试题管理"
 
-#: admin/teacher_views.py:1027 admin/teacher_views.py:1172
+#: admin/teacher_views.py:1169 admin/teacher_views.py:1317
 msgid "Program question"
 msgstr "编程题"
 
-#: admin/teacher_views.py:1042 admin/teacher_views.py:1073
-#: admin/teacher_views.py:1139 admin/teacher_views.py:1207
+#: admin/teacher_views.py:1187 admin/teacher_views.py:1218
+#: admin/teacher_views.py:1284 admin/teacher_views.py:1364
 msgid "Edit question"
 msgstr "编辑试题"
 
-#: admin/teacher_views.py:1103 admin/teacher_views.py:1187
+#: admin/teacher_views.py:1248 admin/teacher_views.py:1343
 msgid "Create question"
 msgstr "创建试题"
 
-#: admin/teacher_views.py:1225
+#: admin/teacher_views.py:1430
 msgid "Lab Manage"
 msgstr "实验管理"
 
-#: admin/teacher_views.py:1266
+#: admin/teacher_views.py:1474
 msgid "Lab tasks"
 msgstr "实验室任务管理"
 
-#: admin/teacher_views.py:1300
+#: admin/teacher_views.py:1508
 msgid "Lab Create"
 msgstr "新建实验"
 
-#: admin/teacher_views.py:1338
+#: admin/teacher_views.py:1546
 msgid "Lab Edit"
 msgstr "编辑实验"
 
-#: admin/teacher_views.py:1373
+#: admin/teacher_views.py:1582
 msgid "VNC Lab Manage"
 msgstr "VNC实验管理"
 
-#: admin/teacher_views.py:1443
+#: admin/teacher_views.py:1653
 msgid "VNC Lab View"
 msgstr "VNC任务查看"
 
-#: admin/teacher_views.py:1488
+#: admin/teacher_views.py:1697
 msgid "VNC Lab Create"
 msgstr "VNC任务创建"
 
-#: admin/teacher_views.py:1513
+#: admin/teacher_views.py:1722
 msgid "VNC Lab Edit"
 msgstr "VNC任务创建"
 
-#: admin/teacher_views.py:1550
+#: admin/teacher_views.py:1759
 msgid "Classify Admin"
 msgstr "知识点管理"
 
-#: admin/views.py:19 admin/views.py:26 admin/views.py:36
+#: admin/views.py:21 admin/views.py:28 admin/views.py:46
 msgid "Admin Auth"
 msgstr "后台认证"
 
-#: admin/views.py:35 user/views.py:55
+#: admin/views.py:45 user/views.py:43 user/views.py:78
 msgid "Invalid username or password."
 msgstr "用户名或者密码错误"
 
-#: admin/views.py:51
+#: admin/views.py:61
 msgid "Teacher Setting"
 msgstr "教师管理"
 
-#: admin/views.py:67
+#: admin/views.py:77
 msgid "System Setting"
 msgstr "站点管理"
 
@@ -209,29 +210,29 @@ msgstr "所有资讯"
 msgid "Case List"
 msgstr "案例列表"
 
-#: case/views.py:23 templates/navbar.html:11 templates/navbar.html:76
-#: templates/navbar.html:90
+#: case/views.py:23 templates/navbar.html:11 templates/navbar.html:117
+#: templates/navbar.html:132
 msgid "Case Display"
 msgstr "案例展示"
 
-#: course/views.py:19
+#: course/views.py:25
 msgid "Courses"
 msgstr "在线课程"
 
-#: course/views.py:153
+#: course/views.py:156
 msgid "Course Materials"
 msgstr "课时材料"
 
-#: group/views.py:20
+#: group/views.py:21
 msgid "Groups"
 msgstr "互动社区"
 
-#: group/views.py:27 templates/group/group_all.html:9
+#: group/views.py:28 templates/group/group_all.html:9
 #: templates/group/group_all.html:16
 msgid "All Groups"
 msgstr "所有群组"
 
-#: group/views.py:59
+#: group/views.py:60
 msgid "Create Topic"
 msgstr "新建话题"
 
@@ -239,59 +240,58 @@ msgstr "新建话题"
 msgid "Labs"
 msgstr "实验室"
 
-#: lab/views.py:215
+#: lab/views.py:206
 msgid "vnc"
 msgstr ""
 
-#: machine_apply/views.py:33 templates/machine_apply/create.html:17
+#: machine_apply/views.py:34 templates/machine_apply/create.html:17
 #: templates/machine_apply/index.html:12
 #: templates/machine_apply/issue_list.html:16
 #: templates/machine_apply/machine_apply_information.html:17
 msgid "Resource Apply"
 msgstr "资源申请"
 
-#: machine_apply/views.py:39
+#: machine_apply/views.py:52
 msgid "Resource Apply Information"
 msgstr "资源申请说明"
 
-#: machine_apply/views.py:58 machine_apply/views.py:98
-#: machine_apply/views.py:127 machine_apply/views.py:136
+#: machine_apply/views.py:70 machine_apply/views.py:111
+#: machine_apply/views.py:121 machine_apply/views.py:148
+#: machine_apply/views.py:157
 msgid "My Machine Hour Apply"
 msgstr "我的机时申请"
 
-#: machine_apply/views.py:184
+#: machine_apply/views.py:215
 msgid "TODO List"
 msgstr "待办事项"
 
-#: machine_apply/views.py:193
+#: machine_apply/views.py:230
 msgid "Waiting List"
 msgstr "待审批事项"
 
-#: machine_apply/views.py:202
+#: machine_apply/views.py:239
 msgid "Finished List"
 msgstr "已完成事项"
 
-#: main/views.py:53 main/views.py:61 main/views.py:67
+#: main/views.py:57 main/views.py:68 main/views.py:78
 msgid "Education Practice Platform"
 msgstr "教育实践平台"
 
-#: problem/views.py:23
+#: main/views.py:86 templates/main/user_manual.html:12
+msgid "User Manual"
+msgstr "用户手册"
+
+#: problem/views.py:24
 msgid "Practice Platform"
 msgstr "练习平台"
 
-#: problem/views.py:37 problem/views.py:61
+#: problem/views.py:38 problem/views.py:62
 msgid "Program Practice"
 msgstr "编程题目"
 
-#: problem/views.py:49
+#: problem/views.py:50
 msgid "My Submit"
 msgstr "我的提交"
-
-#: templates/admin/footer.html:4 templates/footer.html:4
-#: templates/lab/vnc_finish_all_tasks.html:39
-#: templates/lab/vnc_out_of_progress.html:39
-msgid "SYSU SDCS"
-msgstr "中山大学数据科学与计算机学院"
 
 #: templates/admin/header.html:7 templates/course/widget_material_base.html:10
 #: templates/header.html:7 templates/lab/vnc_base.html:10
@@ -299,48 +299,53 @@ msgid "eHPC"
 msgstr ""
 
 #: templates/main/index.html:90 templates/navbar.html:7
-#: templates/navbar.html:72 templates/navbar.html:82
+#: templates/navbar.html:113 templates/navbar.html:124
 msgid "Online Courses"
 msgstr "在线课程"
 
 #: templates/main/index.html:111 templates/navbar.html:8
-#: templates/navbar.html:73 templates/navbar.html:83
+#: templates/navbar.html:114 templates/navbar.html:125
 msgid "Examination Center"
 msgstr "试题中心"
 
 #: templates/main/index.html:143 templates/navbar.html:9
-#: templates/navbar.html:74 templates/navbar.html:88
+#: templates/navbar.html:115 templates/navbar.html:130
 msgid "Community"
 msgstr "互动社区"
 
-#: templates/navbar.html:10 templates/navbar.html:75 templates/navbar.html:89
+#: templates/navbar.html:10 templates/navbar.html:116 templates/navbar.html:131
 msgid "Virutal Lab"
 msgstr "虚拟实验室"
 
-#: templates/navbar.html:12 templates/navbar.html:77 templates/navbar.html:91
+#: templates/navbar.html:12 templates/navbar.html:118 templates/navbar.html:133
 msgid "Machine Hour Apply"
 msgstr "资源申请"
 
-#: templates/lab/lab_base.html:49 templates/navbar.html:35 user/views.py:164
+#: templates/lab/lab_base.html:50 templates/lab/vnc_finish_all_tasks.html:30
+#: templates/lab/vnc_out_of_progress.html:29 templates/navbar.html:25
+#: templates/navbar.html:76 user/views.py:190
 msgid "Personal Page"
 msgstr "个人主页"
 
-#: templates/lab/lab_base.html:54 templates/navbar.html:44
-#: templates/user/setting.html:9 user/views.py:268
+#: templates/lab/lab_base.html:55 templates/lab/vnc_finish_all_tasks.html:35
+#: templates/lab/vnc_out_of_progress.html:34 templates/navbar.html:34
+#: templates/navbar.html:85 templates/user/setting.html:9 user/views.py:271
 msgid "Setting"
 msgstr "账户设置"
 
-#: templates/lab/lab_base.html:56 templates/navbar.html:47
+#: templates/lab/lab_base.html:57 templates/lab/vnc_finish_all_tasks.html:37
+#: templates/lab/vnc_out_of_progress.html:36 templates/navbar.html:37
+#: templates/navbar.html:88
 msgid "Logout"
 msgstr "退出登录"
 
-#: templates/admin/auth.html:42 templates/navbar.html:61
-#: templates/user/reg.html:12 templates/user/signin.html:12
-#: templates/user/signin.html:43
+#: templates/admin/auth.html:42 templates/navbar.html:43
+#: templates/navbar.html:102 templates/user/reg.html:12
+#: templates/user/signin.html:12 templates/user/signin.html:43
 msgid "Sign In"
 msgstr "登录"
 
-#: templates/navbar.html:64 templates/user/reg.html:13
+#: templates/navbar.html:105 templates/user/reg.html:13
 #: templates/user/signin.html:13 templates/user/signin.html:51
 msgid "Registration"
 msgstr "注册"
@@ -366,12 +371,15 @@ msgstr "邮箱地址"
 msgid "Password"
 msgstr "密码"
 
+#: templates/admin/footer.html:4
+msgid "SYSU SDCS"
+msgstr "中山大学数据科学与计算机学院"
+
 #: templates/admin/navbar.html:9
 msgid "Teacher Admin"
 msgstr "教师管理"
 
 #: templates/admin/hpc/edit.html:24 templates/machine_apply/create.html:21
-#: templates/machine_apply/create.html:28
 msgid "Machine Hour Apply Edit"
 msgstr "编辑机时申请"
 
@@ -414,7 +422,7 @@ msgstr "回复"
 #: templates/machine_apply/create.html:16 templates/machine_apply/index.html:11
 #: templates/machine_apply/issue_list.html:15
 #: templates/machine_apply/machine_apply_information.html:16
-#: templates/problem/program_detail.html:12
+#: templates/main/user_manual.html:11 templates/problem/program_detail.html:17
 #: templates/problem/show_my_submits.html:7
 #: templates/problem/show_program.html:15
 #: templates/problem/show_question.html:12 templates/problem/view_code.html:14
@@ -485,15 +493,14 @@ msgid "Challenges"
 msgstr "虚拟实验室"
 
 #: templates/machine_apply/create.html:19
-#: templates/machine_apply/create.html:28
 msgid "Machine Hour Apply Create"
 msgstr "新建机时申请"
 
-#: templates/machine_apply/index.html:18
+#: templates/machine_apply/index.html:18 templates/main/user_manual.html:18
 msgid "Resource Apply Center"
 msgstr "资源申请中心"
 
-#: templates/machine_apply/index.html:39
+#: templates/machine_apply/index.html:39 templates/main/user_manual.html:39
 msgid "ALL Issues"
 msgstr "所有事项"
 
@@ -522,20 +529,20 @@ msgstr "学习 HPC"
 msgid "More Courses"
 msgstr "更多课程"
 
-#: templates/problem/program_detail.html:13
+#: templates/problem/program_detail.html:18
 #: templates/problem/show_my_submits.html:8
 #: templates/problem/show_program.html:16
 #: templates/problem/show_question.html:13 templates/problem/view_code.html:15
 msgid "Practice Center"
 msgstr "试题中心"
 
-#: templates/problem/program_detail.html:14
+#: templates/problem/program_detail.html:19
 #: templates/problem/show_my_submits.html:9
 #: templates/problem/show_program.html:17 templates/problem/view_code.html:16
 msgid "Program Lists"
 msgstr "编程题目"
 
-#: templates/problem/program_detail.html:99
+#: templates/problem/program_detail.html:111
 msgid "Submit Solution"
 msgstr "提交代码"
 
@@ -623,19 +630,19 @@ msgstr "新密码"
 msgid "repeat password"
 msgstr "再次输入新密码"
 
-#: templates/user/passwd_reset_done.html:16
+#: templates/user/passwd_reset_done.html:12
 msgid "Successful!"
 msgstr "成功"
 
-#: templates/user/passwd_reset_done.html:21
+#: templates/user/passwd_reset_done.html:17
 msgid "Password reset successfully. "
 msgstr "密码重置成功"
 
-#: templates/user/passwd_reset_done.html:27
+#: templates/user/passwd_reset_done.html:23
 msgid "Failed!"
 msgstr "失败"
 
-#: templates/user/passwd_reset_done.html:32
+#: templates/user/passwd_reset_done.html:28
 msgid ""
 "Password reset failed somehow.  Please make sure your reset link is legal"
 " and not used already!"
@@ -695,7 +702,7 @@ msgstr "密码确认"
 msgid "letters,digits,underscore"
 msgstr "字符,数字或者下划线"
 
-#: templates/user/reg.html:200
+#: templates/user/reg.html:223
 msgid "Submiting..."
 msgstr "提交中..."
 
@@ -719,55 +726,51 @@ msgstr "忘记密码"
 msgid "Have no account?"
 msgstr "没有账户"
 
-#: user/views.py:33 user/views.py:45 user/views.py:56
+#: user/views.py:36 user/views.py:44 user/views.py:58 user/views.py:79
 msgid "User Sign In"
 msgstr "用户登录"
 
-#: user/views.py:81 user/views.py:88 user/views.py:118
+#: user/views.py:103 user/views.py:110 user/views.py:140
 msgid "Register Account"
 msgstr "注册账户"
 
-#: user/views.py:103
+#: user/views.py:125
 msgid "Username already exists."
 msgstr "已经存在该用户"
 
-#: user/views.py:107
+#: user/views.py:129
 msgid "Email already exists."
 msgstr "邮箱已经被注册"
 
-#: user/views.py:182
+#: user/views.py:208
 msgid "The email can not be empty"
 msgstr "邮箱地址不能为空"
 
-#: user/views.py:184
+#: user/views.py:210
 msgid "The email has not be registered"
 msgstr "邮箱还没有注册"
 
-#: user/views.py:220
+#: user/views.py:246
 msgid "Passwords don't match."
 msgstr "密码不匹配"
 
-#: user/views.py:222
+#: user/views.py:248
 msgid "Passwords can not be empty."
 msgstr "密码不能为空"
 
-#: user/views.py:257 user/views.py:258
-msgid "'s Topics"
-msgstr "的话题"
-
-#: user/views.py:300
+#: user/views.py:303
 msgid "Update info done!"
 msgstr "成功更新个人信息"
 
-#: user/views.py:327
+#: user/views.py:330
 msgid "Update avatar done!"
 msgstr "已更新头像"
 
-#: user/views.py:331 util/file_manage.py:34 util/file_manage.py:93
+#: user/views.py:334 util/file_manage.py:34 util/file_manage.py:93
 msgid "Invalid file"
 msgstr "文件不符合要求"
 
-#: user/views.py:359
+#: user/views.py:362
 msgid "Update password done!"
 msgstr "更新密码成功"
 
@@ -953,4 +956,7 @@ msgstr "管理员"
 
 #~ msgid "My Machine Hour Applies"
 #~ msgstr "我的申请"
+
+#~ msgid "'s Topics"
+#~ msgstr "的话题"
 

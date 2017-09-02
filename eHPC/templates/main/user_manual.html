@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+
+{% block header_ext %}
+    <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+{% endblock %}
+
+{% block content %}
+
+    <div id="content-container" class="container">
+        <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
+            <li><a href="/">{{ _('Index') }}</a></li>
+            <li class="active"><a href="{{ url_for('main.user_manual') }}">{{ _('User Manual') }}</a></li>
+        </ol>
+        <div class="row">
+            <div class="col-lg-12 col-md-12 col-sm-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading text-center" style="border-bottom-color: #DDD">
+                        <h4>{{ _('User Manual') }}</h4>
+                    </div>
+                    <div id="user-manual-box" class="panel-body">
+                        <div id="student-manual" class="alert alert-info alert-dismissable uploaded" role="alert">
+                            <i class="es-icon es-icon-description status-icon"></i>
+                            <a href="{{ url_for('static', filename='download/ehpc_student_manual(v8.26).pdf') }}" target="_blank">学生使用手册</a>
+                        </div>
+                        <div id="teacher-manual" class="alert alert-info alert-dismissable uploaded" role="alert">
+                            <i class="es-icon es-icon-description status-icon"></i>
+                            <a href="{{ url_for('static', filename='download/ehpc_teacher_manual(v8.26).pdf') }}" target="_blank">教师使用手册</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+
+{% endblock %}
