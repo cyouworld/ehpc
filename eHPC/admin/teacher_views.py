@@ -121,8 +121,8 @@ def course_create():
 @teacher_login
 def course_edit(course_id):
     if request.method == 'GET':
-        if request.args.get('tag1'):  # 记录当前课程子菜单到session
-            session['admin_course_tag'] = request.args.get('tag1')
+        if request.args.get('tag1') and request.args.get('tag2'):  # 记录当前课程子菜单到session
+            session['admin_url'] = request.url
 
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         return render_template('admin/course/edit.html', course=curr_course,
@@ -154,8 +154,8 @@ def course_hide(course_id):
 @teacher_login
 def course_picture(course_id):
     if request.method == 'GET':
-        if request.args.get('tag1'):  # 记录当前课程子菜单到session
-            session['admin_course_tag'] = request.args.get('tag1')
+        if request.args.get('tag1') and request.args.get('tag2'):  # 记录当前课程子菜单到session
+            session['admin_url'] = request.url
 
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         return render_template('admin/course/picture.html', course=curr_course,
@@ -178,8 +178,8 @@ def course_picture(course_id):
 @teacher_login
 def course_notice(course_id):
     if request.method == 'GET':
-        if request.args.get('tag1'):  # 记录当前课程子菜单到session
-            session['admin_course_tag'] = request.args.get('tag1')
+        if request.args.get('tag1') and request.args.get('tag2'):  # 记录当前课程子菜单到session
+            session['admin_url'] = request.url
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         notices = Notice.query.filter_by(course=curr_course).order_by(Notice.createdTime.desc()).all()
         return render_template('admin/course/notice.html',
@@ -237,8 +237,8 @@ def course_notice_del(course_id):
 @teacher_login
 def course_lesson(course_id):
     if request.method == 'GET':
-        if request.args.get('tag1'):  # 记录当前课程子菜单到session
-            session['admin_course_tag'] = request.args.get('tag1')
+        if request.args.get('tag1') and request.args.get('tag2'):  # 记录当前课程子菜单到session
+            session['admin_url'] = request.url
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         return render_template('admin/course/lesson.html',
                                title=gettext('Course Lesson'),
@@ -346,8 +346,8 @@ def lesson_material(course_id, lesson_id):
 @teacher_login
 def course_permission(course_id):
     if request.method == 'GET':
-        if request.args.get('tag1'):  # 记录当前课程子菜单到session
-            session['admin_course_tag'] = request.args.get('tag1')
+        if request.args.get('tag1') and request.args.get('tag2'):  # 记录当前课程子菜单到session
+            session['admin_url'] = request.url
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         teachers = User.query.filter_by(permissions=2).all()
         return render_template('admin/course/permission.html', course=curr_course, teachers=teachers, title=u'权限管理')
@@ -378,8 +378,8 @@ def course_permission(course_id):
 @teacher_login
 def course_member(course_id):
     if request.method == 'GET':
-        if request.args.get('tag1'):  # 记录当前课程子菜单到session
-            session['admin_course_tag'] = request.args.get('tag1')
+        if request.args.get('tag1') and request.args.get('tag2'):  # 记录当前课程子菜单到session
+            session['admin_url'] = request.url
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         search_content = request.args.get("search_content", None)
         if search_content is None:
@@ -526,8 +526,8 @@ def course_batch():
 def course_homework(course_id):
     """ 课程的作业管理入口页面 """
     if request.method == 'GET':
-        if request.args.get('tag1'):  # 记录当前课程子菜单到session
-            session['admin_course_tag'] = request.args.get('tag1')
+        if request.args.get('tag1') and request.args.get('tag2'):  # 记录当前课程子菜单到session
+            session['admin_url'] = request.url
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         return render_template('admin/course/homework.html', course=curr_course,
                                homeworks=curr_course.homeworks,
@@ -1018,8 +1018,8 @@ def course_homework_correct(course_id, homework_id):
 def course_paper(course_id):
     """ 课程cid 的试卷管理入口页面 """
     if request.method == 'GET':
-        if request.args.get('tag1'):  # 记录当前课程子菜单到session
-            session['admin_course_tag'] = request.args.get('tag1')
+        if request.args.get('tag1') and request.args.get('tag2'):  # 记录当前课程子菜单到session
+            session['admin_url'] = request.url
         curr_course = Course.query.filter_by(id=course_id).first_or_404()
         return render_template('admin/course/paper.html', course=curr_course,
                                papers=curr_course.papers,

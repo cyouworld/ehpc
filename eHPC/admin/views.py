@@ -62,8 +62,12 @@ def teacher():
     #     return render_template("admin/teacher.html", title=gettext("Teacher Setting"),
     #                            classify=current_user.teacher_classify,
     #                            tag1=session['admin_course_tag'])
+    if session.get('admin_url') is not None:
+        url = '/admin%s' % session.get('admin_url').split('admin')[1]
+        return redirect(url)
 
-    return render_template("admin/teacher.html", title=gettext("Teacher Setting"), classify=current_user.teacher_classify)
+    return render_template("admin/teacher.html", title=gettext("Teacher Setting"),
+                           classify=current_user.teacher_classify)
 
 
 @admin.route('/system/')
@@ -72,7 +76,7 @@ def system():
     user_cnt = User.query.count()
     article_cnt = Article.query.count()
     group_cnt = Group.query.count()
-    case_cnt=Case.query.count()
+    case_cnt = Case.query.count()
     return render_template("admin/system.html",
                            user_cnt=user_cnt,
                            article_cnt=article_cnt,
@@ -80,4 +84,3 @@ def system():
                            case_cnt=case_cnt,
                            course_cnt=Course.query.count(),
                            title=gettext("System Setting"))
-
