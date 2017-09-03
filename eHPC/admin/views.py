@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 
-from flask import render_template, request, redirect, url_for
+from flask import render_template, request, redirect, url_for, session
 from flask_babel import gettext
 from flask_login import login_user, logout_user, current_user
 
@@ -58,6 +58,11 @@ def logout():
 @admin.route('/teacher/')
 @teacher_login
 def teacher():
+    # if 'admin_course_tag' in session:  # 展开session中记录的课程子菜单
+    #     return render_template("admin/teacher.html", title=gettext("Teacher Setting"),
+    #                            classify=current_user.teacher_classify,
+    #                            tag1=session['admin_course_tag'])
+
     return render_template("admin/teacher.html", title=gettext("Teacher Setting"), classify=current_user.teacher_classify)
 
 

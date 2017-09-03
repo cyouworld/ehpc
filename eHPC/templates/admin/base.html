@@ -36,7 +36,22 @@
                                     <span>{{ c.title | truncate(25) }}</span>
                                     <i class="glyphicon glyphicon-chevron-down"></i>
                                 </div>
-                                <ul id="course-{{ c.id }}" class="course-sub submenu" style="display: {% if c == sidebar_courses[0] %}block;{% else %}none;{% endif %}">
+                                <ul id="course-{{ c.id }}" class="course-sub submenu"
+                                    {# 若session中有记录的课程菜单id，则展开之；否则默认展开第一个课程菜单 #}
+                                    {% if 'admin_course_tag' in session %}
+                                        {% if session['admin_course_tag'] == 'course-'+c.id|string %}
+                                            style="display: block"
+                                        {% else %}
+                                            style="display: none"
+                                        {% endif %}
+                                    {% else %}
+                                        {% if c == sidebar_courses[0] %}
+                                            style="display: block"
+                                        {% else %}
+                                            style="display: none"
+                                        {% endif %}
+                                    {% endif %}
+                                >
                                     <li>
                                         <a id="course-{{ c.id }}-0" href="{{ url_for('admin.course_edit',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-0">课程信息</a>
                                     </li>
