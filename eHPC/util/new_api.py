@@ -29,7 +29,6 @@ th2_logger.addHandler(file_handler)
 global g__cookies
 global TH2_MY_PATH, TH2_BASE_URL, TH2_USERNAME, TH2_PASSWORD, TH2_MACHINE_NAME, TH2_LOGIN_DATA
 
-
 # 完成天河2号接口的功能的客户端
 class ehpc_client_new:
     def __init__(self, base_url=TH2_BASE_URL_NEW, headers={}, login_cookie=None, login_data=TH2_LOGIN_DATA_NEW):
@@ -423,7 +422,26 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
 
     sh_command = "cd %s;./%s %s %s %s" % (
         TH2_MY_PATH_NEW, "comprun.sh", input_filename, parameter_language, parameter_number)
-    run_out = mc.run_command(sh_command)
+    run_out_raw = mc.run_command(sh_command)
+
+    #print run_out_raw
+    run_out = ""
+    flag = True
+
+    lines = run_out_raw.split('\n')
+
+    for line in lines:
+        #print line
+        if len(line) > 0 and line[0] == '@' :
+            if flag:
+                flag = False
+                run_out += '\n'
+            run_out += line + '\n'
+        elif line.find('mpiP') == -1:
+            run_out += line + '\n'
+            #print line
+        else:
+            pass
 
     is_success[0] = True
 
