@@ -481,11 +481,14 @@ UNLOCK TABLES;
 DELIMITER ;;
 /*!50003 CREATE*/ /*!50017 DEFINER=`root`@`localhost`*/ /*!50003 TRIGGER `create_new_image` BEFORE INSERT ON `docker_images` FOR EACH ROW BEGIN
     DECLARE dhid INT(11);
+    DECLARE new_port INT(11);
 
     SET @dhid = (SELECT t1.id FROM (SELECT * from docker_holders) AS t1 WHERE t1.images_count = (SELECT MAX(t2.images_count) FROM (SELECT * from docker_holders) AS t2 WHERE t2.images_count < 10) LIMIT 1);
     UPDATE docker_holders set images_count = images_count + 1 where id = @dhid;
 
-    SET NEW.port = IF(ISNULL(@dhid), 0, 5901 + (SELECT t1.images_count FROM (SELECT * from docker_holders) AS t1 WHERE t1.id = @dhid));
+    SET @new_port = (SELECT MAX(port) FROM docker_images WHERE docker_holder_id = @dhid);
+
+    SET NEW.port = IF(ISNULL(@dhid), 0, 1 + IF(ISNULL(@new_port), 5900, @new_port));
     SET NEW.docker_holder_id = IF(ISNULL(@dhid), NULL, @dhid);
   END */;;
 DELIMITER ;

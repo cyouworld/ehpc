@@ -28,11 +28,11 @@
 
 {% block footer_ext %}
     <script src="{{ url_for('static', filename='js/echarts/echarts.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/echarts/wonderland.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/echarts/shine.js') }}"></script>
     <script src="{{ url_for('static', filename='js/echarts/china.js') }}"></script>
     <script>
         $(function () {
-            var graph_user_structure = echarts.init($("#user-structure").find("div")[0], 'wonderland');
+            var graph_user_structure = echarts.init($("#user-structure").find("div")[0], 'shine');
             graph_user_structure.setOption({
                 title: {
                     text: "网站用户构成(共{{ user_count['all'] }}位)",
@@ -76,7 +76,7 @@
                 ]
             });
 
-            var graph_visit_statistics = echarts.init($("#visit-statistics").find("div")[0], 'wonderland');
+            var graph_visit_statistics = echarts.init($("#visit-statistics").find("div")[0], 'shine');
             graph_visit_statistics.setOption({
                 title: {
                     text: "主页访问情况(共{{ visit_statistics['all'] }}人次)",
@@ -149,7 +149,7 @@
             });
 
 
-            var graph_user_geo_distribution = echarts.init($("#user-geo-distribution").find("div")[0], 'wonderland');
+            var graph_user_geo_distribution = echarts.init($("#user-geo-distribution").find("div")[0], 'shine');
             graph_user_geo_distribution.setOption({
                 title: {
                     text: '用户地域分布',
@@ -248,7 +248,7 @@
                 data_month[month] += Math.floor((end_time.getTime() - start_time.getTime()) / 36000) / 100;
             }
 
-            var graph_user_learning_situation = echarts.init($("#user-learning-situation").find("div")[0], 'wonderland');
+            var graph_user_learning_situation = echarts.init($("#user-learning-situation").find("div")[0], 'shine');
             graph_user_learning_situation.setOption({
                 title: {
                     text: '用户学习时间(' + (new Date()).getFullYear() + '年)'

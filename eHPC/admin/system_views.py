@@ -544,14 +544,14 @@ def images(docker_holder_id):
         for di in docker_images:
             more_info.append(u'<div><strong>最近连接时间: </strong>%s</div>' \
                              u'<div><strong>今日剩余时间: </strong>%d 小时 %d 分钟</div>' \
-                             u'<div><strong>开放端口: </strong>%d</div>' \
-                             u'<div><strong>连接密钥: </strong>%s</div>' \
+                             u'<div><strong>VNC连接密钥: </strong>%s</div>' \
+                             u'<div><strong>SSH连接密钥: </strong>%s</div>' \
                              u'<div><strong>连接Token: </strong>%s</div>' \
                              u'<div><strong>连接通道ID: </strong>%s</div>' % \
                              (di.last_connect_time if di.last_connect_time is not None else u"无",
                               di.remaining_time_today / 3600, di.remaining_time_today % 3600 / 60,
-                              di.port,
-                              di.password,
+                              di.vnc_password,
+                              di.ssh_password,
                               di.token if di.token is not None else u"无",
                               di.tunnel_id if di.tunnel_id is not None else u"无"))
         return render_template('admin/docker/images.html', docker_images=docker_images, more_info=more_info)

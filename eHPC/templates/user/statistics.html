@@ -85,7 +85,7 @@
     <script src="//cdn.bootcss.com/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <script src="{{ url_for('static', filename='js/echarts/echarts.min.js') }}"></script>
-    <script src="{{ url_for('static', filename='js/echarts/wonderland.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/echarts/shine.js') }}"></script>
     <script>
         var statistics_this_week = {{ statistics | statistic_get_data('this-week') | safe }};
         var statistics_last_week = {{ statistics | statistic_get_data('last-week') | safe }};
@@ -125,7 +125,7 @@
                     total_wrong += wrong_counts[i];
                 }
 
-                var graph_week_quiz_status = echarts.init($("#week-quiz-status").find("div")[0], 'wonderland');
+                var graph_week_quiz_status = echarts.init($("#week-quiz-status").find("div")[0], 'shine');
                 graph_week_quiz_status.setOption({
                     title: {
                         text: quiz_status.length + "场课程测试答题情况",
@@ -185,7 +185,7 @@
                     status_data_last_week[index] += Math.floor((end_time.getTime() - start_time.getTime()) / 60000);
                 }
 
-                var graph_week_course_document_status = echarts.init($("#week-course-document-status").find("div")[0], 'wonderland');
+                var graph_week_course_document_status = echarts.init($("#week-course-document-status").find("div")[0], 'shine');
                 graph_week_course_document_status.setOption({
                     title: {
                         text: "课程文档学习情况",
