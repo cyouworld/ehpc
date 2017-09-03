@@ -149,15 +149,15 @@ def submit(pid):
         submit_program = SubmitProgram(uid, program_id, source_code, language)
         db.session.add(submit_program)
         db.session.commit()
-        if language == "openmp" :
+        if language == "openmp":
             cpu_number_per_task = cpu_number
             task_number = 1
-        elif language == "mpi" :
+        elif language == "mpi":
             task_number = cpu_number
             cpu_number_per_task = 1
 
         return submit_code_new(pid=pid, uid=uid, source_code=source_code, task_number=task_number, cpu_number_per_task=cpu_number_per_task, language=language)
-    else :
+    else:
         op = request.form['job_op']
         jobid = request.form['job_id']
 
@@ -172,14 +172,14 @@ def submit(pid):
             problem_id = request.form['problem_id']
             source_code = request.form['source_code']
             language = request.form['language']
-            submit_problem = SubmitProblem(uid, problem_id, source_code, language)
-            db.session.add(submit_problem)
+            submit_program = SubmitProgram(uid, problem_id, source_code, language)
+            db.session.add(submit_program)
             db.session.commit()
 
-            if language == "openmp" :
+            if language == "openmp":
                 cpu_number_per_task = cpu_number
                 task_number = 1
-            elif language == "mpi" :
+            elif language == "mpi":
                 task_number = cpu_number
                 cpu_number_per_task = 1
 
