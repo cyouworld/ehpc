@@ -127,14 +127,12 @@ UNLOCK TABLES;
 --
 
 DROP TABLE IF EXISTS `case_versions`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `case_versions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `case_id` int(11) NOT NULL,
   `version_id` int(11) NOT NULL,
   `name` varchar(256) NOT NULL,
-  `description` varchar(256) NOT NULL,
+  `description` text NOT NULL,
   `dir_path` varchar(128) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `case_id` (`case_id`),
@@ -148,7 +146,9 @@ CREATE TABLE `case_versions` (
 
 LOCK TABLES `case_versions` WRITE;
 /*!40000 ALTER TABLE `case_versions` DISABLE KEYS */;
-INSERT INTO `case_versions` VALUES (1,1,1,'版本1','数据采用一个实际用户的算例，由于需要计算的建筑较大较复杂，用户划分了34个MESH ，大小差异较大，总网格量40余万：\r\n\r\n测试过程只计算10s 的模拟时间（实际计算一般需要计算30min 的模拟时间）\r\n官网下载的二进制FDS程序，采用的是预编译的OpenMPI 通信库。 最多只能使用34个进程进行计算： 测试耗时450s\r\n使用系统MPI（MPICH3）编译的FDS程序\r\n34个进程耗时182s 。因使用系统的MPI编译才能发挥HPC计算环境的高速网络的性能，通过跨节点的并行计算来提高计算能力。\r\n通','1/version_1'),(3,2,1,'版本1','','2/version_1'),(4,3,1,'版本1','没有优化','3/version_1');
+INSERT INTO `case_versions` VALUES ('1', '1', '1', '版本1', '数据采用一个实际用户的算例，由于需要计算的建筑较大较复杂，用户划分了34个MESH ，大小差异较大，总网格量40余万：\r\n\r\n测试过程只计算10s 的模拟时间（实际计算一般需要计算30min 的模拟时间）\r\n官网下载的二进制FDS程序，采用的是预编译的OpenMPI 通信库。 最多只能使用34个进程进行计算： 测试耗时450s\r\n使用系统MPI（MPICH3）编译的FDS程序\r\n34个进程耗时182s 。因使用系统的MPI编译才能发挥HPC计算环境的高速网络的性能，通过跨节点的并行计算来提高计算能力。\r\n通', '1/version_1');
+INSERT INTO `case_versions` VALUES ('3', '2', '1', '版本1', '', '2/version_1');
+INSERT INTO `case_versions` VALUES ('4', '3', '1', '版本1', '没有优化', '3/version_1');
 /*!40000 ALTER TABLE `case_versions` ENABLE KEYS */;
 UNLOCK TABLES;
 

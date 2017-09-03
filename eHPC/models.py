@@ -543,7 +543,7 @@ class CaseVersion(db.Model):
     case_id = db.Column(db.Integer, db.ForeignKey('cases.id'), nullable=False)
     version_id = db.Column(db.Integer, nullable=False)
     name = db.Column(db.String(256), nullable=False)
-    description = db.Column(db.String(256), nullable=False)
+    description = db.Column(db.Text(), nullable=False)
     dir_path = db.Column(db.String(128), nullable=False)
 
     materials = db.relationship('CaseCodeMaterial', backref='version', lazy='dynamic', cascade='delete, delete-orphan')

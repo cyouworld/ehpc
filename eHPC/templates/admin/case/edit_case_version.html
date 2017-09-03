@@ -2,6 +2,9 @@
 
 {% block header_ext %}
     <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -89,9 +92,12 @@
                             </div>
                             <div class="col-md-9 controls">
                                 <textarea class="form-control" id="version-description-field" name="description" style="height: 200px"
-                                    data-parsley-maxlength="256" data-parsley-required-message="请输入案例版本描述" required></textarea>
+                                     data-provide="markdown" data-parsley-maxlength="256" data-parsley-required-message="请输入案例版本描述"
+                                          data-img-upload-url="{{ url_for("markdown_files.images") }}"
+                                          data-parsley-errors-container=".textarea-errors" required></textarea>
                             </div>
                         </div>
+                        <div class="col-md-offset-2 textarea-errors" style="margin-top: -30px;"></div>
 
                         <input id="version-op-field" type="hidden" name="op">
                         <input id="version-id-field" type="hidden" name="version_id">
@@ -111,21 +117,52 @@
 {% endblock %}
 
 {% block footer_ext %}
-
+    <script src="{{ url_for('static', filename='js/custom_simplemde.js') }}"></script>
+    <script>
+        var simplemde = custom_simplemde({
+            element: $("#version-description-field")[0],
+            autosave: true,
+            showIcons: ["code", "table"],
+            tabSize: 4,
+            spellChecker: false,
+            previewRender: latex_support
+        });
+    </script>
     <script type="text/javascript">
         $(document).ready(function () {
+            $("#myModal").on("shown.bs.modal",function() {simplemde.codemirror.refresh();});
+            $("#myModal").on("hidden.bs.modal",function() {
+                $("#version-description-field")[0].innerHTML = "";
+                $("#version-description-field").val("");
+                simplemde.value("");
+                simplemde.codemirror.refresh();
+            });
             var p_instance = $('#case-version-form').parsley();
             var success_info = "";
             $("#version-create-btn").click(function () {
                 $("#version-op-field").val("create");
-                $("#version-title-field").val("");
+                $("#version-name-field").val("");
                 $("#version-description-field").val("");
+                simplemde.value("");
                 success_info = "添加成功";
                 $("#myModalLabel")[0].innerHTML = "添加案例版本";
                 p_instance.reset();
             });
 
+            simplemde.codemirror.on("update", function () {
+                $("#version-description-field")[0].innerHTML = simplemde.value();
+                $("#version-description-field").val(simplemde.value());
+                if (simplemde.value()) {
+                    $(".textarea-errors").addClass("hide");
+                }
+                else {
+                    $(".textarea-errors").removeClass("hide");
+                }
+            });
+
             $('#version-save-btn').click(function () {
+                $("#version-description-field")[0].innerHTML = simplemde.value();
+                $("#version-description-field").val(simplemde.value());
                 p_instance.validate();
                 if (p_instance.isValid()) {
                     $.ajax({
@@ -169,6 +206,7 @@
             });
 
             $("#case-item-list").find("a[name=edit-btn]").click(function () {
+                p_instance.reset();
                 var obj = this;
                 $.ajax({
                     type: "post",
@@ -182,6 +220,8 @@
                             $("#version-op-field").val("edit");
                             $("#version-name-field").val(data['name']);
                             $("#version-description-field").val(data['description']);
+                            $("#version-description-field")[0].innerHTML = data['description'];
+                            simplemde.value(data['description']);
                             $("#version-id-field").val($(obj).parent().parent().data('version_id'));
                             success_info = "修改成功";
                             $("#myModalLabel")[0].innerHTML = "修改案例版本信息";
