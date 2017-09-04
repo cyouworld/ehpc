@@ -156,6 +156,8 @@ class Course(db.Model):
     endTime = db.Column(db.DateTime(), nullable=True)
 
     is_hidden = db.Column(db.Boolean, default=False)            # 课程是否隐藏
+    is_invited = db.Column(db.Boolean, default=False)           # 课程是否开启邀请码模式
+    invite_code = db.Column(db.String(16), nullable=True)       # 课程邀请码（4位数字）
 
     lessonNum = db.Column(db.Integer, nullable=False)           # 课时数
     studentNum = db.Column(db.Integer, default=0)               # 学生数目

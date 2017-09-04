@@ -120,6 +120,24 @@ def join(cid, u=current_user):
                    student_num=student_num)
 
 
+@course.route('/invite/<int:cid>/')
+@login_required
+@student_not_in_course
+def invite_join(cid, u=current_user):
+    # 学生通过课程邀请码加入课程
+    course_joined = Course.query.filter_by(id=cid).first_or_404()
+    if request.args.get('invite_code') == course_joined.invite_code:
+        if u not in course_joined.group.members:
+            course_joined.group.members.append(u)
+            course_joined.group.memberNum += 1
+        course_joined.users.append(u)
+        course_joined.studentNum += 1
+        db.session.commit()
+        return jsonify(status='success')
+    else:
+        return jsonify(status='error')
+
+
 @course.route('/exit/<int:cid>/')
 @login_required
 @student_in_course

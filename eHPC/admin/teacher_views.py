@@ -378,6 +378,8 @@ def course_permission(course_id):
             else:
                 curr_course.beginTime = datetime.strptime(request.form['begin'], '%Y-%m-%d %X')
                 curr_course.endTime = datetime.strptime(request.form['end'], '%Y-%m-%d %X')
+            curr_course.is_invited = request.form['invite']
+            curr_course.invite_code = request.form['invite_code']
             db.session.commit()
         return jsonify(status="success", course_id=course_id)
 

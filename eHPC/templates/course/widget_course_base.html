@@ -44,6 +44,12 @@
                                     <a class="btn btn-primary btn-lg"
                                        href="{{ url_for('course.join', cid=course.id) }}" id="course-in" name="join-course">
                                         加入课程</a>
+                                    {% if course.is_invited %}
+                                    <a class="btn btn-primary btn-lg" name="invite-course"
+                                       href="javascript:void(0)">
+                                        使用邀请码</a>
+                                    <p style="margin-top: 5px;">使用邀请码可免审批加入课程</p>
+                                    {% endif  %}
                                 </div>
                             {% endif %}
                         {% else %}
@@ -69,6 +75,7 @@
     </div>
     {% include "widget/upload_status_modal.html" %}
     {% include "course/widget_course_exit.html" %}
+    {% include "course/widget_course_invite.html" %}
 {% endblock %}
 
 {% block footer_ext %}
@@ -93,6 +100,28 @@
                 })
             });
             //退出警告框END
+
+            //邀请码输入框
+            $("#join-course").find("a[name=invite-course]").click(function () {
+                $("#invite-warning").modal("show");
+            });
+            $("#invite-confirm").click(function () {
+                $.ajax({
+                    url: '{{ url_for('course.invite_join', cid=course.id) }}',
+                    type: "GET",
+                    data: {'invite_code':$('#invite_code').val()},
+                    success: function (data) {
+                        if(data['status']=='success')
+                            window.location.reload();
+                        else
+                            alert_modal("邀请码错误，请重新输入");
+                    },
+                    error: function () {
+                        alert_modal("加入课程失败, 请重试");
+                    }
+                })
+            });
+            //邀请码输入框END
 
             $("#join-course").find("a[name=join-course]").click(function () {
                 $.ajax({
