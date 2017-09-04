@@ -86,12 +86,30 @@
                             <label><input type="radio" name="timeout" value="60">&nbsp;&nbsp;60s</label>
                         </div>
                     </div>
+                </div>
+
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" >选择并行核数</h4>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <div id="timeout-choice" class="col-md-offset-2">
+                            <label><input type="radio" name="cpu_number" value="1">&nbsp;&nbsp;1个</label>
+                            <label><input type="radio" name="cpu_number" value="2">&nbsp;&nbsp;2个</label>
+                            <label><input type="radio" name="cpu_number" value="4" checked="checked">&nbsp;&nbsp;4个</label>
+                            <label><input type="radio" name="cpu_number" value="8">&nbsp;&nbsp;8个</label>
+                            <label><input type="radio" name="cpu_number" value="16">&nbsp;&nbsp;16个</label>
+                        </div>
+                    </div>
+
                     <div class="form-group">
                         <button id="confirm-timeout" class="btn btn-primary pull-right"
                                 style="margin-right: 8.333333%;">确认
                         </button>
                     </div>
                 </div>
+
             </div><!-- /.modal-content -->
         </div>
     </div><!-- /.modal -->
@@ -192,6 +210,7 @@
                     type: "post",
                     timeout: time_out * 1000, // sets timeout to 20 seconds
                     data: {
+                        cpu_number: $("#timeout-choice input[name='cpu_number']:checked").val(),
                         op: "run",
                         code: code,
                         k_num: {{ next_progress - 1 }}

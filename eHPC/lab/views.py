@@ -111,13 +111,18 @@ def knowledge(kid):
             pid = str(kid) + '_' + str(k_num)
 
             source_code = request.form['code']
+            cpu_number = request.form['cpu_number']
 
             cur_challenge = Challenge.query.filter_by(knowledgeId=kid).filter_by(knowledgeNum=k_num).first()
 
-            task_number = cur_challenge.task_number
-            cpu_number_per_task = cur_challenge.cpu_number_per_task
-            node_number = cur_challenge.node_number
             language = cur_challenge.language
+
+            if language == "openmp" :
+                cpu_number_per_task = cpu_number
+                task_number = 1
+            elif language == "mpi" :
+                task_number = cpu_number
+                cpu_number_per_task = 1
 
             is_success = [False]
 
