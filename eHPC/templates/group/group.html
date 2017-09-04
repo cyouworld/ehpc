@@ -1,4 +1,11 @@
 {% extends 'base.html' %}
+
+{% block header_ext %}
+    <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
+    <script src='{{ url_for("static", filename="js/custom_simplemde.js") }}'></script>
+{% endblock %}
+
 {% block content %}
     <div id="content-container" class="container">
         <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
@@ -46,7 +53,7 @@
                     <div class="panel-heading"><h3 class="panel-title">小组介绍</h3></div>
                     <div class="panel-body">
                         <div class="well editor-text">
-                            <p>{{ group.about }}</p>
+                            <div id="group-about" role="tabpanel" class="tab-pane markdown-body" data-to-render="{{ group.about }}"></div>
                         </div>
                     </div>
                 </div>
@@ -98,6 +105,9 @@
 {% block footer_ext %}
     <script>
         $(document).ready(function () {
+            var about = $("#group-about");
+            about.html(latex_support(about.data('to-render')));
+            about.attr('data-to-render', null);
             $("#join-or-exit-group").click(function () {
                 $.ajax({
                     url: this.href,

@@ -31,7 +31,7 @@
                         <ul class="lesson-list sortable-list" id="homework-item-list">
                             {% if homeworks.count() > 0 %}
                                 {% for h in homeworks %}
-                                <li class="item-lesson clearfix" data-homework_id="{{ h.id }}" style="word-break: break-all;">
+                                <li class="item-lesson clearfix" data-homework_id="{{ h.id }}" data-homework_type="{{ h.h_type }}" style="word-break: break-all;">
                                     <div class="item-content col-md-4">
                                         <i class="es-icon es-icon-undone"></i>
                                          {{ h.title }}
@@ -60,12 +60,12 @@
         </div>
     </div>
     <!-- 模态框（Modal） -->
-    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel"><span id="student-name"></span> -- 未交作业</h4>
+                    <h4 class="modal-title" id="myModalLabel1"><span id="student-name"></span> -- 未交作业</h4>
                 </div>
                 <div class="modal-body">
                     <ul id="unupload-list" style="line-height: 30px">
@@ -80,12 +80,12 @@
     </div>
 
     <!-- 删除警告 -->
-    <div class="modal fade" id="del-warning" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal fade" id="del-warning" tabindex="-1" role="dialog" aria-labelledby="myModalLabel2" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                    <h4 class="modal-title" id="myModalLabel">警告</h4>
+                    <h4 class="modal-title" id="myModalLabel2">警告</h4>
                 </div>
                 <div class="modal-body" style="height: 100px;font-size: medium">此作业为编程作业，是否删除对应的编程题？</div>
                 <div class="modal-footer">

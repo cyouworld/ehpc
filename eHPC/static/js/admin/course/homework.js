@@ -4,7 +4,16 @@
 var obj = null;
 $("#homework-item-list").find("a[name=del-btn]").click(function () {
     obj = this;
-    $("#del-warning .modal-body")
+    if ($(obj).parent().parent().data('homework_type') == 0) {
+        $("#del-warning .modal-body")[0].innerHTML = "作业删除后不可恢复，是否确认删除？";
+        $("#del-program").addClass("hide");
+        $("#del-homework")[0].innerHTML = "删除";
+    }
+    else {
+        $("#del-warning .modal-body")[0].innerHTML = "此作业为编程作业，是否删除对应的编程题？";
+        $("#del-program").removeClass("hide");
+        $("#del-homework")[0].innerHTML = "否，仅删除作业";
+    }
     $("#del-warning").modal("show");
 });
 
