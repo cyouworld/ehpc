@@ -30,8 +30,8 @@ email_address = re.compile(r'[a-zA-z0-9]+\@[a-zA-Z0-9]+\.+[a-zA-Z]')
 @user.route('/signin/', methods=['GET', 'POST'])
 def signin():
     if request.method == 'GET':
-        if current_user.is_authenticated:
-            return redirect(request.args.get('next') or url_for("main.index"))
+        # if current_user.is_authenticated:
+        #     return redirect(request.args.get('next') or url_for("main.index"))
         return render_template('user/signin.html',
                                title=gettext('User Sign In'),
                                form=None)

@@ -63,7 +63,9 @@ def teacher():
     #                            classify=current_user.teacher_classify,
     #                            tag1=session['admin_course_tag'])
     if session.get('admin_url') is not None:
-        url = '/admin%s' % session.get('admin_url').split('admin')[1]
+        url = session.get('admin_url')
+        if url.find('tag') != -1:
+            url = '/admin%s' % session.get('admin_url').split('admin')[1]
         return redirect(url)
 
     return render_template("admin/teacher.html", title=gettext("Teacher Setting"),

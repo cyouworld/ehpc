@@ -46,6 +46,7 @@ def add_sidebar():
 @teacher_login
 def course():
     if request.method == 'GET':
+        session['admin_url'] = request.url
         all_courses = current_user.teacher_courses.order_by(Course.nature_order.asc()).all()
         all_courses += current_user.assistant_courses.all()
         return render_template('admin/course/index.html', all_courses=all_courses, title=gettext('Course Admin'))
@@ -82,6 +83,7 @@ def course():
                 if c.nature_order >= curr_course.nature_order:
                     c.nature_order -= 1
             db.session.delete(curr_course)
+            db.session.delete(curr_course.group)
             db.session.commit()
             return jsonify(status="success", course_id=curr_course.id)
         elif request.form['op'] == 'seq':
@@ -107,10 +109,16 @@ def course_create():
         db.session.commit()
 
         curr_course = Course(title=request.form['title'], subtitle='', about='',
-                             lessonNum=0, smallPicture='upload/course/noImg.jpg', group_id=course_group.id,  nature_order=idx+1)
+                             lessonNum=0, smallPicture='upload/course/noImg.jpg', nature_order=idx+1)
         curr_course.teacher = current_user
-        db.session.add(curr_course)
 
+        curr_course.users.append(current_user)
+        curr_course.studentNum = 1
+        curr_course.group = course_group
+        curr_course.group.members.append(current_user)
+        curr_course.group.memberNum = 1
+
+        db.session.add(curr_course)
         db.session.commit()
         os.makedirs(os.path.join(current_app.config['RESOURCE_FOLDER'], 'course_%d' % curr_course.id))
         os.makedirs(os.path.join(current_app.config['HOMEWORK_UPLOAD_FOLDER'], 'course_%d' % curr_course.id))
@@ -591,7 +599,7 @@ def course_homework(course_id):
             return abort(404)
 
 
-@admin.route('/course/<int:course_id>/homework/create', methods=['GET', 'POST'])
+@admin.route('/course/<int:course_id>/homework/create/', methods=['GET', 'POST'])
 @teacher_login
 def course_homework_create(course_id):
     """ 课程的作业新创建入口页面 """

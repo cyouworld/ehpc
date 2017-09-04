@@ -53,6 +53,7 @@
                                 <input name="end" id="dtp_input2" value="{{ course.endTime }}" type="hidden"><br>
                             </div>
 
+                            {% if course.teacher == current_user %}
                             <div class="form-group">
                                 <label for="dtp_input1" class="col-md-2 control-label">共同管理</label>
                                 <div class="col-md-8">
@@ -61,13 +62,14 @@
                                         暂无共同管理者
                                     {% else %}
                                         {% for a in course.assistants %}
-                                            <span style="margin-right: 10px;">{{ a.name }}</span>
+                                            <span style="margin-right: 10px;">{{ a.name }}({{ a.university }})</span>
                                         {% endfor %}
                                     {% endif %}
                                         <a href="javascript:void(0);" data-toggle="modal" data-target="#teacher-list">修改</a>
                                     </div>
                                 </div>
                             </div>
+                            {% endif %}
 
                         </form>
                         <div class="col-md-offset-2 col-md-8">
@@ -96,7 +98,7 @@
                         <tr>
                             <th width="30%">姓名</th>
                             <th width="30%">邮箱</th>
-                            <th width="30">学校</th>
+                            <th width="30%">学校</th>
                             <th width="10%">操作</th>
                         </tr>
                         </thead>
