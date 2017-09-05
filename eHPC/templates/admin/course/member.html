@@ -17,93 +17,101 @@
                     <button class="btn btn-info pull-right" data-toggle="modal" data-target="#myModal">
                         <i class="glyphicon glyphicon-floppy-save"></i>导出名单
                     </button>
+                    {% if course.public == 0 %}
+                        <button id="list-apply-btn" class="btn btn-info pull-right" style="margin-right: 10px;">审批</button>
+                    {% endif %}
                 </div>
 
                 <div class="panel-body">
                     {% if course.public == 0 %}
-                    <div class="row" style="margin-bottom: 20px">
-                        <button class="btn btn-primary" id="batch-approve" style="margin-left: 10px">批量同意</button>
-                        <button class="btn btn-primary" id="batch-kick" style="margin-left: 10px">批量踢出</button>
-                        <button class="btn btn-primary" id="batch-del" style="margin-left: 10px">批量删除</button>
-                    </div>
-
-                    <table id="user-table" class="table fixed-table">
-                        <thead>
-                        <tr>
-                            <th width="5%"><input type="checkbox" id="select-all"></th>
-                            <th width="15%">姓名</th>
-                            <th width="15%">学号</th>
-                            <th width="10%">性别</th>
-                            <th width="15%">手机</th>
-                            <th width="10%">状态</th>
-                            <th width="10%">操作</th>
-                        </tr>
-                        </thead><!--表格头-->
-                        <tbody>
-                        {% if applies.count() > 0 %}
-                            {% for a in applies %}
-                                <tr data-id="{{ a.id }}">
-                                    <td><input type="checkbox" name="select"></td>
-                                    <td>{{ a.user.name }}</td>
-                                    <td>{{ a.user.student_id }}</td>
-                                    <td>{{ '女' if a.user.gender else '男' }}</td>
-                                    <td>{{ a.user.phone }}</td>
-                                    <td>{{ a.status | get_apply_status }}</td>
-                                    <td>
-                                        {% if a.status == 0 %}
-                                            <a href="{{ url_for('admin.course_approved', apply_id=a.id) }}">同意</a>
-                                            <span class="divider"> | </span>
-                                            <a href="{{ url_for('admin.course_del', apply_id=a.id) }}">删除</a>
-                                            <a href="{{ url_for('admin.course_kick', apply_id=a.id) }}"
-                                               style="display: none;">踢出</a>
-                                        {% elif a.status == 1 %}
-                                            <a href="{{ url_for('admin.course_approved', apply_id=a.id) }}"
-                                               style="display: none;">同意</a>
-                                            <span class="divider" style="display: none;"> | </span>
-                                            <a href="{{ url_for('admin.course_del', apply_id=a.id) }}"
-                                               style="display: none;">删除</a>
-                                            <a href="{{ url_for('admin.course_kick', apply_id=a.id) }}">踢出</a>
-                                        {% endif %}
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr class="text-center">
-                                <td colspan="6">本课程暂未有人申请加入</td>
-                            </tr>
-                        {% endif %}
-                        </tbody><!--表格主体-->
-                    </table>
-                    {% else %}
-                    <table id="student-list" class="table fixed-table">
-                        <thead>
-                        <tr>
-                            <th>姓名</th>
-                            <th>学号</th>
-                            <th>性别</th>
-                            <th>手机</th>
-                            <th>操作</th>
-                        </tr>
-                        </thead><!--表格头-->
-                        <tbody>
-                        {% if course.users.count() > 0 %}
-                            {% for u in course.users %}
+                        <div id="apply-list">
+                            <div class="row" style="margin-bottom: 20px">
+                                <button class="btn btn-primary" id="batch-approve" style="margin-left: 10px">批量同意
+                                </button>
+                                <button class="btn btn-primary" id="batch-kick" style="margin-left: 10px">批量踢出</button>
+                                <button class="btn btn-primary" id="batch-del" style="margin-left: 10px">批量删除</button>
+                            </div>
+                            <table id="user-table" class="table fixed-table">
+                                <thead>
                                 <tr>
-                                    <td>{{ u.name }}</td>
-                                    <td>{{ u.student_id }}</td>
-                                    <td>{{ '女' if u.gender else '男' }}</td>
-                                    <td>{{ u.phone }}</td>
-                                    <td><a href="{{ url_for('admin.public_kick_student', cid=course.id, uid=u.id) }}">踢出</a></td>
+                                    <th width="5%"><input type="checkbox" id="select-all"></th>
+                                    <th width="15%">姓名</th>
+                                    <th width="15%">学号</th>
+                                    <th width="10%">性别</th>
+                                    <th width="15%">手机</th>
+                                    <th width="10%">状态</th>
+                                    <th width="10%">操作</th>
                                 </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr class="text-center">
-                                <td colspan="6">本课程暂未有人加入</td>
+                                </thead><!--表格头-->
+                                <tbody>
+                                {% if applies.count() > 0 %}
+                                    {% for a in applies %}
+                                        <tr data-id="{{ a.id }}">
+                                            <td><input type="checkbox" name="select"></td>
+                                            <td>{{ a.user.name }}</td>
+                                            <td>{{ a.user.student_id }}</td>
+                                            <td>{{ '女' if a.user.gender else '男' }}</td>
+                                            <td>{{ a.user.phone }}</td>
+                                            <td>{{ a.status | get_apply_status }}</td>
+                                            <td>
+                                                {% if a.status == 0 %}
+                                                    <a href="{{ url_for('admin.course_approved', apply_id=a.id) }}">同意</a>
+                                                    <span class="divider"> | </span>
+                                                    <a href="{{ url_for('admin.course_del', apply_id=a.id) }}">删除</a>
+                                                    <a href="{{ url_for('admin.course_kick', apply_id=a.id) }}"
+                                                       style="display: none;">踢出</a>
+                                                {% elif a.status == 1 %}
+                                                    <a href="{{ url_for('admin.course_approved', apply_id=a.id) }}"
+                                                       style="display: none;">同意</a>
+                                                    <span class="divider" style="display: none;"> | </span>
+                                                    <a href="{{ url_for('admin.course_del', apply_id=a.id) }}"
+                                                       style="display: none;">删除</a>
+                                                    <a href="{{ url_for('admin.course_kick', apply_id=a.id) }}">踢出</a>
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                {% else %}
+                                    <tr class="text-center">
+                                        <td colspan="6">本课程暂未有人申请加入</td>
+                                    </tr>
+                                {% endif %}
+                                </tbody><!--表格主体-->
+                            </table>
+                        </div>
+                    {% endif %}
+                    <div id="student-list-div">
+                        <table id="student-list" class="table fixed-table">
+                            <thead>
+                            <tr>
+                                <th>姓名</th>
+                                <th>学号</th>
+                                <th>性别</th>
+                                <th>手机</th>
+                                <th>操作</th>
                             </tr>
-                        {% endif %}
-                        </tbody><!--表格主体-->
-                    </table>
-                {% endif %}
+                            </thead><!--表格头-->
+                            <tbody>
+                            {% if course.users.count() > 0 %}
+                                {% for u in course.users %}
+                                    <tr>
+                                        <td>{{ u.name }}</td>
+                                        <td>{{ u.student_id }}</td>
+                                        <td>{{ '女' if u.gender else '男' }}</td>
+                                        <td>{{ u.phone }}</td>
+                                        <td>
+                                            <a href="{{ url_for('admin.public_kick_student', cid=course.id, uid=u.id) }}">踢出</a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr class="text-center">
+                                    <td colspan="6">本课程暂未有人加入</td>
+                                </tr>
+                            {% endif %}
+                            </tbody><!--表格主体-->
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
@@ -118,19 +126,23 @@
                     <h4 class="modal-title" id="myModalLabel">选择要导出的字段</h4>
                 </div>
                 <div class="modal-body">
-                    <form id="course-member-form" target="_blank" method="post" class="form-horizontal" data-parsley-validate="">
+                    <form id="course-member-form" target="_blank" method="post" class="form-horizontal"
+                          data-parsley-validate="">
                         <div class="form-group">
                             <div class="col-md-offset-2">
                                 <label><input type="checkbox" name="member-field" value="name" required
-                                              data-parsley-errors-container="#checkbox-errors" data-parsley-required-message="请至少选择一个字段">&nbsp;&nbsp;姓名</label>
+                                              data-parsley-errors-container="#checkbox-errors"
+                                              data-parsley-required-message="请至少选择一个字段">&nbsp;&nbsp;姓名</label>
                                 <label><input type="checkbox" name="member-field" value="stu-id">&nbsp;&nbsp;学号</label>
                                 <label><input type="checkbox" name="member-field" value="gender">&nbsp;&nbsp;性别</label>
-                                <label><input type="checkbox" name="member-field" value="telephone">&nbsp;&nbsp;手机</label>
+                                <label><input type="checkbox" name="member-field"
+                                              value="telephone">&nbsp;&nbsp;手机</label>
                                 <label><input type="checkbox" name="member-field" value="e-mail">&nbsp;&nbsp;邮箱</label>
                             </div>
                         </div>
                         <div class="form-group">
-                            <input type="submit" id="export" class="btn btn-primary pull-right" value="确认" style="margin-right: 8.333333%;">
+                            <input type="submit" id="export" class="btn btn-primary pull-right" value="确认"
+                                   style="margin-right: 8.333333%;">
                             <div id="checkbox-errors" class="pull-right" style="margin-right: 20px;"></div>
                         </div>
                     </form>
@@ -146,19 +158,27 @@
 {% block footer_ext %}
     <script>
         $(function () {
+            {% if course.public == 0 %}
+                $("#apply-list").hide();
+                $("#list-apply-btn").click(function () {
+                    $("#student-list-div").toggle();
+                    $("#apply-list").toggle();
+                });
+            {% endif %}
+
             $('#student-list').DataTable({
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
                 },
-                "lengthMenu": [[ 30, 50, 100, -1], [30, 50, 100, "全部"]]
+                "lengthMenu": [[30, 50, 100, -1], [30, 50, 100, "全部"]]
             });
 
             $("input[type=checkbox]").prop("checked", false);
             $('#user-table').DataTable({
                 language: {
-                url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+                    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
                 },
-                "lengthMenu": [[ 30, 50, 100, -1], [30, 50, 100, "全部"]]
+                "lengthMenu": [[30, 50, 100, -1], [30, 50, 100, "全部"]]
             });
 
             {% if search_content %}
@@ -212,7 +232,7 @@
                         id: array
                     },
                     success: function (data) {
-                        if(data["status"] === "success") {
+                        if (data["status"] === "success") {
                             location.reload();
                         }
                     }
@@ -237,7 +257,7 @@
                         id: array
                     },
                     success: function (data) {
-                        if(data["status"] === "success") {
+                        if (data["status"] === "success") {
                             location.reload();
                         }
                     }
@@ -250,8 +270,7 @@
             $("#del-confirm").click(function () {
                 var array = [], flag = false;
                 $("input[name=select]").each(function () {
-                    if ($(this).prop("checked"))
-                    {
+                    if ($(this).prop("checked")) {
                         if ($(this).parent().parent().children(":nth-child(6)").text() === "已同意") {
                             flag = true;
                         }
@@ -276,7 +295,7 @@
                         id: array
                     },
                     success: function (data) {
-                        if(data["status"] === "success") {
+                        if (data["status"] === "success") {
                             location.reload();
                         }
                     }
