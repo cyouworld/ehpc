@@ -127,12 +127,24 @@ def invite_join(cid, u=current_user):
     # 学生通过课程邀请码加入课程
     course_joined = Course.query.filter_by(id=cid).first_or_404()
     if request.args.get('invite_code') == course_joined.invite_code:
-        if u not in course_joined.group.members:
-            course_joined.group.members.append(u)
-            course_joined.group.memberNum += 1
-        course_joined.users.append(u)
-        course_joined.studentNum += 1
-        db.session.commit()
+        curr_apply = Apply.query.filter_by(user_id=u.id).filter_by(course_id=cid).first()
+        if curr_apply is None:
+            if u not in course_joined.group.members:
+                course_joined.group.members.append(u)
+                course_joined.group.memberNum += 1
+            course_joined.users.append(u)
+            course_joined.studentNum += 1
+            db.session.commit()
+        else:
+            curr_apply.status = 1
+            curr_course = curr_apply.course
+            curr_student = curr_apply.user
+            curr_course.users.append(curr_student)
+            curr_course.studentNum += 1
+            if curr_student not in curr_course.group.members:
+                curr_course.group.members.append(curr_student)
+                curr_course.group.memberNum += 1
+            db.session.commit()
         return jsonify(status='success')
     else:
         return jsonify(status='error')

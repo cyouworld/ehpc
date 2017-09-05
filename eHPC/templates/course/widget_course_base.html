@@ -41,14 +41,18 @@
                                 </div>
                             {% else %}
                                 <div class="join" id="join-course">
-                                    <a class="btn btn-primary btn-lg"
+
+                                    {% if course.is_invited %}
+                                        {% if status != 2 %}
+                                            <a class="btn btn-primary btn-lg"  name="invite-course"
+                                               href="javascript:void(0)">
+                                                使用邀请码</a>
+                                            <p style="margin-top: 5px;">使用邀请码可免审批加入课程</p>
+                                        {% endif %}
+                                    {% else %}
+                                        <a class="btn btn-primary btn-lg"
                                        href="{{ url_for('course.join', cid=course.id) }}" id="course-in" name="join-course">
                                         加入课程</a>
-                                    {% if course.is_invited %}
-                                    <a class="btn btn-primary btn-lg" name="invite-course"
-                                       href="javascript:void(0)">
-                                        使用邀请码</a>
-                                    <p style="margin-top: 5px;">使用邀请码可免审批加入课程</p>
                                     {% endif  %}
                                 </div>
                             {% endif %}
