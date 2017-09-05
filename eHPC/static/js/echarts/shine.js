@@ -21,12 +21,15 @@
     }
     echarts.registerTheme('shine', {
         "color": [
-            "#ff6384",
-            "#ffce56",
-            "#36a2eb",
-            "#4bc073",
-            "#9966ff",
-            "#ff9f40"
+            "#ff4282",
+            "#ffb500",
+            "#46c4b2",
+            "#00a6b5",
+            "#4eb3ff",
+            "#2195f2",
+            "#ffaae4",
+            "#e95ebe",
+            "#ff943b"
         ],
         "backgroundColor": "rgba(0,0,0,0)",
         "textStyle": {},
@@ -192,12 +195,15 @@
             "symbol": "emptyCircle",
             "smooth": false,
             "color": [
-                "#ff6384",
-                "#ffce56",
-                "#36a2eb",
-                "#4bc073",
-                "#9966ff",
-                "#ff9f40"
+                "#ff4282",
+                "#ffb500",
+                "#46c4b2",
+                "#00a6b5",
+                "#4eb3ff",
+                "#2195f2",
+                "#ffaae4",
+                "#e95ebe",
+                "#ff943b"
             ],
             "label": {
                 "normal": {
@@ -210,12 +216,12 @@
         "map": {
             "itemStyle": {
                 "normal": {
-                    "areaColor": "rgba(14,46,69,0.37)",
+                    "areaColor": "#f5f8fa",
                     "borderColor": "#e0dfdf",
                     "borderWidth": "1.1"
                 },
                 "emphasis": {
-                    "areaColor": "rgba(16,45,69,0.64)",
+                    "areaColor": "#dcdfe1",
                     "borderColor": "#dddddd",
                     "borderWidth": 1
                 }
@@ -236,13 +242,13 @@
         "geo": {
             "itemStyle": {
                 "normal": {
-                    "areaColor": "rgba(14,46,69,0.37)",
-                    "borderColor": "#e0dfdf",
+                    "areaColor": "#36A2EB",
+                    "borderColor": "#d9d8d8",
                     "borderWidth": "1.1"
                 },
                 "emphasis": {
-                    "areaColor": "rgba(16,45,69,0.64)",
-                    "borderColor": "#dddddd",
+                    "areaColor": "#348bd2",
+                    "borderColor": "#c0bfbf",
                     "borderWidth": 1
                 }
             },
