@@ -2,6 +2,8 @@
 
 {% block header_ext %}
     <script src="//cdn.bootcss.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/parsley-add.js') }}"></script>
 {% endblock %}
 
 {% block content %}
@@ -58,6 +60,82 @@
             </div>
         </div>
     </div>
+
+    <div class="modal center" id="alert-modal" tabindex="-1" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button class="close modal-alert" data-dismiss="modal">&times;</button>
+                </div>
+                <div class="modal-body text-center">
+                    <div>您还未申请<span id="sc-center-name"></span>超算账号，请先申请账号之后再连接。若已有账号，是否从本地上传密钥？</div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">否，暂不连接</button>
+                    <button id="upload-key" type="button" class="btn btn-primary">是，上传秘钥</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="submit-modal" tabindex="-1" aria-labelledby="myModalLabel" role="dialog" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="machine-key-form" method="post" class="form-horizontal" enctype="multipart/form-data" data-parsley-validate="">
+                    <div class="modal-header">
+                        <button class="close modal-alert" data-dismiss="modal">&times;</button>
+                        <h4 class="modal-title" id="myModalLabel">上传密钥</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <div class="col-md-2 control-label"><label for="ip" class="required">访问地址</label></div>
+                            <div class="col-md-8 controls">
+                                <input id="ip" name="ip" class="form-control" type="text" required
+                                    data-parsley-required-message="访问地址不能为空" data-parsley-maxlength="64">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 control-label"><label for="port" class="required">端口</label></div>
+                            <div class="col-md-8 controls">
+                                <input id="port" name="port" class="form-control" type="text" required
+                                    data-parsley-required-message="端口不能为空" data-parsley-type="number">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 control-label"><label for="username" class="required">用户名</label></div>
+                            <div class="col-md-8 controls">
+                                <input id="username" name="username" class="form-control" type="text" required
+                                    data-parsley-required-message="用户名不能为空" data-parsley-maxlength="64">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 control-label"><label for="password" class="required">密码</label></div>
+                            <div class="col-md-8 controls">
+                                <input id="password" name="password" class="form-control" type="password" required
+                                    data-parsley-required-message="密码不能为空" data-parsley-maxlength="64">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 control-label"><label for="key" class="required">私钥</label></div>
+                            <div class="col-md-8 controls">
+                                <input id="key" name="key" type="file" data-parsley-max-file-size="100"
+                                       data-parsley-required-message="请选择要上传的密钥文件" required accept="">
+                                <p class="help-block">请上传你的私钥文件，大小不超过100KB</p>
+                            </div>
+                        </div>
+                        <input name="op" type="hidden" value="upload-key">
+                        <input id="curr-sc-center" name="curr-sc-center" type="hidden">
+                        <input name="user-id" type="hidden" value="{{ current_user.id }}">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                        <button id="submit-key" type="button" class="btn btn-primary">上传</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
 {% endblock %}
 
 {% block footer_ext %}
@@ -65,9 +143,21 @@
         function connect_machine(event) {
             var has_account = 0;
             var sc_center = event.getAttribute('data-sc-center');
+            $("#curr-sc-center").val(sc_center);
             {% if not current_user.machine_account %}
-                alert_modal("您还未申请超算账号，请申请相应超算账号之后再连接！");
-                setTimeout(function() {$("#modal-alert .close").click()}, 2000);
+                if (sc_center == 0) {
+                    $("#sc-center-name")[0].innerHTML = "广州";
+                }
+                else if (sc_center == 1) {
+                    $("#sc-center-name")[0].innerHTML = "长沙";
+                }
+                else if (sc_center == 2) {
+                    $("#sc-center-name")[0].innerHTML = "中科院";
+                }
+                else {
+                    $("#sc-center-name")[0].innerHTML = "上海";
+                }
+                $("#alert-modal").modal("show");
             {% else %}
                 {% for a in current_user.machine_account %}
                     {% if a.sc_center == 0 %}
@@ -90,21 +180,22 @@
                 {% endfor %}
                 if(has_account == 0) {
                     if (sc_center == 0) {
-                        alert_modal("您还未申请广州超算账号，请申请之后再连接！");
-                        setTimeout(function() {$("#modal-alert .close").click()}, 2000);
+                        $("#sc-center-name")[0].innerHTML = "广州";
                     }
                     else if (sc_center == 1) {
-                        alert_modal("您还未申请长沙超算账号，请申请之后再连接！");
-                        setTimeout(function() {$("#modal-alert .close").click()}, 2000);
+                        $("#sc-center-name")[0].innerHTML = "长沙";
                     }
                     else if (sc_center == 2) {
-                        alert_modal("您还未申请中科院超算账号，请申请之后再连接！");
-                        setTimeout(function() {$("#modal-alert .close").click()}, 2000);
+                        $("#sc-center-name")[0].innerHTML = "中科院";
                     }
                     else {
-                        alert_modal("您还未申请上海超算账号，请申请之后再连接！");
-                        setTimeout(function() {$("#modal-alert .close").click()}, 2000);
+                        $("#sc-center-name")[0].innerHTML = "上海";
                     }
+                    $("#alert-modal").modal("show");
+                }
+                else {
+                    /*连接到各大超算中心 TO DO*/
+
                 }
             {% endif %}
         }

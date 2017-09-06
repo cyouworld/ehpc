@@ -49,4 +49,42 @@ $(function() {
             }
         });
     });
+
+    $("#upload-key").click(function () {
+        $("#alert-modal").modal("hide");
+        $("#submit-modal").modal("show");
+    });
+
+    $("#modal-alert .close").click(function() {
+        location.reload();
+    });
+
+    $("#submit-key").click(function() {
+        var p_instance = $('#machine-key-form').parsley();
+        p_instance.validate();
+        if (p_instance.isValid()) {
+            $.ajax({
+                url: location.href,
+                type: "post",
+                data: new FormData($('#machine-key-form')[0]),
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    $("#submit-modal").modal("hide");
+                    if (data["status"] == "success") {
+                        $("#connect-machine").find(".sc-link").each(function() {
+                            if($(this).attr("data-sc-center") == data['sc_center']) {
+                                $(this).removeClass('not-applied');
+                            }
+                        });
+                        alert_modal("上传成功");
+                    }
+                    else {
+                        alert_modal("上传失败");
+                    }
+                }
+            });
+        }
+    });
 });

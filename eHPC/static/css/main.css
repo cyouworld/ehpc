@@ -4805,6 +4805,11 @@ table.fixed-table {
     position: relative;
 }
 
+.lesson-title {
+    width: 50%;
+    margin: 0 auto;
+}
+
 .back-to-homework-list {
     color: #616161;
     position: absolute;

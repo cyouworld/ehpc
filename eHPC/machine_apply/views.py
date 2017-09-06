@@ -4,12 +4,13 @@
 from flask import render_template, abort, request, redirect, url_for, jsonify, current_app
 from . import machine_apply
 from datetime import datetime
-from ..models import MachineApply, MachineAccount
+from ..models import MachineApply, MachineAccount, User
 from flask_babel import gettext
 from flask_login import current_user, login_required
 from .. import db
 import random, string
 from io import open
+import os
 
 
 @machine_apply.route('/', methods=['GET', 'POST'])
@@ -37,6 +38,31 @@ def index():
             return jsonify(status='success', html=render_template('machine_apply/machine_apply.html'))
         elif request.form['op'] == "other":
             return jsonify(status='success', html=render_template('machine_apply/machine_other.html'))
+        elif request.form["op"] == "upload-key":
+            #  用户自己上传私钥
+            curr_user = User.query.filter_by(id=request.form['user-id']).first_or_404()
+            key_file = request.files['key']
+            sc_center = request.form['curr-sc-center']
+            account = MachineAccount()
+            account.user = curr_user
+            db.session.add(account)
+            db.session.commit()
+
+            id_rsa = key_file
+            key_path = os.path.join(current_app.config['KEY_FOLDER'], 'id_ras_%d' % account.id)
+            id_rsa.save(key_path)
+
+            account.ip = request.form.get('ip')
+            account.port = request.form.get('port')
+            account.username = request.form.get('username')
+            account.password = request.form.get('password')
+            account.key = key_path
+            account.sc_center = sc_center
+            db.session.commit()
+            curr_user.machine_account.append(account)
+            db.session.commit()
+
+            return jsonify(status='success', sc_center=sc_center)
         else:
             return jsonify(status='fail')
 

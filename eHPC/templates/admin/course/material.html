@@ -10,8 +10,10 @@
 
         <div class="row">
 
-                <div class="panel panel-default panel-col">
-                    <div class="panel-heading">
+                <div class="panel panel-default panel-col" style="position: relative">
+                    <a class="back-to-homework-list" href="{{ url_for('admin.course_lesson', course_id=course.id) }}?tag1=course-{{ course.id }}&tag2=course-{{ course.id }}-2">
+                        <i class="glyphicon glyphicon-chevron-left"></i>返回课时列表</a>
+                    <div class="text-center panel-heading">
                         <button id="add-link-file" class="btn btn-info btn-sm pull-right" data-toggle="modal" data-target="#myModal">
                             <i class="glyphicon glyphicon-link"></i>
                             添加外链接文件
@@ -20,7 +22,7 @@
                             <i class="es-icon es-icon-fileupdate"></i>
                             本地上传
                         </button>
-                        {{ course.title }}——{{ lesson.title }}
+                        <div class="lesson-title">{{ lesson.title }}</div>
                     </div>
 
                     <div class="panel-body" id="file-manage-panel">
@@ -29,8 +31,8 @@
                             <tr>
                                 <th width="5%">
                                     <input id="all-select" type="checkbox"></th>
-                                <th>文件名</th>
-                                <th>类型</th>
+                                <th width="55%">文件名</th>
+                                <th width="40%">文件类型(目前仅支持MP4,mkv,pdf,zip,rar文件)</th>
                             </tr>
                             </thead>
                             <tbody id="material-table-body">
