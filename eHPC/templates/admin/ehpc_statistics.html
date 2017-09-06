@@ -51,7 +51,7 @@
                 legend: {
                     orient: 'vertical',
                     left: 'left',
-                    data: ["管理员", "学生", "教师", "高性能计算管理员"]
+                    data: ["系统管理员", "学生", "教师", "机时管理员"]
                 },
                 series: [
                     {
@@ -60,10 +60,10 @@
                         radius: '55%',
                         center: ['50%', '67%'],
                         data: [
-                            {value: {{ user_count['admin'] }}, name: '管理员'},
+                            {value: {{ user_count['admin'] }}, name: '系统管理员'},
                             {value: {{ user_count['student'] }}, name: '学生'},
                             {value: {{ user_count['teacher'] }}, name: '教师'},
-                            {value: {{ user_count['hpc_admin'] }}, name: '高性能计算管理员'}
+                            {value: {{ user_count['hpc_admin'] }}, name: '机时管理员'}
                         ],
                         itemStyle: {
                             emphasis: {
@@ -95,7 +95,7 @@
                 legend: {
                     orient: 'vertical',
                     left: 'left',
-                    data: ["管理员", "学生", "教师", "高性能计算管理员", "匿名用户"]
+                    data: ["系统管理员", "学生", "教师", "机时管理员", "匿名用户"]
                 },
                 series: [
                     {
@@ -104,10 +104,10 @@
                         radius: '55%',
                         center: ['50%', '67%'],
                         data: [
-                            {value: {{ visit_statistics['admin'] }}, name: '管理员'},
+                            {value: {{ visit_statistics['admin'] }}, name: '系统管理员'},
                             {value: {{ visit_statistics['student'] }}, name: '学生'},
                             {value: {{ visit_statistics['teacher'] }}, name: '教师'},
-                            {value: {{ visit_statistics['hpc_admin'] }}, name: '高性能计算管理员'},
+                            {value: {{ visit_statistics['hpc_admin'] }}, name: '机时管理员'},
                             {value: {{ visit_statistics['anonymous'] }}, name: '匿名用户'}
                         ],
                         itemStyle: {
@@ -206,7 +206,7 @@
                         },
                         itemStyle: {
                             normal: {
-                                color: '#76EE00'
+                                color: '#000000'
                             }
                         }
                     },
