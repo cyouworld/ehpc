@@ -32,7 +32,8 @@ def index():
                                finished=finiehed,
                                waiting=waiting,
                                unsubmit=unsubmit,
-                               title=gettext('Resource Apply'))
+                               title=gettext('Resource Apply'),
+                               proxy_server=current_app.config['SSH_PROXY_SERVER'])
     elif request.method == "POST":
         if request.form['op'] == "machine":
             return jsonify(status='success', html=render_template('machine_apply/machine_apply.html'))
@@ -93,8 +94,7 @@ def machine_apply_information():
 def machine_apply_create():
     if request.method == "GET":
         return render_template('machine_apply/create.html',
-                               op="create", title=gettext('My Machine Hour Apply'),
-                               proxy_server=current_app.config['SSH_PROXY_SERVER'])
+                               op="create", title=gettext('My Machine Hour Apply'))
     elif request.method == 'POST':
         curr_apply = MachineApply()
         curr_apply.applicant_name = request.form.get('applicant_name')
@@ -186,16 +186,25 @@ def machine_apply_edit(apply_id):
 @machine_apply.route('/ssh/ask-connect/', methods=['POST'])
 @login_required
 def ask_connect():
+    center = request.form.get('center', None)
+    if center is None:
+        return jsonify(status='fail', msg=u'参数缺失')
+
     while True:
         token = ''.join(random.sample(string.ascii_letters + string.digits, 32))
         machine_account = MachineAccount.query.filter_by(token=token).first()
         if machine_account is not None:
             continue
         break
-
-    if current_user.machine_account is None:
+    if len(current_user.machine_accounts.all()) == 0:
         return jsonify(status='fail', msg=u'未获得帐号')
-    current_user.machine_account.token = token
+
+    cur_machine_account = current_user.machine_accounts.filter_by(sc_center=center).first()
+
+    if cur_machine_account is None:
+        return jsonify(status='fail', msg=u'未获得帐号')
+
+    cur_machine_account.token = token
     db.session.commit()
     return jsonify(status='success', token=token)
 

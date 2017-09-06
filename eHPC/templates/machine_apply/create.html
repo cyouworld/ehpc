@@ -162,18 +162,6 @@
                 </div>
             </div>
         </div>
-        <div class="row">
-            <div class="col-lg-12 col-md-12 col-sm-12">
-                <div class="panel panel-default">
-                    <div class="panel-heading">
-                        <button id="ssh-connect" class="btn btn-primary">点击开启SSH连接</button>
-                    </div>
-                    <div class="panel-body" style="display: none;">
-                        <div id="display"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
     </div>
 
     <div class="modal fade" id="InfoModal" tabindex="-1" role="dialog" aria-labelledby="InfoModalLabel" aria-hidden="true">
@@ -298,87 +286,5 @@
             $("#machine-apply-create-form").parsley().validate();
         });
     });
-    </script>
-    <script type="text/javascript" src="{{ url_for("static", filename="js/vnc/guacamole.min.js") }}"></script>
-    <script>
-        $(function () {
-            var guac, //Guacamole类
-                mouse,
-                display;
-            $("#ssh-connect").click(function () {
-                $("#display").parent().show();
-                $.ajax({
-                    url: "{{ url_for('machine_apply.ask_connect') }}",
-                    type: "post",
-                    success: function (data) {
-                        if(data["status"] === "success"){
-                            $("#ssh-connect").addClass("disabled");
-                            var keyboard;
-                            keyboard = new Guacamole.Keyboard(document);
-                            keyboard.onkeydown = function (keysym) {
-                                guac.sendKeyEvent(1, keysym);
-                            };
-                            keyboard.onkeyup = function (keysym) {
-                                guac.sendKeyEvent(0, keysym);
-                            };
-
-                            display = document.getElementById("display");
-                            guac = new Guacamole.Client(
-                                new Guacamole.HTTPTunnel("http://" + "{{ proxy_server }}" + "/server/tunnel")
-                            );
-                            display.appendChild(guac.getDisplay().getElement());
-                            guac.onerror = function (error) {
-                                //alert_modal("远程桌面连接错误");
-                            };
-                            guac.connect("token="+data["token"]);
-                            window.onunload = function () {
-                                guac.disconnect();
-                            };
-                            sendScaledMouseState = function sendScaledMouseState(mouseState) {
-                                var scaledState = new Guacamole.Mouse.State(
-                                    mouseState.x / guac.getDisplay().getScale(),
-                                    mouseState.y / guac.getDisplay().getScale(),
-                                    mouseState.left,
-                                    mouseState.middle,
-                                    mouseState.right,
-                                    mouseState.up,
-                                    mouseState.down);
-                                guac.sendMouseState(scaledState);
-                            };
-                            mouse = new Guacamole.Mouse(guac.getDisplay().getElement());
-                            mouse.onmousedown =
-                                mouse.onmouseup =
-                                    mouse.onmousemove = function (mouseState) {
-                                        if (!guac || !guac.getDisplay())
-                                            return;
-                                        guac.getDisplay().showCursor(true);
-                                        sendScaledMouseState(mouseState);
-                                    };
-                            guac.onclipboard = function (stream, mimetype) {
-                                var reader = new Guacamole.StringReader(stream);
-                                reader.ontext = function (text) {
-                                    $("#clipboard-content").val(text);
-                                }
-                            };
-                            guac.getDisplay().onresize = function (width, height) {
-                                if(!guac || !guac.getDisplay()) return;
-                                var w = $("#display").width();
-                                $("#display").css("position", "relative");
-                                $("#display").css("left", 0.5 * (w - width));
-                            };
-                            $(window).resize(function () {
-                                if(!guac || !guac.getDisplay()) return;
-                                var w = $("#display").width(), h = $("#display").height();
-                                $("#display").css("position", "relative");
-                                $("#display").css("left", 0.5 * (w - guac.getDisplay().getWidth()));
-                            });
-                        }
-                        else {
-                            alert_modal(data["msg"]);
-                        }
-                    }
-                });
-           });
-        });
     </script>
 {% endblock %}

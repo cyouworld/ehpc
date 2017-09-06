@@ -70,7 +70,7 @@ class User(UserMixin, db.Model):
     vnc_progresses = db.relationship('VNCProgress', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
 
     machine_apply = db.relationship("MachineApply", backref='user', lazy='dynamic', cascade="delete, delete-orphan")
-    machine_account = db.relationship("MachineAccount", backref='user')
+    machine_accounts = db.relationship("MachineAccount", backref='user', lazy='dynamic')
 
     docker_image = db.relationship('DockerImage', uselist=False, backref='user', cascade="delete, delete-orphan")
 

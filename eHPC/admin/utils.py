@@ -8,7 +8,7 @@ from .. import db
 def save_address(ip):
     try:
         response = current_app.geoip_reader.city(ip)
-    except geoip2.errors.AddressNotFoundError as e:
+    except Exception as e:
         print(e)
         return
 
