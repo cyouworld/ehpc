@@ -467,11 +467,13 @@ def machine_apply_password(apply_id):
         return render_template('admin/hpc/password.html', apply=curr_apply, title=u'机时申请')
     elif request.method == 'POST':
         curr_apply = MachineApply.query.filter_by(id=apply_id).first_or_404()
-
-        account = MachineAccount()
-        account.user = curr_apply.user
-        db.session.add(account)
-        db.session.commit()
+        curr_user = curr_apply.user
+        account = MachineAccount.query.filter_by(user_id=curr_user.id, sc_center=curr_apply.sc_center).first()
+        if not account:
+            account = MachineAccount()
+            account.user = curr_user
+            db.session.add(account)
+            db.session.commit()
 
         id_rsa = request.files.get('key')
         key_path = os.path.join(current_app.config['KEY_FOLDER'], 'id_ras_%d' % account.id)
@@ -483,6 +485,8 @@ def machine_apply_password(apply_id):
         account.password = request.form.get('password')
         account.key = key_path
         account.sc_center = curr_apply.sc_center
+        db.session.commit()
+        curr_user.machine_accounts.append(account)
         db.session.commit()
 
         if request.headers.getlist("X-Forwarded-For"):

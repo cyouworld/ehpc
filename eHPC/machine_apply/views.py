@@ -44,10 +44,12 @@ def index():
             curr_user = User.query.filter_by(id=request.form['user-id']).first_or_404()
             key_file = request.files['key']
             sc_center = request.form['curr-sc-center']
-            account = MachineAccount()
-            account.user = curr_user
-            db.session.add(account)
-            db.session.commit()
+            account = MachineAccount.query.filter_by(user_id=curr_user.id, sc_center=sc_center).first()
+            if not account:
+                account = MachineAccount()
+                account.user = curr_user
+                db.session.add(account)
+                db.session.commit()
 
             id_rsa = key_file
             key_path = os.path.join(current_app.config['KEY_FOLDER'], 'id_ras_%d' % account.id)
@@ -60,7 +62,7 @@ def index():
             account.key = key_path
             account.sc_center = sc_center
             db.session.commit()
-            curr_user.machine_account.append(account)
+            curr_user.machine_accounts.append(account)
             db.session.commit()
 
             return jsonify(status='success', sc_center=sc_center)
