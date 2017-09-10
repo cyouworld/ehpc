@@ -617,7 +617,8 @@ def ehpc_statistics():
     if request.method == 'GET':
         user_count = {'all': User.query.count(),
                       'admin': User.query.filter_by(permissions=0).count(),
-                      'student': User.query.filter_by(permissions=1).count(),
+                      'undergraduate': User.query.filter_by(permissions=1).filter_by(student_type=0).count(),
+                      'postgraduate': User.query.filter_by(permissions=1).filter_by(student_type=1).count(),
                       'teacher': User.query.filter_by(permissions=2).count(),
                       'hpc_admin': User.query.filter_by(permissions=3).count()}
 

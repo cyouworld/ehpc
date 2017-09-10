@@ -51,7 +51,7 @@
                 legend: {
                     orient: 'vertical',
                     left: 'left',
-                    data: ["系统管理员", "学生", "教师", "机时管理员"]
+                    data: ["系统管理员", "本科生", "研究生", "教师", "机时管理员"]
                 },
                 series: [
                     {
@@ -61,7 +61,8 @@
                         center: ['50%', '67%'],
                         data: [
                             {value: {{ user_count['admin'] }}, name: '系统管理员'},
-                            {value: {{ user_count['student'] }}, name: '学生'},
+                            {value: {{ user_count['undergraduate'] }}, name: '本科生'},
+                            {value: {{ user_count['postgraduate'] }}, name: '研究生'},
                             {value: {{ user_count['teacher'] }}, name: '教师'},
                             {value: {{ user_count['hpc_admin'] }}, name: '机时管理员'}
                         ],
@@ -206,7 +207,7 @@
                         },
                         itemStyle: {
                             normal: {
-                                color: '#000000'
+                                color: '#373737'
                             }
                         }
                     },

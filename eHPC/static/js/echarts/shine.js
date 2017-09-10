@@ -242,13 +242,13 @@
         "geo": {
             "itemStyle": {
                 "normal": {
-                    "areaColor": "#a9d6f4",
-                    "borderColor": "#b5b4b4",
+                    "areaColor": "#e9faff",
+                    "borderColor": "#afaeae",
                     "borderWidth": "1.1"
                 },
                 "emphasis": {
-                    "areaColor": "#97c0de",
-                    "borderColor": "#9a9999",
+                    "areaColor": "#d9eaef",
+                    "borderColor": "#a5a4a4",
                     "borderWidth": 1
                 }
             },
