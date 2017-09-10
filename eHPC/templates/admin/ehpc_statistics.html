@@ -17,6 +17,9 @@
                     <div id="user-geo-distribution" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div style="height: 700%;"></div>
                     </div>
+                    <div id="user-student-structure" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                        <div style="height: 600%;"></div>
+                    </div>
                     <div id="user-learning-situation" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
                         <div style="height: 300%;"></div>
                     </div>
@@ -244,6 +247,101 @@
                 ]
             });
 
+            var student_structure = [], university_legend = [], undergraduate_data = [], postgraduate_data = [];
+            $.ajax({
+                url: "{{ url_for('admin.ehpc_statistics') }}",
+                type: "post",
+                data: {
+                    op: "student_structure"
+                },
+                async: false,
+                success: function (data) {
+                    if(data["status"]==="success"){
+                        var undergraduate = data["undergraduate"];
+                        var postgraduate = data["postgraduate"];
+                        for (var k in undergraduate){
+                            student_structure.push({"university": k, "undergraduate": undergraduate[k], "postgraduate": postgraduate[k]});
+                        }
+                        student_structure.sort(function (a, b) {
+                            return b["undergraduate"]+b["postgraduate"] - (a["undergraduate"]+a["postgraduate"]);
+                        });
+
+                        for(var i=0;i<student_structure.length;i++){
+                            university_legend.push(student_structure[i]['university']);
+                            undergraduate_data.push(student_structure[i]['undergraduate']);
+                            postgraduate_data.push(student_structure[i]['postgraduate']);
+                        }
+                    }
+                }
+            });
+
+            var graph_student_structure = echarts.init($("#user-student-structure").find("div")[0], 'shine');
+            graph_student_structure.setOption({
+                 title: {
+                     text: '学生用户统计'
+                 },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                dataZoom: [
+                    {
+                        type: 'slider',
+                        start: 0,
+                        end: 20
+                    }
+                ],
+                toolbox: {
+                    show : true,
+                    feature : {
+                        restore : {show: true}
+                    },
+                    itemSize: 30
+                },
+                legend: {
+                     data: ["本科生", "研究生"]
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '40%',
+                    containLabel: true
+                },
+                xAxis : [
+                    {
+                        type : 'category',
+                        data : university_legend,
+                        axisLabel: {
+                            interval:0,
+                            rotate:90
+                        }
+                    }
+                ],
+                yAxis : [
+                    {
+                        type : 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: "本科生",
+                        type: "bar",
+                        stack: "学生",
+                        data: undergraduate_data
+                    },
+                    {
+                        name: "研究生",
+                        type: "bar",
+                        stack: "学生",
+                        data: postgraduate_data
+                    }
+                ]
+            });
+
+
+
             var user_learning_situation_data = {{ learning_situation_statistics | statistic_get_data('all') | safe }}["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
             var data_month = [0,0,0,0,0,0,0,0,0,0,0,0];
             var month, start_time, end_time;
@@ -306,6 +404,7 @@
                 graph_visit_statistics.resize();
                 graph_user_geo_distribution.resize();
                 graph_user_learning_situation.resize();
+                graph_student_structure.resize();
             });
 
         });

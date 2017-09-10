@@ -18,6 +18,8 @@ from ..user.authorize import system_login, hpc_login
 from ..util.email import send_email_with_attach
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename
 
+from sqlalchemy import func
+
 
 @admin.route('/')
 @system_login
@@ -653,14 +655,46 @@ def ehpc_statistics():
                                visit_statistics=visit_statistics,
                                learning_situation_statistics=learning_situation_statistics)
     elif request.method == 'POST':
-        all_user = User.query.all()
-        positions = {}
-        user_geo_data = {}
-        for u in all_user:
-            if u.city_name not in positions.keys():
-                positions[u.city_name] = dict(longitude=u.last_longitude, latitude=u.last_latitude)
-                user_geo_data[u.city_name] = 1
-            else:
-                user_geo_data[u.city_name] += 1
+        op = request.form.get("op", None)
 
-        return jsonify(status='success', positions=positions, user_geo_data=user_geo_data)
+        if op is None:
+            return jsonify(status='fail')
+
+        if op == 'user_geo_distribution':
+            all_user = User.query.all()
+            positions = {}
+            user_geo_data = {}
+            for u in all_user:
+                if u.city_name not in positions.keys():
+                    positions[u.city_name] = dict(longitude=u.last_longitude, latitude=u.last_latitude)
+                    user_geo_data[u.city_name] = 1
+                else:
+                    user_geo_data[u.city_name] += 1
+
+            return jsonify(status='success', positions=positions, user_geo_data=user_geo_data)
+        elif op == 'student_structure':
+            student = User.query.filter_by(permissions=1)
+            undergraduate = student.filter_by(student_type=0).all()
+            postgraduate = student.filter_by(student_type=1).all()
+
+            undergraduate_status, postgraduate_status = {}, {}
+
+            for s in student.all():
+                if not undergraduate_status.has_key(s.university):
+                    undergraduate_status[s.university] = 0
+                    postgraduate_status[s.university] = 0
+
+            for u in undergraduate:
+                undergraduate_status[u.university] += 1
+
+            for p in postgraduate:
+                postgraduate_status[p.university] += 1
+
+            undergraduate_structure, postgraduate_structure = [], []
+            for k, v in undergraduate_status.items():
+                undergraduate_structure.append({u"学校": k, u"人数": v})
+
+            for k,v in postgraduate_status.items():
+                postgraduate_structure.append({u"学校": k, u"人数": v})
+
+            return jsonify(status='success', undergraduate=undergraduate_status, postgraduate=postgraduate_status)
