@@ -171,14 +171,14 @@ def reg():
             else:
                 ip = request.remote_addr
 
-            if _form.get('type') == '1':
-                send_email(ip, current_app.config['MAIL_ADMIN_ADDR'], u'教师用户注册提醒', 'user/reg_teacher_email', user=reg_user)
-                return render_template('user/teacher_reg_note.html')
-
             token = reg_user.generate_email_token()
             send_email(ip, reg_user.email, u'EasyHPC邮箱验证', 'user/verify_email', user=reg_user, token=token)
             reg_user.verify_email_time = datetime.now()
             db.session.commit()
+
+            if _form.get('type') == '1':
+                send_email(ip, current_app.config['MAIL_ADMIN_ADDR'], u'教师用户注册提醒', 'user/reg_teacher_email', user=reg_user)
+                return render_template('user/teacher_reg_note.html')
 
             return redirect(url_for('user.verify_email', user_id=reg_user.id))
 
