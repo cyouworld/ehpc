@@ -42,7 +42,7 @@
                             {% else %}
                                 <div class="join" id="join-course">
 
-                                    {% if course.is_invited %}
+                                    {% if course.is_invited and not course.is_public %}
                                         {% if status != 2 %}
                                             <a class="btn btn-primary btn-lg"  name="invite-course"
                                                href="javascript:void(0)">
@@ -112,10 +112,11 @@
                 $("#invite-warning").modal("show");
             });
             $("#invite-confirm").click(function () {
+                var invite_code = $("#invite_code_1").val()+$("#invite_code_2").val()+$("#invite_code_3").val()+$("#invite_code_4").val();
                 $.ajax({
                     url: '{{ url_for('course.invite_join', cid=course.id) }}',
                     type: "GET",
-                    data: {'invite_code':$('#invite_code').val()},
+                    data: {'invite_code':invite_code},
                     success: function (data) {
                         if(data['status']=='success')
                             window.location.reload();
