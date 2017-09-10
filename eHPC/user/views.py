@@ -719,13 +719,13 @@ def verify_email(user_id):
     if request.method == 'GET':
         u = User.query.get(user_id)
         if u.is_verify_email:
-            return abort(503)
+            return abort(403)
         return render_template('user/verify.html')
 
     elif request.method == 'POST':
         u = User.query.get(user_id)
         if u.is_verify_email:
-            return abort(503)
+            return abort(403)
         if (datetime.now() - u.verify_email_time).seconds < 10 * 60:
             return jsonify(status='too_frequently')
 

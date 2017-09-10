@@ -350,7 +350,11 @@
                 month = new Date(user_learning_situation_data[i]["data"]["end_time"]).getMonth();
                 start_time = new Date(user_learning_situation_data[i]["data"]["start_time"]);
                 end_time = new Date(user_learning_situation_data[i]["data"]["end_time"]);
-                data_month[month] += Math.floor((end_time.getTime() - start_time.getTime()) / 36000) / 100;
+                data_month[month] += (end_time.getTime() - start_time.getTime()) / 3600000;
+            }
+
+            for (i = 0; i < data_month.length; i++) {
+                data_month[i] = data_month[i].toFixed(2);
             }
 
             var graph_user_learning_situation = echarts.init($("#user-learning-situation").find("div")[0], 'shine');
