@@ -17,7 +17,7 @@
                                     <i class="es-icon es-icon-check"></i>
                                 </span>
                                 <span class="homework-deadline pull-right">截止时间: {{ h.deadline | unite_time_format }}</span>
-                                <span class="homework-score pull-right">成绩：{% if current_user.id | has_score(h.id) %}{{ current_user.id | get_score(h.id) }}{% else %}未批改{% endif %}</span>
+                                <span class="homework-score pull-right">成绩：{% if current_user.id | has_score(h.id) %}{{ current_user | get_score(h.id) }}{% else %}未批改{% endif %}</span>
                             </div>
                         </li>
                     {% endfor %}

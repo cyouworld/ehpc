@@ -177,7 +177,17 @@ def has_score(u_id, h_id):
         return False
 
 
-@filter_blueprint.app_template_filter('get_score')
-def get_score(u_id, h_id):
-    homework_score = HomeworkScore.query.filter_by(user_id=u_id, homework_id=h_id).first_or_404()
-    return homework_score.score
+@filter_blueprint.app_template_filter('distinct_submits')
+def distinct_submits(program, c_id):
+    #   用于筛选每道编程题的submits记录，每位学生只显示最近的一次提交
+    all_submits = SubmitProgram.query.filter_by(pid=program.id).order_by(SubmitProgram.submit_time.desc())
+    submits = []
+    curr_course = Course.query.filter_by(id=c_id).first_or_404()
+    user_ids = []
+    for u in curr_course.users:
+        user_ids.append(u.id)
+    for u_id in user_ids:
+        curr_submit = all_submits.filter_by(uid=u_id).first()
+        if curr_submit:
+            submits.append(curr_submit)
+    return submits

@@ -65,7 +65,7 @@
                         <table id="homework-uploaded-table" class="table table-striped table-hover">
                         <thead>
                         <tr>
-                            <th class="text-center" width="30%">题目</th>
+                            <th class="text-center" width="30%">题目代码</th>
                             <th class="text-center" width="20%">学号</th>
                             <th class="text-center" width="15%">姓名</th>
                             <th class="text-center" width="15%">提交状态</th>
@@ -74,7 +74,7 @@
                         </thead>
                         <tbody id="homework-table-body">
                         {% for p in homework.program %}
-                            {% for s in p.submit_programs %}
+                            {% for s in p | distinct_submits(course.id) %}
                                 <tr>
                                     <td class="text-center">
                                         <a href="{{ url_for('problem.view_code', sid=s.id) }}" target="_blank">{{ s.program.title }}</a>

@@ -44,7 +44,7 @@ def show_program():
 @problem.route('/program/submits/<int:pid>/')
 @login_required
 def show_my_submits(pid):
-    my_submits = SubmitProgram.query.filter_by(pid=pid, uid=current_user.id).all()
+    my_submits = SubmitProgram.query.filter_by(pid=pid, uid=current_user.id).order_by(SubmitProgram.submit_time.desc())
     pro = Program.query.filter_by(id=pid).first_or_404()
     return render_template('problem/show_my_submits.html',
                            title=gettext('My Submit'),
