@@ -1,0 +1,90 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+    <div class="container" id="content-container">
+        <div class="row">
+            <a class="btn btn-info btn-sm" style="margin-bottom: 10px;" href="{{ url_for('admin.program') }}?tag2=lab-2">返回题目列表</a>
+            <div class="panel panel-default panel-col">
+                <div class="panel-heading">
+                    <span class="pull-right">
+                        <a id="create-btn" href="javascript:void(0)"
+                           class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            新建标签
+                        </a>
+                    </span>
+                        标签列表
+                </div>
+                <div class="panel-body">
+                    <table class="table fixed-table">
+                        <thead>
+                        <tr>
+                            <th width="10%" style="text-align: center">序号</th>
+                            <th width="30%">标签名称</th>
+                            <th >题目数量</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead><!--表格头-->
+                        <tbody id="tb">
+                        {% if tags %}
+                            {% for t in tags %}
+                                <tr data-id="{{ t.id }}" data-name="{{ t.name }}">
+                                    <td style="text-align: center">{{ loop.index }}</td>
+                                    <td class="overflow-ellipsis" data-toggle="tooltip">{{ t.name }}</td>
+                                    <td>{{ t.programs.all()|length }}</td>
+                                    <td>
+                                        <a href="javascript:void(0)" class="edit-btn">编辑</a>
+                                        <span class="divider"> | </span>
+                                        <a href="javascript:void(0)" class="del-btn">删除</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="text-center"><td colspan="5">暂无标签</td></tr>
+                        {% endif %}
+                        </tbody><!--表格主体-->
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    {% include "admin/problem/widget-del-tag.html" %}
+    {% include "admin/problem/widget-edit-tag.html" %}
+    {% include "admin/problem/widget-create-tag.html" %}
+{% endblock %}
+
+{% block footer_ext %}
+    <script>
+        $(document).ready(function () {
+            var obj = null;
+            $("#create-btn").click(function () {
+                $("#create-tag").modal("show");
+            });
+            $(".edit-btn").click(function () {
+                obj = this;
+                $("input[name=edit-id]").val($(obj).parent().parent().data('id'));
+                $("#edit-tag-name").val($(obj).parent().parent().data('name'));
+                $("#edit-tag").modal("show");
+            });
+            $(".del-btn").click(function () {
+                obj = this;
+                $("input[name=del-id]").val($(obj).parent().parent().data('id'));
+                $("#del-tag").modal("show");
+            });
+
+{#            $("#del-confirm").click(function () {#}
+{#                $.ajax({#}
+{#                    type: "post",#}
+{#                    url: "{{ url_for('admin.program') }}",#}
+{#                    data: {op: 'del', id: $(obj).parent().parent().data('id')},#}
+{#                    success: function (data) {#}
+{#                        $(obj).parent().parent().remove();#}
+{#                        $("#del-warning").modal("hide");#}
+{#                    }#}
+{#                });#}
+{#            });#}
+        });
+    </script>
+{% endblock %}

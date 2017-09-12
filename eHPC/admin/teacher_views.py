@@ -15,7 +15,7 @@ from threading import Thread
 
 from . import admin
 from .. import db
-from ..models import Classify, Program, Paper, Question, PaperQuestion, Homework, HomeworkUpload, HomeworkAppendix, HomeworkScore, Notice
+from ..models import Classify, Program, Paper, Question, PaperQuestion, Homework, HomeworkUpload, HomeworkAppendix, HomeworkScore, Notice, ProgTag, program_tag
 from ..models import Course, Lesson, Material, User, Apply, VNCKnowledge, VNCTask, Lab
 from ..models import Knowledge, Challenge, Group
 from ..user.authorize import teacher_login
@@ -1362,23 +1362,61 @@ def program():
         return unicode(curr_program.id)
 
 
+@admin.route('/problem/program/tags', methods=['GET', 'POST'])
+@teacher_login
+def program_tags():
+    """ 题目标签管理 """
+    if request.method == 'GET':
+        tags = ProgTag.query.all()
+        return render_template('admin/problem/tag.html',
+                               title=u"标签管理",
+                               tags=tags)
+
+    elif request.method == 'POST':
+        if request.form['op'] == 'create':
+            curr_tag = ProgTag(name=request.form['tag'])
+            db.session.add(curr_tag)
+            db.session.commit()
+            return redirect(url_for('admin.program_tags', tag2="lab-2"))
+        elif request.form['op'] == 'edit':
+            curr_tag = ProgTag.query.filter_by(id=request.form['edit-id']).first_or_404()
+            curr_tag.name = request.form['tag']
+            db.session.commit()
+            return redirect(url_for('admin.program_tags', tag2="lab-2"))
+        elif request.form['op'] == 'delete':
+            curr_tag = ProgTag.query.filter_by(id=request.form['del-id']).first_or_404()
+            p_list = curr_tag.programs.all()
+            for p in p_list:
+                curr_tag.programs.remove(p)
+            db.session.delete(curr_tag)
+            db.session.commit()
+            return redirect(url_for('admin.program_tags', tag2="lab-2"))
+
+
 @admin.route('/problem/program/create/', methods=['GET', 'POST'])
 @teacher_login
 def program_create():
     """ 在题库添加编程题 """
     if request.method == 'GET':
+        tags = ProgTag.query.all()
         return render_template('admin/problem/program_detail.html',
                                title=gettext('Create question'),
-                               op='create')
+                               op='create',
+                               tags=tags)
     elif request.method == 'POST':
         # 添加编程题
         curr_program = Program(title=request.form['title'],
                                detail=request.form['content'],
                                default_code=request.form['default-code'])
         curr_program.teacher = current_user
+        curr_program.difficulty = request.values.get('difficulty')
+        tags = request.values.getlist('tag')
         db.session.add(curr_program)
         db.session.commit()
-
+        for t in tags:
+            curr_tag = ProgTag.query.filter_by(id=t).first_or_404()
+            curr_program.tags.append(curr_tag)
+        db.session.commit()
         return redirect(url_for('admin.program', tag2="lab-2"))
 
 
@@ -1388,16 +1426,29 @@ def program_edit():
     """ 题库中编程题目的编辑页面 """
     if request.method == 'GET':
         curr_program = Program.query.filter_by(id=request.args['id']).first_or_404()
+        tags = ProgTag.query.all()
         return render_template('admin/problem/program_detail.html',
                                title=gettext('Edit question'),
                                op='edit',
-                               program_problem=curr_program)
+                               program_problem=curr_program,
+                               tags=tags)
     elif request.method == 'POST':
         # 编辑编程题
         curr_program = Program.query.filter_by(id=request.form['id']).first_or_404()
         curr_program.title = request.form['title']
         curr_program.detail = request.form['content']
         curr_program.default_code = request.form['default-code']
+        curr_program.difficulty = request.values.get('difficulty')
+
+        tags = curr_program.tags
+        for t in tags:
+            curr_program.tags.remove(t)
+            db.session.commit()
+
+        tags = request.values.getlist('tag')
+        for t in tags:
+            curr_tag = ProgTag.query.filter_by(id=t).first_or_404()
+            curr_program.tags.append(curr_tag)
         db.session.commit()
         return redirect(url_for('admin.program'))
 

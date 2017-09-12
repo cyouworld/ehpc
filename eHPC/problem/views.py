@@ -14,7 +14,7 @@ from config import TH2_MY_PATH, TH2_MAX_NODE_NUMBER
 from eHPC.util.new_api import submit_code_new, run_evaluate_program
 from . import problem
 from .. import db
-from ..models import Program, Classify, SubmitProgram, Question, CodeCache, Statistic
+from ..models import Program, Classify, SubmitProgram, Question, CodeCache, Statistic, ProgTag
 import json
 
 
@@ -28,16 +28,31 @@ def index():
 @login_required
 def show_program():
     pro = Program.query.all()
+    tags = ProgTag.query.all()
     submission = SubmitProgram.query.filter_by(uid=current_user.id).all()
     cnt = {}
     for i in submission:
         cnt[i.pid] = 0
     for i in submission:
         cnt[i.pid] += 1
-    return render_template('problem/show_program.html',
-                           title=gettext('Program Practice'),
-                           programs=pro,
-                           count=cnt)
+
+    tag_id = request.args.get('tag', None)
+    if tag_id:
+        print tag_id
+        tag = ProgTag.query.filter_by(id=tag_id).first_or_404()
+        pro = tag.programs
+        return render_template('problem/show_program.html',
+                               title=gettext('Program Practice'),
+                               programs=pro,
+                               count=cnt,
+                               tags=tags,
+                               the_tag=tag)
+    else:
+        return render_template('problem/show_program.html',
+                               title=gettext('Program Practice'),
+                               programs=pro,
+                               count=cnt,
+                               tags=tags)
 
 
 # 新增一个连接到我的提交界面的路由

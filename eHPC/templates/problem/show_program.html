@@ -19,13 +19,24 @@
         <div class="row">
             <div class="panel panel-default">
                 <div class="panel-body">
+                        标签过滤查询：
+                        <select name="tag" id="tag-select" onchange="tag_query()">
+                            <option value="all">所有标签</option>
+                            {% for t in tags %}
+                                {% if the_tag and the_tag.id == t.id %}
+                                    <option selected="selected" value="{{ t.id }}">{{ t.name }}</option>
+                                {% else %}
+                                    <option value="{{ t.id }}">{{ t.name }}</option>
+                                {% endif %}
+                            {% endfor %}
+                        </select>
+
                     <table class="ui celled table" cellspacing="0" id="program">
                         <thead>
                         <tr>
                             <th>{{ _('ID') }}</th>
                             <th>{{ _('Description') }}</th>
                             <th>{{ _('Difficulty') }}</th>
-                            <th>{{ _('AcceptNum') }}</th>
                             <th>我的提交次数</th>
                         </tr>
                         </thead>
@@ -34,8 +45,12 @@
                             <tr>
                                 <td><a href="{{ p.id }}">{{ p.id }}</a></td>
                                 <td><a href="{{ p.id }}">{{ p.title }}</a></td>
-                                <td>{{ p.difficulty }}</td>
-                                <td>{{ p.acceptedNum }}</td>
+                                <td>
+                                    {% if p.difficulty == 0 %}<a class="btn-info btn" href="javascript:void">简单</a>{% endif %}
+                                    {% if p.difficulty == 1 %}<a class="btn-primary btn" href="javascript:void">中等</a>{% endif %}
+                                    {% if p.difficulty == 2 %}<a class="btn-warning btn" href="javascript:void">困难</a>{% endif %}
+                                    {% if p.difficulty == 3 %}<a class="btn-danger btn" href="javascript:void">极难</a>{% endif %}
+                                </td>
                                 {% if p.id in count %}
                                     <td><a href="{{ url_for('problem.show_my_submits',pid=p.id,uid=current_user.id) }}">{{ count[p.id] }}</a></td>
                                 {% else %}
@@ -54,14 +69,22 @@
 
 {% block footer_ext %}
     <script>
-        $(document).ready(
-                function () {
-                    $('#program').DataTable({
-                        language: {
-                            url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
-                        },
-                    });
-                });
+        function tag_query() {
+            var tag_id = $("#tag-select option:selected").val();
+            if(tag_id=='all') {
+                window.location.href = '{{ url_for('problem.show_program') }}';
+            }
+            else window.location.href = '{{ url_for('problem.show_program') }}?tag=' + tag_id;
+        }
+
+        $(document).ready(function() {
+            $('#program').DataTable({
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+                },
+                "lengthMenu": [[50, 100, 150, -1], [50, 100, 150, "全部"]]
+            });
+        });
     </script>
 
 {% endblock %}

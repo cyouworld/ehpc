@@ -326,8 +326,14 @@ class Post(db.Model):
 
 
 homework_program = db.Table('homework_program',
-                               db.Column('homework_id', db.Integer, db.ForeignKey('homework.id'), primary_key=True),
-                               db.Column('program_id', db.Integer, db.ForeignKey('programs.id'), primary_key=True))
+                            db.Column('homework_id', db.Integer, db.ForeignKey('homework.id'), primary_key=True),
+                            db.Column('program_id', db.Integer, db.ForeignKey('programs.id'), primary_key=True))
+
+
+# 题目与题目标签是多对多的关系
+program_tag = db.Table('program_tag',
+                       db.Column('program_id', db.Integer, db.ForeignKey('programs.id'), primary_key=True),
+                       db.Column('tag_id', db.Integer, db.ForeignKey('prog_tags.id'), primary_key=True))
 
 
 class Program(db.Model):
@@ -335,11 +341,11 @@ class Program(db.Model):
     id = db.Column(db.Integer, primary_key=True)        # 题目 ID
     title = db.Column(db.String(128), nullable=False)   # 题目标题
     detail = db.Column(db.Text(), nullable=False)       # 题目详情
-    difficulty = db.Column(db.Integer, default=0)       # 题目难度
+    difficulty = db.Column(db.Integer, default=0)       # 题目难度, 0为简单，1为中等，2为困难, 3为极难
     acceptedNum = db.Column(db.Integer, default=0)      # 通过次数
     submitNum = db.Column(db.Integer, default=0)        # 提交次数
 
-    default_code = db.Column(db.Text(), default="")   # 预先设定的代码
+    default_code = db.Column(db.Text(), default="")     # 预先设定的代码
 
     can_evaluate = db.Column(db.Boolean, default=False)  # 是否支持评测
     pi_code = db.Column(db.Text(), default="")  # 评测主代码
@@ -351,7 +357,14 @@ class Program(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     homework = db.relationship('Homework', secondary=homework_program, backref=db.backref('program', lazy='dynamic'))
+    tags = db.relationship('ProgTag', secondary=program_tag, lazy='dynamic', backref=db.backref('programs', lazy='dynamic'))
     submit_programs = db.relationship('SubmitProgram', backref='program', lazy='dynamic')
+
+
+class ProgTag(db.Model):
+    __tablename__ = "prog_tags"
+    id = db.Column(db.Integer, primary_key=True)      # 题目标签id
+    name = db.Column(db.String(128), nullable=False)  # 题目标签名
 
 
 class SubmitProgram(db.Model):

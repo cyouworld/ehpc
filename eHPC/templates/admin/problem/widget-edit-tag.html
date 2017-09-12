@@ -1,0 +1,21 @@
+<!-- 编辑标签 -->
+<div class="modal fade" id="edit-tag" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="{{ url_for('admin.program_tags') }}" method="post">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" id="myModalLabel">编辑标签</h4>
+                </div>
+                <div class="modal-body" style="height: 100px;font-size: medium">请输入标签名(不超过五个字):
+                    <input name="tag" id="edit-tag-name" type="text" style="margin-left: 10px;"/></div>
+                <input name="edit-id" type="hidden" value="" />
+                <input name="op" type="hidden" value="edit" >
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button id="edit-confirm" type="submit" class="btn btn-primary">确认</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

@@ -38,6 +38,27 @@
                             >{% if op == 'edit' %}{{ program_problem.detail }}{% endif %}</textarea>
                             <div class="textarea-errors"></div>
 
+                            <div style="margin-bottom: 15px">
+                                <label>难度设置：</label>
+                                <select name="difficulty">
+                                    <option {% if program_problem.difficulty == 0  %}selected{% endif %} value="0">简单</option>
+                                    <option {% if program_problem.difficulty == 1  %}selected{% endif %} value="1">中等</option>
+                                    <option {% if program_problem.difficulty == 2  %}selected{% endif %} value="2">困难</option>
+                                    <option {% if program_problem.difficulty == 3  %}selected{% endif %} value="3">极难</option>
+                                </select>
+                            </div>
+
+                            <div style="margin-bottom: 15px">
+                                <label>标签设置：</label>
+                                {% if tags %}
+                                    {% for t in tags %}
+                                        <input {% if program_problem in t.programs.all()  %}checked{% endif %}  name="tag" type="checkbox" value="{{ t.id }}" />{{ t.name }}&nbsp;
+                                    {% endfor %}
+                                {% else %}
+                                    <br>当前没有标签，<a href="{{ url_for('admin.program_tags') }}">点击此处跳转到标签管理</a>。
+                                {% endif %}
+                            </div>
+
                             <label>参考代码</label>
                             <div class="row form-group" style="padding: 10px">
                                 <div id="reference-code-editor" class="code-editor"></div>
