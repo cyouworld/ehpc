@@ -8,9 +8,14 @@
 
 {% block content %}
     <div class="container" id="content-container">
-        <div class="panel panel-default panel-col">
+        <div id="machine-apply-manage" class="panel panel-default panel-col">
             <div class="panel-heading">
-                机时申请管理
+                <ul class="nav nav-tabs">
+                    <li class="{% if sc_center == 0 %}active{% endif %}"><a href="{{ url_for('admin.machine_apply_index') }}">广州超算</a></li>
+                    <li class="{% if sc_center == 1 %}active{% endif %}"><a href="{{ url_for('admin.machine_apply_cs') }}">长沙超算</a></li>
+                    <li class="{% if sc_center == 2 %}active{% endif %}"><a href="{{ url_for('admin.machine_apply_zky') }}">中科院超算</a></li>
+                    <li class="{% if sc_center == 3 %}active{% endif %}"><a href="{{ url_for('admin.machine_apply_sh') }}">上海超算</a></li>
+                </ul>
             </div>
             <div class="panel-body" style="padding: 10px">
                 <table class="table" id="apply-table" style="word-break:break-all;">
@@ -24,7 +29,7 @@
                         <th>管理</th>
                     </tr>
                     </thead>
-                    <tbody id="tb">
+                    <tbody class="" id="tb-gz">
                     {% for a in applies %}
                         {% if a.submit_status != 0 %}
                         <tr>
@@ -46,13 +51,12 @@
 
 {% block footer_ext %}
     <script>
-        $(document).ready(
-            function () {
-                $('#apply-table').DataTable({
-                    language: {
-                        url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
-                    }
-                });
+        $(document).ready(function () {
+            $('#apply-table').DataTable({
+                language: {
+                    url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+                }
             });
+        });
     </script>
 {% endblock %}

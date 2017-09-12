@@ -23,9 +23,9 @@
                             <thead><!--表格头-->
                             <tr>
                                 <th width="8%">序号</th>
-                                <th width="17%">标题</th>
-                                <th width="35%">简介</th>
-                                <th width="40%">操作</th>
+                                <th class="text-center" width="17%">标题</th>
+                                <th class="text-center" width="35%">简介</th>
+                                <th class="text-center" width="40%">操作</th>
                             </tr>
                             </thead>
                             <tbody><!--表格主体-->
@@ -33,9 +33,9 @@
                                     {% for k in current_user.teacher_knowledge %}
                                         <tr data-id="{{ k.id }}" data-cover-url="{{ url_for("static", filename=k.cover_url) }}">
                                             <td>{{ loop.index }}</td>
-                                            <td>{{ k.title }}</td>
-                                            <td class="overflow-ellipsis" data-toggle="tooltip" title="{{ k.content }}">{{ k.content }}</td>
-                                            <td>
+                                            <td class="text-center">{{ k.title }}</td>
+                                            <td class="overflow-ellipsis text-center" data-toggle="tooltip" title="{{ k.content }}">{{ k.content }}</td>
+                                            <td class="text-center">
                                                 <a class="btn btn-link" href="javascript:void(0);" name="knowledge-edit-btn">
                                                     <i class="es-icon es-icon-edit"></i>编辑信息</a>
                                                 <a class="btn btn-link" href="{{ url_for('admin.lab_view', knowledge_id=k.id) }}?tag2={{ request.args.get('tag2') }}">

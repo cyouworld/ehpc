@@ -171,7 +171,7 @@ class Course(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     group_id = db.Column(db.Integer, db.ForeignKey('groups.id'))
-    nature_order = db.Column(db.Integer, nullable=False)
+    nature_order = db.Column(db.Integer, nullable=False)        #课程排序
 
     # 课程包含的课时，评价，资料等， 一对多的关系
     notices = db.relationship('Notice', backref='course', lazy='dynamic')
@@ -452,6 +452,8 @@ class Knowledge(db.Model):
     content = db.Column(db.Text(), default=None)        # 技能简介
     cover_url = db.Column(db.String(512), default='upload/lab/default.png')
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'))
+    is_hidden = db.Column(db.Boolean, default=False)      #实验是否隐藏
 
     # 一个技能对应了很多任务, 一对多的关系。
     challenges = db.relationship('Challenge', backref='knowledge', lazy='dynamic')
@@ -499,10 +501,20 @@ class VNCKnowledge(db.Model):
     about = db.Column(db.Text(), nullable=False)
     cover_url = db.Column(db.String(512), default='upload/vnc_lab/default.png')
     teacher_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    lab_id = db.Column(db.Integer, db.ForeignKey('lab.id'))
+    is_hidden = db.Column(db.Boolean, default=False)  # 实验是否隐藏
 
     # 一个实验对应多个小任务，一个小任务只属于一个实验
     vnc_tasks = db.relationship('VNCTask', backref='vnc_knowledge', lazy='dynamic', cascade="delete, delete-orphan")
     vnc_progresses = db.relationship('VNCProgress', backref='vnc_knowledge', lazy='dynamic', cascade="delete, delete-orphan")
+
+
+class Lab(db.Model):
+    # 此表用于给实验排序，序号即为id
+    __tablename__ = 'lab'
+    id = db.Column(db.Integer, primary_key=True)               # 实验序号，默认值为当前ID
+    knowledge_id = db.Column(db.Integer, nullable=False)       # 实验ID,可能是knowledge.id，也可能是vcn_knowledge.id
+    knowledge_type = db.Column(db.Boolean, nullable=False)     # 实验室类别：0-虚拟实验室；1-VNC实验室
 
 
 class VNCTask(db.Model):

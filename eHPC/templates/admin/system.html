@@ -57,6 +57,14 @@
                 </div>
                 <div class="col-sm-6 col-md-4">
                     <div class="admin-item">
+                        <div class="info">共有 {{ lab_cnt }} 实验</div>
+                        <div class="bottom">
+                            <a class="btn btn-primary" href="{{ url_for('admin.knowledge') }}">实验管理</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6 col-md-4">
+                    <div class="admin-item">
                         <div class="info"></div>
                         <div class="bottom">
                             <a class="btn btn-primary" href="{{ url_for('admin.ehpc_statistics') }}">网站数据</a>

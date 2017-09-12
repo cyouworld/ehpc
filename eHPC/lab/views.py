@@ -23,8 +23,8 @@ from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerImage
 @lab.route('/')
 @login_required
 def index():
-    knowledges = Knowledge.query.all()
-    vnc_knowledges = VNCKnowledge.query.all()
+    knowledges = Knowledge.query.order_by(Knowledge.lab_id.asc())
+    vnc_knowledges = VNCKnowledge.query.order_by(VNCKnowledge.lab_id.asc())
     # 记录当前用户在每个knowledge上的进度百分比
     if current_user.is_authenticated:
         for k in knowledges:
@@ -37,10 +37,22 @@ def index():
             k.cur_vnc_level = pro.have_done if pro else 0
             k.all_vnc_levels = k.vnc_tasks.count()
             k.percentage = "{0:.0f}%".format(100.0 * k.cur_vnc_level / k.all_vnc_levels) if k.all_vnc_levels >= 1 else "100%"
+        all_knowledges = []
+        for k in knowledges:
+            all_knowledges.append(k)
+        for k in vnc_knowledges:
+            bigger = 1  # 用于判断当前VNC实验序号是否比all_knowledges里面所有的序号都大
+            for idx in range(len(all_knowledges)):
+                if all_knowledges[idx].lab_id > k.lab_id:
+                    bigger = 0
+                    all_knowledges.insert(idx, k)
+                    break
+            if bigger:
+                # 若当前VNC实验序号比all_knowledges里面所有的序号都大，则直接在最后插入
+                all_knowledges.append(k)
     return render_template('lab/index.html',
                            title=gettext('Labs'),
-                           knowledges=knowledges,
-                           vnc_knowledges=vnc_knowledges)
+                           all_knowledges=all_knowledges)
 
 
 @lab.route('/detail/<int:kid>/')

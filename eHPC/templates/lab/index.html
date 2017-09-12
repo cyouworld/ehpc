@@ -11,72 +11,43 @@
             <li class="active"><a href="{{ url_for('lab.index') }}">所有实验</a></li>
         </ol>
         <div class="row">
-            {% if vnc_knowledges %}
-                {% for vnc_knowledge in vnc_knowledges %}
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                        <div id="labs">
-                            <div class="lab-item">
-                                <div class="lab-content">
-                                    <div class="lab-img">
-                                        <a href="{{ url_for('lab.tasks_list', vnc_knowledge_id=vnc_knowledge.id) }}"><img src="{{ url_for('static', filename=vnc_knowledge.cover_url) }}" alt="{{ vnc_knowledge.title }}" class="img-responsive"></a>
+            {% for k in all_knowledges %}
+                {% if not k.is_hidden %}
+                <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <div id="labs">
+                        <div class="lab-item">
+                            <div class="lab-content">
+                                <div class="lab-img">
+                                    {% if k | get_knowledge_type == 1 %}
+                                        <a href="{{ url_for('lab.tasks_list', vnc_knowledge_id=k.id) }}"><img src="{{ url_for('static', filename=k.cover_url) }}" alt="{{ k.title }}" class="img-responsive"></a>
+                                    {% else %}
+                                        <a href="{{ url_for('lab.detail', kid=k.id) }}"><img src="{{ url_for('static', filename=k.cover_url) }}" alt="{{ k.title }}" class="img-responsive"></a>
+                                    {% endif %}
+                                </div>
+                                <div class="lab-title">
+                                    <strong>{{ k.title }}</strong>
+                                </div>
+                                <!-- 对简洁内容进行截断, 防止内容过长 -->
+                                <p> {{ k | get_lab_content | truncate(140, True) }} </p>
+                                <div class="progress">
+                                    <div class="progress-bar" style="width: {{ k.percentage }}; background: #92c26a;">
+                                        <span class="progress-icon fa fa-check" style="border-color:#92c26a; color:#92c26a;"></span><br>
                                     </div>
-                                    <div class="lab-title">
-                                        <strong>{{ vnc_knowledge.title }}</strong>
-                                    </div>
-                                    <!-- 对简洁内容进行截断, 防止内容过长 -->
-                                    <p> {{ vnc_knowledge.about | truncate(140, True) }} </p>
+                                </div>
 
-                                    <div class="progress">
-                                        <div class="progress-bar" style="width: {{ vnc_knowledge.percentage }}; background: #92c26a;">
-                                            <span class="progress-icon fa fa-check" style="border-color:#92c26a; color:#92c26a;"></span><br>
-                                        </div>
-                                    </div>
-
-                                    <div class="pull-right">
-                                        <a href="{{ url_for('lab.tasks_list', vnc_knowledge_id=vnc_knowledge.id) }}" class="btn">开始实验</a>
-                                    </div>
+                                <div class="pull-right">
+                                    {% if k | get_knowledge_type == 1 %}
+                                        <a href="{{ url_for('lab.tasks_list', vnc_knowledge_id=k.id) }}" class="btn">开始实验</a>
+                                    {% else %}
+                                        <a href="{{ url_for('lab.detail', kid=k.id) }}" class="btn">开始实验</a>
+                                    {% endif %}
                                 </div>
                             </div>
                         </div>
                     </div>
-                {% endfor %}
-            {% else %}
-                <div class="text-center">暂未发布实验</div>
-            {% endif %}
-
-            {% if knowledges %}
-                {% for knowledge in knowledges %}
-                    <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
-                        <div id="labs">
-                            <div class="lab-item">
-                                <div class="lab-content">
-                                    <div class="lab-img">
-                                        <a href="{{ url_for('lab.detail', kid=knowledge.id) }}"><img src="{{ url_for('static', filename=knowledge.cover_url) }}" alt="{{ knowledge.title }}" class="img-responsive"></a>
-                                    </div>
-                                    <div class="lab-title">
-                                        <strong>{{ knowledge.title }}</strong>
-                                    </div>
-                                    <!-- 对简洁内容进行截断, 防止内容过长 -->
-                                    <p> {{ knowledge.content | truncate(140, True) }} </p>
-                                    <div class="progress">
-                                        <div class="progress-bar"
-                                             style="width: {{ knowledge.percentage }}; background: #92c26a;">
-                                    <span class="progress-icon fa fa-check"
-                                          style="border-color:#92c26a; color:#92c26a;"></span>
-                                            <br>
-                                        </div>
-                                    </div>
-                                    <div class="pull-right">
-                                        <a href="{{ url_for('lab.detail', kid=knowledge.id) }}" class="btn">开始实验</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <div class="text-center">暂未发布实验</div>
-            {% endif %}
+                </div>
+                {% endif %}
+            {% endfor %}
         </div>
     </div>
 {% endblock %}

@@ -9,7 +9,7 @@ from flask_login import login_user, logout_user, current_user
 from eHPC.util.captcha import verify_captcha
 from . import admin
 from .. import db
-from ..models import User, Article, Group, Case, Classify, Course
+from ..models import User, Article, Group, Case, Classify, Course, DockerHolder, Knowledge, VNCKnowledge
 from ..user.authorize import admin_login, system_login, teacher_login
 import threading
 from utils import save_address
@@ -79,10 +79,13 @@ def system():
     article_cnt = Article.query.count()
     group_cnt = Group.query.count()
     case_cnt = Case.query.count()
+    lab_cnt = Knowledge.query.count() + VNCKnowledge.query.count()
     return render_template("admin/system.html",
                            user_cnt=user_cnt,
                            article_cnt=article_cnt,
                            group_cnt=group_cnt,
                            case_cnt=case_cnt,
                            course_cnt=Course.query.count(),
+                           docker_holder_cnt=DockerHolder.query.count(),
+                           lab_cnt=lab_cnt,
                            title=gettext("System Setting"))

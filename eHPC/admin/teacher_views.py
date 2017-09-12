@@ -16,7 +16,7 @@ from threading import Thread
 from . import admin
 from .. import db
 from ..models import Classify, Program, Paper, Question, PaperQuestion, Homework, HomeworkUpload, HomeworkAppendix, HomeworkScore, Notice
-from ..models import Course, Lesson, Material, User, Apply, VNCKnowledge, VNCTask
+from ..models import Course, Lesson, Material, User, Apply, VNCKnowledge, VNCTask, Lab
 from ..models import Knowledge, Challenge, Group
 from ..user.authorize import teacher_login
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename, extension_to_file_type
@@ -1472,6 +1472,12 @@ def lab():
             else:
                 curr_knowledge.cover_url = "upload/lab/default.jpg"
                 db.session.commit()
+            # 在创建实验的同时创建一个新的序号实体lab
+            curr_lab = Lab(knowledge_id=curr_knowledge.id, knowledge_type=0)
+            db.session.add(curr_lab)
+            db.session.commit()
+            curr_knowledge.lab_id = curr_lab.id
+            db.session.commit()
             return jsonify(status='success')
         elif request.form['op'] == 'edit':
             curr_knowledge = Knowledge.query.filter_by(id=request.form['knowledge_id']).first_or_404()
@@ -1486,9 +1492,13 @@ def lab():
             return jsonify(status='success')
         elif request.form['op'] == 'del':
             curr_knowledge = Knowledge.query.filter_by(id=request.form['knowledge_id']).first_or_404()
+            curr_lab = Lab.query.filter_by(id=curr_knowledge.lab_id).first_or_404()
             for challenge in curr_knowledge.challenges:
+                curr_knowledge.challenges.remove(challenge)
                 db.session.delete(challenge)
             db.session.delete(curr_knowledge)
+            db.session.commit()
+            db.session.delete(curr_lab)
             db.session.commit()
             return jsonify(status='success')
 
@@ -1614,9 +1624,18 @@ def vnc_lab():
             if op == 'del':
                 vnc_knowledge_id = request.form.get('vnc_knowledge_id', None)
                 if vnc_knowledge_id is not None:
-                    vnc_knowledge_to_del = current_user.teacher_vnc_knowledge.filter_by(id=vnc_knowledge_id).first()
+                    vnc_knowledge_to_del = VNCKnowledge.query.filter_by(id=vnc_knowledge_id).first()
                     if vnc_knowledge_to_del is not None:
+                        curr_lab = Lab.query.filter_by(id=vnc_knowledge_to_del.lab_id).first_or_404()
+                        for t in vnc_knowledge_to_del.vnc_tasks:
+                            vnc_knowledge_to_del.vnc_tasks.remove(t)
+                            db.session.delete(t)
+                        for p in vnc_knowledge_to_del.vnc_progresses:
+                            vnc_knowledge_to_del.vnc_progresses.remove(p)
+                            db.session.delete(p)
                         db.session.delete(vnc_knowledge_to_del)
+                        db.session.commit()
+                        db.session.delete(curr_lab)
                         db.session.commit()
                         return jsonify(status='success')
                     else:
@@ -1665,6 +1684,12 @@ def vnc_lab():
                     else:
                         vnc_knowledge_to_create.cover_url = "upload/vnc_lab/default.jpg"
                         db.session.commit()
+                    # 在创建实验的同时创建一个新的序号实体lab
+                    curr_lab = Lab(knowledge_id=vnc_knowledge_to_create.id, knowledge_type=1)
+                    db.session.add(curr_lab)
+                    db.session.commit()
+                    vnc_knowledge_to_create.lab_id = curr_lab.id
+                    db.session.commit()
                     return jsonify(status='success')
 
                 else:

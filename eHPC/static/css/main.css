@@ -5219,21 +5219,25 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
     padding: 0px;
 }
 
-#issue-list-box .nav-tabs {
+#issue-list-box .nav-tabs,#machine-apply-manage .nav-tabs {
     margin-bottom: 0px;
     border-bottom: 2px solid #ddd;
 }
 
-#issue-list-box .nav-tabs li a {
+#issue-list-box .nav-tabs li a,#machine-apply-manage .nav-tabs li a {
     font-weight: 600;
 }
 
-#issue-list-box .nav-tabs li.active {
+#issue-list-box .nav-tabs li.active,#machine-apply-manage .nav-tabs li.active {
     border-bottom: 2px solid #46C37B;
 }
 
 #issue-list-box a:hover {
     cursor: pointer;
+}
+
+#machine-apply-manage .panel-heading {
+    border-bottom: none;
 }
 
 .noty-a{

@@ -641,16 +641,31 @@ CREATE TABLE `knowledges` (
   `content` text,
   `cover_url` varchar(512) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
+  `lab_id` int(11) DEFAULT NULL,
+  `is_hidden` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `knowledges_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
+  KEY `lab_id` (`lab_id`),
+  CONSTRAINT `knowledges_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `knowledges_ibfk_2` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
--- ----------------------------
--- Records of knowledges
--- ----------------------------
-INSERT INTO `knowledges` VALUES ('5', 'MPI 编程实训', 'MPI(Message Passing Interface)是一个跨语言的通讯协议,用于编写并行程序。与OpenMP并行程序不同，MPI是一种基于消息传递的并行编程技术。消息传递接口是一种编程接口标准，而不是一种具体的编程语言。\r\n简而言之，MPI标准定义了一组具有可移植性的编程接口。不同的厂商和组织遵循着这个标准推出各自的实现，而不同的实现也会有其不同的特点。\r\n由于MPI提供了统一的编程接口，程序员只需要设计好并行算法，使用相应的MPI库就可以实现基于消息传递的并行计算。MPI支持多种操作系统，包括大多数的类UNIX和Windows系统。', 'upload/lab/cover_5.png', '3');
-INSERT INTO `knowledges` VALUES ('6', 'OpenMP 编程实训', 'OpenMP（Open Multi-Processing）是一套支持跨平台共享内存方式的多线程并发的编程API，使用C,C++和Fortran语言，可以在大多数的处理器体系和操作系统中运行，包括Solaris, AIX, HP-UX, GNU/Linux, Mac OS X, 和Microsoft Windows。包括一套编译器指令、库和一些能够影响运行行为的环境变量。\r\nOpenMP采用可移植的、可扩展的模型，为程序员提供了一个简单而灵活的开发平台，从标准桌面电脑到超级计算机的并行应用程序接口。', 'upload/lab/cover_6.png', '3');
+--
+-- Dumping data for table `knowledges`
+--
+
+LOCK TABLES `knowledges` WRITE;
+/*!40000 ALTER TABLE `knowledges` DISABLE KEYS */;
+INSERT INTO `knowledges` VALUES (''5'', ''MPI 编程实训'', ''MPI(Message Passing Interface)是一个跨语言的通讯协议,用于编写并行程序。与OpenMP并行程序不同，MPI是一种基于消息传递的并行编程技术。消息传递接口是一种编程接口标准，而不是一种具体的编程语言。\r\n简而言之，MPI标准定义了一组具有可移植性的编程接口。不同的厂商和组织遵循着这个标准推出各自的实现，而不同的实现也会有其不同的特点。\r\n由于MPI提供了统一的编程接口，程序员只需要设计好并行算法，使用相应的MPI库就可以实现基于消息传递的并行计算。MPI支持多种操作系统，包括大多数的类UNIX和Windows系统。'', ''upload/lab/cover_5.png'', ''3'', ''3'', ''0'');
+INSERT INTO `knowledges` VALUES (''6'', ''OpenMP 编程实训'', ''OpenMP（Open Multi-Processing）是一套支持跨平台共享内存方式的多线程并发的编程API，使用C,C++和Fortran语言，可以在大多数的处理器体系和操作系统中运行，包括Solaris, AIX, HP-UX, GNU/Linux, Mac OS X, 和Microsoft Windows。包括一套编译器指令、库和一些能够影响运行行为的环境变量。\r\nOpenMP采用可移植的、可扩展的模型，为程序员提供了一个简单而灵活的开发平台，从标准桌面电脑到超级计算机的并行应用程序接口。'', ''upload/lab/cover_6.png'', ''3'', ''2'', ''0'');
+
+/*!40000 ALTER TABLE `knowledges` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `lab_programs`
+--
 
 -- ----------------------------
 -- Table structure for `lab_programs`
@@ -663,10 +678,43 @@ CREATE TABLE `lab_programs` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
+
+LOCK TABLES `lab_programs` WRITE;
+/*!40000 ALTER TABLE `lab_programs` DISABLE KEYS */;
+INSERT INTO `lab_programs` VALUES (1,'#include<iostream>\r\nusing namespace std;\r\nint main()\r\n{\r\n  cout<<\"hello world\"<<endl;\r\n}','#include<iostream>\r\nusing namespace std;\r\nint main()\r\n{\r\n  \r\n}');
+/*!40000 ALTER TABLE `lab_programs` ENABLE KEYS */;
+UNLOCK TABLES;
+
+
 -- ----------------------------
--- Records of lab_programs
+-- Table structure for lab
 -- ----------------------------
-INSERT INTO `lab_programs` VALUES ('1', '#include<iostream>\r\nusing namespace std;\r\nint main()\r\n{\r\n  cout<<\"hello world\"<<endl;\r\n}', '#include<iostream>\r\nusing namespace std;\r\nint main()\r\n{\r\n  \r\n}');
+DROP TABLE IF EXISTS `lab`;
+CREATE TABLE `lab` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `knowledge_id` int(11) NOT NULL,
+  `knowledge_type` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;;
+
+--
+-- Dumping data for table `lab`
+--
+
+LOCK TABLES `lab` WRITE;
+/*!40000 ALTER TABLE `lab` DISABLE KEYS */;
+INSERT INTO `lab` VALUES ('2', '6', '0');
+INSERT INTO `lab` VALUES ('3', '5', '0');
+INSERT INTO `lab` VALUES ('5', '1', '1');
+INSERT INTO `lab` VALUES ('6', '2', '1');
+INSERT INTO `lab` VALUES ('7', '3', '1');
+INSERT INTO `lab` VALUES ('8', '4', '1');
+/*!40000 ALTER TABLE `lab` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `lessons`
+--
 
 -- ----------------------------
 -- Table structure for `lessons`
@@ -2109,10 +2157,32 @@ CREATE TABLE `vnc_knowledge` (
   `about` text NOT NULL,
   `cover_url` varchar(512) DEFAULT NULL,
   `teacher_id` int(11) DEFAULT NULL,
+  `lab_id` int(11) DEFAULT NULL,
+  `is_hidden` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `teacher_id` (`teacher_id`),
-  CONSTRAINT `vnc_knowledge_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
+  KEY `lab_id` (`lab_id`),
+  CONSTRAINT `vnc_knowledge_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `vnc_knowledge_ibfk_2` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `vnc_knowledge`
+--
+
+LOCK TABLES `vnc_knowledge` WRITE;
+/*!40000 ALTER TABLE `vnc_knowledge` DISABLE KEYS */;
+INSERT INTO `vnc_knowledge` VALUES ('1', '配置实验1', '此乃配置实验1', 'upload/vnc_lab/default.png', '3', '5', '0');
+INSERT INTO `vnc_knowledge` VALUES ('2', '配置实验2', '此乃配置实验2', 'upload/vnc_lab/default.png', '3', '6', '0');
+INSERT INTO `vnc_knowledge` VALUES ('3', '配置实验3', '此乃配置实验3', 'upload/vnc_lab/default.png', '3', '7', '0');
+INSERT INTO `vnc_knowledge` VALUES ('4', '配置实验4', '此乃配置实验4', 'upload/vnc_lab/default.png', '3', '8', '0');
+/*!40000 ALTER TABLE `vnc_knowledge` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `vnc_progresses`
+--
 
 -- ----------------------------
 -- Records of vnc_knowledge

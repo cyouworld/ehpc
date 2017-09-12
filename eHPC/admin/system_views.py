@@ -11,7 +11,7 @@ from flask_babel import gettext
 
 from . import admin
 from .. import db
-from ..models import DockerHolder, DockerImage, Statistic
+from ..models import DockerHolder, DockerImage, Statistic, Knowledge, VNCKnowledge, Lab
 from ..models import User, Article, Group, Case, CaseVersion, CaseCodeMaterial, Course, MachineApply, \
     MachineAccount
 from ..user.authorize import system_login, hpc_login
@@ -24,6 +24,7 @@ from sqlalchemy import func
 @admin.route('/')
 @system_login
 def index():
+    lab_cnt = Knowledge.query.count() + VNCKnowledge.query.count()
     return render_template('admin/system.html',
                            title=gettext("System Admin"),
                            user_cnt=User.query.count(),
@@ -31,7 +32,8 @@ def index():
                            article_cnt=Article.query.count(),
                            group_cnt=Group.query.count(),
                            case_cnt=Case.query.count(),
-                           docker_holder_cnt=DockerHolder.query.count())
+                           docker_holder_cnt=DockerHolder.query.count(),
+                           lab_cnt=lab_cnt)
 
 
 @admin.route('/users/')
@@ -416,10 +418,44 @@ def case_version_material(case_id, version_id):
                 return jsonify(status='fail')
 
 
-@admin.route('/hpc/')
+@admin.route('/hpc/guangzhou')
 @hpc_login
 def machine_apply_index():
-    return render_template('admin/hpc/index.html', applies=MachineApply.query.all(), title=u'机时申请')
+    applies = MachineApply.query.filter_by(sc_center=0).all()
+    return render_template('admin/hpc/index.html',
+                           applies=applies,
+                           sc_center=0,
+                           title=u'机时申请')
+
+
+@admin.route('/hpc/changsha')
+@hpc_login
+def machine_apply_cs():
+    applies = MachineApply.query.filter_by(sc_center=1).all()
+    return render_template('admin/hpc/index.html',
+                           applies=applies,
+                           sc_center=1,
+                           title=u'机时申请')
+
+
+@admin.route('/hpc/zhongkeyuan')
+@hpc_login
+def machine_apply_zky():
+    applies = MachineApply.query.filter_by(sc_center=2).all()
+    return render_template('admin/hpc/index.html',
+                           applies=applies,
+                           sc_center=2,
+                           title=u'机时申请')
+
+
+@admin.route('/hpc/shanghai')
+@hpc_login
+def machine_apply_sh():
+    applies = MachineApply.query.filter_by(sc_center=3).all()
+    return render_template('admin/hpc/index.html',
+                           applies=applies,
+                           sc_center=3,
+                           title=u'机时申请')
 
 
 @admin.route('/hpc/<int:apply_id>/', methods=['GET', 'POST'])
@@ -698,3 +734,92 @@ def ehpc_statistics():
                 postgraduate_structure.append({u"学校": k, u"人数": v})
 
             return jsonify(status='success', undergraduate=undergraduate_status, postgraduate=postgraduate_status)
+
+
+@admin.route('/system/knowledge/', methods=['POST', 'GET'])
+@system_login
+def knowledge():
+    all_labs = Lab.query.all()
+    lab_ids = []
+    k_ids = {}
+    k_types = {}
+    for l in all_labs:
+        lab_ids.append(l.id)
+        k_ids[l.id] = l.knowledge_id
+        k_types[l.id] = l.knowledge_type
+    if request.method == "GET":
+        knowledges = Knowledge.query.order_by(Knowledge.lab_id.asc())
+        vnc_knowledges = VNCKnowledge.query.order_by(VNCKnowledge.lab_id.asc())
+        all_knowledges = []
+        for k in knowledges:
+            all_knowledges.append(k)
+        for k in vnc_knowledges:
+            bigger = 1     # 用于判断当前VNC实验序号是否比all_knowledges里面所有的序号都大
+            for idx in range(len(all_knowledges)):
+                if all_knowledges[idx].lab_id > k.lab_id:
+                    bigger = 0
+                    all_knowledges.insert(idx, k)
+                    break
+            if bigger:
+                # 若当前VNC实验序号比all_knowledges里面所有的序号都大，则直接在最后插入
+                all_knowledges.append(k)
+        return render_template("admin/knowledge/index.html",
+                               all_knowledges=all_knowledges,
+                               labs=all_labs,
+                               title=gettext("Lab Manage"))
+    elif request.method == "POST":
+        if request.form['op'] == "order":
+            seq = request.form.getlist('seq[]')
+            cnt = 0
+            for idx in seq:
+                if k_types[int(idx)] == 0:
+                    curr_knowledge = Knowledge.query.filter_by(id=k_ids[int(idx)]).first_or_404()
+                else:
+                    curr_knowledge = VNCKnowledge.query.filter_by(id=k_ids[int(idx)]).first_or_404()
+                curr_knowledge.lab_id = lab_ids[cnt]
+                curr_lab = Lab.query.filter_by(id=lab_ids[cnt]).first_or_404()
+                curr_lab.knowledge_id = curr_knowledge.id
+                curr_lab.knowledge_type = k_types[int(idx)]
+                cnt += 1
+
+            db.session.commit()
+            return jsonify(status='success')
+        elif request.form['op'] == 'del':
+            curr_lab = Lab.query.filter_by(id=request.form['lab_id']).first_or_404()
+            if curr_lab.knowledge_type == 0:
+                curr_knowledge = Knowledge.query.filter_by(id=curr_lab.knowledge_id).first_or_404()
+                for challenge in curr_knowledge.challenges:
+                    curr_knowledge.challenges.remove(challenge)
+                    db.session.delete(challenge)
+                db.session.delete(curr_knowledge)
+                db.session.commit()
+            else:
+                curr_knowledge = VNCKnowledge.query.filter_by(id=curr_lab.knowledge_id).first_or_404()
+                for t in curr_knowledge.vnc_tasks:
+                    curr_knowledge.vnc_tasks.remove(t)
+                    db.session.delete(t)
+                for p in curr_knowledge.vnc_progresses:
+                    curr_knowledge.vnc_progresses.remove(p)
+                    db.session.delete(p)
+                db.session.delete(curr_knowledge)
+                db.session.commit()
+            db.session.delete(curr_lab)
+            db.session.commit()
+            return jsonify(status="success")
+
+
+@admin.route('/system/knowledge<int:k_id>_lab<int:lab_id>/hide/')
+@system_login
+def lab_hide(k_id, lab_id):
+    # 隐藏或显示实验
+    curr_lab = Lab.query.filter_by(id=lab_id).first_or_404()
+    if curr_lab.knowledge_type == 0:
+        curr_knowledge = Knowledge.query.filter_by(id=k_id).first_or_404()
+    else:
+        curr_knowledge = VNCKnowledge.query.filter_by(id=k_id).first_or_404()
+    if curr_knowledge.is_hidden:
+        curr_knowledge.is_hidden = False
+    else:
+        curr_knowledge.is_hidden = True
+    db.session.commit()
+    return redirect(url_for('admin.knowledge'))

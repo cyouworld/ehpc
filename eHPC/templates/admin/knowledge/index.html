@@ -1,0 +1,117 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block header_ext %}
+    <script src="//cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.js"></script>
+    <link href="//cdn.bootcss.com/jqueryui/1.12.1/jquery-ui.css" rel="stylesheet">
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="container" id="content-container">
+        <div class="panel panel-default panel-col">
+            <div class="panel-heading">
+                <button id="edit-seq" class="btn btn-info btn-sm pull-right" style="margin-right: 20px;"><i class="glyphicon glyphicon-resize-vertical" aria-hidden="true"></i> 调整顺序</button>
+                所有实验
+            </div>
+            <div class="panel-body">
+                <div id="hint" style="display: none;margin-bottom: 10px;"><i class="es-icon es-icon-info"></i> 请直接拖动实验来调整顺序</div>
+                <table class="table fixed-table" id="lab-table">
+                    <thead>
+                    <tr>
+                        <th width="35%">实验标题</th>
+                        <th class="text-center" width="30%">实验描述</th>
+                        <th class="text-center" width="10%">实验类型</th>
+                        <th class="text-center" width="15%">教师</th>
+                        <th class="text-center" width="10%">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tb">
+                    {% if all_knowledges.count > 0 %}
+                        {% for k in all_knowledges %}
+                        <tr data-id="{{ k.lab_id }}" style="">
+                            <td  title="{{ k.title }}">
+                                <span><img src="/static/{{ k.cover_url }}" width="160px" height="90px"></span>
+                                <span class="overflow-ellipsis" data-toggle="tooltip">{{ k.title }}</span>
+                            </td>
+                            <td class="text-center" title="{{ k | get_lab_content }}">{{ k | get_lab_content | truncate(100, True) }}</td>
+                            <td class="text-center">{{ k | get_lab_type }}</td>
+                            <td class="text-center">{{ k | get_teacher_name }}</td>
+                            <td class="text-center">
+                                <a class="del-lab" href="javascript:void(0);">删除</a>
+                                <span> | </span>
+                                {% if k.is_hidden %}
+                                <a href="{{ url_for('admin.lab_hide', k_id=k.id, lab_id=k.lab_id) }}">显示</a>
+                                {% else %}
+                                <a href="{{ url_for('admin.lab_hide', k_id=k.id, lab_id=k.lab_id) }}">隐藏</a>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr class="text-center"><td colspan="5">还没有发布任何实验</td></tr>
+                    {% endif %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% include "admin/widget-del-warning.html" %}
+
+{% endblock %}
+
+{% block footer_ext %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#edit-seq").click(function () {
+                if ($(this).text() == " 调整顺序") {
+                    $("#lab-table").find("tbody").sortable();
+                    $("#hint").show();
+                    $(this).text("保存");
+                }
+                else {
+                    var seq = [];
+                    $("#lab-table").find("tbody").find("tr").each(function () {
+                        seq.push($(this).data("id"));
+                    });
+                    $.ajax({
+                        type: "post",
+                        url: location.href,
+                        data: {
+                            op: "order",
+                            seq: seq
+                        },
+                        success: function (data) {
+                            if (data["status"] == "success") {
+                                location.reload();
+                            }
+                        }
+                    });
+                }
+            });
+            var obj = null;
+            $(".del-lab").click(function () {
+                obj = $(this);
+                $("#del-warning").modal("show");
+            });
+
+            $("#del-confirm").click(function () {
+                $.ajax({
+                    type: "post",
+                    url: location.href,
+                    data: {
+                        op: "del",
+                        lab_id: obj.parent().parent().data("id")
+                    },
+                    success: function (data) {
+                        if (data["status"] == "success") {
+                            obj.parent().parent().remove();
+                            $("#del-warning").modal("hide");
+                        }
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}

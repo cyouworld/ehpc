@@ -3,6 +3,7 @@
 
 from . import filter_blueprint
 import json
+from ..models import User
 from flask import Markup
 
 
@@ -58,3 +59,37 @@ def get_sc_center(sc_id):
 @filter_blueprint.app_template_filter('get_not_read_count')
 def get_not_read_count(current_user):
     return current_user.note_info.filter_by(is_read=False).count()
+
+
+@filter_blueprint.app_template_filter('get_lab_type')
+def get_lab_type(knowledge):
+    if hasattr(knowledge, "about"):
+        return u'VNC实验'
+    else:
+        return u'编程实验'
+
+
+@filter_blueprint.app_template_filter('get_knowledge_type')
+def get_knowledge_type(knowledge):
+    if hasattr(knowledge, "about"):
+        return 1
+    else:
+        return 0
+
+
+@filter_blueprint.app_template_filter('get_teacher_name')
+def get_teacher_name(knowledge):
+    if hasattr(knowledge, "user_id"):
+        t_id = knowledge.user_id
+    else:
+        t_id = knowledge.teacher_id
+    teacher = User.query.filter_by(id=t_id).first_or_404()
+    return teacher.name
+
+
+@filter_blueprint.app_template_filter('get_lab_content')
+def get_lab_content(knowledge):
+    if hasattr(knowledge, "about"):
+        return knowledge.about
+    else:
+        return knowledge.content
