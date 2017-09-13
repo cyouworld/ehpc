@@ -10,7 +10,7 @@ Target Server Type    : MYSQL
 Target Server Version : 50628
 File Encoding         : 65001
 
-Date: 2017-09-12 18:40:30
+Date: 2017-09-13 10:20:38
 */
 
 SET FOREIGN_KEY_CHECKS=0;
@@ -642,30 +642,34 @@ CREATE TABLE `knowledges` (
   `cover_url` varchar(512) DEFAULT NULL,
   `user_id` int(11) DEFAULT NULL,
   `lab_id` int(11) DEFAULT NULL,
-  `is_hidden` tinyint(1) DEFAULT '0',
+  `is_hidden` tinyint(1) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
-  KEY `lab_id` (`lab_id`),
-  CONSTRAINT `knowledges_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `knowledges_ibfk_2` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
+  KEY `1` (`lab_id`),
+  CONSTRAINT `1` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`),
+  CONSTRAINT `knowledges_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8;
 
---
--- Dumping data for table `knowledges`
---
+-- ----------------------------
+-- Records of knowledges
+-- ----------------------------
+INSERT INTO `knowledges` VALUES ('5', 'MPI 编程实训', 'MPI(Message Passing Interface)是一个跨语言的通讯协议,用于编写并行程序。与OpenMP并行程序不同，MPI是一种基于消息传递的并行编程技术。消息传递接口是一种编程接口标准，而不是一种具体的编程语言。\r\n简而言之，MPI标准定义了一组具有可移植性的编程接口。不同的厂商和组织遵循着这个标准推出各自的实现，而不同的实现也会有其不同的特点。\r\n由于MPI提供了统一的编程接口，程序员只需要设计好并行算法，使用相应的MPI库就可以实现基于消息传递的并行计算。MPI支持多种操作系统，包括大多数的类UNIX和Windows系统。', 'upload/lab/cover_5.png', '3', null, null);
+INSERT INTO `knowledges` VALUES ('6', 'OpenMP 编程实训', 'OpenMP（Open Multi-Processing）是一套支持跨平台共享内存方式的多线程并发的编程API，使用C,C++和Fortran语言，可以在大多数的处理器体系和操作系统中运行，包括Solaris, AIX, HP-UX, GNU/Linux, Mac OS X, 和Microsoft Windows。包括一套编译器指令、库和一些能够影响运行行为的环境变量。\r\nOpenMP采用可移植的、可扩展的模型，为程序员提供了一个简单而灵活的开发平台，从标准桌面电脑到超级计算机的并行应用程序接口。', 'upload/lab/cover_6.png', '3', null, null);
 
-LOCK TABLES `knowledges` WRITE;
-/*!40000 ALTER TABLE `knowledges` DISABLE KEYS */;
-INSERT INTO `knowledges` VALUES (''5'', ''MPI 编程实训'', ''MPI(Message Passing Interface)是一个跨语言的通讯协议,用于编写并行程序。与OpenMP并行程序不同，MPI是一种基于消息传递的并行编程技术。消息传递接口是一种编程接口标准，而不是一种具体的编程语言。\r\n简而言之，MPI标准定义了一组具有可移植性的编程接口。不同的厂商和组织遵循着这个标准推出各自的实现，而不同的实现也会有其不同的特点。\r\n由于MPI提供了统一的编程接口，程序员只需要设计好并行算法，使用相应的MPI库就可以实现基于消息传递的并行计算。MPI支持多种操作系统，包括大多数的类UNIX和Windows系统。'', ''upload/lab/cover_5.png'', ''3'', ''3'', ''0'');
-INSERT INTO `knowledges` VALUES (''6'', ''OpenMP 编程实训'', ''OpenMP（Open Multi-Processing）是一套支持跨平台共享内存方式的多线程并发的编程API，使用C,C++和Fortran语言，可以在大多数的处理器体系和操作系统中运行，包括Solaris, AIX, HP-UX, GNU/Linux, Mac OS X, 和Microsoft Windows。包括一套编译器指令、库和一些能够影响运行行为的环境变量。\r\nOpenMP采用可移植的、可扩展的模型，为程序员提供了一个简单而灵活的开发平台，从标准桌面电脑到超级计算机的并行应用程序接口。'', ''upload/lab/cover_6.png'', ''3'', ''2'', ''0'');
+-- ----------------------------
+-- Table structure for `lab`
+-- ----------------------------
+DROP TABLE IF EXISTS `lab`;
+CREATE TABLE `lab` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `knowledge_id` int(11) NOT NULL,
+  `knowledge_type` tinyint(1) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-/*!40000 ALTER TABLE `knowledges` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `lab_programs`
---
+-- ----------------------------
+-- Records of lab
+-- ----------------------------
 
 -- ----------------------------
 -- Table structure for `lab_programs`
@@ -678,43 +682,10 @@ CREATE TABLE `lab_programs` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 
-
-LOCK TABLES `lab_programs` WRITE;
-/*!40000 ALTER TABLE `lab_programs` DISABLE KEYS */;
-INSERT INTO `lab_programs` VALUES (1,'#include<iostream>\r\nusing namespace std;\r\nint main()\r\n{\r\n  cout<<\"hello world\"<<endl;\r\n}','#include<iostream>\r\nusing namespace std;\r\nint main()\r\n{\r\n  \r\n}');
-/*!40000 ALTER TABLE `lab_programs` ENABLE KEYS */;
-UNLOCK TABLES;
-
-
 -- ----------------------------
--- Table structure for lab
+-- Records of lab_programs
 -- ----------------------------
-DROP TABLE IF EXISTS `lab`;
-CREATE TABLE `lab` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `knowledge_id` int(11) NOT NULL,
-  `knowledge_type` tinyint(1) NOT NULL,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci;;
-
---
--- Dumping data for table `lab`
---
-
-LOCK TABLES `lab` WRITE;
-/*!40000 ALTER TABLE `lab` DISABLE KEYS */;
-INSERT INTO `lab` VALUES ('2', '6', '0');
-INSERT INTO `lab` VALUES ('3', '5', '0');
-INSERT INTO `lab` VALUES ('5', '1', '1');
-INSERT INTO `lab` VALUES ('6', '2', '1');
-INSERT INTO `lab` VALUES ('7', '3', '1');
-INSERT INTO `lab` VALUES ('8', '4', '1');
-/*!40000 ALTER TABLE `lab` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `lessons`
---
+INSERT INTO `lab_programs` VALUES ('1', '#include<iostream>\r\nusing namespace std;\r\nint main()\r\n{\r\n  cout<<\"hello world\"<<endl;\r\n}', '#include<iostream>\r\nusing namespace std;\r\nint main()\r\n{\r\n  \r\n}');
 
 -- ----------------------------
 -- Table structure for `lessons`
@@ -1286,14 +1257,14 @@ CREATE TABLE `programs` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `programs_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=11 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of programs
 -- ----------------------------
 INSERT INTO `programs` VALUES ('1', '编写Pthreads程序', '编写Pthreads程序，求小于2n的素数。\r\n\r\na)	输入：整数n，10\\<n\\<48。\r\n\r\nb)	输出：二进制文件。每个素数用一个int64_t型的整数表示，找到的全部素数按照从小到大顺序存储在输出文件中。\r\n', '2', '0', '0', '2016-12-29 23:53:11', '3', '#include <stdio.h>\r\nint main(){\r\n    printf(\"\\n\");\r\n}', '0', null, null, null, null);
-INSERT INTO `programs` VALUES ('2', '编写MPI程序', '编写MPI程序，求小于2n的素数。\r\n\r\na)	输入：整数n，10\\<n\\<48。\r\n\r\nb)	输出：二进制文件。每个素数用一个int64_t型的整数表示，找到的全部素数按照从小到大顺序存储在输出文件中。\r\n', '1', '0', '0', '2016-12-29 23:53:40', '3', '', '0', null, null, null, null);
-INSERT INTO `programs` VALUES ('3', '计算π的近似值', '公式![](/static/upload/md_images/20161229235552.png)可用于计算π的近似值。编写串行程序、Pthreads程序、和MPI程序实现该公式，分别计算π的近似值。\r\n\r\na)	输入：整数k和p，10\\<k\\<48。n=2k表示计算精度，p是并行执行时处理器的数量。\r\n\r\nb)	输出：每个版本分别以科学表示法输出所计算的π。\r\n', '3', '0', '0', '2016-12-29 23:56:26', '3', '#include <mpi.h>\r\n#include <stdio.h>\r\nint main(int argc, char **argv)\r\n{ \r\n    MPI_Init(&argc, &argv); \r\n    \r\n    float sum=0.0;\r\n    float i=1,d=1;\r\n    while(1/i>=1e-6)\r\n    {\r\n       sum=sum+d/i;\r\n       d=d*(-1);\r\n       i=i+2;\r\n    }           \r\n    sum=sum*4;\r\n    printf(\"value is %0.6f\",sum);\r\n    \r\n    MPI_Finalize();\r\n    return 0;\r\n} \r\n', '1', '#include <stdio.h>\r\n#include <stdlib.h>\r\n#include <string.h>\r\n#include <math.h>\r\n#include <time.h>\r\n#include <unistd.h>\r\n#include <sys/types.h>\r\n#include <sys/wait.h>\r\nusing namespace std;\r\n\r\n#define NANO           1000000000\r\n\r\nint main(int argc, char* argv[] ){\r\n    int8_t flag = 1;\r\n    struct timespec ts,te;\r\n    double scost, rcost, ycost;\r\n    char command[256];\r\n\r\n    sscanf(argv[1], \"%hhd\", &flag);\r\n    //printf(\"cmd:%s\\n\",\"test\");\r\n    //return 0 ; \r\n    int64_t num_steps = atoll(argv[3]);\r\n    if ( flag ) {\r\n        if (num_steps<30) {\r\n                        sprintf(command, \"./serial %s\", argv[3]);\r\n                        clock_gettime(CLOCK_REALTIME, &ts);\r\n                        //printf(\"cmd:%s\\n\",command);\r\n                        system(command);\r\n                        clock_gettime(CLOCK_REALTIME, &te);\r\n                        scost = te.tv_sec - ts.tv_sec + (double)(te.tv_nsec-ts.tv_nsec)/(double)NANO;\r\n        }\r\n\r\n        sprintf(command, \"mpirun -np %s ./hello\", argv[2]);\r\n        system(command);\r\n        sprintf(command, \"mpirun -np %s ./ref %s\", argv[2], argv[3]);\r\n                clock_gettime(CLOCK_REALTIME, &ts);\r\n                system(command);\r\n                clock_gettime(CLOCK_REALTIME, &te);\r\n                rcost = te.tv_sec - ts.tv_sec + (double)(te.tv_nsec-ts.tv_nsec)/(double)NANO;\r\n    }\r\n    sprintf(command, \"mpirun -np %s ./hello\", argv[2]);\r\n    //printf(\"cmd:%s\\n\",command);\r\n    system(command);\r\n    sprintf(command, \"mpirun -np %s ./program %s\", argv[2], argv[3]);\r\n    //printf(\"cmd:%s\\n\",command);\r\n    clock_gettime(CLOCK_REALTIME, &ts);\r\n    system(command);\r\n    clock_gettime(CLOCK_REALTIME, &te);\r\n    ycost = te.tv_sec - ts.tv_sec + (double)(te.tv_nsec-ts.tv_nsec)/(double)NANO;\r\n    FILE *fs, *fr, *fy;\r\n    double ds, dr, dy;\r\n    int    ss, sr, sy;\r\n    if ( flag ) {\r\n        if (num_steps<30) {\r\n    //printf(\"cmd:%s\\n\",\"test 1\");\r\n                fs=fopen(\"serial.out\",\"rb\");\r\n                fr=fopen(\"ref.out\",\"rb\");\r\n                fy=fopen(\"data.out\",\"rb\");\r\n                ss = fread(&ds, sizeof(double), 1, fs);\r\n                sr = fread(&dr, sizeof(double), 1, fr);\r\n                sy = fread(&dy, sizeof(double), 1, fy);\r\n                fclose(fs);\r\n                fclose(fr);\r\n                fclose(fy);\r\n                        printf(\"\\\"ser_cost\\\":\\\"%6.4e\\\", \\\"ser_val\\\":\\\"%15.13lf\\\",\", scost, ds);\r\n                        printf(\"\\\"ref_cost\\\":\\\"%6.4e\\\", \\\"ref_ratio\\\":\\\"%-5.3e\\\",\\\"ref_val\\\":\\\"%15.13lf\\\", \\\"ref_diff\\\":\\\"%10.8e\\\",\", rcost, scost/rcost, dr, fabs(ds - dr));\r\n                        printf(\"\\\"you_cost\\\":\\\"%6.4e\\\", \\\"you_ratio\\\":\\\"%-5.3e\\\",\\\"you_val\\\":\\\"%15.13lf\\\",\\\"you_diff\\\":\\\"%10.8e\\\"\", ycost, scost/ycost, dy, fabs(ds - dy));\r\n                        unlink(\"ref.out\");\r\n                        unlink(\"serial.out\");\r\n        } else {\r\n                //printf(\"cmd:%s\\n\",\"test 2\");\r\n                fr=fopen(\"ref.out\",\"rb\");\r\n                fy=fopen(\"data.out\",\"rb\");\r\n                sr = fread(&dr, sizeof(double), 1, fr);\r\n                sy = fread(&dy, sizeof(double), 1, fy);\r\n                fclose(fr);\r\n                fclose(fy);\r\n                        printf(\"reference parallel impl.: time_cost=%-6.4e pi=%15.13lf\\n\", rcost, dr);\r\n                        printf(\"your impl.              : time_cost=%-6.4e pi=%15.13lf diff=%10.8e\\n\", ycost, dy, fabs(dr - dy));\r\n                        unlink(\"ref.out\");\r\n        }\r\n    } else {\r\n    printf(\"cmd:%s\\n\",\"test 3\");\r\n        fy=fopen(\"data.out\",\"rb\");\r\n        sy = fread(&dy, sizeof(double), 1, fy);\r\n        fclose(fy);\r\n        printf(\"your impl. : time_cost=%-6.4e pi=%15.13lf\\n\", ycost, dy);\r\n    }\r\n    unlink(\"data.out\");\r\n    return EXIT_SUCCESS;\r\n}\r\n', '#include <mpi.h>\r\n#include <stdlib.h>\r\n\r\nint main(int argc,char ** argv) {   \r\n    int my_rank, np;\r\n    MPI_Init(&argc,&argv);\r\n    MPI_Comm_rank(MPI_COMM_WORLD,&my_rank);\r\n    MPI_Comm_size(MPI_COMM_WORLD,&np);\r\n    MPI_Finalize(); \r\n    return EXIT_SUCCESS;\r\n}\r\n\r\n\r\n', '#include <stdlib.h>\r\n#include <stdio.h>\r\n\r\nint main (int argc, char* argv[]) {\r\n	int64_t i, num_steps;\r\n	double pi, x, sum, step;\r\n     \r\n    num_steps = atoll(argv[1]);\r\n    num_steps = ((int64_t)1<<num_steps);\r\n    sum = 0.;\r\n    step = 1.0/(double) num_steps;\r\n     \r\n    for (i=1; i<=num_steps; i++) {\r\n    	x = (i-0.5)*step;\r\n        sum = sum + 4.0/(1.0+x*x);\r\n    }\r\n    pi = step * sum;\r\n    \r\n    FILE *fout=fopen(\"serial.out\",\"wb\");\r\n    fwrite(&pi, sizeof(double), 1, fout);\r\n    fclose(fout);\r\n     \r\n    return EXIT_SUCCESS;\r\n}\r\n\r\n', '#include <mpi.h>\r\n#include <stdlib.h>\r\n#include <stdio.h>\r\n\r\n\r\nint main(int argc, char**argv) { \r\n\r\n    int rank, size;\r\n	int64_t i, num_steps;\r\n	double pi, x, sum, step, loc_sum = 0.0;\r\n	\r\n    num_steps = atoll(argv[1]);//printf(\"%20.18f %ld\\n\", pi, num_steps);\r\n    num_steps = ((int64_t)1<<num_steps);\r\n    sum = 0.;\r\n    step = 1.0/(double) num_steps;\r\n    \r\n\r\n	MPI_Init(&argc, &argv);\r\n	MPI_Comm_size(MPI_COMM_WORLD, &size);\r\n	MPI_Comm_rank(MPI_COMM_WORLD, &rank);\r\n     \r\n    for (i=rank+1; i<=num_steps ; i+=size) {\r\n         x = (i-0.5)*step;\r\n         loc_sum += 4.0/(1.0+x*x);\r\n    }\r\n    MPI_Allreduce(&loc_sum, &sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD); \r\n    pi = sum * step;\r\n     \r\n    //evaluate(steps, ts, te, pi);\r\n    if (rank==0) {\r\n    	FILE *fout=fopen(\"ref.out\",\"wb\");\r\n    	fwrite(&pi, sizeof(double), 1, fout);\r\n    	fclose(fout);\r\n    }\r\n     \r\n    MPI_Finalize();\r\n\r\n    return EXIT_SUCCESS;\r\n}\r\n');
+INSERT INTO `programs` VALUES ('2', '编写MPI程序', '编写MPI程序，求小于2n的素数。\r\n\r\na)	输入：整数n，10\\<n\\<48。\r\n\r\nb)	输出：二进制文件。每个素数用一个int64_t型的整数表示，找到的全部素数按照从小到大顺序存储在输出文件中。\r\n', '0', '0', '0', '2016-12-29 23:53:40', '3', '', '0', null, null, null, null);
+INSERT INTO `programs` VALUES ('3', '计算π的近似值', '公式![](/static/upload/md_images/20161229235552.png)可用于计算π的近似值。编写串行程序、Pthreads程序、和MPI程序实现该公式，分别计算π的近似值。\r\n\r\na)	输入：整数k和p，10\\<k\\<48。n=2k表示计算精度，p是并行执行时处理器的数量。\r\n\r\nb)	输出：每个版本分别以科学表示法输出所计算的π。\r\n', '0', '0', '0', '2016-12-29 23:56:26', '3', '#include <mpi.h>\n#include <stdio.h>\nint main(int argc, char **argv)\n{ \n    MPI_Init(&argc, &argv); \n    \n    float sum=0.0;\n    float i=1,d=1;\n    while(1/i>=1e-6)\n    {\n       sum=sum+d/i;\n       d=d*(-1);\n       i=i+2;\n    }           \n    sum=sum*4;\n    printf(\"value is %0.6f\",sum);\n    \n    MPI_Finalize();\n    return 0;\n} \n', '1', '#include <stdio.h>\r\n#include <stdlib.h>\r\n#include <string.h>\r\n#include <math.h>\r\n#include <time.h>\r\n#include <unistd.h>\r\n#include <sys/types.h>\r\n#include <sys/wait.h>\r\nusing namespace std;\r\n\r\n#define NANO           1000000000\r\n\r\nint main(int argc, char* argv[] ){\r\n    int8_t flag = 1;\r\n    struct timespec ts,te;\r\n    double scost, rcost, ycost;\r\n    char command[256];\r\n\r\n    sscanf(argv[1], \"%hhd\", &flag);\r\n    //printf(\"cmd:%s\\n\",\"test\");\r\n    //return 0 ; \r\n    int64_t num_steps = atoll(argv[3]);\r\n    if ( flag ) {\r\n        if (num_steps<30) {\r\n                        sprintf(command, \"./serial %s\", argv[3]);\r\n                        clock_gettime(CLOCK_REALTIME, &ts);\r\n                        //printf(\"cmd:%s\\n\",command);\r\n                        system(command);\r\n                        clock_gettime(CLOCK_REALTIME, &te);\r\n                        scost = te.tv_sec - ts.tv_sec + (double)(te.tv_nsec-ts.tv_nsec)/(double)NANO;\r\n        }\r\n\r\n        sprintf(command, \"mpirun -np %s ./hello\", argv[2]);\r\n        system(command);\r\n        sprintf(command, \"mpirun -np %s ./ref %s\", argv[2], argv[3]);\r\n                clock_gettime(CLOCK_REALTIME, &ts);\r\n                system(command);\r\n                clock_gettime(CLOCK_REALTIME, &te);\r\n                rcost = te.tv_sec - ts.tv_sec + (double)(te.tv_nsec-ts.tv_nsec)/(double)NANO;\r\n    }\r\n    sprintf(command, \"mpirun -np %s ./hello\", argv[2]);\r\n    //printf(\"cmd:%s\\n\",command);\r\n    system(command);\r\n    sprintf(command, \"mpirun -np %s ./program %s\", argv[2], argv[3]);\r\n    //printf(\"cmd:%s\\n\",command);\r\n    clock_gettime(CLOCK_REALTIME, &ts);\r\n    system(command);\r\n    clock_gettime(CLOCK_REALTIME, &te);\r\n    ycost = te.tv_sec - ts.tv_sec + (double)(te.tv_nsec-ts.tv_nsec)/(double)NANO;\r\n    FILE *fs, *fr, *fy;\r\n    double ds, dr, dy;\r\n    int    ss, sr, sy;\r\n    if ( flag ) {\r\n        if (num_steps<30) {\r\n    //printf(\"cmd:%s\\n\",\"test 1\");\r\n                fs=fopen(\"serial.out\",\"rb\");\r\n                fr=fopen(\"ref.out\",\"rb\");\r\n                fy=fopen(\"data.out\",\"rb\");\r\n                ss = fread(&ds, sizeof(double), 1, fs);\r\n                sr = fread(&dr, sizeof(double), 1, fr);\r\n                sy = fread(&dy, sizeof(double), 1, fy);\r\n                fclose(fs);\r\n                fclose(fr);\r\n                fclose(fy);\r\n                        printf(\"\\\"ser_cost\\\":\\\"%6.4e\\\", \\\"ser_val\\\":\\\"%15.13lf\\\",\", scost, ds);\r\n                        printf(\"\\\"ref_cost\\\":\\\"%6.4e\\\", \\\"ref_ratio\\\":\\\"%-5.3e\\\",\\\"ref_val\\\":\\\"%15.13lf\\\", \\\"ref_diff\\\":\\\"%10.8e\\\",\", rcost, scost/rcost, dr, fabs(ds - dr));\r\n                        printf(\"\\\"you_cost\\\":\\\"%6.4e\\\", \\\"you_ratio\\\":\\\"%-5.3e\\\",\\\"you_val\\\":\\\"%15.13lf\\\",\\\"you_diff\\\":\\\"%10.8e\\\"\", ycost, scost/ycost, dy, fabs(ds - dy));\r\n                        unlink(\"ref.out\");\r\n                        unlink(\"serial.out\");\r\n        } else {\r\n                //printf(\"cmd:%s\\n\",\"test 2\");\r\n                fr=fopen(\"ref.out\",\"rb\");\r\n                fy=fopen(\"data.out\",\"rb\");\r\n                sr = fread(&dr, sizeof(double), 1, fr);\r\n                sy = fread(&dy, sizeof(double), 1, fy);\r\n                fclose(fr);\r\n                fclose(fy);\r\n                        printf(\"reference parallel impl.: time_cost=%-6.4e pi=%15.13lf\\n\", rcost, dr);\r\n                        printf(\"your impl.              : time_cost=%-6.4e pi=%15.13lf diff=%10.8e\\n\", ycost, dy, fabs(dr - dy));\r\n                        unlink(\"ref.out\");\r\n        }\r\n    } else {\r\n    printf(\"cmd:%s\\n\",\"test 3\");\r\n        fy=fopen(\"data.out\",\"rb\");\r\n        sy = fread(&dy, sizeof(double), 1, fy);\r\n        fclose(fy);\r\n        printf(\"your impl. : time_cost=%-6.4e pi=%15.13lf\\n\", ycost, dy);\r\n    }\r\n    unlink(\"data.out\");\r\n    return EXIT_SUCCESS;\r\n}\r\n', '#include <mpi.h>\r\n#include <stdlib.h>\r\n\r\nint main(int argc,char ** argv) {   \r\n    int my_rank, np;\r\n    MPI_Init(&argc,&argv);\r\n    MPI_Comm_rank(MPI_COMM_WORLD,&my_rank);\r\n    MPI_Comm_size(MPI_COMM_WORLD,&np);\r\n    MPI_Finalize(); \r\n    return EXIT_SUCCESS;\r\n}\r\n\r\n\r\n', '#include <stdlib.h>\r\n#include <stdio.h>\r\n\r\nint main (int argc, char* argv[]) {\r\n	int64_t i, num_steps;\r\n	double pi, x, sum, step;\r\n     \r\n    num_steps = atoll(argv[1]);\r\n    num_steps = ((int64_t)1<<num_steps);\r\n    sum = 0.;\r\n    step = 1.0/(double) num_steps;\r\n     \r\n    for (i=1; i<=num_steps; i++) {\r\n    	x = (i-0.5)*step;\r\n        sum = sum + 4.0/(1.0+x*x);\r\n    }\r\n    pi = step * sum;\r\n    \r\n    FILE *fout=fopen(\"serial.out\",\"wb\");\r\n    fwrite(&pi, sizeof(double), 1, fout);\r\n    fclose(fout);\r\n     \r\n    return EXIT_SUCCESS;\r\n}\r\n\r\n', '#include <mpi.h>\r\n#include <stdlib.h>\r\n#include <stdio.h>\r\n\r\n\r\nint main(int argc, char**argv) { \r\n\r\n    int rank, size;\r\n	int64_t i, num_steps;\r\n	double pi, x, sum, step, loc_sum = 0.0;\r\n	\r\n    num_steps = atoll(argv[1]);//printf(\"%20.18f %ld\\n\", pi, num_steps);\r\n    num_steps = ((int64_t)1<<num_steps);\r\n    sum = 0.;\r\n    step = 1.0/(double) num_steps;\r\n    \r\n\r\n	MPI_Init(&argc, &argv);\r\n	MPI_Comm_size(MPI_COMM_WORLD, &size);\r\n	MPI_Comm_rank(MPI_COMM_WORLD, &rank);\r\n     \r\n    for (i=rank+1; i<=num_steps ; i+=size) {\r\n         x = (i-0.5)*step;\r\n         loc_sum += 4.0/(1.0+x*x);\r\n    }\r\n    MPI_Allreduce(&loc_sum, &sum, 1, MPI_DOUBLE, MPI_SUM, MPI_COMM_WORLD); \r\n    pi = sum * step;\r\n     \r\n    //evaluate(steps, ts, te, pi);\r\n    if (rank==0) {\r\n    	FILE *fout=fopen(\"ref.out\",\"wb\");\r\n    	fwrite(&pi, sizeof(double), 1, fout);\r\n    	fclose(fout);\r\n    }\r\n     \r\n    MPI_Finalize();\r\n\r\n    return EXIT_SUCCESS;\r\n}\r\n');
 INSERT INTO `programs` VALUES ('4', '计算两个矩阵的乘积', '计算两个矩阵A和B的乘积A×B，其中A是m×n的单精度浮点数矩阵、B是n×k的单精度浮点数矩阵。\r\n\r\na)	输入：m、n、k、fa、fb、of。m、n、k是三个正整数，分别表示矩阵A和B的行数、列数。fa和fb是两个二进制输入文件，fa按行优先顺序存储A的元素值，fb按行优先顺序存储B的元素值；of是输出文件的名称。\r\n\r\nb)	输出：名为of的二进制文件，按行优先顺序存储结果矩阵的元素。\r\n\r\n', '0', '0', '0', '2016-12-29 23:58:14', '3', '', '0', null, null, null, null);
 INSERT INTO `programs` VALUES ('5', '整型数组排序', '对长度为2n的整型数组排序。原始数组的每个元素类型为int32_t，以二进制存储在数据文件data.in中。\r\n\r\na)	输入：n。\r\n\r\nb)	输出：对data.in中前2n个元素从小到大排序，并将排序结果以二进制存储在文件data.out中。\r\n', '0', '0', '0', '2016-12-29 23:58:44', '3', '', '0', null, null, null, null);
 INSERT INTO `programs` VALUES ('6', '求粒子状态', '在某个粒子系统中共有2n个粒子，粒子之间的互相吸引力导致其状态不断变化。为简化问题，我们将任意两个粒子b1和b2之间的吸引力用公式![](/static/upload/md_images/20161230000108.png)表示，其中m1、m2分别是b1和b2的质量，→┬r_12是b1和b2之间的矢量距离；粒子b的移动速度用矢量表示f ⃗/m表示，其中f ⃗、m分别是b的受力和质量。计算经过t个时间步后，该粒子系统的状态。粒子的原始状态存储在二进制文件data.in中，每个粒子的状态占用4个双精度浮点数，依次是质量、x轴坐标、y轴坐标、z轴坐标。\r\n\r\na)	输入：n，t。n表示粒子系统中共有2n个粒子，t是模拟计算的时间步数量。\r\n\r\nb)	输出：经过t步后各个粒子的状态，存储在二进制文件data.out中data.in。粒子在输出文件中的存储顺序与输入文件的一致，每个粒子的状态占用4个双精度浮点数，依次是质量、x轴坐标、y轴坐标、z轴坐标。\r\n', '0', '0', '0', '2016-12-30 00:02:31', '3', '', '0', null, null, null, null);
@@ -1308,18 +1279,15 @@ CREATE TABLE `program_tag` (
   `program_id` int(11) NOT NULL,
   `tag_id` int(11) NOT NULL,
   PRIMARY KEY (`program_id`,`tag_id`),
-  KEY `2` (`tag_id`),
-  CONSTRAINT `1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`),
-  CONSTRAINT `2` FOREIGN KEY (`tag_id`) REFERENCES `prog_tags` (`id`)
+  KEY `tag_id` (`tag_id`),
+  CONSTRAINT `program_tag_ibfk_1` FOREIGN KEY (`program_id`) REFERENCES `programs` (`id`),
+  CONSTRAINT `program_tag_ibfk_2` FOREIGN KEY (`tag_id`) REFERENCES `prog_tags` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of program_tag
 -- ----------------------------
-INSERT INTO `program_tag` VALUES ('1', '11');
-INSERT INTO `program_tag` VALUES ('2', '12');
-INSERT INTO `program_tag` VALUES ('5', '12');
-INSERT INTO `program_tag` VALUES ('3', '13');
+INSERT INTO `program_tag` VALUES ('1', '1');
 
 -- ----------------------------
 -- Table structure for `progress`
@@ -1354,16 +1322,15 @@ INSERT INTO `progress` VALUES ('15', '5', '0', '2017-03-25 22:09:41');
 DROP TABLE IF EXISTS `prog_tags`;
 CREATE TABLE `prog_tags` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `name` varchar(256) NOT NULL,
+  `name` varchar(128) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of prog_tags
 -- ----------------------------
-INSERT INTO `prog_tags` VALUES ('11', 'openmp');
-INSERT INTO `prog_tags` VALUES ('12', 'mpi');
-INSERT INTO `prog_tags` VALUES ('13', 'xis');
+INSERT INTO `prog_tags` VALUES ('1', 'mpi');
+INSERT INTO `prog_tags` VALUES ('2', 'openmp');
 
 -- ----------------------------
 -- Table structure for `qrcode`
@@ -1896,24 +1863,14 @@ CREATE TABLE `statistics` (
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
   CONSTRAINT `statistics_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=77 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=67 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of statistics
 -- ----------------------------
 INSERT INTO `statistics` VALUES ('64', '3', '10001', null, '2017-09-10 13:19:56');
 INSERT INTO `statistics` VALUES ('65', '3', '10001', null, '2017-09-10 13:19:58');
-INSERT INTO `statistics` VALUES ('66', null, '10001', null, '2017-09-11 09:17:27');
-INSERT INTO `statistics` VALUES ('67', '3', '10001', null, '2017-09-11 09:17:27');
-INSERT INTO `statistics` VALUES ('68', '3', '10001', null, '2017-09-11 10:01:42');
-INSERT INTO `statistics` VALUES ('69', null, '10001', null, '2017-09-11 10:24:39');
-INSERT INTO `statistics` VALUES ('70', '10', '10001', null, '2017-09-11 10:24:47');
-INSERT INTO `statistics` VALUES ('71', '10', '10001', null, '2017-09-11 10:25:26');
-INSERT INTO `statistics` VALUES ('72', null, '10001', null, '2017-09-11 11:14:52');
-INSERT INTO `statistics` VALUES ('73', '3', '10001', null, '2017-09-11 20:09:45');
-INSERT INTO `statistics` VALUES ('74', '3', '10001', null, '2017-09-11 20:09:53');
-INSERT INTO `statistics` VALUES ('75', '3', '10001', null, '2017-09-11 20:16:39');
-INSERT INTO `statistics` VALUES ('76', '3', '10001', null, '2017-09-12 15:35:37');
+INSERT INTO `statistics` VALUES ('66', '3', '10001', null, '2017-09-13 10:14:52');
 
 -- ----------------------------
 -- Table structure for `submit_programs`
@@ -2181,14 +2138,14 @@ CREATE TABLE `users` (
 -- ----------------------------
 INSERT INTO `users` VALUES ('1', 'root', 'pbkdf2:sha1:1000$xBnOyGu0$2265b81c262f0438d80348748b24db1f66a65425', '1291023320@qq.com', 'name', '1', '13800138000', 'university', '0', '-1', '1', '2017-03-24 09:24:17', '2016-09-29 03:14:30', '', '1.png?t=1475844478.0', '1', '知其然，知其所以然。知识广度是深度的副产品！', '6', '1', '3', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('2', 'test', 'pbkdf2:sha1:1000$JZE0rscV$a7b07ad8602a608e76dc583142b1aaf2c378c55b', '1@qq.com', 'name', '1', '13800138000', 'university', '0', '-1', '0', '2017-01-04 14:13:35', '2016-09-29 03:35:29', null, 'none.jpg', '1', '好好学习，天天向上', '0', '0', '1', null, '0', '1', null, '113.28', '23.12', '广州');
-INSERT INTO `users` VALUES ('3', 'teacher', 'pbkdf2:sha1:1000$ZRqJzJuR$ec4e50db6eb3eaae92e7cb8bd9468fd2743c3505', 'teacher@qq.com', '张三丰', '0', '13800138000', '中山大学', '150101102', '-1', '0', '2017-09-11 11:15:15', '2016-09-29 03:36:08', 'http://sdcs.sysu.edu.cn', '3.png?t=1489327909.05', '2', '混吃等死不舒服', '0', '4', '6', null, '0', '1', null, '113.28', '23.12', '广州');
+INSERT INTO `users` VALUES ('3', 'teacher', 'pbkdf2:sha1:1000$ZRqJzJuR$ec4e50db6eb3eaae92e7cb8bd9468fd2743c3505', 'teacher@qq.com', '张三丰', '0', '13800138000', '中山大学', '150101102', '-1', '0', '2017-07-20 10:20:36', '2016-09-29 03:36:08', 'http://sdcs.sysu.edu.cn', '3.png?t=1489327909.05', '2', '混吃等死不舒服', '0', '4', '6', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('4', 'abc', 'pbkdf2:sha1:1000$Z0hb47ZO$8cc84309e6a696c6deb28d6ebb910fa828d16e3d', '3@qq.com', 'name', '1', '13800138000', 'university', '0', '-1', '0', '2016-10-23 10:40:03', '2016-10-17 03:00:38', null, 'none.jpg', '1', null, '1', '2', '0', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('5', 'admin', 'pbkdf2:sha1:1000$h9IWWCJh$78e5c725ab15124732c7b19dbe43775df4e823e1', 'admin@qq.com', 'name', '1', '13800138000', 'university', '0', '-1', '0', '2017-03-23 15:23:28', '2016-10-22 11:41:15', null, 'none.jpg', '0', null, '0', '0', '0', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('6', 'wudi', 'pbkdf2:sha1:1000$6eg5KT1A$36731eb6b025347439f6f333050fa727f7d74d94', 'wudi27@mail.sysu.edu.cn', '吴迪测试2', '0', '13800138000', '中山大学', '14312412', '-1', '0', '2017-03-22 23:09:29', '2016-10-18 02:57:55', 'netlab.sysu.edu.cn', '6.png?t=1490195402.92', '2', null, '1', '1', '0', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('7', 'yongyi_yang', 'pbkdf2:sha1:1000$qeUp02pL$088fe9b296a054b622d5b3826045d9c7dbd28e9c', '18826073128@163.com', 'name', '1', '13800138000', 'university', '0', '-1', '0', '2016-12-15 12:03:44', '2016-10-18 15:03:29', null, 'none.jpg', '1', null, '2', '0', '0', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('8', 'alexhanbing', 'pbkdf2:sha1:1000$MsiV0RcE$b9d0794fd92ce0f1d6c3432f4a68614ec60294ca', '565613352@qq.com', 'name', '1', '13800138000', 'university', '0', '-1', '0', '2016-10-21 14:18:52', '2016-10-21 14:18:52', null, null, '1', null, '0', '3', '0', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('9', 'forest80', 'pbkdf2:sha1:1000$34jYf26A$3f6f628bd4e48ed8492219171920e9d498d5023b', 'forest80@163.com', 'name', '1', '13800138000', 'university', '0', '-1', '1', '2016-12-05 14:04:15', '2016-12-05 14:04:15', null, 'none.jpg', '1', null, '0', '0', '0', null, '0', '1', null, '113.28', '23.12', '广州');
-INSERT INTO `users` VALUES ('10', 'Zouzhp', 'pbkdf2:sha1:1000$fzjFGAmb$30667cca608819c147c04d5a49671989dd66cefd', '503951764@qq.com', 'name', '1', '13800138000', 'university', '0', '-1', '1', '2017-09-11 10:24:46', '2016-12-12 10:22:07', null, '10.png?t=1481509362.88', '0', null, '0', '0', '0', null, '0', '1', null, '113.28', '23.12', '广州');
+INSERT INTO `users` VALUES ('10', 'Zouzhp', 'pbkdf2:sha1:1000$fzjFGAmb$30667cca608819c147c04d5a49671989dd66cefd', '503951764@qq.com', 'name', '1', '13800138000', 'university', '0', '-1', '1', '2017-03-16 10:29:13', '2016-12-12 10:22:07', null, '10.png?t=1481509362.88', '1', null, '0', '0', '0', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('11', 'test1', 'pbkdf2:sha1:1000$3fdjJ0du$b93a90b23e1365bd53962cf7339ff69d7c6e0423', 'test@163.com', 'name', '1', '13800138000', 'university', '0', '-1', '1', '2016-12-15 12:15:14', '2016-12-15 12:15:14', null, 'none.jpg', '1', null, '0', '0', '0', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('12', 'test_nscc', 'pbkdf2:sha1:1000$ANtf20qe$a3f467c203a80abde2b126307f04af5affb50164', 'lijianggs@126.com', 'name', '1', '13800138000', 'university', '0', '-1', '1', '2017-03-12 21:06:06', '2017-01-03 15:14:08', null, 'none.jpg', '1', null, '0', '0', '0', null, '0', '1', null, '113.28', '23.12', '广州');
 INSERT INTO `users` VALUES ('13', '111', 'pbkdf2:sha1:1000$DaD5XWyO$c00d0caab874bac4e3ef1328bdcfc0408a5974b9', '1970025901@qq.com', 'name', '1', '13800138000', 'university', '0', '-1', '1', '2017-03-21 16:32:50', '2017-01-09 18:47:36', null, 'none.jpg', '1', null, '0', '0', '0', null, '0', '1', null, '113.28', '23.12', '广州');
@@ -2206,32 +2163,10 @@ CREATE TABLE `vnc_knowledge` (
   `about` text NOT NULL,
   `cover_url` varchar(512) DEFAULT NULL,
   `teacher_id` int(11) DEFAULT NULL,
-  `lab_id` int(11) DEFAULT NULL,
-  `is_hidden` tinyint(1) DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `teacher_id` (`teacher_id`),
-  KEY `lab_id` (`lab_id`),
-  CONSTRAINT `vnc_knowledge_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`),
-  CONSTRAINT `vnc_knowledge_ibfk_2` FOREIGN KEY (`lab_id`) REFERENCES `lab` (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Dumping data for table `vnc_knowledge`
---
-
-LOCK TABLES `vnc_knowledge` WRITE;
-/*!40000 ALTER TABLE `vnc_knowledge` DISABLE KEYS */;
-INSERT INTO `vnc_knowledge` VALUES ('1', '配置实验1', '此乃配置实验1', 'upload/vnc_lab/default.png', '3', '5', '0');
-INSERT INTO `vnc_knowledge` VALUES ('2', '配置实验2', '此乃配置实验2', 'upload/vnc_lab/default.png', '3', '6', '0');
-INSERT INTO `vnc_knowledge` VALUES ('3', '配置实验3', '此乃配置实验3', 'upload/vnc_lab/default.png', '3', '7', '0');
-INSERT INTO `vnc_knowledge` VALUES ('4', '配置实验4', '此乃配置实验4', 'upload/vnc_lab/default.png', '3', '8', '0');
-/*!40000 ALTER TABLE `vnc_knowledge` ENABLE KEYS */;
-UNLOCK TABLES;
-
---
--- Table structure for table `vnc_progresses`
---
+  CONSTRAINT `vnc_knowledge_ibfk_1` FOREIGN KEY (`teacher_id`) REFERENCES `users` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 
 -- ----------------------------
 -- Records of vnc_knowledge
