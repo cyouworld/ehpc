@@ -1412,6 +1412,7 @@ def program_create():
                                default_code=request.form['default-code'])
         curr_program.teacher = current_user
         curr_program.difficulty = request.values.get('difficulty')
+        curr_program.default_language = request.values.get('default-language')
         tags = request.values.getlist('tag')
         db.session.add(curr_program)
         db.session.commit()
@@ -1440,6 +1441,7 @@ def program_edit():
         curr_program.title = request.form['title']
         curr_program.detail = request.form['content']
         curr_program.default_code = request.form['default-code']
+        curr_program.default_language = request.form['default-language']
         curr_program.difficulty = request.values.get('difficulty')
 
         tags = curr_program.tags

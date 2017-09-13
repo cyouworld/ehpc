@@ -49,6 +49,14 @@
                             </div>
 
                             <div style="margin-bottom: 15px">
+                                <label>默认编程语言：</label>
+                                <select name="default-language">
+                                    <option value="0">mpi</option>
+                                    <option {% if program_problem.default_language == 1 %}selected{% endif %} value="1">openmp</option>
+                                </select>
+                            </div>
+
+                            <div style="margin-bottom: 15px">
                                 <label>标签设置：</label>
                                 {% if tags %}
                                     {% for t in tags %}

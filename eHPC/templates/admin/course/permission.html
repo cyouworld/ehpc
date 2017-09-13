@@ -45,9 +45,11 @@
                             <div class="form-group">
                                 <label class="col-md-2 control-label">邀请码设置</label>
                                 <div class="col-md-8">
-                                    <input name="invite_code" class="form-control" style="width: 150px"
-                                           type="text" value="{% if course.invite_code %}{{ course.invite_code }}{% endif %}"
-                                           data-parsley-maxlength="4" placeholder="建议输入四位数字">
+                                    <input type="text" onkeyup="focus_to_2()" maxlength="1" id="invite_code_1" name="invite_code_1" style="height: 50px;width: 50px;font-size: 30px; text-align: center;">
+                                    <input type="text" onkeyup="focus_to_3()" maxlength="1" id="invite_code_2" name="invite_code_2" style="height: 50px;width: 50px;font-size: 30px; text-align: center;">
+                                    <input type="text" onkeyup="focus_to_4()" maxlength="1" id="invite_code_3" name="invite_code_3" style="height: 50px;width: 50px;font-size: 30px; text-align: center;">
+                                    <input type="text" maxlength="1" id="invite_code_4" name="invite_code_4" style="height: 50px;width: 50px;font-size: 30px; text-align: center;">
+                                    <input type="hidden" id="invite_code" name="invite_code">
                                 </div>
                             </div>
 
@@ -156,6 +158,19 @@
 
 {% block footer_ext %}
     <script type="text/javascript">
+
+        //课程邀请码跳转
+        function focus_to_2() {
+            $("#invite_code_2").focus();
+        }
+        function focus_to_3() {
+            $("#invite_code_3").focus();
+        }
+        function focus_to_4() {
+            $("#invite_code_4").focus();
+        }
+
+
         function checkYes() {
             $("#dtp_input1").val(null);
             $("#dtp_input2").val(null);
@@ -169,6 +184,15 @@
         }
 
         $(document).ready(function () {
+            {% if course.invite_code %}
+                var invite_code = "{{ course.invite_code }}";
+                $("#invite_code_1").val(invite_code.charAt(0));
+                $("#invite_code_2").val(invite_code.charAt(1));
+                $("#invite_code_3").val(invite_code.charAt(2));
+                $("#invite_code_4").val(invite_code.charAt(3));
+            {% endif %}
+
+
             $('#dtp1').datetimepicker({
                 format: "yyyy-mm-dd hh:ii",
                 weekStart: 1,
@@ -198,6 +222,9 @@
                         return;
                     }
                 }
+
+                var invite_code = $("#invite_code_1").val() + $("#invite_code_2").val() + $("#invite_code_3").val() + $("#invite_code_4").val();
+                $("#invite_code").val(invite_code);
 
                 $.ajax({
                     type: "post",

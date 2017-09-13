@@ -348,7 +348,8 @@ class Program(db.Model):
     acceptedNum = db.Column(db.Integer, default=0)      # 通过次数
     submitNum = db.Column(db.Integer, default=0)        # 提交次数
 
-    default_code = db.Column(db.Text(), default="")     # 预先设定的代码
+    default_code = db.Column(db.Text(), default="")      # 预先设定的代码
+    default_language = db.Column(db.Integer, default=0)  # 题目语言, 0（或None）为mpi，1为openmp
 
     can_evaluate = db.Column(db.Boolean, default=False)  # 是否支持评测
     pi_code = db.Column(db.Text(), default="")  # 评测主代码

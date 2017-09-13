@@ -67,10 +67,10 @@
         <form onsubmit="submit_code(); return false;">
             <div class="row">
                 <div class="col-md-3 form-group">
-                    <label class="" for="language">编程语言</label>
-                    <select class="col-md-6 selectpicker" name="language" id="language">
+                    <label class="" for="the_language">编程语言</label>
+                    <select class="col-md-6 selectpicker" name="the_language" id="the_language">
                         <option value="mpi">mpi</option>
-                        <option value="openmp">openmp</option>
+                        <option {% if program.default_language == 1 %}selected{% endif %} value="openmp">openmp</option>
                         <option value="ace/mode/c_cpp">C</option>
                         <option value="ace/mode/c_cpp">C++</option>
                         <option value="ace/mode/python">Python</option>
@@ -309,7 +309,7 @@
         function submit_code() {
             document.getElementById('source_code').value = editor.getValue();
 
-            $("input[name=language]").val($("#language").find("option:selected").text());
+            $("input[name=language]").val($("#the_language").find("option:selected").text());
             $("input[name=cpu_number]").val($("#cpu_number").find("option:selected").text());
 
             var data = $.param({'job_op': '1', 'job_id': 'ERROR'}) + '&' + $("form").serialize();
