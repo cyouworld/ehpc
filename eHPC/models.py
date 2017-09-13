@@ -32,6 +32,7 @@ class User(UserMixin, db.Model):
 
     # 权限: 0-管理员, 1-学生, 2-老师, 3-高性能计算管理员
     permissions = db.Column(db.Integer, default=1, nullable=False)
+    wait_for_audit = db.Column(db.Boolean, default=False)
     website = db.Column(db.String(128), nullable=True)
     avatar_url = db.Column(db.String(128), default="none.jpg")
     # 个人座右铭, 用于在个人主页显示

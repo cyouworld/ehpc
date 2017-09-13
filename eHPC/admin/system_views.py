@@ -59,9 +59,33 @@ def user_edit(uid):
                                title=gettext('User Edit'))
 
 
+@admin.route('/audit/teacher/')
+@system_login
+def audit_index():
+    """系统管理员审核教师申请主页面"""
+    users = User.query.filter_by(wait_for_audit=True)
+    return render_template('admin/user/audit_teacher.html', title=u'审核教师申请', users=users)
+
+
+@admin.route('/audit/teacher/<int:user_id>/')
+@system_login
+def audit_teacher(user_id):
+    """系统管理员审核教师申请"""
+    u = User.query.filter_by(id=user_id).first_or_404()
+    if request.args['op'] == 'approve':
+        u.permissions = 2
+        u.wait_for_audit = False
+        db.session.commit()
+    elif request.args['op'] == 'disapprove':
+        u.wait_for_audit = False
+        db.session.commit()
+    return redirect(url_for('admin.audit_index'))
+
+
 @admin.route('/add/teacher/<int:user_id>/', methods=['GET', 'POST'])
 @system_login
 def reg_teacher(user_id):
+    """邮箱审核教师申请"""
     if request.method == 'GET':
         u = User.query.filter_by(id=user_id).first_or_404()
         return render_template('user/reg_teacher.html', user=u, title=u'教师注册')

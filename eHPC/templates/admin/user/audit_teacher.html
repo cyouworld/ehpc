@@ -1,0 +1,63 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block header_ext %}
+    <script src="//cdn.bootcss.com/datatables/1.10.13/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.bootcss.com/semantic-ui/2.2.7/semantic.min.js"></script>
+    <script src="//cdn.bootcss.com/datatables/1.10.13/js/dataTables.semanticui.min.js"></script>
+    <link type="text/css" rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.7/semantic.min.css">
+    <link type="text/css" rel="stylesheet" href="//cdn.bootcss.com/datatables/1.10.13/css/dataTables.semanticui.min.css">
+{% endblock %}
+
+{% block content %}
+    <div class="container" id="content-container">
+        <div class="panel panel-default panel-col">
+            <div class="panel-heading">
+                审核教师用户申请
+            </div>
+            <div class="panel-body" style="padding: 10px">
+
+                <table class="table" id="user-table" style="word-break:break-all;">
+                    <thead>
+                    <tr>
+                        <th width="12%">用户名</th>
+                        <th width="10%">姓名</th>
+                        <th width="15%">学校</th>
+                        <th width="12%">电话</th>
+                        <th width="20%">邮箱地址</th>
+                        <th width="8%">审核操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tb">
+                    {% for u in users %}
+                        <tr uid="{{ u.id }}">
+                            <td>{{ u.username }}</td>
+                            <td>{{ u.name }}</td>
+                            <td>{{ u.university }}</td>
+                            <td>{{ u.phone }}</td>
+                            <td>{{ u.email }}</td>
+                            <td>
+                                <a href="{{ url_for('admin.audit_teacher',user_id=u.id) }}?op=approve">通过</a><span class="divider"> | </span>
+                                <a href="{{ url_for('admin.audit_teacher',user_id=u.id) }}?op=disapprove">拒绝</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script>
+        $(document).ready(
+                function () {
+                    $('#user-table').DataTable({
+                        language: {
+                            url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
+                        }
+                    });
+                });
+    </script>
+{% endblock %}
