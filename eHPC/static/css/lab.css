@@ -11,7 +11,7 @@
 
 .lab-item p {
     margin: 10px;
-    height: 100px;
+    height: 60px;
     overflow: hidden;
 }
 
@@ -275,10 +275,10 @@
     width: 100%;
     font-weight: bolder;
     background-color: #303030;
-    padding: 5px;
+    padding: 0;
     box-shadow: inset 0 0 10px black;
-    overflow: auto;
-    flex-grow: 1;
+    height: 50%;
+    overflow: hidden;
 }
 
 .terminal {
@@ -292,6 +292,8 @@
     font-size: 14px;
     background-color: transparent;
     border-color: transparent;
+    color: rgb(240, 240, 240);
+    height: 100%;
 }
 
 #continue {

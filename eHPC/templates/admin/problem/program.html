@@ -6,19 +6,58 @@
             <div class="panel panel-default panel-col">
                 <div class="panel-heading">
                     <span class="pull-right">
+                        {% if current_user.permissions != 0 %}
                         <a id="create-program" href="{{ url_for('admin.program_create') }}?tag2=lab-2"
                            class="btn btn-info btn-sm">
                             <span class="glyphicon glyphicon-plus"></span>
                             新建题目
                         </a>
-                        <a href="{{ url_for('admin.program_tags') }}?tag2=lab-2"
-                           class="btn btn-info btn-sm">
+                        {% endif %}
+                        <a href="{{ url_for('admin.program_tags') }}?tag2=lab-2" class="btn btn-info btn-sm">
                             标签管理
                         </a>
                     </span>
                         题目列表
                 </div>
                 <div class="panel-body">
+                {% if current_user.permissions == 0 %}
+                    <table class="table fixed-table">
+                        <thead>
+                        <tr>
+                            <th width="5%" style="text-align: center">序号</th>
+                            <th width="30%">名称</th>
+                            <th width="10%" style="text-align: center">支持评测</th>
+                            <th width="15%">创建用户</th>
+                            <th width="20%">创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead><!--表格头-->
+                        <tbody id="tb">
+                        {% if programs | length > 0 %}
+                            {% for program in programs %}
+                                <tr data-id="{{ program.id }}">
+                                    <td style="text-align: center">{{ loop.index }}</td>
+                                    <td class="overflow-ellipsis" data-toggle="tooltip" title="{{ program.title }}">{{ program.title }}</td>
+                                    <td style="text-align: center">
+                                        {% if program.can_evaluate %} 是 {% else %} 否 {% endif %}
+                                    </td>
+                                    <td>{{ program.teacher.name }}({{ program.teacher.university }})</td>
+                                    <td>{{ program.createdTime }}</td>
+                                    <td>
+                                        <a href="{{ url_for('admin.program_edit', id=program.id) }}&tag2=lab-2">编辑</a>
+                                        <span class="divider"> | </span>
+                                        <a href="javascript:void(0)" name="del-btn">删除</a>
+                                        <span class="divider"> | </span>
+                                        <a href="{{ url_for('admin.program_evaluate', id=program.id) }}&tag2=lab-2">评测设置</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr class="text-center"><td colspan="5">暂无编程题</td></tr>
+                        {% endif %}
+                        </tbody><!--表格主体-->
+                    </table>
+                {% else %}
                     <table class="table fixed-table">
                         <thead>
                         <tr>
@@ -57,6 +96,7 @@
                         {% endif %}
                         </tbody><!--表格主体-->
                     </table>
+                {% endif %}
                 </div>
             </div>
         </div>
@@ -69,6 +109,12 @@
 
 {% block footer_ext %}
     <script>
+        {% if current_user.permissions == 0 %}
+            $(function () {
+                $(".col-sm-2.col-md-2.col-xs-2").remove();
+                $(".col-sm-10.col-md-10.col-xs-10").removeClass();
+            });
+        {% endif %}
         $(document).ready(function () {
             var obj = null;
             $("#tb").find("a[name=del-btn]").click(function () {

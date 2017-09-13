@@ -28,7 +28,7 @@
                                     <strong>{{ k.title }}</strong>
                                 </div>
                                 <!-- 对简洁内容进行截断, 防止内容过长 -->
-                                <p> {{ k | get_lab_content | truncate(140, True) }} </p>
+                                <p> {{ k | get_lab_content | truncate(65, True) }} </p>
                                 <div class="progress">
                                     <div class="progress-bar" style="width: {{ k.percentage }}; background: #92c26a;">
                                         <span class="progress-icon fa fa-check" style="border-color:#92c26a; color:#92c26a;"></span><br>

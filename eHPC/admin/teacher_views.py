@@ -18,7 +18,7 @@ from .. import db
 from ..models import Classify, Program, Paper, Question, PaperQuestion, Homework, HomeworkUpload, HomeworkAppendix, HomeworkScore, Notice, ProgTag, program_tag
 from ..models import Course, Lesson, Material, User, Apply, VNCKnowledge, VNCTask, Lab
 from ..models import Knowledge, Challenge, Group
-from ..user.authorize import teacher_login
+from ..user.authorize import teacher_login, admin_login
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename, extension_to_file_type
 from ..util.new_api import init_evaluate_program
 from ..util.pdf import get_paper_pdf
@@ -1129,7 +1129,7 @@ def paper_edit(course_id, paper_id):
 
 
 @admin.route('/problem/')
-@teacher_login
+@admin_login
 def problem():
     return render_template('admin/problem/index.html', classify=current_user.teacher_classify,
                            questions=current_user.teacher_questions,
@@ -1138,7 +1138,7 @@ def problem():
 
 
 @admin.route('/problem/<question_type>/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def question(question_type):
     if request.method == 'GET':
         questions = None
@@ -1163,7 +1163,7 @@ def question(question_type):
 
 
 @admin.route('/problem/<question_type>/<int:question_classify>/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def question_filter_by_classify(question_type, question_classify):
     if request.method == 'GET':
         questions = None
@@ -1190,7 +1190,7 @@ def question_filter_by_classify(question_type, question_classify):
 
 
 @admin.route('/problem/program/<int:question_classify>/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def program_filter_by_classify(question_classify):
     """ 题库中编程题的入口页面 """
     if request.method == 'GET':
@@ -1207,7 +1207,7 @@ def program_filter_by_classify(question_classify):
 
 
 @admin.route('/problem/<question_type>/create/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def question_create(question_type):
     if request.method == 'GET':
         question_classify = request.args.get("question_classify", None)
@@ -1338,10 +1338,12 @@ def paper_question_edit(paper_id, question_type, question_id):
 
 
 @admin.route('/problem/program/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def program():
     """ 题库中编程题的入口页面 """
     if request.method == 'GET':
+        if current_user.permissions == 0:
+            return render_template('admin/problem/program.html', title=gettext('Program question'), programs=Program.query.all())
         return render_template('admin/problem/program.html', title=gettext('Program question'))
     elif request.method == 'POST':
         # 删除编程题目
@@ -1363,7 +1365,7 @@ def program():
 
 
 @admin.route('/problem/program/tags', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def program_tags():
     """ 题目标签管理 """
     if request.method == 'GET':
@@ -1394,7 +1396,7 @@ def program_tags():
 
 
 @admin.route('/problem/program/create/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def program_create():
     """ 在题库添加编程题 """
     if request.method == 'GET':
@@ -1421,7 +1423,7 @@ def program_create():
 
 
 @admin.route('/problem/program/edit/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def program_edit():
     """ 题库中编程题目的编辑页面 """
     if request.method == 'GET':
@@ -1454,7 +1456,7 @@ def program_edit():
 
 
 @admin.route('/problem/program/evaluate/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def program_evaluate():
     """ 题库中编程题的评测设置 """
     if request.method == 'GET':

@@ -21,10 +21,10 @@
                     <tr>
                         <th width="12%">用户名</th>
                         <th width="10%">姓名</th>
-                        <th width="15%">学校</th>
+                        <th width="13%">学校</th>
                         <th width="12%">电话</th>
                         <th width="20%">邮箱地址</th>
-                        <th width="8%">用户权限</th>
+                        <th width="10%">用户身份</th>
                         <th width="15%">上次登录时间</th>
                         <th width="8%">权限管理</th>
                     </tr>
@@ -59,7 +59,9 @@
                     $('#user-table').DataTable({
                         language: {
                             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
-                        }
+                        },
+                        order: [[ 6, "desc" ]],
+                        iDisplayLength: 50
                     });
                 });
     </script>

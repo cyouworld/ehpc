@@ -35,8 +35,14 @@ def is_system_user(u):
 @filter_blueprint.app_template_filter('show_role')
 def show_role(u):
     if u.permissions == 2:
-        return gettext("Teacher")
-    elif u.permissions == 1:
-        return gettext("Student")
+        return u'教师'
+    elif u.permissions == 1 and u.student_type == 0:
+        return u'本科生'
+    elif u.permissions == 1 and u.student_type == 1:
+        return u'研究生'
     elif u.permissions == 0:
-        return gettext("Administrator")
+        return u'系统管理员'
+    elif u.permissions == 3:
+        return u'机时管理员'
+    else:
+        return u'未知'
