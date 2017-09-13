@@ -9,6 +9,7 @@
                 <li class="nav-hover"><a href="{{ url_for('admin.problem') }}">题目管理</a></li>
                 <li class="nav-hover"><a href="{{ url_for('admin.lab') }}?tag2=lab-0">实验管理</a></li>
                 <li class="nav-hover"><a href="{{ url_for('admin.classify') }}">知识点管理</a></li>
+                <li class="nav-hover"><a href="{{ url_for('admin.case') }}">案例管理</a></li>
             {% elif current_user | is_system_user %}
                 <li class="nav-hover"><a href="{{ url_for('admin.user') }}">用户管理</a></li>
                 <li class="nav-hover"><a href="{{ url_for('admin.course_manage') }}">课程管理</a></li>
@@ -52,6 +53,7 @@
                 <li class="nav-hover"><a href="{{ url_for('admin.problem') }}">题目管理</a></li>
                 <li class="nav-hover"><a href="{{ url_for('admin.lab') }}?tag2=lab-0">实验管理</a></li>
                 <li class="nav-hover"><a href="{{ url_for('admin.classify') }}">知识点管理</a></li>
+                <li class="nav-hover"><a href="{{ url_for('admin.case') }}">案例管理</a></li>
             {% elif current_user | is_system_user %}
                 <li class="nav-hover"><a href="{{ url_for('admin.user') }}">用户管理</a></li>
                 <li class="nav-hover"><a href="{{ url_for('admin.course_manage') }}">课程管理</a></li>
@@ -81,6 +83,7 @@
                     {% if current_user | is_teacher_user %}
                         <li class="nav-hover"><a href="{{ url_for('admin.lab') }}?tag2=lab-0">实验管理</a></li>
                         <li class="nav-hover"><a href="{{ url_for('admin.classify') }}">知识点管理</a></li>
+                        <li class="nav-hover"><a href="{{ url_for('admin.case') }}">案例管理</a></li>
                     {% elif current_user | is_system_user %}
                         <li class="nav-hover"><a href="{{ url_for('admin.article') }}">资讯管理</a></li>
                         <li class="nav-hover"><a href="{{ url_for('admin.group') }}">群组管理</a></li>

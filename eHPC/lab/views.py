@@ -15,9 +15,9 @@ from sqlalchemy import exc
 from eHPC.util.new_api import submit_code_new
 from . import lab
 from .lab_util import get_cur_progress, increase_progress, get_cur_vnc_progress, increase_vnc_progress
-from .vnc_util import is_token_unique, create_new_image, start_vnc_server, start_ssh_server
+from .vnc_util import is_token_unique, create_new_image, start_vnc_server, start_ssh_server, stop_image, start_image
 from .. import db
-from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerImage
+from ..models import Challenge, Knowledge, VNCKnowledge, VNCTask, DockerImage, DockerHolder
 
 
 @lab.route('/')
@@ -303,10 +303,21 @@ def vnc_ready_to_connect():
         result, message, docker_image = create_new_image(docker_image)
         if result is False:
             return jsonify(status='fail', msg=message)
+        if docker_image.docker_holder.using_container_count >= DockerHolder.MAX_RUNNING_COUNT:
+            stop_image(docker_image)
 
     except exc.IntegrityError as e:
         db.session.rollback()
         docker_image = DockerImage.query.filter_by(user_id=current_user.id).first()
+
+    if docker_image.docker_holder.using_container_count >= DockerHolder.MAX_RUNNING_COUNT:
+        return jsonify(status='fail', msg=u'目前使用人数过多，请稍后再试')
+
+    if docker_image.is_running is False:
+        status, msg = start_image(docker_image)
+        if status is False:
+            return jsonify(status='fail', msg=msg)
+
     if protocol == 'vnc':
         if docker_image.is_vnc_running is False:
             result, message = start_vnc_server(docker_image)
@@ -411,7 +422,7 @@ def db_controller():
         cur_image.status = DockerImage.CONNECTED
         cur_image.last_connect_time = datetime.now()
 
-        cur_image.docker_holder.running_container_count += 1
+        cur_image.docker_holder.using_container_count += 1
 
         db.session.commit()
         return jsonify(status='success')
@@ -428,11 +439,13 @@ def db_controller():
             return jsonify(status='fail')
 
         if cur_image.tunnel_id == tunnel_id:
+            stop_image(cur_image)
+
             cur_image.tunnel_id = None
             cur_image.status = DockerImage.DISCONNECTED
             cur_image.token = None
 
-        cur_image.docker_holder.running_container_count -= 1
+        cur_image.docker_holder.using_container_count -= 1
         db.session.commit()
 
         return jsonify(status='success')

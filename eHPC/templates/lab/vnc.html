@@ -317,7 +317,6 @@
                                 do_event_unbind();
                                 do_event_bind(data["token"], data["address"]);
                                 do_connect_vnc_server(data["token"], data["address"], "ssh");
-                                $(window).resize()
                             }
                             else if(data['status'] === 'fail'){
                                 alert_modal(data['msg']);
@@ -339,7 +338,6 @@
                                 do_event_unbind();
                                 do_event_bind(data["token"], data["address"]);
                                 do_connect_vnc_server(data["token"], data["address"], "vnc");
-                                $(window).resize()
                             }
                             else if(data['status'] === 'fail'){
                                 alert_modal(data['msg']);
@@ -361,7 +359,6 @@
                             $("#display").show();
                             do_event_bind(data["token"], data["address"]);
                             do_connect_vnc_server(data["token"], data["address"], "vnc");
-                            $(window).resize()
                         });
                     }
                     else if(data['status'] === 'fail'){
@@ -421,7 +418,6 @@
                                     if(data['status'] === "success"){
                                         $("#display").empty();
                                         do_connect_vnc_server(data["token"], data["address"], "vnc");
-                                        $(window).resize()
                                     }
                                     else if(data['status'] === 'fail'){
                                         alert_modal(data['msg']);
@@ -482,7 +478,15 @@
                 var scale_width = width_to_set/cur_width;
                 guac.getDisplay().scale(scale_height > scale_width?scale_width:scale_height);
                 $("#display").css("position", "absolute");
-                $("#display").css("top", 0.5 * (Math.floor(content_right.height()) - Math.floor($("#display").height())));
+
+                if(hide_document) {
+                    $("#display").css("left", 0.5 * (Math.floor(content_right.width() - Math.floor($("#display").width()))));
+                    $("#display").css("top", 0);
+                }
+                else {
+                    $("#display").css("left", 0);
+                    $("#display").css("top", 0.5 * (Math.floor(content_right.height() - Math.floor($("#display").height()))));
+                }
             };
             guac.onclipboard = function (stream, mimetype) {
                 var reader = new Guacamole.StringReader(stream);
@@ -503,6 +507,7 @@
                 guac.getDisplay().scale(scale_height > scale_width?scale_width:scale_height);
 
                 guac.getDisplay().getDefaultLayer().resize(Math.floor(guac.getDisplay().getDefaultLayer().height * cur_width / cur_height), Math.floor(guac.getDisplay().getDefaultLayer().height));
+
                 if(hide_document) {
                     $("#display").css("left", 0.5 * (Math.floor(content_right.width() - $("#display").width())));
                     $("#display").css("top", 0);

@@ -33,12 +33,12 @@
                             <td>{{ i.docker_holder.public_port }}</td>
                             <td>{{ i.create_time }}</td>
                             <td>
-                                {% if i.status == 1 %}
-                                    <span data-name="running" style="color: #7cb342"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;运行中</span>
-                                    <span data-name="stopped" style="color: #ff8280;display: none"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;已停止</span>
-                                {% else %}
-                                    <span data-name="running" style="color: #7cb342;display: none"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;运行中</span>
-                                    <span data-name="stopped" style="color: #ff8280"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;已停止</span>
+                                {% if i.status == 2 %}
+                                    <span data-name="running" style="color: #7cb342"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;使用中</span>
+                                    <span data-name="stopped" style="color: #ff8280;display: none"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;未使用</span>
+                                {% elif i.status == 0  %}
+                                    <span data-name="running" style="color: #7cb342;display: none"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;使用中</span>
+                                    <span data-name="stopped" style="color: #ff8280"><i class="fa fa-circle" aria-hidden="true" style="font-size: 12px"></i>&nbsp;未使用</span>
                                 {% endif %}
                             </td>
                             <td>

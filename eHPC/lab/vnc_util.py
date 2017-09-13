@@ -30,7 +30,7 @@ def create_new_image(new_image):
 
     holder_to_assign = DockerHolder.query.filter_by(id=new_image.docker_holder_id).first()
     if holder_to_assign is None:
-        return False, u'创建镜像失败', None
+        return False, u'创建镜像失败，已无可用虚拟机', None
 
     if holder_to_assign.status == DockerHolder.STOPPED:
         # TODO: 开启超算虚拟机
@@ -55,6 +55,7 @@ def create_new_image(new_image):
         result = req.json()
         if result['status'] == DockerImage.STATUS_CREATE_USER_IMAGE_SUCCESSFULLY:
             new_image.create_time = datetime.strptime(result['create_time'], '%Y-%m-%d %H:%M:%S')
+            new_image.is_running = True
             db.session.commit()
             return True, "success", new_image
         else:
@@ -107,4 +108,47 @@ def start_ssh_server(docker_image):
             db.session.commit()
             print result['message']
             return False, u'启动SSH服务失败'
+
+
+def start_image(docker_image):
+    try:
+        req = requests.post('http://%s:%d/server/handler' % (docker_image.docker_holder.inner_ip,
+                                                             docker_image.docker_holder.inner_port),
+                            params={"op": "start_image", "image_name": docker_image.name}, timeout=10)
+        req.raise_for_status()
+    except requests.RequestException as e:
+        print e
+        return False, u'服务器内部错误，请联系管理员'
+    else:
+        result = req.json()
+        if result['status'] == DockerImage.STATUS_START_IMAGE_SUCCESSFULLY:
+            docker_image.is_running = True
+            docker_image.is_vnc_running = True
+            docker_image.is_ssh_running = True
+            db.session.commit()
+            return True, u''
+        else:
+            return False, u'启动镜像失败'
+
+
+def stop_image(docker_image):
+    try:
+        req = requests.post('http://%s:%d/server/handler' % (docker_image.docker_holder.inner_ip,
+                                                             docker_image.docker_holder.inner_port),
+                            params={"op": "stop_image", "image_name": docker_image.name}, timeout=10)
+        req.raise_for_status()
+    except requests.RequestException as e:
+        print e
+        return False, u'服务器内部错误，请联系管理员'
+    else:
+        result = req.json()
+        if result['status'] == DockerImage.STATUS_STOP_IMAGE_SUCCESSFULLY:
+            docker_image.is_running = False
+            docker_image.is_vnc_running = False
+            docker_image.is_ssh_running = False
+            db.session.commit()
+            return True, u''
+        else:
+            return False, u'停止镜像失败'
+
 

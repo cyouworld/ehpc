@@ -8,13 +8,15 @@ import shutil
 from datetime import datetime
 from flask import render_template, request, redirect, url_for, jsonify, current_app, send_file
 from flask_babel import gettext
+from flask_login import current_user
 
+from eHPC.lab.vnc_util import start_image, stop_image
 from . import admin
 from .. import db
 from ..models import DockerHolder, DockerImage, Statistic, Knowledge, VNCKnowledge, Lab
 from ..models import User, Article, Group, Case, CaseVersion, CaseCodeMaterial, Course, MachineApply, \
     MachineAccount
-from ..user.authorize import system_login, hpc_login
+from ..user.authorize import system_login, hpc_login, admin_login
 from ..util.email import send_email_with_attach
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename
 
@@ -230,16 +232,20 @@ def group_delete():
 
 
 @admin.route('/cases/')
-@system_login
+@admin_login
 def case():
-    cases = Case.query.all()
+    cases = []
+    if current_user.permissions == 0:
+        cases = Case.query.all()
+    elif current_user.permissions == 2:
+        cases = current_user.cases
     return render_template('admin/case/index.html',
                            title=gettext('Case Admin'),
                            cases=cases)
 
 
 @admin.route('/case/create/', methods=['POST', 'GET'])
-@system_login
+@admin_login
 def case_create():
     if request.method == 'GET':
         return render_template('admin/case/create.html', title=gettext('Create Case'))
@@ -256,7 +262,7 @@ def case_create():
 
 
 @admin.route('/case/<int:case_id>/edit/', methods=['POST', 'GET'])
-@system_login
+@admin_login
 def case_edit(case_id):
     cur_case = Case.query.filter_by(id=case_id).first_or_404()
     if request.method == 'GET':
@@ -279,7 +285,7 @@ def case_edit(case_id):
 
 
 @admin.route('/case/delete/', methods=['POST', 'GET'])
-@system_login
+@admin_login
 def case_delete():
     cur_case = Case.query.filter_by(id=request.form['cid']).first_or_404()
     versions = cur_case.versions
@@ -631,46 +637,23 @@ def images(docker_holder_id):
         if docker_holder is None:
             return jsonify(status='fail')
 
-        docker_images = docker_holder.docker_images.filter_by(id=docker_images_id).first()
-        if docker_images is None:
+        docker_image = docker_holder.docker_images.filter_by(id=docker_images_id).first()
+        if docker_image is None:
             return jsonify(status='fail')
 
         if op == 'start_image':
-            try:
-                req = requests.post('http://%s:%d/server/handler' % (docker_holder.inner_ip, docker_holder.inner_port),
-                                    params={"op": "start_image",
-                                            "image_name": str(docker_images.name)}, timeout=10)
-                req.raise_for_status()
-            except requests.RequestException as e:
-                print e
-                return jsonify(status='fail', msg=u'服务器内部错误，请联系管理员')
+            status, msg = start_image(docker_image)
+            if status:
+                return jsonify(status='success')
             else:
-                result = req.json()
-                if result['status'] == DockerImage.STATUS_START_IMAGE_SUCCESSFULLY:
-                    docker_images.is_running = True
-                    docker_holder.images_count += 1
-                    db.session.commit()
-                    return jsonify(status='success')
-                else:
-                    return jsonify(status='fail', msg=u'启动镜像失败')
+                return jsonify(status='fail', msg=msg)
+
         elif op == 'stop_image':
-            try:
-                req = requests.post('http://%s:%d/server/handler' % (docker_holder.inner_ip, docker_holder.inner_port),
-                                    params={"op": "stop_image",
-                                            "image_name": str(docker_images.name)}, timeout=10)
-                req.raise_for_status()
-            except requests.RequestException as e:
-                print e
-                return jsonify(status='fail', msg=u'服务器内部错误，请联系管理员')
+            status, msg = stop_image(docker_image)
+            if status:
+                return jsonify(status='success')
             else:
-                result = req.json()
-                if result['status'] == DockerImage.STATUS_STOP_IMAGE_SUCCESSFULLY:
-                    docker_images.is_running = False
-                    docker_holder.images_count -= 1
-                    db.session.commit()
-                    return jsonify(status='success')
-                else:
-                    return jsonify(status='fail', msg=u'停止镜像失败')
+                return jsonify(status='fail', msg=msg)
 
 
 @admin.route('/system/statistics/', methods=['POST', 'GET'])

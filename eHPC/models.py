@@ -80,6 +80,8 @@ class User(UserMixin, db.Model):
     statistics = db.relationship('Statistic', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
     submit_programs = db.relationship('SubmitProgram', backref='user', lazy='dynamic')
 
+    cases = db.relationship('Case', backref='teacher', lazy='dynamic')
+
     @property
     def password(self):
         raise AttributeError('password is not a readable attribute')
@@ -561,6 +563,7 @@ class Case(db.Model):
     icon = db.Column(db.String(64), nullable=False)     # 案例 Logo
     tag = db.Column(db.String(256))                     # 案例标签，两个标签之间用分号隔开
 
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     versions = db.relationship('CaseVersion', backref='case', lazy='dynamic', cascade='delete, delete-orphan')
 
 
@@ -715,10 +718,11 @@ class MachineAccount(db.Model):
 class DockerHolder(db.Model):
     STOPPED = 0
     RUNNING = 1
+    MAX_RUNNING_COUNT = 50
 
     def __init__(self):
         self.status = 0
-        self.running_container_count = 0
+        self.using_container_count = 0
         self.images_count = 0
 
     __tablename__ = "docker_holders"
@@ -729,7 +733,7 @@ class DockerHolder(db.Model):
     public_port = db.Column(db.Integer, nullable=False)
     inner_port = db.Column(db.Integer, nullable=False)
     status = db.Column(db.Integer, default=0)   # 0: 停止 1: 运行
-    running_container_count = db.Column(db.Integer, default=0)
+    using_container_count = db.Column(db.Integer, default=0)
     images_count = db.Column(db.Integer, default=0)
 
     docker_images = db.relationship('DockerImage', backref='docker_holder', lazy='dynamic', cascade="delete, delete-orphan")
@@ -752,6 +756,10 @@ class DockerImage(db.Model):
     STATUS_STOP_IMAGE_SUCCESSFULLY = 4010
     STATUS_START_SSH_SERVER_FAIL = 4011
     STATUS_START_SSH_SERVER_SUCCESSFULLY = 4012
+    STATUS_STOP_VNC_SERVER_FAIL = 4012
+    STATUS_STOP_VNC_SERVER_SUCCESSFULLY = 4014
+    STATUS_STOP_SSH_SERVER_FAIL = 4015
+    STATUS_STOP_SSH_SERVER_SUCCESSFULLY = 4016
 
     MESSAGE_CREATE_CONTAINER_FAIL = "Failed to create a new container when creating a new user image"
     MESSAGE_SET_VNC_SERVER_PASSWORD_FAIL = "Failed to set vnc server when creating a new user image"
