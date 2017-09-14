@@ -50,10 +50,10 @@ def user():
 @system_login
 def user_edit(uid):
     u = User.query.filter_by(id=uid).first_or_404()
-    if request.method == "GET":
+    if request.method == 'GET':
         return render_template('admin/user/edit.html', user=u, title=u'修改用户权限')
-    elif request.method == "POST":
-        u.permissions = request.form["permission"]
+    elif request.method == 'POST':
+        u.permissions = request.form.get('permission')
         db.session.commit()
         message_success = gettext('Successfully modify permission')
         return render_template('admin/user/edit.html', user=u,
