@@ -1364,7 +1364,7 @@ def program():
         return unicode(curr_program.id)
 
 
-@admin.route('/problem/program/tags', methods=['GET', 'POST'])
+@admin.route('/problem/program/tags/', methods=['GET', 'POST'])
 @admin_login
 def program_tags():
     """ 题目标签管理 """

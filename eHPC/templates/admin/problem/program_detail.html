@@ -41,10 +41,10 @@
                             <div style="margin-bottom: 15px">
                                 <label>难度设置：</label>
                                 <select name="difficulty">
-                                    <option {% if program_problem.difficulty == 0  %}selected{% endif %} value="0">简单</option>
-                                    <option {% if program_problem.difficulty == 1  %}selected{% endif %} value="1">中等</option>
-                                    <option {% if program_problem.difficulty == 2  %}selected{% endif %} value="2">困难</option>
-                                    <option {% if program_problem.difficulty == 3  %}selected{% endif %} value="3">极难</option>
+                                    <option {% if op == 'edit' and program_problem.difficulty == 0  %}selected{% endif %} value="0">简单</option>
+                                    <option {% if op == 'edit' and program_problem.difficulty == 1  %}selected{% endif %} value="1">中等</option>
+                                    <option {% if op == 'edit' and program_problem.difficulty == 2  %}selected{% endif %} value="2">困难</option>
+                                    <option {% if op == 'edit' and program_problem.difficulty == 3  %}selected{% endif %} value="3">极难</option>
                                 </select>
                             </div>
 
@@ -52,7 +52,7 @@
                                 <label>默认编程语言：</label>
                                 <select name="default-language">
                                     <option value="0">mpi</option>
-                                    <option {% if program_problem.default_language == 1 %}selected{% endif %} value="1">openmp</option>
+                                    <option {% if op == 'edit' and program_problem.default_language == 1 %}selected{% endif %} value="1">openmp</option>
                                 </select>
                             </div>
 

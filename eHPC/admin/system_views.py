@@ -448,9 +448,15 @@ def case_version_material(case_id, version_id):
                 return jsonify(status='fail')
 
 
-@admin.route('/hpc/guangzhou')
+@admin.route('/hpc/')
 @hpc_login
 def machine_apply_index():
+    return redirect(url_for('admin.machine_apply_gz'))
+
+
+@admin.route('/hpc/guangzhou/')
+@hpc_login
+def machine_apply_gz():
     applies = MachineApply.query.filter_by(sc_center=0).all()
     return render_template('admin/hpc/index.html',
                            applies=applies,
@@ -458,7 +464,7 @@ def machine_apply_index():
                            title=u'机时申请')
 
 
-@admin.route('/hpc/changsha')
+@admin.route('/hpc/changsha/')
 @hpc_login
 def machine_apply_cs():
     applies = MachineApply.query.filter_by(sc_center=1).all()
@@ -468,7 +474,7 @@ def machine_apply_cs():
                            title=u'机时申请')
 
 
-@admin.route('/hpc/zhongkeyuan')
+@admin.route('/hpc/zhongkeyuan/')
 @hpc_login
 def machine_apply_zky():
     applies = MachineApply.query.filter_by(sc_center=2).all()
@@ -478,7 +484,7 @@ def machine_apply_zky():
                            title=u'机时申请')
 
 
-@admin.route('/hpc/shanghai')
+@admin.route('/hpc/shanghai/')
 @hpc_login
 def machine_apply_sh():
     applies = MachineApply.query.filter_by(sc_center=3).all()
