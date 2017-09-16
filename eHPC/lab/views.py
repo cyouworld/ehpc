@@ -124,6 +124,7 @@ def knowledge(kid):
 
             source_code = request.form['code']
             cpu_number = request.form['cpu_number']
+            ifEvaluate = request.form['ifEvaluate']
 
             cur_challenge = Challenge.query.filter_by(knowledgeId=kid).filter_by(knowledgeNum=k_num).first()
 
@@ -139,7 +140,7 @@ def knowledge(kid):
             is_success = [False]
 
             result = submit_code_new(pid=pid, uid=uid, source_code=source_code, task_number=task_number,
-                                     cpu_number_per_task=cpu_number_per_task, language=language, is_success=is_success)
+                                     cpu_number_per_task=cpu_number_per_task, language=language, ifEvaluate=ifEvaluate, is_success=is_success)
 
             # 代码成功通过编译, 则认为已完成该知识点学习
             if is_success[0]:

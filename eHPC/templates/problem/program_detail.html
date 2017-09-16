@@ -91,6 +91,14 @@
                         <option value="2400">2400</option>
                     </select>
                 </div>
+
+                <div class="col-md-3 form-group">
+                    <label class="" for="ifEvaluate">是否评测</label>
+                    <select class="col-md-6 selectpicker" name="ifEvaluate" id="ifEvaluate">
+                        <option value="0">否</option>
+                        <option value="1">是</option>
+                    </select>
+                </div>
             </div>
 
             <div class="row form-group">
@@ -311,8 +319,9 @@
 
             $("input[name=language]").val($("#the_language").find("option:selected").text());
             $("input[name=cpu_number]").val($("#cpu_number").find("option:selected").text());
+            $("input[name=ifEvaluate]").val($("#ifEvaluate").find("option:selected").text());
 
-            var data = $.param({'job_op': '1', 'job_id': 'ERROR'}) + '&' + $("form").serialize();
+            var data = $.param({'job_op': '1', 'job_id': 'ERROR',}) + '&' + $("form").serialize();
             $('#result-show').css("display", 'block');
             var loading = "<img src='{{ url_for('static', filename='images/submit.gif') }}' alt='Loading'></div>";
             var $run_result = $("#run-content");

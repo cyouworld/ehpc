@@ -161,6 +161,7 @@ def submit(pid):
         program_id = request.form['program_id']
         source_code = request.form['source_code']
         language = request.form['language']
+        ifEvaluate = request.form['ifEvaluate']
         submit_program = SubmitProgram(uid, program_id, source_code, language)
         db.session.add(submit_program)
         db.session.commit()
@@ -171,7 +172,7 @@ def submit(pid):
             task_number = cpu_number
             cpu_number_per_task = 1
 
-        return submit_code_new(pid=pid, uid=uid, source_code=source_code, task_number=task_number, cpu_number_per_task=cpu_number_per_task, language=language)
+        return submit_code_new(pid=pid, uid=uid, source_code=source_code, task_number=task_number, cpu_number_per_task=cpu_number_per_task, language=language, ifEvaluate=ifEvaluate)
     else:
         op = request.form['job_op']
         jobid = request.form['job_id']

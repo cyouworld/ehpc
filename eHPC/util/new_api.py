@@ -388,7 +388,7 @@ class ehpc_client_new:
         self.run_command(mkdir_command)
 
 
-def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, language, is_success=[False]):
+def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, language, ifEvaluate='0', is_success=[False]):
     """ 后台提交从前端获取的代码到天河系统，编译运行并返回结果
 
     @pid: 编程题ID（对于非编程题的代码，可自行赋予ID）,
@@ -420,8 +420,11 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
         parameter_number = 1
         parameter_language = "c"
 
-    sh_command = "cd %s;./%s %s %s %s" % (
-        TH2_MY_PATH_NEW, "comprun.sh", input_filename, parameter_language, parameter_number)
+    if ifEvaluate == '1':
+        sh_command = "cd %s;./%s %s %s %s" % (TH2_MY_PATH_NEW, "comprun.sh", input_filename, parameter_language, parameter_number)
+    else:
+        sh_command = "cd %s;./%s %s %s %s" % (TH2_MY_PATH_NEW, "comprun_with_no_evaluate.sh", input_filename, parameter_language, parameter_number)
+
     run_out_raw = mc.run_command(sh_command)
 
     #print run_out_raw
