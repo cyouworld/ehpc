@@ -11,16 +11,22 @@
                     <div id="user-structure" class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <div style="height: 300%;"></div>
                     </div>
-                    <div id="visit-statistics" class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
+                    <div id="visit-count" class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
                         <div style="height: 300%;"></div>
                     </div>
-                    <div id="user-geo-distribution" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div id="visit-time" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%">
+                        <div style="height: 400%;"></div>
+                    </div>
+                    <div id="user-geo-percentage" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%">
+                        <div style="height: 300%;"></div>
+                    </div>
+                    <div id="user-geo-distribution" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%">
                         <div style="height: 700%;"></div>
                     </div>
-                    <div id="user-student-structure" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div id="user-student-structure" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%">
                         <div style="height: 600%;"></div>
                     </div>
-                    <div id="user-learning-situation" class="col-xs-12 col-sm-12 col-md-12 col-lg-12">
+                    <div id="user-learning-situation" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%">
                         <div style="height: 300%;"></div>
                     </div>
                 </div>
@@ -30,113 +36,232 @@
 {% endblock %}
 
 {% block footer_ext %}
-    <script src="{{ url_for('static', filename='js/echarts/echarts.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/echarts/echarts.js') }}"></script>
     <script src="{{ url_for('static', filename='js/echarts/shine.js') }}"></script>
     <script src="{{ url_for('static', filename='js/echarts/china.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/moment-with-locales.min.js') }}"></script>
+    <script>moment.locale('zh-CN');</script>
     <script>
         $(function () {
             var graph_user_structure = echarts.init($("#user-structure").find("div")[0], 'shine');
-            graph_user_structure.setOption({
-                title: {
-                    text: "网站用户构成(共{{ user_count['all'] }}位)",
-                    left: 'center'
+            $.ajax({
+                url: "{{ url_for('admin.ehpc_statistics') }}",
+                type: "post",
+                data: {
+                    op: "user_structure"
                 },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: function (params) {
-                        var result = params.seriesName + "<br>";
-                        result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params.color + '"></span>';
-                        result += params.name + ": " + params.value + "人 ";
-                        result += "(" + params.percent + "%)";
-                        return result;
+                success: function (data) {
+                    if(data["status"]==="success"){
+                        var user_count = data["user_count"];
+                        graph_user_structure.setOption({
+                            title: {
+                                text: "网站用户构成(共" + user_count["all"] + "位)",
+                                left: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: function (params) {
+                                    var result = params.seriesName + "<br>";
+                                    result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params.color + '"></span>';
+                                    result += params.name + ": " + params.value + "人 ";
+                                    result += "(" + params.percent + "%)";
+                                    return result;
+                                }
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left',
+                                data: ["系统管理员", "本科生", "研究生", "教师", "机时管理员"]
+                            },
+                            series: [
+                                {
+                                    name: '用户构成',
+                                    type: 'pie',
+                                    radius: '55%',
+                                    center: ['50%', '67%'],
+                                    data: [
+                                        {value: user_count['admin'], name: '系统管理员'},
+                                        {value: user_count['undergraduate'], name: '本科生'},
+                                        {value: user_count['postgraduate'], name: '研究生'},
+                                        {value: user_count['teacher'], name: '教师'},
+                                        {value: user_count['hpc_admin'], name: '机时管理员'}
+                                    ],
+                                    itemStyle: {
+                                        emphasis: {
+                                            shadowBlur: 10,
+                                            shadowOffsetX: 0,
+                                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                        }
+                                    }
+                                }
+                            ]
+                        });
                     }
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left',
-                    data: ["系统管理员", "本科生", "研究生", "教师", "机时管理员"]
-                },
-                series: [
-                    {
-                        name: '用户构成',
-                        type: 'pie',
-                        radius: '55%',
-                        center: ['50%', '67%'],
-                        data: [
-                            {value: {{ user_count['admin'] }}, name: '系统管理员'},
-                            {value: {{ user_count['undergraduate'] }}, name: '本科生'},
-                            {value: {{ user_count['postgraduate'] }}, name: '研究生'},
-                            {value: {{ user_count['teacher'] }}, name: '教师'},
-                            {value: {{ user_count['hpc_admin'] }}, name: '机时管理员'}
-                        ],
-                        itemStyle: {
-                            emphasis: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
-                            }
-                        }
-                    }
-                ]
+                }
             });
 
-            var graph_visit_statistics = echarts.init($("#visit-statistics").find("div")[0], 'shine');
-            graph_visit_statistics.setOption({
-                title: {
-                    text: "主页访问情况(共{{ visit_statistics['all'] }}人次)",
-                    left: 'center'
+            var graph_visit_count = echarts.init($("#visit-count").find("div")[0], 'shine');
+            var graph_visit_time = echarts.init($("#visit-time").find("div")[0], 'shine');
+            $.ajax({
+                url: "{{ url_for('admin.ehpc_statistics') }}",
+                type: "post",
+                data: {
+                    op: "visit_statistics"
                 },
-                tooltip: {
-                    trigger: 'item',
-                    formatter: function (params) {
-                        var result = params.seriesName + "<br>";
-                        result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params.color + '"></span>';
-                        result += params.name + ": " + params.value + "人次 ";
-                        result += "(" + params.percent + "%)";
-                        return result;
-                    }
-                },
-                legend: {
-                    orient: 'vertical',
-                    left: 'left',
-                    data: ["系统管理员", "学生", "教师", "机时管理员", "匿名用户"]
-                },
-                series: [
-                    {
-                        name: '访问情况',
-                        type: 'pie',
-                        radius: '55%',
-                        center: ['50%', '67%'],
-                        data: [
-                            {value: {{ visit_statistics['admin'] }}, name: '系统管理员'},
-                            {value: {{ visit_statistics['student'] }}, name: '学生'},
-                            {value: {{ visit_statistics['teacher'] }}, name: '教师'},
-                            {value: {{ visit_statistics['hpc_admin'] }}, name: '机时管理员'},
-                            {value: {{ visit_statistics['anonymous'] }}, name: '匿名用户'}
-                        ],
-                        itemStyle: {
-                            emphasis: {
-                                shadowBlur: 10,
-                                shadowOffsetX: 0,
-                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                success: function (data) {
+                    if(data["status"]==="success"){
+                        var visit_count, visit_time;
+                        var time_step = [], visit_data = [];
+                        visit_count = data["visit_count"];
+                        visit_time = data["visit_time"];
+                        visit_time.sort(function (a, b) {
+                            return new Date(a) > new Date(b)
+                        });
+
+                        var interval = (new Date(visit_time[visit_time.length - 1]).getTime() - new Date(visit_time[0]).getTime())/(1000*60*60*24);
+                        var interval_count = interval / 7;
+                        for(i=0;i<interval_count;i++){
+                            time_step.push(moment(visit_time[0]).add(i * 7, 'days').format("YYYY-MM-DD"));
+                            visit_data.push(0);
+                        }
+                        time_step.push(visit_time[visit_time.length - 1]);
+                        visit_data.push(0);
+
+                        for(i=0;i<visit_time.length;i++){
+                            var flag = false;
+                            for(var j=1;j<time_step.length;j++){
+                                if(new Date(visit_time[i]) < new Date(time_step[j])){
+                                    visit_data[j-1]++;
+                                    flag = true;
+                                    break;
+                                }
+                            }
+                            if(!flag){
+                                visit_data[time_step.length - 1]++;
                             }
                         }
+
+                        for(i=1;i<visit_data.length;i++){
+                            visit_data[i] += visit_data[i-1];
+                        }
+
+                        graph_visit_count.setOption({
+                            title: {
+                                text: "主页访问情况(共" + visit_count["all"] + "人次)",
+                                left: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: function (params) {
+                                    var result = params.seriesName + "<br>";
+                                    result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params.color + '"></span>';
+                                    result += params.name + ": " + params.value + "人次 ";
+                                    result += "(" + params.percent + "%)";
+                                    return result;
+                                }
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                left: 'left',
+                                data: ["系统管理员", "学生", "教师", "机时管理员", "匿名用户"]
+                            },
+                            series: [
+                                {
+                                    name: '访问情况',
+                                    type: 'pie',
+                                    radius: '55%',
+                                    center: ['50%', '67%'],
+                                    data: [
+                                        {value: visit_count["admin"], name: '系统管理员'},
+                                        {value: visit_count["student"], name: '学生'},
+                                        {value: visit_count["teacher"], name: '教师'},
+                                        {value: visit_count["hpc_admin"], name: '机时管理员'},
+                                        {value: visit_count["anonymous"], name: '匿名用户'}
+                                    ],
+                                    itemStyle: {
+                                        emphasis: {
+                                            shadowBlur: 10,
+                                            shadowOffsetX: 0,
+                                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+                        graph_visit_time.setOption({
+                            title: {
+                                text: "累计访问量",
+                                left: 'left'
+                            },
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: {
+                                    type: 'line'
+                                }
+                            },
+                            legend: {
+                                data:['至此用户访问数']
+                            },
+                            grid: {
+                                left: '3%',
+                                right: '4%',
+                                bottom: '15%',
+                                containLabel: true
+                            },
+                            xAxis: {
+                                type: 'category',
+                                axisTick: {
+                                    alignWithLabel: true
+                                },
+                                axisLine: {
+                                    onZero: false
+                                },
+                                data: time_step
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            dataZoom: [{
+                                type: 'inside',
+                                start: 0,
+                                end: 100
+                            }, {
+                                start: 0,
+                                end: 100
+                            }],
+                            toolbox: {
+                                show : true,
+                                feature : {
+                                    restore : {show: true}
+                                },
+                                itemSize: 30
+                            },
+                            series: [
+                                {
+                                    name:'至此用户访问数',
+                                    type:'line',
+                                    smooth: true,
+                                    sampling: 'average',
+                                    data: visit_data
+                                }
+                            ]
+                        });
                     }
-                ]
+                }
             });
 
-            var res = [];
-
+            var graph_user_geo_percentage = echarts.init($("#user-geo-percentage").find("div")[0], 'shine');
+            var graph_user_geo_distribution = echarts.init($("#user-geo-distribution").find("div")[0], 'shine');
             $.ajax({
                 url: "{{ url_for('admin.ehpc_statistics') }}",
                 type: "post",
                 data: {
                     op: "user_geo_distribution"
                 },
-                async: false,
                 success: function (data) {
                     if(data["status"]==="success"){
                         var positions, user_geo_data;
+                        var res = [];
                         positions = data["positions"];
                         user_geo_data = data["user_geo_data"];
                         for(var d in user_geo_data){
@@ -148,115 +273,169 @@
                         res.sort(function (a, b) {
                             return b.value[2] - a.value[2];
                         });
+
+                        var user_geo_percentage_type = [], user_geo_percentage_data = [];
+
+                        if(res.length > 5){
+                            for(i=0;i<5;i++){
+                                user_geo_percentage_type.push(res[i].name);
+                                user_geo_percentage_data.push({value: res[i].value[2], name: res[i].name});
+                            }
+                            user_geo_percentage_type.push("其他");
+                            user_geo_percentage_data.push({value: 0, name: "其他"});
+                            for(i=5;i<res.length;i++){
+                                user_geo_percentage_data[5].value += res[i].value[2];
+                            }
+                        }else{
+                            for(i=0;i<res.length;i++){
+                                user_geo_percentage_type.push(res[i].name);
+                                user_geo_percentage_data.push({value: res[i].value[2], name: res[i].name});
+                            }
+                        }
+
+                        graph_user_geo_percentage.setOption({
+                            title: {
+                                text: "用户地域分布（百分比）",
+                                left: 'center'
+                            },
+                            tooltip: {
+                                trigger: 'item',
+                                formatter: function (params) {
+                                    var result = params.seriesName + "<br>";
+                                    result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params.color + '"></span>';
+                                    result += params.name + ": " + params.value + "人 ";
+                                    result += "(" + params.percent + "%)";
+                                    return result;
+                                }
+                            },
+                            legend: {
+                                top: "15%",
+                                data: user_geo_percentage_type
+                            },
+                            series: [
+                                {
+                                    name: '用户地域分布',
+                                    type: 'pie',
+                                    radius: '55%',
+                                    center: ['50%', '67%'],
+                                    data: user_geo_percentage_data,
+                                    itemStyle: {
+                                        emphasis: {
+                                            shadowBlur: 10,
+                                            shadowOffsetX: 0,
+                                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                                        }
+                                    }
+                                }
+                            ]
+                        });
+                        graph_user_geo_distribution.setOption({
+                            title: {
+                                text: '用户地域分布（地图）',
+                                left: 'center'
+                            },
+                            tooltip : {
+                                trigger: 'item',
+                                formatter: function (params) {
+                                    var result = params.seriesName + "<br>";
+                                    result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params.color + '"></span>';
+                                    result += params.name + ": " + params.value[2] + "人";
+                                    return result;
+                                }
+                            },
+                            toolbox: {
+                                show : true,
+                                feature : {
+                                    dataView : {show: true, readOnly: true},
+                                    restore : {show: true}
+                                },
+                                itemSize: 30
+                            },
+                            legend: {
+                                orient: 'vertical',
+                                y: 'bottom',
+                                x:'right',
+                                data:['人数', '人数Top 5']
+                            },
+                            geo: {
+                                map: 'china',
+                                label: {
+                                    emphasis: {
+                                        show: false
+                                    }
+                                },
+                                roam: true
+                            },
+                            series : [
+                                {
+                                    name: '人数',
+                                    type: 'scatter',
+                                    coordinateSystem: 'geo',
+                                    data: res.slice(5),
+                                    symbolSize: function (val) {
+                                        if(val === 0) return 0;
+                                        else return 4 * Math.log(Math.log(val[2]+2) / Math.log(1.2));
+                                    },
+                                    label: {
+                                        normal: {
+                                            formatter: '{b}',
+                                            position: 'right',
+                                            show: true
+                                        }
+                                    },
+                                    itemStyle: {
+                                        normal: {
+                                            color: '#373737'
+                                        }
+                                    }
+                                },
+                                {
+                                    name: '人数Top 5',
+                                    type: 'effectScatter',
+                                    coordinateSystem: 'geo',
+                                    data: res.slice(0, 5),
+                                    symbolSize: function (val) {
+                                        if(val === 0) return 0;
+                                        else return 4 * Math.log(Math.log(val[2]+2) / Math.log(1.2));
+                                    },
+                                    showEffectOn: 'render',
+                                    rippleEffect: {
+                                        brushType: 'stroke'
+                                    },
+                                    hoverAnimation: true,
+                                    label: {
+                                        normal: {
+                                            formatter: '{b}',
+                                            position: 'right',
+                                            show: true
+                                        }
+                                    },
+                                    itemStyle: {
+                                        normal: {
+                                            color: '#FF4282',
+                                            shadowBlur: 10,
+                                            shadowColor: '#b6b6b6'
+                                        }
+                                    },
+                                    zlevel: 1
+                                }
+                            ]
+                        });
                     }
                 }
             });
 
 
-            var graph_user_geo_distribution = echarts.init($("#user-geo-distribution").find("div")[0], 'shine');
-            graph_user_geo_distribution.setOption({
-                title: {
-                    text: '用户地域分布',
-                    left: 'center'
-                },
-                tooltip : {
-                    trigger: 'item',
-                    formatter: function (params) {
-                        var result = params.seriesName + "<br>";
-                        result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params.color + '"></span>';
-                        result += params.name + ": " + params.value[2] + "人";
-                        return result;
-                    }
-                },
-                toolbox: {
-                    show : true,
-                    feature : {
-                        dataView : {show: true, readOnly: true},
-                        restore : {show: true}
-                    },
-                    itemSize: 30
-                },
-                legend: {
-                    orient: 'vertical',
-                    y: 'bottom',
-                    x:'right',
-                    data:['人数', '人数Top 5']
-                },
-                geo: {
-                    map: 'china',
-                    label: {
-                        emphasis: {
-                            show: false
-                        }
-                    },
-                    roam: true
-                },
-                series : [
-                    {
-                        name: '人数',
-                        type: 'scatter',
-                        coordinateSystem: 'geo',
-                        data: res.slice(5),
-                        symbolSize: function (val) {
-                            if(val === 0) return 0;
-                            else return 4 * Math.log(Math.log(val[2]+2) / Math.log(1.2));
-                        },
-                        label: {
-                            normal: {
-                                formatter: '{b}',
-                                position: 'right',
-                                show: true
-                            }
-                        },
-                        itemStyle: {
-                            normal: {
-                                color: '#373737'
-                            }
-                        }
-                    },
-                    {
-                        name: '人数Top 5',
-                        type: 'effectScatter',
-                        coordinateSystem: 'geo',
-                        data: res.slice(0, 5),
-                        symbolSize: function (val) {
-                            if(val === 0) return 0;
-                            else return 4 * Math.log(Math.log(val[2]+2) / Math.log(1.2));
-                        },
-                        showEffectOn: 'render',
-                        rippleEffect: {
-                            brushType: 'stroke'
-                        },
-                        hoverAnimation: true,
-                        label: {
-                            normal: {
-                                formatter: '{b}',
-                                position: 'right',
-                                show: true
-                            }
-                        },
-                        itemStyle: {
-                            normal: {
-                                color: '#FF4282',
-                                shadowBlur: 10,
-                                shadowColor: '#b6b6b6'
-                            }
-                        },
-                        zlevel: 1
-                    }
-                ]
-            });
-
-            var student_structure = [], university_legend = [], undergraduate_data = [], postgraduate_data = [];
+            var graph_student_structure = echarts.init($("#user-student-structure").find("div")[0], 'shine');
             $.ajax({
                 url: "{{ url_for('admin.ehpc_statistics') }}",
                 type: "post",
                 data: {
                     op: "student_structure"
                 },
-                async: false,
                 success: function (data) {
                     if(data["status"]==="success"){
+                        var student_structure = [], university_legend = [], undergraduate_data = [], postgraduate_data = [];
                         var undergraduate = data["undergraduate"];
                         var postgraduate = data["postgraduate"];
                         for (var k in undergraduate){
@@ -271,75 +450,73 @@
                             undergraduate_data.push(student_structure[i]['undergraduate']);
                             postgraduate_data.push(student_structure[i]['postgraduate']);
                         }
+
+                        graph_student_structure.setOption({
+                            title: {
+                                text: '学生用户统计'
+                            },
+                            tooltip: {
+                                trigger: 'axis',
+                                axisPointer: {
+                                    type: 'shadow'
+                                }
+                            },
+                            dataZoom: [
+                                {
+                                    type: 'slider',
+                                    start: 0,
+                                    end: 20
+                                }
+                            ],
+                            toolbox: {
+                                show : true,
+                                feature : {
+                                    restore : {show: true}
+                                },
+                                itemSize: 30
+                            },
+                            legend: {
+                                data: ["本科生", "研究生"]
+                            },
+                            grid: {
+                                left: '3%',
+                                right: '4%',
+                                bottom: '40%',
+                                containLabel: true
+                            },
+                            xAxis : [
+                                {
+                                    type : 'category',
+                                    data : university_legend,
+                                    axisLabel: {
+                                        interval:0,
+                                        rotate:90
+                                    }
+                                }
+                            ],
+                            yAxis : [
+                                {
+                                    type : 'value'
+                                }
+                            ],
+                            series: [
+                                {
+                                    name: "本科生",
+                                    type: "bar",
+                                    stack: "学生",
+                                    data: undergraduate_data
+                                },
+                                {
+                                    name: "研究生",
+                                    type: "bar",
+                                    stack: "学生",
+                                    data: postgraduate_data
+                                }
+                            ]
+                        });
                     }
                 }
             });
-
-            var graph_student_structure = echarts.init($("#user-student-structure").find("div")[0], 'shine');
-            graph_student_structure.setOption({
-                 title: {
-                     text: '学生用户统计'
-                 },
-                tooltip: {
-                    trigger: 'axis',
-                    axisPointer: {
-                        type: 'shadow'
-                    }
-                },
-                dataZoom: [
-                    {
-                        type: 'slider',
-                        start: 0,
-                        end: 20
-                    }
-                ],
-                toolbox: {
-                    show : true,
-                    feature : {
-                        restore : {show: true}
-                    },
-                    itemSize: 30
-                },
-                legend: {
-                     data: ["本科生", "研究生"]
-                },
-                grid: {
-                    left: '3%',
-                    right: '4%',
-                    bottom: '40%',
-                    containLabel: true
-                },
-                xAxis : [
-                    {
-                        type : 'category',
-                        data : university_legend,
-                        axisLabel: {
-                            interval:0,
-                            rotate:90
-                        }
-                    }
-                ],
-                yAxis : [
-                    {
-                        type : 'value'
-                    }
-                ],
-                series: [
-                    {
-                        name: "本科生",
-                        type: "bar",
-                        stack: "学生",
-                        data: undergraduate_data
-                    },
-                    {
-                        name: "研究生",
-                        type: "bar",
-                        stack: "学生",
-                        data: postgraduate_data
-                    }
-                ]
-            });
-
 
 
             var user_learning_situation_data = {{ learning_situation_statistics | statistic_get_data('all') | safe }}["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
@@ -405,10 +582,12 @@
 
             $(window).resize(function () {
                 graph_user_structure.resize();
-                graph_visit_statistics.resize();
+                graph_visit_count.resize();
                 graph_user_geo_distribution.resize();
                 graph_user_learning_situation.resize();
                 graph_student_structure.resize();
+                graph_user_geo_percentage.resize();
+                graph_visit_time.resize();
             });
 
         });

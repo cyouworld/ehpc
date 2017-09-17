@@ -667,42 +667,13 @@ def images(docker_holder_id):
 @system_login
 def ehpc_statistics():
     if request.method == 'GET':
-        user_count = {'all': User.query.count(),
-                      'admin': User.query.filter_by(permissions=0).count(),
-                      'undergraduate': User.query.filter_by(permissions=1).filter_by(student_type=0).count(),
-                      'postgraduate': User.query.filter_by(permissions=1).filter_by(student_type=1).count(),
-                      'teacher': User.query.filter_by(permissions=2).count(),
-                      'hpc_admin': User.query.filter_by(permissions=3).count()}
 
-        visit_statistics_all = Statistic.query.filter_by(action=Statistic.ACTION_USER_VISIT_MAIN_PAGE).all()
-        visit_statistics_anonymous, visit_statistics_admin, visit_statistics_student, visit_statistics_teacher, visit_statistics_hpc_admin = 0, 0, 0, 0, 0
-        for v in visit_statistics_all:
-            if v.user is None:
-                visit_statistics_anonymous += 1
-            else:
-                if v.user.permissions == 0:
-                    visit_statistics_admin += 1
-                elif v.user.permissions == 1:
-                    visit_statistics_student += 1
-                elif v.user.permissions == 2:
-                    visit_statistics_teacher += 1
-                elif v.user.permissions == 3:
-                    visit_statistics_hpc_admin += 1
-
-        visit_statistics = {'all': len(visit_statistics_all),
-                            'admin': visit_statistics_admin,
-                            'student': visit_statistics_student,
-                            'teacher': visit_statistics_teacher,
-                            'hpc_admin': visit_statistics_hpc_admin,
-                            'anonymous': visit_statistics_anonymous}
 
         learning_situation_statistics = Statistic.query.filter_by(
             action=Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO)
 
         return render_template('admin/ehpc_statistics.html',
                                Statistic=Statistic,
-                               user_count=user_count,
-                               visit_statistics=visit_statistics,
                                learning_situation_statistics=learning_situation_statistics)
     elif request.method == 'POST':
         op = request.form.get("op", None)
@@ -710,7 +681,16 @@ def ehpc_statistics():
         if op is None:
             return jsonify(status='fail')
 
-        if op == 'user_geo_distribution':
+        if op == 'user_structure':
+            user_count = {'all': User.query.count(),
+                          'admin': User.query.filter_by(permissions=0).count(),
+                          'undergraduate': User.query.filter_by(permissions=1).filter_by(student_type=0).count(),
+                          'postgraduate': User.query.filter_by(permissions=1).filter_by(student_type=1).count(),
+                          'teacher': User.query.filter_by(permissions=2).count(),
+                          'hpc_admin': User.query.filter_by(permissions=3).count()}
+
+            return jsonify(status='success', user_count=user_count)
+        elif op == 'user_geo_distribution':
             all_user = User.query.all()
             positions = {}
             user_geo_data = {}
@@ -748,6 +728,32 @@ def ehpc_statistics():
                 postgraduate_structure.append({u"学校": k, u"人数": v})
 
             return jsonify(status='success', undergraduate=undergraduate_status, postgraduate=postgraduate_status)
+        elif op == 'visit_statistics':
+            visit_statistics_all = Statistic.query.filter_by(action=Statistic.ACTION_USER_VISIT_MAIN_PAGE).all()
+            visit_count = {'all': len(visit_statistics_all),
+                           'admin': 0,
+                           'student': 0,
+                           'teacher': 0,
+                           'hpc_admin': 0,
+                           'anonymous': 0}
+
+            visit_time = []
+
+            for v in visit_statistics_all:
+                visit_time.append(v.timestamp.strftime('%Y-%m-%d'))
+                if v.user is None:
+                    visit_count['anonymous'] += 1
+                else:
+                    if v.user.permissions == 0:
+                        visit_count['admin'] += 1
+                    elif v.user.permissions == 1:
+                        visit_count['student'] += 1
+                    elif v.user.permissions == 2:
+                        visit_count['teacher'] += 1
+                    elif v.user.permissions == 3:
+                        visit_count['hpc_admin'] += 1
+
+            return jsonify(status='success', visit_count=visit_count, visit_time=visit_time)
 
 
 @admin.route('/system/knowledge/', methods=['POST', 'GET'])
