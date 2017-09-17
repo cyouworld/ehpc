@@ -27,20 +27,18 @@ def index():
     vnc_knowledges = VNCKnowledge.query.order_by(VNCKnowledge.lab_id.asc())
     # 记录当前用户在每个knowledge上的进度百分比
     if current_user.is_authenticated:
+        all_knowledges = []
         for k in knowledges:
             pro = current_user.progresses.filter_by(knowledge_id=k.id).first()
             k.cur_level = pro.cur_progress if pro else 0
             k.all_levels = k.challenges.count()
             k.percentage = "{0:.0f}%".format(100.0 * k.cur_level / k.all_levels) if k.all_levels >= 1 else "100%"
+            all_knowledges.append(k)
         for k in vnc_knowledges:
             pro = current_user.vnc_progresses.filter_by(vnc_knowledge_id=k.id).first()
             k.cur_vnc_level = pro.have_done if pro else 0
             k.all_vnc_levels = k.vnc_tasks.count()
             k.percentage = "{0:.0f}%".format(100.0 * k.cur_vnc_level / k.all_vnc_levels) if k.all_vnc_levels >= 1 else "100%"
-        all_knowledges = []
-        for k in knowledges:
-            all_knowledges.append(k)
-        for k in vnc_knowledges:
             bigger = 1  # 用于判断当前VNC实验序号是否比all_knowledges里面所有的序号都大
             for idx in range(len(all_knowledges)):
                 if all_knowledges[idx].lab_id > k.lab_id:

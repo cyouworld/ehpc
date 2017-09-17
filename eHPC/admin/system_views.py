@@ -95,6 +95,7 @@ def reg_teacher(user_id):
         if request.form.get('op') == 'approve':
             u = User.query.filter_by(id=user_id).first_or_404()
             u.permissions = 2
+            u.wait_for_audit = False
             db.session.commit()
         return redirect(url_for('admin.user'))
 
