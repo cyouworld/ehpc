@@ -66,6 +66,18 @@
 
     <ul class="navbar-user nav user-nav hidden-xs">
         {% if current_user.is_authenticated %}
+            {% if current_user.permissions == 2 %}
+                <li><a href="{{ url_for('admin.teacher') }}">
+                    <i class="es-icon es-icon-administrator"></i>切换为老师</a></li>
+            {% endif %}
+            {% if current_user.permissions == 3 %}
+                <li><a href="{{ url_for('admin.machine_apply_index') }}">
+                    <i class="es-icon es-icon-administrator"></i>机时管理</a></li>
+            {% endif %}
+            {% if current_user.permissions == 0 %}
+                <li><a href="{{ url_for('admin.index') }}">
+                    <i class="es-icon es-icon-administrator"></i>系统管理</a></li>
+            {% endif %}
             <li class="user-avatar-li nav-hover">
                 <a href="javascript:;" class="dropdown-toggle">
                     <img class="avatar-sm" src="{{ current_user.avatar_url | get_avatar_path }}">
@@ -89,14 +101,6 @@
                     </li>
                 </ul>
             </li>
-            {% if current_user.permissions == 2 %}
-                <li><a href="{{ url_for('admin.teacher') }}">
-                    <i class="es-icon es-icon-administrator"></i>切换为老师</a></li>
-            {% endif %}
-            {% if current_user.permissions == 3 %}
-                <li><a href="{{ url_for('admin.machine_apply_index') }}">
-                    <i class="es-icon es-icon-administrator"></i>机时管理</a></li>
-            {% endif %}
         {% else %}
             <li>
                 <a href="{{ url_for('user.signin', next=request.path) }}">{{ _('Sign In') }}</a>

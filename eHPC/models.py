@@ -65,19 +65,19 @@ class User(UserMixin, db.Model):
     teacher_questions = db.relationship('Question', backref='teacher', lazy='dynamic')
     teacher_knowledge = db.relationship('Knowledge', backref='teacher', lazy='dynamic')
     teacher_program = db.relationship('Program', backref='teacher', lazy='dynamic')
-    teacher_vnc_knowledge = db.relationship('VNCKnowledge', backref='teacher', lazy='dynamic', cascade="delete, delete-orphan")
+    teacher_vnc_knowledge = db.relationship('VNCKnowledge', backref='teacher', lazy='dynamic', cascade='delete, delete-orphan')
     teacher_classify = db.relationship('Classify', backref='teacher', lazy='dynamic')
 
-    vnc_progresses = db.relationship('VNCProgress', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
+    vnc_progresses = db.relationship('VNCProgress', backref='user', lazy='dynamic', cascade='delete, delete-orphan')
 
-    machine_apply = db.relationship("MachineApply", backref='user', lazy='dynamic', cascade="delete, delete-orphan")
-    machine_accounts = db.relationship("MachineAccount", backref='user', lazy='dynamic')
+    machine_apply = db.relationship('MachineApply', backref='user', lazy='dynamic', cascade='delete, delete-orphan')
+    machine_accounts = db.relationship('MachineAccount', backref='user', lazy='dynamic')
 
-    docker_image = db.relationship('DockerImage', uselist=False, backref='user', cascade="delete, delete-orphan")
+    docker_image = db.relationship('DockerImage', uselist=False, backref='user', cascade='delete, delete-orphan')
 
     notifications_sent = db.relationship('Notification', backref='sender', lazy='dynamic', cascade='delete, delete-orphan')
 
-    statistics = db.relationship('Statistic', backref='user', lazy='dynamic', cascade="delete, delete-orphan")
+    statistics = db.relationship('Statistic', backref='user', lazy='dynamic', cascade='delete, delete-orphan')
     submit_programs = db.relationship('SubmitProgram', backref='user', lazy='dynamic')
 
     cases = db.relationship('Case', backref='teacher', lazy='dynamic')
@@ -699,6 +699,8 @@ class MachineApply(db.Model):
     applying_time = db.Column(db.DateTime, default=datetime.now, nullable=False)  # 提交申请的时间
     submit_status = db.Column(db.Integer, default=0)  # 当前申请的提交状态：0-未提交，1-已提交，等待审批，2-审批通过，3-申请被拒绝
 
+    account = db.relationship('MachineAccount', uselist=False, backref='apply')
+
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
@@ -714,6 +716,7 @@ class MachineAccount(db.Model):
     sc_center = db.Column(db.Integer)     # 超算单位：0-广州超算，1-长沙超算，2-中科院超算，3-上海超算
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    apply_id = db.Column(db.Integer, db.ForeignKey('machine_apply.id'))
 
 
 class DockerHolder(db.Model):

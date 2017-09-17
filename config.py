@@ -46,7 +46,7 @@ luosimao人机验证参数
 文档地址
 https://luosimao.com/docs/api/56
 """
-CAPTCHA = False if os.environ.get('CAPTCHA') == "False" else True
+CAPTCHA = False #if os.environ.get('CAPTCHA') == "False" else True
 CAPTCHA_VERIFY_URL = 'https://captcha.luosimao.com/api/site_verify'
 CAPTCHA_SITE_KEY = '9179b9c905994e6dae98e52778b69c87'
 CAPTCHA_API_KEY = 'e14e661452db57a55918930185270a16'

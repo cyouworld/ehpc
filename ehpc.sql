@@ -857,11 +857,14 @@ CREATE TABLE `machine_account` (
   `ip` varchar(64) DEFAULT NULL,
   `port` int(11) DEFAULT NULL,
   `token` varchar(64) DEFAULT NULL,
-  `user_id` int(11) DEFAULT NULL,
   `sc_center` int(11) DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL,
+  `apply_id` int(11) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `user_id` (`user_id`),
-  CONSTRAINT `machine_account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
+  KEY `apply_id` (`apply_id`),
+  CONSTRAINT `machine_account_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`),
+  CONSTRAINT `machine_account_ibfk_2` FOREIGN KEY (`apply_id`) REFERENCES `machine_apply` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 -- ----------------------------

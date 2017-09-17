@@ -107,6 +107,7 @@
                             <button data-op="disapprove" class="btn btn-danger">拒绝申请</button>
                             {% elif apply.submit_status == 2 %}
                                 <span style="color: green;margin-right: 20px;"><strong>已通过该申请</strong></span>
+                                <button data-op="key" class="btn btn-info">账户信息</button>
                             {% elif apply.submit_status == 3 %}
                                 <span style="color: red;margin-right: 20px;"><strong>已拒绝该申请</strong></span>
                             {% endif %}
