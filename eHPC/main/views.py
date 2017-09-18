@@ -3,6 +3,8 @@
 # @Author: xuezaigds@gmail.com
 
 from flask import render_template, url_for, redirect
+
+from eHPC.util.statistics_utils import statistic_record
 from . import main
 from ..models import Course, Group, Article, Post, SubmitProgram, Program, Progress, Statistic
 from flask_babel import gettext
@@ -14,7 +16,7 @@ import requests
 
 @main.route('/')
 def index():
-    courses = Course.query.filter(Course.is_hidden!=True).order_by(Course.nature_order.asc()).limit(6).all()
+    courses = Course.query.filter(Course.is_hidden != True).order_by(Course.nature_order.asc()).limit(6).all()
     groups = Group.query.order_by(Group.memberNum.desc()).limit(6).all()
     articles = Article.query.order_by(Article.updatedTime.desc()).limit(5).all()
     if current_user.is_authenticated:
@@ -49,10 +51,9 @@ def index():
                 count += 1
 
         if user_courses or user_topics or user_program or user_challenges:
-            db.session.add(Statistic(current_user.id,
-                                     Statistic.ACTION_USER_VISIT_MAIN_PAGE,
-                                     None))
-            db.session.commit()
+            statistic_record(current_user.id,
+                             Statistic.ACTION_USER_VISIT_MAIN_PAGE,
+                             None)
             return render_template('main/personal_index.html',
                                    title=gettext('Education Practice Platform'),
                                    user_courses=user_courses,
@@ -60,20 +61,18 @@ def index():
                                    user_program=user_program,
                                    user_challenges=user_challenges)
         else:
-            db.session.add(Statistic(current_user.id,
-                                     Statistic.ACTION_USER_VISIT_MAIN_PAGE,
-                                     None))
-            db.session.commit()
+            statistic_record(current_user.id,
+                             Statistic.ACTION_USER_VISIT_MAIN_PAGE,
+                             None)
             return render_template('main/index.html',
                                    title=gettext('Education Practice Platform'),
                                    courses=courses,
                                    groups=groups,
                                    articles=articles)
     else:
-        db.session.add(Statistic(None,
-                                 Statistic.ACTION_USER_VISIT_MAIN_PAGE,
-                                 None))
-        db.session.commit()
+        statistic_record(None,
+                         Statistic.ACTION_USER_VISIT_MAIN_PAGE,
+                         None)
         return render_template('main/index.html',
                                title=gettext('Education Practice Platform'),
                                courses=courses,

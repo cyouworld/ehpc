@@ -12,6 +12,7 @@ from PIL import Image
 from datetime import datetime, timedelta
 
 from eHPC.util.captcha import verify_captcha
+from eHPC.util.statistics_utils import statistic_record
 from . import user
 from ..models import User, Statistic
 from ..util.email import send_email
@@ -179,7 +180,8 @@ def reg():
             if _form.get('type') == '1':
                 reg_user.wait_for_audit = True
                 db.session.commit()
-                send_email(ip, current_app.config['MAIL_ADMIN_ADDR'], u'教师用户注册提醒', 'user/reg_teacher_email', user=reg_user)
+                send_email(ip, current_app.config['MAIL_ADMIN_ADDR'], u'教师用户注册提醒', 'user/reg_teacher_email',
+                           user=reg_user)
                 return render_template('user/teacher_reg_note.html')
 
             return redirect(url_for('user.verify_email', user_id=reg_user.id))
@@ -386,7 +388,8 @@ def notifications():
                          'event_name': r.notification.event_name,
                          'create_time': str(r.notification.create_time),
                          'sender': r.notification.sender.name,
-                         'event_content': r.notification.event_content} for r in current_user.note_info.filter_by(is_read=False).all()]
+                         'event_content': r.notification.event_content} for r in
+                        current_user.note_info.filter_by(is_read=False).all()]
             return jsonify(status='success', note=not_read)
         elif note_type == 'received':
             received = [{'id': r.id,
@@ -446,7 +449,7 @@ def statistics():
                 return jsonify(status='fail')
 
             if op == 'percentage':
-                all_statistics = Statistic.query.filter_by(action=action_code).\
+                all_statistics = Statistic.query.filter_by(action=action_code). \
                     filter(Statistic.user_id != current_user.id).all()
                 status = {}
                 for s in all_statistics:
@@ -464,7 +467,7 @@ def statistics():
                         my_status += 1
 
                 count = 0
-                for (k,v) in status.items():
+                for (k, v) in status.items():
                     if my_status > v:
                         count += 1
 
@@ -526,7 +529,8 @@ def statistics():
                     if correct_status[k] + wrong_status[k] == 0:
                         k_accuracy = 0
                     else:
-                        k_accuracy = int(round(1.0 * correct_status[k] / (correct_status[k] + wrong_status[k]), 2) * 100)
+                        k_accuracy = int(
+                            round(1.0 * correct_status[k] / (correct_status[k] + wrong_status[k]), 2) * 100)
                     if accuracy > k_accuracy:
                         count += 1
 
@@ -566,13 +570,12 @@ def collect_statistics():
         except ValueError:
             return jsonify(status='fail')
 
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.ACTION_QUESTION_SUBMIT_ANSWER,
-                                 json.dumps(dict(classify_id=classify_id,
-                                                 status=status,
-                                                 start_time=str(start_time),
-                                                 end_time=str(end_time)))))
-        db.session.commit()
+        statistic_record(current_user.id,
+                         Statistic.ACTION_QUESTION_SUBMIT_ANSWER,
+                         json.dumps(dict(classify_id=classify_id,
+                                         status=status,
+                                         start_time=str(start_time),
+                                         end_time=str(end_time))))
         return jsonify(status='success')
     elif action_code == Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO:
         material_id = request.form.get("material_id")
@@ -592,12 +595,11 @@ def collect_statistics():
         except ValueError:
             return jsonify(status='fail')
 
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO,
-                                 json.dumps(dict(material_id=material_id,
-                                                 start_time=str(start_time),
-                                                 end_time=str(end_time)))))
-        db.session.commit()
+        statistic_record(current_user.id,
+                         Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO,
+                         json.dumps(dict(material_id=material_id,
+                                         start_time=str(start_time),
+                                         end_time=str(end_time))))
         return jsonify(status='success')
     elif action_code == Statistic.ACTION_COURSE_ATTEND_QUIZ:
         course_id = request.form.get('course_id')
@@ -619,13 +621,12 @@ def collect_statistics():
         except ValueError:
             return jsonify(status='fail')
 
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.ACTION_COURSE_ATTEND_QUIZ,
-                                 json.dumps(dict(paper_id=paper_id,
-                                                 course_id=course_id,
-                                                 start_time=str(start_time),
-                                                 end_time=str(end_time)))))
-        db.session.commit()
+        statistic_record(current_user.id,
+                         Statistic.ACTION_COURSE_ATTEND_QUIZ,
+                         json.dumps(dict(paper_id=paper_id,
+                                         course_id=course_id,
+                                         start_time=str(start_time),
+                                         end_time=str(end_time))))
         return jsonify(status='success')
     elif action_code == Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER:
         course_id = request.form.get('course_id')
@@ -649,14 +650,13 @@ def collect_statistics():
         except ValueError:
             return jsonify(status='fail')
 
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER,
-                                 json.dumps(dict(paper_id=paper_id,
-                                                 course_id=course_id,
-                                                 result=result,
-                                                 start_time=str(start_time),
-                                                 end_time=str(end_time)))))
-        db.session.commit()
+        statistic_record(current_user.id,
+                         Statistic.ACTION_COURSE_SUBMIT_QUIZ_ANSWER,
+                         json.dumps(dict(paper_id=paper_id,
+                                         course_id=course_id,
+                                         result=result,
+                                         start_time=str(start_time),
+                                         end_time=str(end_time))))
         return jsonify(status='success')
     elif action_code == Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK:
         knowledge_id = request.form.get('kid')
@@ -678,13 +678,12 @@ def collect_statistics():
         except ValueError:
             return jsonify(status='fail')
 
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK,
-                                 json.dumps(dict(knowledge_id=knowledge_id,
-                                                 challenge_id=challenge_id,
-                                                 start_time=str(start_time),
-                                                 end_time=str(end_time)))))
-        db.session.commit()
+        statistic_record(current_user.id,
+                         Statistic.ACTION_LAB_PASS_A_PROGRAMING_TASK,
+                         json.dumps(dict(knowledge_id=knowledge_id,
+                                         challenge_id=challenge_id,
+                                         start_time=str(start_time),
+                                         end_time=str(end_time))))
         return jsonify(status='success')
     elif action_code == Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK:
         vnc_knowledge_id = request.form.get('vnc_knowledge_id')
@@ -706,13 +705,12 @@ def collect_statistics():
         except ValueError:
             return jsonify(status='fail')
 
-        db.session.add(Statistic(current_user.id,
-                                 Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK,
-                                 json.dumps(dict(vnc_knowledge_id=vnc_knowledge_id,
-                                                 vnc_task_id=vnc_task_id,
-                                                 start_time=str(start_time),
-                                                 end_time=str(end_time)))))
-        db.session.commit()
+        statistic_record(current_user.id,
+                         Statistic.ACTION_LAB_PASS_A_CONFIGURATION_TASK,
+                         json.dumps(dict(vnc_knowledge_id=vnc_knowledge_id,
+                                         vnc_task_id=vnc_task_id,
+                                         start_time=str(start_time),
+                                         end_time=str(end_time))))
         return jsonify(status='success')
 
 
