@@ -309,7 +309,7 @@ def case_delete():
 
 
 @admin.route('/case/<int:case_id>/picture/', methods=['GET', 'POST'])
-@system_login
+@admin_login
 def case_icon(case_id):
     if request.method == 'GET':
         cur_case = Case.query.filter_by(id=case_id).first_or_404()
@@ -336,7 +336,7 @@ def case_icon(case_id):
 
 
 @admin.route('/case/<int:case_id>/version/', methods=['GET', 'POST'])
-@system_login
+@admin_login
 def case_version(case_id):
     if request.method == 'GET':
         cur_case = Case.query.filter_by(id=case_id).first_or_404()
@@ -397,7 +397,7 @@ def case_version(case_id):
 
 
 @admin.route('/case/<int:case_id>/version/<int:version_id>/material/', methods=['GET', 'POST'])
-@system_login
+@admin_login
 def case_version_material(case_id, version_id):
     if request.method == 'GET':
         cur_case = Case.query.filter_by(id=case_id).first_or_404()
