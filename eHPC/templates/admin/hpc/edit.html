@@ -204,17 +204,19 @@
                 $("#save-op").val("save-as-draft");
             });
             $("#submit").click(function() {
-                $("#applicant_name").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");
-                $("#applicant_institution").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");
-                $("#applicant_tel").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人电话");
-                $("#applicant_email").attr('required', "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");
-                $("#applicant_address").attr('required', "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");
+                $("#applicant_name").attr("required", "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");
+                $("#applicant_institution").attr("required", "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");
+                $("#applicant_tel").attr("required", "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人电话");
+                $("#applicant_email").attr("required", "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");
+                $("#applicant_address").attr("required", "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");
 
-                $("#manager_name").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");
-                $("#manager_institution").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");
-                $("#manager_tel").attr('required', "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人电话");
-                $("#manager_email").attr('required', "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");
-                $("#manager_address").attr('required', "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");
+                $("#manager_name").attr("required", "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人姓名");
+                $("#manager_institution").attr("required", "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人单位");
+                $("#manager_tel").attr("required", "required").attr("data-parsley-maxlength", 64).attr("data-parsley-required-message", "请输入申请人电话");
+                $("#manager_email").attr("required", "required").attr("data-parsley-type", "email").attr("data-parsley-required-message", "请输入申请人邮箱");
+                $("#manager_address").attr("required", "required").attr("data-parsley-maxlength", 128).attr("data-parsley-required-message", "请输入申请人电话");
+
+                $("#usage").attr('required', "required").attr("data-parsley-maxlength", 1024).attr("data-parsley-minlength", 20).attr("data-parsley-required-message", "请填写用途说明");
 
                 $("#machine-apply-create-form").parsley().validate();
             });

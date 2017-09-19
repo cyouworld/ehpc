@@ -12,7 +12,7 @@ from flask_login import current_user
 from eHPC.lab.vnc_util import start_image, stop_image
 from . import admin
 from .. import db
-from ..models import DockerHolder, Statistic, Knowledge, VNCKnowledge, Lab
+from ..models import DockerHolder, Statistic, Knowledge, VNCKnowledge, Lab, Program
 from ..models import User, Article, Group, Case, CaseVersion, CaseCodeMaterial, Course
 from ..user.authorize import system_login, admin_login
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename
@@ -30,7 +30,9 @@ def index():
                            group_cnt=Group.query.count(),
                            case_cnt=Case.query.count(),
                            docker_holder_cnt=DockerHolder.query.count(),
-                           lab_cnt=lab_cnt)
+                           lab_cnt=lab_cnt,
+                           apply_cnt=User.query.filter_by(wait_for_audit=True).count(),
+                           program_cnt=Program.query.count())
 
 
 @admin.route('/users/')
