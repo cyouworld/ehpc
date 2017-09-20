@@ -18,7 +18,7 @@ from .. import db
 from ..models import Classify, Program, Paper, Question, PaperQuestion, Homework, HomeworkUpload, HomeworkAppendix, HomeworkScore, Notice, ProgTag, program_tag
 from ..models import Course, Lesson, Material, User, Apply, VNCKnowledge, VNCTask, Lab
 from ..models import Knowledge, Challenge, Group
-from ..user.authorize import teacher_login, admin_login
+from ..user.authorize import teacher_login, admin_login, system_login
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename, extension_to_file_type
 from ..util.new_api import init_evaluate_program
 from ..util.pdf import get_paper_pdf
@@ -146,7 +146,7 @@ def course_edit(course_id):
 
 
 @admin.route('/course/<int:course_id>/hide/')
-@teacher_login
+@admin_login
 def course_hide(course_id):
     # 隐藏或显示课程
     curr_course = Course.query.filter_by(id=course_id).first_or_404()
@@ -155,7 +155,10 @@ def course_hide(course_id):
     else:
         curr_course.is_hidden = False
     db.session.commit()
-    return redirect(url_for('admin.course', tag2='course-manage'))
+    if current_user.permissions == 0:
+        return redirect(url_for('admin.course_manage'))
+    else:
+        return redirect(url_for('admin.course', tag2='course-manage'))
 
 
 @admin.route('/course/<int:course_id>/picture/', methods=['GET', 'POST'])

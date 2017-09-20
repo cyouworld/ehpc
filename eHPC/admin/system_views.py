@@ -15,7 +15,7 @@ from .. import db
 from ..models import DockerHolder, Statistic, Knowledge, VNCKnowledge, Lab, Program
 from ..models import User, Article, Group, Case, CaseVersion, CaseCodeMaterial, Course
 from ..user.authorize import system_login, admin_login
-from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename
+from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename, remove_dirs
 
 
 @admin.route('/')
@@ -102,16 +102,70 @@ def reg_teacher(user_id):
 def course_manage():
     if request.method == 'GET':
         all_courses = Course.query.order_by(Course.nature_order.asc())
-        return render_template('admin/course_manage.html',
+        return render_template('admin/admin_course/course_manage.html',
                                all_courses=all_courses,
                                title=gettext('Course Admin'))
     elif request.method == 'POST':
-        seq = json.loads(request.form['seq'])
-        all_courses = Course.query.order_by(Course.nature_order.asc())
-        for c in all_courses:
-            c.nature_order = seq[str(c.id)]
+        if request.form["op"] == "seq":
+            seq = json.loads(request.form['seq'])
+            all_courses = Course.query.order_by(Course.nature_order.asc())
+            for c in all_courses:
+                c.nature_order = seq[str(c.id)]
+            db.session.commit()
+            return jsonify(status='success')
+        elif request.form['op'] == 'del':
+            # 删除课程
+            curr_course = Course.query.filter_by(id=request.form['course_id']).first_or_404()
+            for l in curr_course.lessons:
+                for m in l.materials:
+                    db.session.delete(m)
+                db.session.delete(l)
+            for h in curr_course.homeworks:
+                for x in h.uploads:
+                    db.session.delete(x)
+                for x in h.appendix:
+                    db.session.delete(x)
+                db.session.delete(h)
+            for p in curr_course.papers:
+                db.session.delete(p)
+            for c in curr_course.comments:
+                db.session.delete(c)
+            if curr_course.qrcode:
+                db.session.delete(curr_course.qrcode)
+
+            resource_path = os.path.join(current_app.config['RESOURCE_FOLDER'], 'course_%d' % curr_course.id)
+            homework_path = os.path.join(current_app.config['HOMEWORK_UPLOAD_FOLDER'], 'course_%d' % curr_course.id)
+            homework_appendix_path = os.path.join(current_app.config['HOMEWORK_APPENDIX_FOLDER'],
+                                                  'course_%d' % curr_course.id)
+            cover_path = os.path.join(current_app.config['COURSE_COVER_FOLDER'], 'cover_%d.png' % curr_course.id)
+            remove_dirs(resource_path, homework_path, homework_appendix_path, cover_path)
+
+            # 将排在此课程后面的课程序号全部减1
+            total_courses = Course.query.order_by(Course.nature_order.asc())
+            for c in total_courses:
+                if c.nature_order >= curr_course.nature_order:
+                    c.nature_order -= 1
+            db.session.delete(curr_course)
+            db.session.delete(curr_course.group)
+            db.session.commit()
+            return jsonify(status="success", course_id=curr_course.id)
+
+
+@admin.route('/courses/<int:course_id>/edit/', methods=['GET', 'POST'])
+@system_login
+def admin_course_edit(course_id):
+    if request.method == 'GET':
+        curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        return render_template('admin/admin_course/edit.html', course=curr_course,
+                               title=gettext('Edit Course'))
+    elif request.method == 'POST':
+        # 编辑课程基本信息
+        curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        curr_course.title = request.form['title']
+        curr_course.subtitle = request.form['subtitle']
+        curr_course.about = request.form['about']
         db.session.commit()
-        return jsonify(status='success')
+        return jsonify(status="success", course_id=curr_course.id)
 
 
 @admin.route('/articles/')

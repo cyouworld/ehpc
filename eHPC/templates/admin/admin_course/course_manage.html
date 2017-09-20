@@ -19,11 +19,12 @@
                 <table class="table fixed-table" id="course-table">
                     <thead>
                     <tr>
-                        <th width="40%">名称</th>
-                        <th class="text-center" width="10%">课程数</th>
-                        <th class="text-center" width="10%">学生数</th>
-                        <th class="text-center" width="20%">创建时间</th>
-                        <th class="text-center" width="10%">教师</th>
+                        <th width="35%">名称</th>
+                        <th class="text-center" width="7%">课程数</th>
+                        <th class="text-center" width="7%">学生数</th>
+                        <th class="text-center" width="15%">创建时间</th>
+                        <th class="text-center" width="8%">教师</th>
+                        <th class="text-center" width="18%">操作</th>
                     </tr>
                     </thead>
                     <tbody id="tb">
@@ -38,6 +39,17 @@
                             <td class="text-center">{{ c.studentNum }}</td>
                             <td class="text-center">{{ c.createdTime }}</td>
                             <td class="text-center">{{ c.teacher.name }}</td>
+                            <td class="text-center">
+                                <a href="{{ url_for('admin.admin_course_edit', course_id=c.id) }}">编辑</a>
+                                <span class="divider"> | </span>
+                                <a href="javascript:void(0)" name="del-btn">删除</a>
+                                <span class="divider"> | </span>
+                                {% if c.is_hidden %}
+                                <a href="{{ url_for('admin.course_hide', course_id=c.id) }}">显示课程</a>
+                                {% else %}
+                                <a href="{{ url_for('admin.course_hide', course_id=c.id) }}">隐藏课程</a>
+                                {% endif %}
+                            </td>
                         </tr>
                         {% endfor %}
                     {% else %}
@@ -49,11 +61,36 @@
         </div>
     </div>
 
+    {% include "admin/widget-del-warning.html" %}
+
 {% endblock %}
 
 {% block footer_ext %}
     <script type="text/javascript">
         $(document).ready(function () {
+            var id = -1, obj = null;
+            $("#tb").find("a[name=del-btn]").each(function () {
+                $(this).click(function () {
+                    id = $(obj).parent().parent().data('id');
+                    obj = this;
+                    $("#del-warning").modal("show");
+                });
+            });
+            $("#del-confirm").click(function () {
+                $.ajax({
+                    type: "post",
+                    url: location.href,
+                    data: {
+                        course_id: $(obj).parent().parent().data('id') ,
+                        op: "del"
+                    },
+                    async: false,
+                    success: function (data) {
+                        $(obj).parent().parent().remove();
+                        $("#del-warning").modal("hide");
+                    }
+                });
+            });
             $("#edit-seq").click(function () {
                 if ($(this).text() == " 调整顺序") {
                     $("#course-table").find("tbody").sortable();
@@ -69,7 +106,8 @@
                         type: "post",
                         url: location.href,
                         data: {
-                            seq: JSON.stringify(seq)
+                            seq: JSON.stringify(seq),
+                            op: "seq"
                         },
                         success: function (data) {
                             if (data["status"] == "success") {
