@@ -252,6 +252,7 @@ def case_create():
         tags = request.form['tags']
         description = request.form['description']
         new_case = Case(name=name, description=description, tag=tags, icon="/static/upload/case/test.png")
+        new_case.teacher = current_user
         db.session.add(new_case)
         db.session.commit()
         path = os.path.join(current_app.config['CASE_FOLDER'], "%d" % new_case.id)
