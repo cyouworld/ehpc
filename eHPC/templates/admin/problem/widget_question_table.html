@@ -10,6 +10,22 @@
 </div>
 
 <div class="panel-body">
+    {% if question_classify %}
+        <a {% if question_type == 'choice' %}disabled{% endif %} href="{{ url_for('admin.question_filter_by_classify', question_type='choice', question_classify=question_classify) }}?tag2={{ request.args.get('tag2') }}"
+           class="btn btn-primary" style="margin-bottom: 10px;">选择题</a>
+        <a {% if question_type == 'judge' %}disabled{% endif %} href="{{ url_for('admin.question_filter_by_classify', question_type='judge', question_classify=question_classify) }}?tag2={{ request.args.get('tag2') }}"
+           class="btn btn-primary" style="margin-bottom: 10px;">判断题</a>
+        <a {% if question_type == 'fill' %}disabled{% endif %} href="{{ url_for('admin.question_filter_by_classify', question_type='fill', question_classify=question_classify) }}?tag2={{ request.args.get('tag2') }}"
+           class="btn btn-primary" style="margin-bottom: 10px;">填空题</a>
+        <a {% if question_type == 'essay' %}disabled{% endif %} href="{{ url_for('admin.question_filter_by_classify', question_type='essay', question_classify=question_classify) }}?tag2={{ request.args.get('tag2') }}"
+           class="btn btn-primary" style="margin-bottom: 10px;">问答题</a>
+    {% else %}
+        <a {% if question_type == 'choice' %}disabled{% endif %} href="{{ url_for('admin.question', question_type='choice') }}?tag2={{ request.args.get('tag2') }}" class="btn btn-primary" style="margin-bottom: 10px;">选择题</a>
+        <a {% if question_type == 'judge' %}disabled{% endif %} href="{{ url_for('admin.question', question_type='judge') }}?tag2={{ request.args.get('tag2') }}" class="btn btn-primary" style="margin-bottom: 10px;">判断题</a>
+        <a {% if question_type == 'fill' %}disabled{% endif %} href="{{ url_for('admin.question', question_type='fill') }}?tag2={{ request.args.get('tag2') }}" class="btn btn-primary" style="margin-bottom: 10px;">填空题</a>
+        <a {% if question_type == 'essay' %}disabled{% endif %} href="{{ url_for('admin.question', question_type='essay') }}?tag2={{ request.args.get('tag2') }}" class="btn btn-primary" style="margin-bottom: 10px;">问答题</a>
+    {% endif %}
+
     <table class="table fixed-table">
         <thead>
         <tr>

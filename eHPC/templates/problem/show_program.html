@@ -43,7 +43,7 @@
                         <tbody>
                         {% for p in programs %}
                             <tr>
-                                <td><a href="{{ p.id }}">{{ p.id }}</a></td>
+                                <td><a href="{{ p.id }}">{{ loop.index }}</a></td>
                                 <td><a href="{{ p.id }}">{{ p.title }}</a></td>
                                 <td>
                                     {% if p.difficulty == 0 %}<a class="btn-info btn" href="javascript:void">简单</a>{% endif %}

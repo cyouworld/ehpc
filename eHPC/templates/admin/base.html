@@ -84,6 +84,10 @@
                                         <a id="course-{{ c.id }}-7"
                                         href="{{ url_for('admin.course_notice',course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-7">公告管理</a>
                                     </li>
+                                    <li>
+                                        <a id="course-{{ c.id }}-8" target="_blank"
+                                        href="{{ url_for('course.view',cid=c.id) }}?tab=discussion">跳转至课程讨论</a>
+                                    </li>
                                 </ul>
                             </li>
                         {% endfor %}

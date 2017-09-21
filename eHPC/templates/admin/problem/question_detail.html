@@ -10,48 +10,38 @@
 {% block content %}
     <div class="container" id="content-container">
         <div class="row">
-            {% if mode == "practice" %}
-            <div class="col-md-3">
-                {% with type=type %}
-                    {% include 'admin/problem/widget_nav_left.html' %}
-                {% endwith %}
-            </div>
-            {% endif %}
-
-            <div {% if mode == "practice" %}class="col-md-9"{% endif %}>
-                <div class="panel panel-default panel-col" style="position: relative">
-                    {% if mode == "practice" %}
-                        <div class="panel-heading">
-                            题目编辑
-                        </div>
-                    {% else %}
-                        <a class="back-to-homework-list" href="{{ url_for('admin.paper_edit',course_id=curr_paper.course.id,paper_id=curr_paper.id) }}?tag1=course-{{ curr_paper.course.id }}&tag2=course-{{ curr_paper.course.id }}-6">
-                            <i class="glyphicon glyphicon-chevron-left"></i>返回试卷题目列表</a>
-                        <div class="panel-heading text-center">
-                            题目编辑
-                        </div>
-                    {% endif %}
-                    <div class="panel-body">
-                        {% with op=op, classifies=classifies, mode=mode, paper=curr_paper if mode == 'paper' else none %}
-                            {% if type == 'choice' %}
-                                {% with choice=question %}
-                                    {% include 'admin/problem/widget_choice_detail.html' %}
-                                {% endwith %}
-                            {% elif type == 'fill' %}
-                                {% with fill=question %}
-                                    {% include 'admin/problem/widget_fill_detail.html' %}
-                                {% endwith %}
-                            {% elif type == 'judge' %}
-                                {% with judge=question %}
-                                    {% include 'admin/problem/widget_judge_detail.html' %}
-                                {% endwith %}
-                            {% elif type == 'essay' %}
-                                {% with essay=question %}
-                                    {% include 'admin/problem/widget_essay_detail.html' %}
-                                {% endwith %}
-                            {% endif %}
-                        {% endwith %}
+            <div class="panel panel-default panel-col" style="position: relative">
+                {% if mode == "practice" %}
+                    <div class="panel-heading">
+                        题目编辑
                     </div>
+                {% else %}
+                    <a class="back-to-homework-list" href="{{ url_for('admin.paper_edit',course_id=curr_paper.course.id,paper_id=curr_paper.id) }}?tag1=course-{{ curr_paper.course.id }}&tag2=course-{{ curr_paper.course.id }}-6">
+                        <i class="glyphicon glyphicon-chevron-left"></i>返回试卷题目列表</a>
+                    <div class="panel-heading text-center">
+                        题目编辑
+                    </div>
+                {% endif %}
+                <div class="panel-body">
+                    {% with op=op, classifies=classifies, mode=mode, paper=curr_paper if mode == 'paper' else none %}
+                        {% if type == 'choice' %}
+                            {% with choice=question %}
+                                {% include 'admin/problem/widget_choice_detail.html' %}
+                            {% endwith %}
+                        {% elif type == 'fill' %}
+                            {% with fill=question %}
+                                {% include 'admin/problem/widget_fill_detail.html' %}
+                            {% endwith %}
+                        {% elif type == 'judge' %}
+                            {% with judge=question %}
+                                {% include 'admin/problem/widget_judge_detail.html' %}
+                            {% endwith %}
+                        {% elif type == 'essay' %}
+                            {% with essay=question %}
+                                {% include 'admin/problem/widget_essay_detail.html' %}
+                            {% endwith %}
+                        {% endif %}
+                    {% endwith %}
                 </div>
             </div>
         </div>

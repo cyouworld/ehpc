@@ -8,6 +8,7 @@ var import_mathjax = '<script type="text/x-mathjax-config">\
 
 document.write(import_mathjax);
 function latex_support(plainText) {
+    plainText = plainText.toString();
     $(".lab-content-wrap, .content-wrap").append("<div id='latex-render-area' style='display: none'></div>");
     var temp = plainText.match(/\\\([\s\S]*?\\\)|\\\[[\s\S]*?\\\]/g);
     if(temp!=null){
