@@ -89,6 +89,7 @@ def topic_in_course_new(gid):
         current_user.topicNum += 1
         cur_group.topics.append(new_topic)
         cur_group.topicNum += 1
+        db.session.commit()
 
         return jsonify(status='success')
 
