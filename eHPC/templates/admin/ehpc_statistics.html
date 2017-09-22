@@ -9,28 +9,36 @@
             <div class="panel-body">
                 <div class="row">
                     <div id="user-structure" class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="text-align: center">
-                        <div style="height: 300%;"></div>
+                        <div style="height: 300%;display: none"></div>
+                        <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
                     <div id="visit-count" class="col-xs-12 col-sm-12 col-md-6 col-lg-6" style="text-align: center">
-                        <div style="height: 300%;"></div>
+                        <div style="height: 300%;display: none"></div>
+                        <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="visit-time" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;">
-                        <div style="height: 400%;"></div>
+                    <div id="visit-time" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                        <div style="height: 400%;display: none"></div>
+                        <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-increase" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;">
-                        <div style="height: 400%;"></div>
+                    <div id="user-increase" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                        <div style="height: 400%;display: none"></div>
+                        <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-geo-percentage" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;">
-                        <div style="height: 300%;"></div>
+                    <div id="user-geo-percentage" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                        <div style="height: 300%;display: none"></div>
+                        <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-geo-distribution" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;">
-                        <div style="height: 700%;"></div>
+                    <div id="user-geo-distribution" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                        <div style="height: 700%;display: none"></div>
+                        <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-student-structure" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;">
-                        <div style="height: 600%;"></div>
+                    <div id="user-student-structure" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                        <div style="height: 600%;display: none"></div>
+                        <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-learning-situation" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;">
-                        <div style="height: 300%;"></div>
+                    <div id="user-learning-situation" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                        <div style="height: 300%;display: none"></div>
+                        <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
                 </div>
             </div>
@@ -56,7 +64,11 @@
                 success: function (data) {
                     if(data["status"]==="success"){
                         var user_count = data["user_count"];
+                        $("#user-structure").find("img").eq(0).hide();
+                        $("#user-structure").find("div").eq(0).show();
+                        graph_user_structure.resize();
                         graph_user_structure.setOption({
+                            animationDuration: 3000,
                             title: {
                                 text: "网站用户构成(共" + user_count["all"] + "位)",
                                 left: 'center'
@@ -129,7 +141,12 @@
                         for(i=1;i<visit_time_values.length;i++){
                             visit_data.push(visit_data[i - 1] + visit_time_values[i]);
                         }
+
+                        $("#visit-count").find("img").eq(0).hide();
+                        $("#visit-count").find("div").eq(0).show();
+                        graph_visit_count.resize();
                         graph_visit_count.setOption({
+                            animationDuration: 3000,
                             title: {
                                 text: "主页访问情况(共" + visit_count["all"] + "人次)",
                                 left: 'center'
@@ -172,7 +189,12 @@
                                 }
                             ]
                         });
+
+                        $("#visit-time").find("img").eq(0).hide();
+                        $("#visit-time").find("div").eq(0).show();
+                        graph_visit_time.resize();
                         graph_visit_time.setOption({
+                            animationDuration: 3000,
                             title: {
                                 text: "累计访问量",
                                 left: 'left'
@@ -263,7 +285,12 @@
                             reg_increase[j]++;
                         }
                     }
+
+                    $("#user-increase").find("img").eq(0).hide();
+                    $("#user-increase").find("div").eq(0).show();
+                    graph_user_increase.resize();
                     graph_user_increase.setOption({
+                            animationDuration: 3000,
                         title: {
                             text: '用户增长情况'
                         },
@@ -318,8 +345,7 @@
                                 data: reg_increase
                             }
                         ]
-                    })
-
+                    });
                 }
             });
 
@@ -365,7 +391,11 @@
                                 user_geo_percentage_data.push({value: res[i].value[2], name: res[i].name});
                             }
                         }
+                        $("#user-geo-percentage").find("img").eq(0).hide();
+                        $("#user-geo-percentage").find("div").eq(0).show();
+                        graph_user_geo_percentage.resize();
                         graph_user_geo_percentage.setOption({
+                            animationDuration: 3000,
                             title: {
                                 text: "用户地域分布（百分比）",
                                 left: 'center'
@@ -401,7 +431,12 @@
                                 }
                             ]
                         });
+
+                        $("#user-geo-distribution").find("img").eq(0).hide();
+                        $("#user-geo-distribution").find("div").eq(0).show();
+                        graph_user_geo_distribution.resize();
                         graph_user_geo_distribution.setOption({
+                            animationDuration: 3000,
                             title: {
                                 text: '用户地域分布（地图）',
                                 left: 'center'
@@ -522,7 +557,11 @@
                             undergraduate_data.push(student_structure[i]['undergraduate']);
                             postgraduate_data.push(student_structure[i]['postgraduate']);
                         }
+                        $("#user-student-structure").find("img").eq(0).hide();
+                        $("#user-student-structure").find("div").eq(0).show();
+                        graph_student_structure.resize();
                         graph_student_structure.setOption({
+                            animationDuration: 3000,
                             title: {
                                 text: '学生用户统计'
                             },
@@ -606,7 +645,11 @@
             }
 
             var graph_user_learning_situation = echarts.init($("#user-learning-situation").find("div")[0], 'shine');
+            $("#user-learning-situation").find("img").eq(0).hide();
+            $("#user-learning-situation").find("div").eq(0).show();
+            graph_user_learning_situation.resize();
             graph_user_learning_situation.setOption({
+                            animationDuration: 3000,
                 title: {
                     text: '用户学习时间(' + (new Date()).getFullYear() + '年)'
                 },
