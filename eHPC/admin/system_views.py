@@ -618,7 +618,7 @@ def ehpc_statistics():
             for k, v in undergraduate_status.items():
                 undergraduate_structure.append({u"学校": k, u"人数": v})
 
-            for k,v in postgraduate_status.items():
+            for k, v in postgraduate_status.items():
                 postgraduate_structure.append({u"学校": k, u"人数": v})
 
             return jsonify(status='success', undergraduate=undergraduate_status, postgraduate=postgraduate_status)
@@ -631,10 +631,15 @@ def ehpc_statistics():
                            'hpc_admin': 0,
                            'anonymous': 0}
 
-            visit_time = []
+            visit_time = {}
 
             for v in visit_statistics_all:
-                visit_time.append(v.timestamp.strftime('%Y-%m-%d'))
+                time_point = v.timestamp.strftime('%Y-%m-%d')
+                if not visit_time.has_key(time_point):
+                    visit_time[time_point] = 1
+                else:
+                    visit_time[time_point] += 1
+
                 if v.user is None:
                     visit_count['anonymous'] += 1
                 else:
@@ -648,6 +653,9 @@ def ehpc_statistics():
                         visit_count['hpc_admin'] += 1
 
             return jsonify(status='success', visit_count=visit_count, visit_time=visit_time)
+        elif op == 'user_increase':
+            date_joined_all = User.query.with_entities(User.date_joined).order_by(User.date_joined.asc()).all()
+            return jsonify(status='success', date_joined_all=date_joined_all)
 
 
 @admin.route('/system/knowledge/', methods=['POST', 'GET'])
@@ -668,7 +676,7 @@ def knowledge():
         for k in knowledges:
             all_knowledges.append(k)
         for k in vnc_knowledges:
-            bigger = 1     # 用于判断当前VNC实验序号是否比all_knowledges里面所有的序号都大
+            bigger = 1  # 用于判断当前VNC实验序号是否比all_knowledges里面所有的序号都大
             for idx in range(len(all_knowledges)):
                 if all_knowledges[idx].lab_id > k.lab_id:
                     bigger = 0
