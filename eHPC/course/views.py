@@ -267,12 +267,7 @@ def homework_upload(hid):
         upload_path = unicode(os.path.join(current_app.config['HOMEWORK_UPLOAD_FOLDER'], homework_uri), 'utf8')       #处理中文文件名
         status = upload_file(curr_upload, upload_path, ['wrap', 'pdf'])
         if status[0]:
-            homework_score = HomeworkScore.query.filter_by(user_id=current_user.id, homework_id=cur_homework.id).first()
-            if homework_score:
-                homework_upload = HomeworkUpload(name=homework_file_name, homework_id=hid, user_id=current_user.id,
-                                                 uri=homework_uri, score=homework_score.score)
-            else:
-                homework_upload = HomeworkUpload(name=homework_file_name, homework_id=hid, user_id=current_user.id, uri=homework_uri)
+            homework_upload = HomeworkUpload(name=homework_file_name, homework_id=hid, user_id=current_user.id, uri=homework_uri)
             db.session.add(homework_upload)
             cur_homework.uploads.append(homework_upload)
             db.session.commit()
