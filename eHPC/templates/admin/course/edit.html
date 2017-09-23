@@ -5,6 +5,7 @@
     <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
     <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/bootstrap-colorpicker.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -63,6 +64,7 @@
 
 {% block footer_ext %}
     <script language=javascript src='{{ url_for("static", filename="js/custom_simplemde.js") }}'></script>
+    <script src="{{ url_for('static', filename='js/colorpicker/bootstrap-colorpicker.min.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             var edt = custom_simplemde({

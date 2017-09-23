@@ -417,11 +417,12 @@ def db_controller():
         if cur_image is None:
             return jsonify(status='fail')
 
+        if cur_image.tunnel_id is None:
+            cur_image.docker_holder.using_container_count += 1
+
         cur_image.tunnel_id = tunnel_id
         cur_image.status = DockerImage.CONNECTED
         cur_image.last_connect_time = datetime.now()
-
-        cur_image.docker_holder.using_container_count += 1
 
         db.session.commit()
         return jsonify(status='success')
@@ -443,9 +444,8 @@ def db_controller():
             cur_image.tunnel_id = None
             cur_image.status = DockerImage.DISCONNECTED
             cur_image.token = None
-
-        cur_image.docker_holder.using_container_count -= 1
-        db.session.commit()
+            cur_image.docker_holder.using_container_count -= 1
+            db.session.commit()
 
         return jsonify(status='success')
 

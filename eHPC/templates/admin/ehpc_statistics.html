@@ -16,27 +16,33 @@
                         <div style="height: 300%;display: none"></div>
                         <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="visit-time" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                    <div id="visit-time" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                         style="margin-top: 3%;text-align: center">
                         <div style="height: 400%;display: none"></div>
                         <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-increase" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                    <div id="user-increase" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                         style="margin-top: 3%;text-align: center">
                         <div style="height: 400%;display: none"></div>
                         <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-geo-percentage" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                    <div id="user-geo-percentage" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                         style="margin-top: 3%;text-align: center">
                         <div style="height: 300%;display: none"></div>
                         <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-geo-distribution" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                    <div id="user-geo-distribution" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                         style="margin-top: 3%;text-align: center">
                         <div style="height: 700%;display: none"></div>
                         <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-student-structure" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                    <div id="user-student-structure" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                         style="margin-top: 3%;text-align: center">
                         <div style="height: 600%;display: none"></div>
                         <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
-                    <div id="user-learning-situation" class="col-xs-12 col-sm-12 col-md-12 col-lg-12" style="margin-top: 3%;text-align: center">
+                    <div id="user-learning-situation" class="col-xs-12 col-sm-12 col-md-12 col-lg-12"
+                         style="margin-top: 3%;text-align: center">
                         <div style="height: 300%;display: none"></div>
                         <img src="{{ url_for('static', filename='images/loading2.svg') }}">
                     </div>
@@ -62,7 +68,7 @@
                     op: "user_structure"
                 },
                 success: function (data) {
-                    if(data["status"]==="success"){
+                    if (data["status"] === "success") {
                         var user_count = data["user_count"];
                         $("#user-structure").find("img").eq(0).hide();
                         $("#user-structure").find("div").eq(0).show();
@@ -124,12 +130,12 @@
                     op: "visit_statistics"
                 },
                 success: function (data) {
-                    if(data["status"]==="success"){
+                    if (data["status"] === "success") {
                         var visit_count, visit_time = {}, visit_time_keys, visit_time_values;
                         var visit_temp = data["visit_time"];
 
                         visit_time_keys = Object.keys(visit_temp).sort();
-                        for(i=0;i<visit_time_keys.length;i++){
+                        for (i = 0; i < visit_time_keys.length; i++) {
                             visit_time[visit_time_keys[i]] = visit_temp[visit_time_keys[i]];
                         }
 
@@ -138,7 +144,7 @@
                         visit_time_values = Object.values(visit_time);
 
                         var visit_data = [visit_time_values[0]];
-                        for(i=1;i<visit_time_values.length;i++){
+                        for (i = 1; i < visit_time_values.length; i++) {
                             visit_data.push(visit_data[i - 1] + visit_time_values[i]);
                         }
 
@@ -206,7 +212,7 @@
                                 }
                             },
                             legend: {
-                                data:['至此用户访问数']
+                                data: ['至此用户访问数']
                             },
                             grid: {
                                 left: '3%',
@@ -236,16 +242,16 @@
                                 end: 100
                             }],
                             toolbox: {
-                                show : true,
-                                feature : {
-                                    restore : {show: true}
+                                show: true,
+                                feature: {
+                                    restore: {show: true}
                                 },
                                 itemSize: 30
                             },
                             series: [
                                 {
-                                    name:'至此用户访问数',
-                                    type:'line',
+                                    name: '至此用户访问数',
+                                    type: 'line',
                                     smooth: true,
                                     data: visit_data
                                 }
@@ -265,23 +271,23 @@
                 success: function (data) {
                     var reg_time = data["date_joined_all"];
 
-                    for(i=0;i<reg_time.length;i++){
+                    for (i = 0; i < reg_time.length; i++) {
                         reg_time[i] = new Date(reg_time[i][0]).getTime();
                     }
                     reg_time.sort();
-                    for(i=0;i<reg_time.length;i++){
+                    for (i = 0; i < reg_time.length; i++) {
                         reg_time[i] = new Date(reg_time[i]);
                     }
 
-                    var reg_time_data = [moment(reg_time[0]).format("YYYY-MM-DD")];
+                    var reg_time_data = [moment(reg_time[0]).utcOffset(-8).format("YYYY-MM-DD")];
                     var reg_increase = [1];
-                    for(var i=1,j=0;i<reg_time.length;i++){
-                        var t = moment(reg_time[i]).format("YYYY-MM-DD");
-                        if(t!==reg_time_data[j]){
+                    for (var i = 1, j = 0; i < reg_time.length; i++) {
+                        var t = moment(reg_time[i]).utcOffset(-8).format("YYYY-MM-DD");
+                        if (t !== reg_time_data[j]) {
                             reg_time_data.push(t);
                             reg_increase.push(1);
                             j++;
-                        }else{
+                        } else {
                             reg_increase[j]++;
                         }
                     }
@@ -290,7 +296,7 @@
                     $("#user-increase").find("div").eq(0).show();
                     graph_user_increase.resize();
                     graph_user_increase.setOption({
-                            animationDuration: 3000,
+                        animationDuration: 3000,
                         title: {
                             text: '用户增长情况'
                         },
@@ -303,14 +309,14 @@
                         dataZoom: [
                             {
                                 type: 'slider',
-                                start: 0,
-                                end: 40
+                                start: 70,
+                                end: 100
                             }
                         ],
                         toolbox: {
-                            show : true,
-                            feature : {
-                                restore : {show: true}
+                            show: true,
+                            feature: {
+                                restore: {show: true}
                             },
                             itemSize: 30
                         },
@@ -323,19 +329,19 @@
                             bottom: '25%',
                             containLabel: true
                         },
-                        xAxis : [
+                        xAxis: [
                             {
-                                type : 'category',
-                                data : reg_time_data,
+                                type: 'category',
+                                data: reg_time_data,
                                 axisLabel: {
-                                    interval:0,
-                                    rotate:90
+                                    interval: 0,
+                                    rotate: 90
                                 }
                             }
                         ],
-                        yAxis : [
+                        yAxis: [
                             {
-                                type : 'value'
+                                type: 'value'
                             }
                         ],
                         series: [
@@ -358,12 +364,12 @@
                     op: "user_geo_distribution"
                 },
                 success: function (data) {
-                    if(data["status"]==="success"){
+                    if (data["status"] === "success") {
                         var positions, user_geo_data;
                         var res = [];
                         positions = data["positions"];
                         user_geo_data = data["user_geo_data"];
-                        for(var d in user_geo_data){
+                        for (var d in user_geo_data) {
                             res.push({
                                 name: d,
                                 value: [positions[d]['longitude'], positions[d]['latitude'], user_geo_data[d]]
@@ -375,18 +381,18 @@
 
                         var user_geo_percentage_type = [], user_geo_percentage_data = [];
 
-                        if(res.length > 5){
-                            for(i=0;i<5;i++){
+                        if (res.length > 5) {
+                            for (i = 0; i < 5; i++) {
                                 user_geo_percentage_type.push(res[i].name);
                                 user_geo_percentage_data.push({value: res[i].value[2], name: res[i].name});
                             }
                             user_geo_percentage_type.push("其他");
                             user_geo_percentage_data.push({value: 0, name: "其他"});
-                            for(i=5;i<res.length;i++){
+                            for (i = 5; i < res.length; i++) {
                                 user_geo_percentage_data[5].value += res[i].value[2];
                             }
-                        }else{
-                            for(i=0;i<res.length;i++){
+                        } else {
+                            for (i = 0; i < res.length; i++) {
                                 user_geo_percentage_type.push(res[i].name);
                                 user_geo_percentage_data.push({value: res[i].value[2], name: res[i].name});
                             }
@@ -441,7 +447,7 @@
                                 text: '用户地域分布（地图）',
                                 left: 'center'
                             },
-                            tooltip : {
+                            tooltip: {
                                 trigger: 'item',
                                 formatter: function (params) {
                                     var result = params.seriesName + "<br>";
@@ -451,18 +457,18 @@
                                 }
                             },
                             toolbox: {
-                                show : true,
-                                feature : {
-                                    dataView : {show: true, readOnly: true},
-                                    restore : {show: true}
+                                show: true,
+                                feature: {
+                                    dataView: {show: true, readOnly: true},
+                                    restore: {show: true}
                                 },
                                 itemSize: 30
                             },
                             legend: {
                                 orient: 'vertical',
                                 y: 'bottom',
-                                x:'right',
-                                data:['人数', '人数Top 5']
+                                x: 'right',
+                                data: ['人数', '人数Top 5']
                             },
                             geo: {
                                 map: 'china',
@@ -473,15 +479,15 @@
                                 },
                                 roam: true
                             },
-                            series : [
+                            series: [
                                 {
                                     name: '人数',
                                     type: 'scatter',
                                     coordinateSystem: 'geo',
                                     data: res.slice(5),
                                     symbolSize: function (val) {
-                                        if(val === 0) return 0;
-                                        else return 4 * Math.log(Math.log(val[2]+2) / Math.log(1.2));
+                                        if (val === 0) return 0;
+                                        else return 4 * Math.log(Math.log(val[2] + 2) / Math.log(1.2));
                                     },
                                     label: {
                                         normal: {
@@ -502,8 +508,8 @@
                                     coordinateSystem: 'geo',
                                     data: res.slice(0, 5),
                                     symbolSize: function (val) {
-                                        if(val === 0) return 0;
-                                        else return 4 * Math.log(Math.log(val[2]+2) / Math.log(1.2));
+                                        if (val === 0) return 0;
+                                        else return 4 * Math.log(Math.log(val[2] + 2) / Math.log(1.2));
                                     },
                                     showEffectOn: 'render',
                                     rippleEffect: {
@@ -541,18 +547,23 @@
                     op: "student_structure"
                 },
                 success: function (data) {
-                    if(data["status"]==="success"){
-                        var student_structure = [], university_legend = [], undergraduate_data = [], postgraduate_data = [];
+                    if (data["status"] === "success") {
+                        var student_structure = [], university_legend = [], undergraduate_data = [],
+                            postgraduate_data = [];
                         var undergraduate = data["undergraduate"];
                         var postgraduate = data["postgraduate"];
-                        for (var k in undergraduate){
-                            student_structure.push({"university": k, "undergraduate": undergraduate[k], "postgraduate": postgraduate[k]});
+                        for (var k in undergraduate) {
+                            student_structure.push({
+                                "university": k,
+                                "undergraduate": undergraduate[k],
+                                "postgraduate": postgraduate[k]
+                            });
                         }
                         student_structure.sort(function (a, b) {
-                            return b["undergraduate"]+b["postgraduate"] - (a["undergraduate"]+a["postgraduate"]);
+                            return b["undergraduate"] + b["postgraduate"] - (a["undergraduate"] + a["postgraduate"]);
                         });
 
-                        for(var i=0;i<student_structure.length;i++){
+                        for (var i = 0; i < student_structure.length; i++) {
                             university_legend.push(student_structure[i]['university']);
                             undergraduate_data.push(student_structure[i]['undergraduate']);
                             postgraduate_data.push(student_structure[i]['postgraduate']);
@@ -579,9 +590,9 @@
                                 }
                             ],
                             toolbox: {
-                                show : true,
-                                feature : {
-                                    restore : {show: true}
+                                show: true,
+                                feature: {
+                                    restore: {show: true}
                                 },
                                 itemSize: 30
                             },
@@ -594,19 +605,19 @@
                                 bottom: '40%',
                                 containLabel: true
                             },
-                            xAxis : [
+                            xAxis: [
                                 {
-                                    type : 'category',
-                                    data : university_legend,
+                                    type: 'category',
+                                    data: university_legend,
                                     axisLabel: {
-                                        interval:0,
-                                        rotate:90
+                                        interval: 0,
+                                        rotate: 90
                                     }
                                 }
                             ],
-                            yAxis : [
+                            yAxis: [
                                 {
-                                    type : 'value'
+                                    type: 'value'
                                 }
                             ],
                             series: [
@@ -628,12 +639,11 @@
                 }
             });
 
-
             var user_learning_situation_data = {{ learning_situation_statistics | statistic_get_data('all') | safe }}["{{ Statistic.ACTION_COURSE_VISIT_DOCUMENT_OR_VIDEO }}"];
-            var data_month = [0,0,0,0,0,0,0,0,0,0,0,0];
+            var data_month = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
             var month, start_time, end_time;
 
-            for(var i=0;i<user_learning_situation_data.length;i++){
+            for (var i = 0; i < user_learning_situation_data.length; i++) {
                 month = new Date(user_learning_situation_data[i]["data"]["end_time"]).getMonth();
                 start_time = new Date(user_learning_situation_data[i]["data"]["start_time"]);
                 end_time = new Date(user_learning_situation_data[i]["data"]["end_time"]);
@@ -649,12 +659,15 @@
             $("#user-learning-situation").find("div").eq(0).show();
             graph_user_learning_situation.resize();
             graph_user_learning_situation.setOption({
-                            animationDuration: 3000,
+                animationDuration: 3000,
                 title: {
                     text: '用户学习时间(' + (new Date()).getFullYear() + '年)'
                 },
                 tooltip: {
                     trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    },
                     formatter: function (params) {
                         var result = params[0].seriesName + "<br>";
                         result += '<span style="display:inline-block;margin-right:5px;border-radius:10px;width:9px;height:9px;background-color:' + params[0].color + '"></span>';
@@ -663,7 +676,7 @@
                     }
                 },
                 legend: {
-                    data:['学习时间']
+                    data: ['学习时间']
                 },
                 grid: {
                     left: '3%',
@@ -673,17 +686,16 @@
                 },
                 xAxis: {
                     type: 'category',
-                    boundaryGap: false,
-                    data: ['一月','二月','三月','四月','五月','六月','七月','八月','九月','十月','十一月','十二月']
+                    data: ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月']
                 },
                 yAxis: {
                     type: 'value'
                 },
                 series: [
                     {
-                        name:'学习时间',
-                        type:'line',
-                        data:data_month,
+                        name: '学习时间',
+                        type: 'bar',
+                        data: data_month,
                         label: {
                             normal: {
                                 show: true,

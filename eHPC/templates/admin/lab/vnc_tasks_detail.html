@@ -2,6 +2,8 @@
 
 {% block header_ext %}
     <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/bootstrap-colorpicker.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -52,7 +54,6 @@
 
 {% block footer_ext %}
     <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
-    <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
     <script language=javascript src='{{ url_for("static", filename="js/custom_simplemde.js") }}'></script>
     <script>
         var edt = custom_simplemde({
