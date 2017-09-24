@@ -286,14 +286,16 @@ def group_delete():
 @admin.route('/cases/')
 @admin_login
 def case():
-    cases = []
     if current_user.permissions == 0:
         cases = Case.query.all()
+        return render_template('admin/case/index.html',
+                               title=gettext('Case Admin'),
+                               cases=cases)
     elif current_user.permissions == 2:
         cases = current_user.cases
-    return render_template('admin/case/index.html',
-                           title=gettext('Case Admin'),
-                           cases=cases)
+        return render_template('admin/case/teacher_admin_index.html',
+                               title=gettext('Case Admin'),
+                               cases=cases)
 
 
 @admin.route('/case/create/', methods=['POST', 'GET'])

@@ -1,0 +1,39 @@
+{% extends 'admin/base.html' %}
+{% block content %}
+    <div id="content-container" class="container">
+        <a href="{{ url_for('admin.course_discuss', course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-8"
+           class="btn btn-primary" style="margin-bottom: 10px">返回讨论列表</a>
+        <div class="row">
+            <div class="col-md-9 group-main">
+                {% include 'admin/course/widget_topic_detail.html' %}
+            </div>
+
+            <div class="col-md-3 group-side">
+                <div class="panel panel-default">
+                    <div class="panel-heading">话题作者</div>
+                    <div class="panel-body">
+                        <div class="media">
+                            <div class="media-left prm">
+                                <a class="" href="{{ url_for('user.view', uid=topic.userID) }}">
+                                    <img src="{{ topic.user.avatar_url | get_avatar_path }}" class="avatar-md">
+                                </a>
+                            </div>
+                            <div class="media-body ptm list-meta">
+                                <div>
+                                    <i class="es-icon es-icon-person"></i>
+                                    <a class="link-dark"
+                                       href="{{ url_for('user.view', uid=topic.userID) }}">{{ topic.user.username }}</a>
+                                </div>
+                                <span class="text-sm gray-medium">
+                                    <i class="es-icon es-icon-topic"></i>{{ topic.user.topics.all() | length }} 话题</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{# topic #}

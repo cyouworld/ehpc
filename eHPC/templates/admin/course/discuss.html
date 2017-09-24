@@ -1,0 +1,73 @@
+{% extends 'admin/base.html' %}
+
+{% block header_ext %}
+{% endblock %}
+
+{% block content %}
+<div class="container" id="content-container">
+    <div class="row">
+        <div class="group-main">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    课程话题
+                    <div class="pull-right">
+                        <a href="{{ url_for('admin.discuss_create',course_id=c.id) }}" class="btn btn-info btn-sm">
+                            <i class="glyphicon glyphicon-plus"></i> 新建话题
+                        </a>
+                    </div>
+                </div>
+
+                <div class="panel-body">
+                    {% if topics %}
+                        <ul class="media-list thread-list">
+                            {% for t in topics %}
+                                <li class="media" data-tid="{{ t.id }}">
+                                    <div class="media-left">
+                                        <span class="reply-num">
+                                            <strong> {{ t.postNum }} </strong> {{ _('replies') }}
+                                        </span>
+                                    </div>
+                                    <div class="media-body pts">
+                                        <div class="media-heading">
+                                            <a class="title gray-darker"
+                                               href="{{ url_for('admin.discuss_detail', topic_id=t.id, course_id=c.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-8">{{ t.title }}</a>
+                                        </div>
+
+                                        <div class="metas">
+                                            <a class="userImg js-user-card" href="#">
+                                                <img class="avatar-xxs" src="{{ t.user.avatar_url | get_avatar_path }} ">
+                                            </a>
+
+                                            <a class="link-dark pls"
+                                               href="#">{{ t.user.username }}</a>
+                                            {{ t.createdTime | natural_time }}发起了话题
+                                            <span class="divider">•</span>
+
+                                            {% if t.posts.all() %}
+                                                <span>最后回复</span>
+                                                <a class="link-dark pls"
+                                                   href="#">{{ t.posts[-1].user.username }}</a>
+                                            {% else %}
+                                                <span>没有回复</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                    {% else %}
+                        <div class="panel-heading" id="post-num">
+                            <div class="alert alert-info">
+                                该小组下目前没有话题
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block footer_ext %}
+{% endblock %}

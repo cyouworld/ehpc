@@ -1,0 +1,75 @@
+{% extends 'admin/base.html' %}
+
+{% block content %}
+    <div class="container" id="content-container">
+        <div class="panel panel-default panel-col">
+            <div class="panel-heading">
+                    <span class="pull-right">
+                        <a id="create-case" href="{{ url_for('admin.case_create') }}" class="btn btn-info btn-sm">
+                            <span class="glyphicon glyphicon-plus"></span>
+                            新建案例
+                        </a>
+                    </span>
+                所有案例
+            </div>
+
+            <div class="panel-body">
+                <table class="table fixed-table" id="course-table">
+                    <thead>
+                    <tr>
+                        <th width="45%">案例名称</th>
+                        <th width="25%">关键词</th>
+                        <th width="10%">版本数</th>
+                        <th>操作</th>
+                    </tr>
+                    </thead>
+                    <tbody id="tb">
+                    {% for c in cases %}
+                        <tr data-cid="{{ c.id }}">
+                            <td class="overflow-ellipsis" data-toggle="tooltip" title="{{ c.name }}">{{ c.name }}</td>
+                            <td>{{ c.tag }}</td>
+                            <td>{{ c.versions.count()}}</td>
+                            <td>
+                                <a href="{{ url_for('admin.case_edit', case_id=c.id) }}">管理案例</a>
+                                <span class="divider"> | </span>
+                                <a href="{{ url_for('case.show_case',case_id=c.id) }}" target="_blank">预览</a>
+                                <span class="divider"> | </span>
+                                <a href="javascript:void(0)" name="del-btn">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    {% include "admin/widget-del-warning.html" %}
+
+{% endblock %}
+
+{% block footer_ext %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var obj = null;
+            $("#tb").find("a[name=del-btn]").click(function () {
+                obj = this;
+                $("#del-warning").modal("show");
+            });
+
+            $("#del-confirm").click(function () {
+                $.ajax({
+                    type: "post",
+                    url: "{{ url_for('admin.case_delete') }}",
+                    data: {cid: $(obj).parent().parent().data('cid')},
+                    success: function (data) {
+                        $(obj).parent().parent().remove();
+                        $("#del-warning").modal("hide");
+                    }
+                });
+            });
+        });
+    </script>
+{% endblock %}
+
+{# articles #}

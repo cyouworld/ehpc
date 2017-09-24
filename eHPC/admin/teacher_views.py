@@ -17,7 +17,7 @@ from . import admin
 from .. import db
 from ..models import Classify, Program, Paper, Question, PaperQuestion, Homework, HomeworkUpload, HomeworkAppendix, HomeworkScore, Notice, ProgTag, program_tag
 from ..models import Course, Lesson, Material, User, Apply, VNCKnowledge, VNCTask, Lab
-from ..models import Knowledge, Challenge, Group
+from ..models import Knowledge, Challenge, Group, Topic
 from ..user.authorize import teacher_login, admin_login, system_login
 from ..util.file_manage import upload_img, upload_file, get_file_type, custom_secure_filename, extension_to_file_type
 from ..util.new_api import init_evaluate_program
@@ -1065,6 +1065,79 @@ def course_paper(course_id):
             return jsonify(status="success", title=curr_paper.title, content=curr_paper.about)
         else:
             return abort(404)
+
+
+@admin.route('/course/<int:course_id>/discuss/', methods=['GET', 'POST'])
+@teacher_login
+def course_discuss(course_id):
+    """课程讨论的管理入口"""
+    curr_course = Course.query.filter_by(id=course_id).first_or_404()
+    group = curr_course.group
+    # 注意：获取的topic是该课程所有的topic
+    topics = curr_course.group.topics.order_by(Topic.createdTime.desc()).all()
+    return render_template('admin/course/discuss.html',
+                           title=u'课程讨论',
+                           group=group,
+                           topics=topics,
+                           c=curr_course)
+
+
+@admin.route('/course/<int:course_id>/discuss/<int:topic_id>', methods=['GET', 'POST'])
+@teacher_login
+def discuss_detail(course_id, topic_id):
+    curr_course = Course.query.filter_by(id=course_id).first_or_404()
+    cur_topic = Topic.query.filter_by(id=topic_id).first_or_404()
+    cur_topic.visitNum += 1
+    db.session.commit()
+    return render_template('admin/course/discuss_detail.html',
+                           title=cur_topic.title,
+                           topic=cur_topic,
+                           c=curr_course)
+
+
+@admin.route('/course/<int:course_id>/discuss/create', methods=['GET', 'POST'])
+@teacher_login
+def discuss_create(course_id):
+    curr_course = Course.query.filter_by(id=course_id).first_or_404()
+    cur_group = curr_course.group
+
+    if request.method == 'GET':
+        return render_template('admin/course/discuss_create.html',
+                               title=gettext('Create Topic'),
+                               group=cur_group,
+                               c=curr_course)
+    elif request.method == 'POST':
+        title = request.form['title']
+        content = request.form['content']
+        new_topic = Topic(current_user.id, title, content, cur_group.id)
+        db.session.commit()
+        # 更新用户和群组对应的话题
+        current_user.topics.append(new_topic)
+        current_user.topicNum += 1
+        cur_group.topics.append(new_topic)
+        cur_group.topicNum += 1
+        db.session.commit()
+        return redirect(url_for('admin.course_discuss', course_id=curr_course.id))
+
+
+@admin.route('/course/<int:course_id>/discuss/<int:topic_id>/edit', methods=['GET', 'POST'])
+@teacher_login
+def discuss_edit(course_id, topic_id):
+    curr_course = Course.query.filter_by(id=course_id).first_or_404()
+    cur_topic = Topic.query.filter_by(id=topic_id).first_or_404()
+    if request.method == 'GET':
+        return render_template('admin/course/discuss_edit.html',
+                               title=cur_topic.title,
+                               topic=cur_topic,
+                               c=curr_course)
+    elif request.method == 'POST':
+        content = request.form['content']
+        title = request.form['title']
+        cur_topic.title = title
+        cur_topic.content = content
+        cur_topic.updatedTime = datetime.now()
+        db.session.commit()
+        return redirect(url_for('admin.course_discuss', course_id=curr_course.id))
 
 
 @admin.route('/course/<int:course_id>/paper/<int:paper_id>/edit/', methods=['GET', 'POST'])

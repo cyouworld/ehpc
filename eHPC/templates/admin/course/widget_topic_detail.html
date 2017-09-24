@@ -1,0 +1,181 @@
+{% block header_ext %}
+    <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
+{% endblock %}
+
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h2 class="panel-title list-post-title-in-topic">
+            {{ topic.title }}
+            {% if current_user.id == topic.userID %}
+                <a class="btn btn-success pull-right" href="{{ url_for('admin.discuss_edit', course_id=c.id, topic_id=topic.id) }}?tag1=course-{{ c.id }}&tag2=course-{{ c.id }}-8">编辑</a>
+            {% endif %}
+        </h2>
+        <div class="list-meta color-gray">
+            <span><i class="es-icon es-icon-time"></i>{{ topic.updatedTime | natural_time }}更新</span>
+            <span><i class="es-icon es-icon-visibility"></i>{{ topic.visitNum }}</span>
+            <span id="title_post_num">
+                <i class="es-icon es-icon-comment"></i>{{ topic.postNum }}</span>
+        </div>
+
+    </div>
+    <div class="panel-body clearfix" id="post-action">
+        <div class="markdown-body" id="topic-content" data-to-render="{{ topic.content }}"></div>
+    </div>
+</div>
+
+<!--Show the existing replies-->
+<div class="panel panel-default group-post-list">
+    <div class="panel-heading" id="post-num">
+        {% if topic.postNum %}
+            {{ topic.postNum }} {{ _('Reply') }}
+        {% else %}
+            <div class="alert alert-info">
+                {{ _('No replies yet!') }}
+            </div>
+        {% endif %}
+    </div>
+
+    {% if topic.postNum %}
+        <ul class="list-group" id="post-area">
+            {% for p in topic.posts %}
+                {% with index=loop.index, p=p %}
+                    <div class="list-group-item list-topic-item" id="comment-{{ index }}">
+                        <div class="row">
+                            <a href="{{ url_for('user.view', uid=p.userID) }}" class="col-md-1"><img
+                                    title="{{ p.user.username }}" class="avatar-middle" src=" {{ p.user.avatar_url | get_avatar_path }} "></a>
+                            <div class="col-xs-11">
+                                <div class="row list-meta color-gray">
+                                    <div class="col-sm-10">
+                                        <span>
+                                            <i class="es-icon es-icon-person"></i>
+                                            <a class="link-grey" href="{{ url_for('user.view', uid=p.userID) }}">{{ p.user.username }}</a>
+                                        </span>
+                                        <span class="list-time">
+                                            <i class="es-icon es-icon-time"></i>{{ p.createdTime | natural_time }}
+                                        </span>
+
+                                    </div>
+                                    <div class="col-sm-2">
+                                        {% if current_user.is_authenticated %}
+                                            <a href="#create_reply"
+                                               class="label-info label pull-right reply-btn">{{ _('Reply') }}</a>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="reply-content col-md-11" style="margin-top:0.8em">
+                                        {{ p.content | safe}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                {% endwith %}
+            {% endfor %}
+        </ul>
+    {% else %}
+        <ul class="list-group" id="post-area">
+        </ul>
+    {% endif %}
+</div>
+<!-- End existing replies -->
+
+<!-- Create new reply -->
+<div class="panel panel-default" id="create_reply">
+    <div class="panel-heading">
+        <p class="panel-title">
+            {{ _('Reply') }}
+        </p>
+    </div>
+    <div class="panel-body">
+        {% if current_user.is_authenticated %}
+            <form onsubmit="submit_post(); return false;">
+                <div class="form-group ">
+                    <label class="sr-only" for="content">{{ _('Content') }}</label>
+                    <textarea class="form-control" id="content" name="content"
+                              style="margin: 0px -9px 0px 0px;width:100%;height: 120px;"></textarea>
+                </div>
+
+                <div class="form-submit text-right">
+                    <span id="comment-submit-info" class="hide" style="margin-right: 20px;color: red;">
+                        <i class="es-icon es-icon-warning"></i>&nbsp;
+                        <span></span>
+                    </span>
+                    <button class="btn btn-success" type="submit" id="submit">
+                        {{ _('Submit') }}
+                    </button>
+                </div>
+            </form>
+        {% else %}
+            <br>
+            <p class="text-center">你还没有登录，请先<a href="{{ url_for('user.signin', next=request.url) }}"> 登录</a>
+                或<a href="{{ url_for('user.reg', next=request.url) }}"> 注册！</a></p>
+            <br>
+        {% endif %}
+    </div>
+</div>
+<!-- End create new reply-->
+
+{% block foot_ext %}
+    <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/markdown_latex_support.js') }}"></script>
+    <script>
+        $(document).ready(function () {
+            var content = $("#topic-content");
+            content.html(latex_support(content.data('to-render')));
+            content.attr('data-to-render', null);
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+            $('#post-area').on(
+                    "click", ".reply-btn",
+                    function () {
+                        <!-- 找到当前回复按钮对应的用户, 也就是说对谁进行回复, 修复 issue 38 -->
+                        var pre_div = $(this).parent().prev();
+                        var at_user = $(pre_div).find("a.link-grey").text();
+                        $('#content').val($('#content').val() + '@' + at_user + ' ');
+                    }
+            );
+        });
+    </script>
+
+    <script>
+        function submit_post() {
+            if ($("#content").val() == "" || $("#content").val() == null || $("#content").val() == "None") {
+                show_invalid_info("#comment-submit-info","#comment-submit-info span","请输入评论内容");
+                return;
+            }
+            if ($("#content").val().length > 1024) {
+                show_invalid_info("#comment-submit-info","#comment-submit-info span","评论过长，不能超过1024个字");
+                return;
+            }
+
+            var data = $("form").serialize();
+            $.ajax({
+                method: "post",
+                cache: false,
+                url: "{{ url_for('group.create_post', tid=topic.id) }}",
+                data: data,
+                success: function (post) {
+                    <!-- 第一条评论, 这里需要首先清除现有的提示信息 -->
+                    if (post.post_cnt == 1) {
+                        $("#post-area").empty().html(post.post_html);
+                    }
+                    else {
+                        $("#post-area").append(post.post_html);
+                    }
+                    $("#post-num").html(post.post_cnt + " {{ _('Reply') }}");
+                    $("#title_post_num").html("<i class='es-icon es-icon-comment'></i>" + post.post_cnt);
+                    $("#content").val("");
+                },
+                error: function (post_html) {
+                    alert_modal('评论失败, 请稍后重试');
+                }
+            });
+        }
+    </script>
+
+{% endblock %}
+{# topic #}
