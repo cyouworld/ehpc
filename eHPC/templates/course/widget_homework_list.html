@@ -6,18 +6,25 @@
                     {% for h in homeworks %}
                         <li class="homework-item clearfix" data-toggle="tooltip"
                             title="{% if h.id | homework_uploaded(current_user.id) %}已提交{% else %}未提交{% endif %}">
-                            <div class="homework-title col-lg-5 col-md-5 col-sm-5 col-xs-5" data-homework_id="{{ h.id }}">
+                            <div class="homework-title col-lg-4 col-md-4 col-sm-4 col-xs-4" data-homework_id="{{ h.id }}">
                                 <span class="homework-icon"><i class="es-icon es-icon-undone"></i></span>
                                 <span class="title"> {{ h.title }}</span>
                             </div>
-                            <div class="homework-info col-lg-7 col-md-7 col-sm-7 col-xs-7">
+                            <div class="homework-info col-lg-8 col-md-8 col-sm-8 col-xs-8">
                                 <span class="course-type pull-right"
                                       style="{% if current_user.id | is_join_course(course.id) %}{% if h.id | homework_uploaded(current_user.id) %}color: #5BB85D;{% else %}color: #DD4B39;{% endif %}{% endif %}">
                                     {% if current_user.id | is_join_course(course.id) %}{% if h.id | homework_uploaded(current_user.id) %}已提交{% else %}未提交{% endif %}{% endif %}
                                     <i class="es-icon es-icon-check"></i>
                                 </span>
                                 <span class="homework-deadline pull-right">截止时间: {{ h.deadline | unite_time_format }}</span>
-                                <span class="homework-score pull-right">成绩：{% if current_user.id | has_score(h.id) %}{{ current_user | get_score(h.id) }}{% else %}未批改{% endif %}</span>
+                                <span class="homework-score pull-right">
+                                    {% if current_user.id | has_score(h.id) %}
+                                        <span class="label label-info homework-comment" title="{{ current_user | get_comment(h.id) }}">查看点评</span>
+                                        <span class="label label-success">{{ current_user | get_score(h.id) }}分</span>
+                                    {% else %}
+                                        <span class="label label-danger">未批改</span>
+                                    {% endif %}
+                                </span>
                             </div>
                         </li>
                     {% endfor %}
@@ -53,6 +60,10 @@
                 $("#modal-alert .close").click();
             },1500);
         {% endif %}
+    });
+    $(".homework-comment").click(function() {
+        var homework_comment = $(this).attr("title");
+        alert_modal(homework_comment);
     });
 </script>
 {% endblock %}

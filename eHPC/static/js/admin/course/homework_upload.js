@@ -4,7 +4,7 @@ $(document).ready(function () {
             url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
         },
         "order": [[4, 'dec']],
-        "pageLength": 100,
+        "pageLength": -1,
         "lengthMenu": [[ 10, 30, 50, 100, -1],[ 10, 30, 50, 100, '全部']]
     });
     $("#all-homework-select").click(function () {

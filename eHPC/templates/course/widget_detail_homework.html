@@ -13,6 +13,12 @@
                     <span class="pull-right" style="color: #919191;font-size: 14px">发布于： {{ homework.publish_time | unite_time_format }}</span>
                 </div>
                 <div class="homework-content"><b><i class="glyphicon glyphicon-time"></i> 截止日期：</b> {{ homework.deadline | unite_time_format }}</div>
+                {% if current_user.id | has_score(homework.id) %}
+                    <div class="homework-content">
+                        <div style="margin-bottom: 10px;"><b>得分： </b><span class="label label-success">{{ current_user | get_score(homework.id) }}分</span></div>
+                        <div><b>教师点评： </b>{{ current_user | get_comment(homework.id) }}</div>
+                    </div>
+                {% endif %}
                 <div class="homework-content">
                     <b>作业内容：</b>
                     <div id="homework-description" data-to-render="{{ homework.description }}"></div>
