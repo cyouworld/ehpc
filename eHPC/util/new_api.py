@@ -132,6 +132,10 @@ class ehpc_client_new:
             self.resp = resp
             rdata = resp.read()
 
+            #print(resp.status)
+            #print (resp.code)
+            #print rdata
+
         except HTTPError, e:  # HTTPError必须排在URLError的前面
             # print "The server couldn't fulfill the request.  Error code:", e.code
             noerror = False
@@ -161,9 +165,10 @@ class ehpc_client_new:
 
         if isinstance(rdata, bytes):
             rdata = rdata.decode('utf-8')
-        rdata_reg = re.search('\{.+\}', rdata)
+        #rdata_reg = re.search('\{.+\}', rdata)
+        rdata_reg = re.search('{.}', rdata)
         rdata = rdata if rdata_reg is None else rdata_reg.group()
-
+        #print(rdata)
         # 保存数据
         try:
             rdata = json.loads(rdata)
@@ -387,6 +392,54 @@ class ehpc_client_new:
         mkdir_command = "cd %s;if [ -d \"./%s\" ]; then rm -rf \"./%s\"; fi" % (myPath, program_id, program_id)
         self.run_command(mkdir_command)
 
+def extract_data(raw_data):
+    lines = raw_data.split('\n')
+    result = dict()
+    count = 0
+    thread_num = 0
+    flag = True
+
+    result['output'] = ""
+
+    for line in lines:
+        if line == "-------------------------------------------------------------------------------":
+            if count == 0 :
+                result['picture_data'] = dict()
+                count += 1
+            elif count == 1:
+                count += 1
+            elif count == 2:
+                count = 1
+                thread_num += 1
+                flag = True
+            else :
+                pass
+        else :
+            if count == 0:
+                result['output'] += line + '\n'
+            elif count == 1:
+                result['picture_data'][str(thread_num)] = dict()
+                result['picture_data'][str(thread_num)]['thread_name'] = line[line.find(':'):]
+            elif count == 2:
+                if flag:
+                    #words = line.split(' ')
+
+                    #for word in words:
+                     #   result['picture_data'][str(thread_num)][word] = []
+                    result['picture_data'][str(thread_num)]['excl.secs'] = []
+                    flag = False
+                else :
+                    words = line.split(' ')
+
+                    for word in words:
+                        if word != '':
+                            result['picture_data'][str(thread_num)]['excl.secs'].append(word)
+                            break
+            else :
+                pass
+
+    return result
+
 
 def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, language, ifEvaluate='0', is_success=[False]):
     """ 后台提交从前端获取的代码到天河系统，编译运行并返回结果
@@ -421,38 +474,27 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
         parameter_language = "c"
 
     if ifEvaluate == '1':
-        sh_command = "cd %s;./%s %s %s %s" % (TH2_MY_PATH_NEW, "comprun.sh", input_filename, parameter_language, parameter_number)
+        sh_command = "cd %s;./%s %s %s %s" % (TH2_MY_PATH_NEW, "comprun_tau.sh", input_filename, parameter_language, parameter_number)
     else:
         sh_command = "cd %s;./%s %s %s %s" % (TH2_MY_PATH_NEW, "comprun_with_no_evaluate.sh", input_filename, parameter_language, parameter_number)
 
     run_out_raw = mc.run_command(sh_command)
 
     #print run_out_raw
-    run_out = ""
-    flag = True
-
-    lines = run_out_raw.split('\n')
-
-    for line in lines:
-        #print line
-        if len(line) > 0 and line[0] == '@' :
-            if flag:
-                flag = False
-                run_out += '\n'
-            run_out += line + '\n'
-        elif line.find('mpiP') == -1:
-            run_out += line + '\n'
-            #print line
-        else:
-            pass
-
-    is_success[0] = True
-
     result = dict()
 
-    result['run_out'] = run_out
+    if ifEvaluate == '1':
+        run_out = extract_data(run_out_raw)
+        result['run_out'] = run_out['output']
+        result['picture_data']=run_out['picture_data']
+    else :
+        result['run_out'] = run_out_raw
+
+    is_success[0] = True
     result['status'] = 'success'
     result['problem_id'] = pid
+
+    #print(result['picture_data'])
 
     return jsonify(**result)
 
