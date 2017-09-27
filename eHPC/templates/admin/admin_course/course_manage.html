@@ -22,9 +22,9 @@
                         <th width="35%">名称</th>
                         <th class="text-center" width="7%">课程数</th>
                         <th class="text-center" width="7%">学生数</th>
-                        <th class="text-center" width="15%">创建时间</th>
+                        <th class="text-center" width="13%">创建时间</th>
                         <th class="text-center" width="8%">教师</th>
-                        <th class="text-center" width="18%">操作</th>
+                        <th class="text-center" width="20%">操作</th>
                     </tr>
                     </thead>
                     <tbody id="tb">
@@ -37,10 +37,12 @@
                             </td>
                             <td class="text-center">{{ c.lessonNum }}</td>
                             <td class="text-center">{{ c.studentNum }}</td>
-                            <td class="text-center">{{ c.createdTime }}</td>
+                            <td class="text-center">{{ c.createdTime | unite_time_format }}</td>
                             <td class="text-center">{{ c.teacher.name }}</td>
                             <td class="text-center">
                                 <a href="{{ url_for('admin.admin_course_edit', course_id=c.id) }}">编辑</a>
+                                <span class="divider"> | </span>
+                                <a href="{{ url_for('admin.admin_course_picture', course_id=c.id) }}">图片</a>
                                 <span class="divider"> | </span>
                                 <a href="javascript:void(0)" name="del-btn">删除</a>
                                 <span class="divider"> | </span>

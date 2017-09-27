@@ -168,6 +168,27 @@ def admin_course_edit(course_id):
         return jsonify(status="success", course_id=curr_course.id)
 
 
+@admin.route('/courses/<int:course_id>/picture/', methods=['GET', 'POST'])
+@system_login
+def admin_course_picture(course_id):
+    if request.method == 'GET':
+        curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        return render_template('admin/admin_course/picture.html', course=curr_course,
+                               title=gettext('Course Picture'))
+    elif request.method == 'POST':
+        # 上传图片和保存图片
+        curr_course = Course.query.filter_by(id=course_id).first_or_404()
+        curr_course.smallPicture = os.path.join('upload/course', "cover_%d.png" % curr_course.id)
+        filename = "cover_%d.png" % curr_course.id
+        cover_path = os.path.join(current_app.config['COURSE_COVER_FOLDER'], filename)
+        status = upload_img(request.files['pic'], 171, 304, cover_path)
+        if status[0]:
+            db.session.commit()
+            return jsonify(status='success')
+        else:
+            return jsonify(status="fail")
+
+
 @admin.route('/articles/')
 @system_login
 def article():

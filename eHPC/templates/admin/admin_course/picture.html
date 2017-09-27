@@ -1,0 +1,79 @@
+{% extends 'admin/admin_base.html' %}
+
+{% block header_ext %}
+    <script src="{{ url_for('static', filename='js/parsley.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/parsley-add.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <div class="container" id="content-container">
+
+        <div class="row">
+
+            <div class="panel panel-default panel-col" style="position: relative">
+                <a class="back-to-homework-list" href="{{ url_for('admin.course_manage') }}">
+                    <i class="glyphicon glyphicon-chevron-left"></i>返回课程列表</a>
+                <div class="panel-heading text-center">{{ course.title }}——课程图片</div>
+                <div class="panel-body">
+                    <form id="course-picture-form" method="post" data-parsley-validate="">
+                        <div class="form-group clearfix">
+                            <div class="col-md-offset-2 col-md-8 controls">
+                                <img id="course-picture" src="/static/{{ course.smallPicture }}" style="height: 171px;width: 304px;">
+                            </div>
+                        </div>
+
+                        <div class="form-group clearfix">
+                            <div class="col-md-offset-2 col-md-8 controls">
+                                <input id="course-picture-field" name="pic" accept="image/bmp,image/jpeg,image/png"
+                                       type="file" data-parsley-max-file-size="1024" data-parsley-required-message="请选择要上传的图片" required>
+                                <p class="help-block">你可以上传jpg, bmp, png格式的文件，不超过1M</p>
+                            </div>
+                        </div>
+                        <input type="hidden" name="op" value="upload">
+                    </form>
+
+                    <div class="form-group clearfix">
+                        <div class="col-md-offset-2 col-md-8 controls">
+                            <button class="btn btn-fat btn-primary" id="upload-picture-btn" type="submit">保存
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block footer_ext %}
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#course-picture-field').change("#course-picture", preview_picture);
+
+            $('#upload-picture-btn').click(function () {
+                var p_instance = $('#course-picture-form').parsley();
+                p_instance.validate();
+                if (p_instance.isValid()) {
+                    $.ajax({
+                        url: location.href,
+                        type: "post",
+                        data: new FormData($('#course-picture-form')[0]),
+                        cache: false,
+                        contentType: false,
+                        processData: false,
+                        success: function (data) {
+                            if (data["status"] == "success") {
+                                alert_modal("保存成功");
+                            }
+                            else {
+                                alert_modal("保存失败");
+                            }
+                        }
+                    });
+                }
+            });
+        });
+    </script>
+{% endblock %}
