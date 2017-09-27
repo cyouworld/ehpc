@@ -19,25 +19,27 @@
                 <table class="table fixed-table" id="lab-table">
                     <thead>
                     <tr>
-                        <th width="35%">实验标题</th>
+                        <th width="30%">实验标题</th>
                         <th class="text-center" width="30%">实验描述</th>
                         <th class="text-center" width="10%">实验类型</th>
                         <th class="text-center" width="15%">教师</th>
-                        <th class="text-center" width="10%">操作</th>
+                        <th class="text-center" width="15%">操作</th>
                     </tr>
                     </thead>
                     <tbody id="tb">
                     {% if all_knowledges.count > 0 %}
                         {% for k in all_knowledges %}
-                        <tr data-id="{{ k.lab_id }}" style="">
+                        <tr data-id="{{ k.lab_id }}" data-kid="{{ k.id }}" data-cover-url="{{ url_for("static", filename=k.cover_url) }}" style="">
                             <td  title="{{ k.title }}">
                                 <span><img src="/static/{{ k.cover_url }}" width="160px" height="90px"></span>
                                 <span class="overflow-ellipsis" data-toggle="tooltip">{{ k.title }}</span>
                             </td>
-                            <td class="text-center" title="{{ k | get_lab_content }}">{{ k | get_lab_content | truncate(100, True) }}</td>
+                            <td class="text-center" data-content="{{ k | get_lab_content }}">{{ k | get_lab_content | truncate(100, True) }}</td>
                             <td class="text-center">{{ k | get_lab_type }}</td>
                             <td class="text-center">{{ k | get_teacher_name }}</td>
                             <td class="text-center">
+                                <a class="edit-lab" href="javascript:void(0);">编辑</a>
+                                <span> | </span>
                                 <a class="del-lab" href="javascript:void(0);">删除</a>
                                 <span> | </span>
                                 {% if k.is_hidden %}
@@ -57,11 +59,65 @@
         </div>
     </div>
 
+    <div class="modal fade" id="knowledgeModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="myModalLabel">实验信息</h4>
+                </div>
+                <div class="modal-body">
+                    <form id="lab-info">
+                        <div class="form-group">
+                            <div class="col-md-2 control-label" style="margin-top: 10px;">
+                                <label class="pull-right" for="knowledge-title-field">标题</label>
+                            </div>
+                            <div class="col-md-9 controls" style="margin-top: 10px;">
+                                <input id="knowledge-title-field" class="form-control" name="title" type="text" placeholder="请输入实验标题（必填项）">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 control-label" style="margin-top: 10px;">
+                                <label class="pull-right" for="knowledge-content-field">简介</label>
+                            </div>
+                            <div class="col-md-9 controls" style="margin-top: 10px;">
+                                    <textarea class="form-control" id="knowledge-content-field" name="content"
+                                              style="height: 200px" placeholder="请输入实验简介（非必填项）"></textarea>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div class="col-md-2 control-label" style="margin-top: 10px;">
+                                <label class="pull-right" for="knowledge-content-field">封面</label>
+                            </div>
+
+                            <div class="col-md-9 controls" style="margin-top: 10px;">
+                                <input id="lab-picture-field" type="file" name="cover" accept="image/bmp,image/jpeg,image/png">
+                            </div>
+
+                            <div class="col-md-9 controls col-md-offset-2" style="margin-top: 10px;">
+                                <img id="lab-picture" src="#" style="height: 171px;width: 304px;">
+                            </div>
+                        </div>
+                        <input type="hidden" name="op" value="edit">
+                        <input type="hidden" name="knowledge_id" value="">
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <span id="knowledge-save-info" class="hide" style="margin-right:20px;color:red;">
+                        <i class="es-icon es-icon-warning"></i>&nbsp;
+                        <span></span>
+                    </span>
+                    <button id="knowledge-save-btn" type="button" class="btn btn-primary">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     {% include "admin/widget-del-warning.html" %}
 
 {% endblock %}
 
 {% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/show_invalid_info.js') }}"></script>
     <script type="text/javascript">
         $(document).ready(function () {
             $("#edit-seq").click(function () {
@@ -108,6 +164,56 @@
                         if (data["status"] == "success") {
                             obj.parent().parent().remove();
                             $("#del-warning").modal("hide");
+                        }
+                    }
+                });
+            });
+            var id = -1, type = 0;
+            var lab_url = "{{ url_for('admin.lab') }}";
+            var vnc_url = "{{ url_for('admin.vnc_lab') }}";
+
+            $('#lab-picture-field').change("#lab-picture", preview_picture);
+
+            $(".edit-lab").click(function () {
+                var row = $(this).parent().parent();
+                $("#knowledge-title-field").val(row.find("td > span").eq(1).text());
+                $("#knowledge-content-field").val(row.find("td").eq(1).data("content"));
+                $("#lab-picture").attr("src",row.data("cover-url"));
+                id = row.data("kid");
+                type = (row.find("td").eq(2).text() === "编程实验") ? 0 : 1;
+                $("#knowledgeModal").modal();
+            });
+
+            $("#knowledge-save-btn").click(function () {
+                if(!$("#knowledge-title-field").val()) {
+                    show_invalid_info("#knowledge-save-info","#knowledge-save-info span","标题不能为空");
+                    return;
+                }
+                if($("#knowledge-title-field").val().length > 1024) {
+                    show_invalid_info("#knowledge-save-info","#knowledge-save-info span","标题内容过长（最多1024个字符）");
+                    return;
+                }
+                var content_field = $("#knowledge-content-field");
+                var id_field = $("#lab-info").find("> input").eq(1);
+                if (type === 0)
+                {
+                    content_field.attr("name", "content");
+                    id_field.attr("name", "knowledge_id").attr("value", id);
+                } else {
+                    content_field.attr("name", "about");
+                    id_field.attr("name", "vnc_knowledge_id").attr("value", id);
+                }
+
+                $.ajax({
+                    type: "post",
+                    url: type === 0? lab_url : vnc_url,
+                    data: new FormData($('#lab-info')[0]),
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    success: function (data) {
+                        if (data["status"] == "success") {
+                            location.reload();
                         }
                     }
                 });

@@ -1582,7 +1582,7 @@ def program_evaluate():
 
 
 @admin.route('/lab/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def lab():
     if request.method == 'GET':
         return render_template('admin/lab/index.html',
@@ -1745,7 +1745,7 @@ def lab_edit(knowledge_id, challenge_id):
 
 
 @admin.route('/vnc_lab/', methods=['GET', 'POST'])
-@teacher_login
+@admin_login
 def vnc_lab():
     if request.method == 'GET':
         return render_template('admin/lab/vnc_index.html', title=gettext('VNC Lab Manage'), type='vnc_lab')
@@ -1780,7 +1780,7 @@ def vnc_lab():
                 cover = request.files['cover']
 
                 if title is not None and about is not None and vnc_knowledge_id is not None:
-                    vnc_knowledge_to_edit = current_user.teacher_vnc_knowledge.filter_by(id=vnc_knowledge_id).first()
+                    vnc_knowledge_to_edit = VNCKnowledge.query.filter_by(id=vnc_knowledge_id).first()
                     if vnc_knowledge_to_edit is not None:
                         vnc_knowledge_to_edit.title = title
                         vnc_knowledge_to_edit.about = about

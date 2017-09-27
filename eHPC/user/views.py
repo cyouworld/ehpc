@@ -726,7 +726,7 @@ def verify_email(user_id):
         u = User.query.get(user_id)
         if u.is_verify_email:
             return abort(403)
-        if (datetime.now() - u.verify_email_time).seconds < 10 * 60:
+        if u.verify_email_time and (datetime.now() - u.verify_email_time).seconds < 10 * 60:
             return jsonify(status='too_frequently')
 
         if request.headers.getlist("X-Forwarded-For"):

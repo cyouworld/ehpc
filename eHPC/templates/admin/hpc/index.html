@@ -23,7 +23,7 @@
                     <tr>
                         <th>申请人姓名</th>
                         <th>申请人单位</th>
-                        <th>申请事由</th>
+                        <th width="40%">申请事由</th>
                         <th>申请时间</th>
                         <th>状态</th>
                         <th>管理</th>
@@ -55,7 +55,9 @@
             $('#apply-table').DataTable({
                 language: {
                     url: "//cdn.datatables.net/plug-ins/9dcbecd42ad/i18n/Chinese.json"
-                }
+                },
+                order: [[ 4, "desc" ]],
+                iDisplayLength: 50
             });
         });
     </script>
