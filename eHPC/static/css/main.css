@@ -5362,3 +5362,11 @@ http://stackoverflow.com/questions/9492249/render-a-string-in-html-and-preserve-
 .homework-program-list a:active {
     text-decoration: none;
 }
+
+.qtip {
+    max-width: none !important;
+}
+
+.qtip-content{
+    height: 100%
+}

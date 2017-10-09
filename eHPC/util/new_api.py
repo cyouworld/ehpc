@@ -132,9 +132,9 @@ class ehpc_client_new:
             self.resp = resp
             rdata = resp.read()
 
-            #print(resp.status)
-            #print (resp.code)
-            #print rdata
+            # print(resp.status)
+            # print (resp.code)
+            # print rdata
 
         except HTTPError, e:  # HTTPError必须排在URLError的前面
             # print "The server couldn't fulfill the request.  Error code:", e.code
@@ -165,10 +165,10 @@ class ehpc_client_new:
 
         if isinstance(rdata, bytes):
             rdata = rdata.decode('utf-8')
-        #rdata_reg = re.search('\{.+\}', rdata)
+        # rdata_reg = re.search('\{.+\}', rdata)
         rdata_reg = re.search('{.}', rdata)
         rdata = rdata if rdata_reg is None else rdata_reg.group()
-        #print(rdata)
+        # print(rdata)
         # 保存数据
         try:
             rdata = json.loads(rdata)
@@ -335,6 +335,7 @@ class ehpc_client_new:
     """
     上传多个文件
     """
+
     def upload_multi(self, myPath, problem_id, filename=[], data=[]):
         mkdir_command = "cd %s;if [ ! -d \"./%s\" ]; then mkdir \"./%s\"; fi" % (myPath, problem_id, problem_id)
         self.run_command(mkdir_command)
@@ -347,6 +348,7 @@ class ehpc_client_new:
     """
     在当前评测目录编译程序
     """
+
     def mpi_complie(self, myPath, input_filename, output_filename):
         compile_command = "mpicc -O2 -o %s %s" % (output_filename, input_filename)
         commands = 'cd %s;%s' % (myPath, compile_command)
@@ -362,6 +364,7 @@ class ehpc_client_new:
     """
     初始化编程题评测目录:根据已经上传到评测目录中的源代码文件来编译评测程序、参考程序等
     """
+
     def mpi_compile_multi(self, myPath, problem_id, input_filenames=[], output_filenames=[]):
         compile_out = ""
         for index in range(len(input_filenames)):
@@ -372,8 +375,9 @@ class ehpc_client_new:
     """
     在当前评测目录，根据用户代码运行评测程序
     """
+
     def mpi_run_multi(self, myPath, problem_id, user_id, output_filename, node_number=1,
-                          task_number=1, step_num=1):
+                      task_number=1, step_num=1):
         sh_command = "cd %s;mpirun -np %s ./%s 1 %s %s" % ((myPath + "/" + problem_id + "/" + user_id), node_number,
                                                            output_filename, task_number, step_num)
         return self.run_command(sh_command)
@@ -381,6 +385,7 @@ class ehpc_client_new:
     """
     建立编程题的评测目录
     """
+
     def create_program_dir(self, myPath, program_id):
         mkdir_command = "cd %s;mkdir %s" % (myPath, program_id)
         self.run_command(mkdir_command)
@@ -388,9 +393,11 @@ class ehpc_client_new:
     """
     删除编程题的评测目录
     """
+
     def del_program_dir(self, myPath, program_id):
         mkdir_command = "cd %s;if [ -d \"./%s\" ]; then rm -rf \"./%s\"; fi" % (myPath, program_id, program_id)
         self.run_command(mkdir_command)
+
 
 def extract_data(raw_data):
     lines = raw_data.split('\n')
@@ -403,7 +410,7 @@ def extract_data(raw_data):
 
     for line in lines:
         if line == "-------------------------------------------------------------------------------":
-            if count == 0 :
+            if count == 0:
                 result['picture_data'] = dict()
                 count += 1
             elif count == 1:
@@ -412,9 +419,9 @@ def extract_data(raw_data):
                 count = 1
                 thread_num += 1
                 flag = True
-            else :
+            else:
                 pass
-        else :
+        else:
             if count == 0:
                 result['output'] += line + '\n'
             elif count == 1:
@@ -422,26 +429,27 @@ def extract_data(raw_data):
                 result['picture_data'][str(thread_num)]['thread_name'] = line[line.find(':'):]
             elif count == 2:
                 if flag:
-                    #words = line.split(' ')
+                    # words = line.split(' ')
 
-                    #for word in words:
-                     #   result['picture_data'][str(thread_num)][word] = []
+                    # for word in words:
+                    #   result['picture_data'][str(thread_num)][word] = []
                     result['picture_data'][str(thread_num)]['excl.secs'] = []
                     flag = False
-                else :
+                else:
                     words = line.split(' ')
 
                     for word in words:
                         if word != '':
                             result['picture_data'][str(thread_num)]['excl.secs'].append(word)
                             break
-            else :
+            else:
                 pass
 
     return result
 
 
-def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, language, ifEvaluate='0', is_success=[False]):
+def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, language, ifEvaluate='0',
+                    is_success=[False]):
     """ 后台提交从前端获取的代码到天河系统，编译运行并返回结果
 
     @pid: 编程题ID（对于非编程题的代码，可自行赋予ID）,
@@ -474,27 +482,29 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
         parameter_language = "c"
 
     if ifEvaluate == '1':
-        sh_command = "cd %s;./%s %s %s %s" % (TH2_MY_PATH_NEW, "comprun_tau.sh", input_filename, parameter_language, parameter_number)
+        sh_command = "cd %s;./%s %s %s %s" % (
+        TH2_MY_PATH_NEW, "comprun_tau.sh", input_filename, parameter_language, parameter_number)
     else:
-        sh_command = "cd %s;./%s %s %s %s" % (TH2_MY_PATH_NEW, "comprun_with_no_evaluate.sh", input_filename, parameter_language, parameter_number)
+        sh_command = "cd %s;./%s %s %s %s" % (
+        TH2_MY_PATH_NEW, "comprun_with_no_evaluate.sh", input_filename, parameter_language, parameter_number)
 
     run_out_raw = mc.run_command(sh_command)
 
-    #print run_out_raw
+    # print run_out_raw
     result = dict()
 
     if ifEvaluate == '1':
         run_out = extract_data(run_out_raw)
         result['run_out'] = run_out['output']
-        result['picture_data']=run_out['picture_data']
-    else :
+        result['picture_data'] = run_out['picture_data']
+    else:
         result['run_out'] = run_out_raw
 
     is_success[0] = True
     result['status'] = 'success'
     result['problem_id'] = pid
 
-    #print(result['picture_data'])
+    # print(result['picture_data'])
 
     return jsonify(**result)
 

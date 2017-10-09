@@ -3,10 +3,10 @@
 {% block header_ext %}
     <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
     <link href="{{ url_for('static', filename='css/simplemde.min.css') }}" rel="stylesheet">
+    <link href="{{ url_for('static', filename='css/jquery.qtip.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
-
     <div id="challenge-left">
         <div class="challenge-progress">
             <div class="progress">
@@ -44,6 +44,9 @@
             <button id="check-source-code" class="btn btn-primary pull-right" style="margin-right: 10px">
                 <i class="glyphicon glyphicon-play"></i> 查看答案
             </button>
+            <button id="evaluate-result" class="btn btn-primary pull-right" style="margin-right: 10px">
+                <i class="glyphicon glyphicon-play"></i> 评测结果
+            </button>
         </div>
         <div id="laboratory"  style="background-color: #1D1F21;">
             <div id="laboratory-editor" class="code-editor" style="min-height: 100%;"></div>
@@ -51,7 +54,6 @@
         <div id="terminal">
             <pre class="terminal" tabindex="0"></pre>
         </div>
-
     </div>
 
     <div class="modal fade center" id="loading" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
@@ -127,10 +129,12 @@
             </div><!-- /.modal-content -->
         </div>
     </div><!-- /.modal -->
-
 {% endblock %}
 
 {% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/echarts/echarts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/echarts/shine.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/jquery.qtip.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/moment-with-locales.min.js') }}"></script>
     <script>moment.locale('zh-CN');</script>
     <script>
@@ -162,7 +166,6 @@
             theme: 'ace/theme/tomorrow_night',
             mode: 'ace/mode/c_cpp'
         });
-
         $(function () {
             $.ajax({
                 url: address,
@@ -178,7 +181,6 @@
                 }
             });
         });
-
     </script>
 
     <script>
@@ -213,12 +215,33 @@
                 time_out = $("#timeout-choice input[name='timeout']:checked").val();
                 $("#setTimeout").modal('hide');
             });
+
+            var evaluate_result = $("#evaluate-result");
+            evaluate_result.qtip({
+                prerender: true,
+                content: {
+                    text: '<div id="graph-evaluate-result" style="height: 100%;width: 100%">暂无评测结果</div>'
+                },
+                hide: {
+                    event: 'unfocus'
+                },
+                show: {
+                    event: 'click'
+                },
+                position: {
+                    my: "top center",
+                    at: "bottom center"
+                },
+                style: {
+                    classes: "qtip-dark qtip-shadow"
+                }
+            });
+            var graph_evaluate_result, isOnResize = false;
             $run.click(function () {
                 $run.prop('disabled', true);
                 var code = editor.getValue();
                 $("#submit-status")[0].innerHTML = "代码提交中，请稍候....";
                 $("#loading").modal("show");
-
                 $.ajax({
                     url: address,
                     type: "post",
@@ -233,6 +256,180 @@
                     success: function (data) {
                         if (data.status == "success") {
                             terminal.eq(0).text(data.run_out);
+
+                            if(data.hasOwnProperty("picture_data")){
+                                var yAxis = [];
+                                var name = [];
+                                var y_num = Object.keys(data["picture_data"]).length;
+                                var step_num = data["picture_data"]["0"]["excl.secs"].length;
+                                for(var i=0;i<y_num - 5;i++){
+                                    yAxis.push("核" + i.toString());
+                                }
+                                yAxis.push("总和");
+                                yAxis.push("均值");
+                                yAxis.push("标准差");
+                                yAxis.push("最大值");
+                                yAxis.push("最小值");
+
+                                for(i=0;i<step_num;i++){
+                                    name.push((i+1).toString());
+                                }
+
+                                var graph_data = [];
+                                for(i=0;i<step_num;i++){
+                                    graph_data.push([]);
+                                }
+
+                                for(i=0;i<y_num;i++){
+                                    for(var j=0;j<step_num;j++){
+                                        graph_data[j].push(data["picture_data"][i.toString()]["excl.secs"][j]);
+                                    }
+                                }
+
+                                var series = [];
+                                for(i=0;i<step_num;i++){
+                                    series.push(
+                                        {
+                                            name: (i+1).toString(),
+                                            type: 'bar',
+                                            stack: '总时间',
+                                            data: graph_data[i]
+                                        }
+                                    )
+                                }
+                                graph_evaluate_result = echarts.init($("#graph-evaluate-result")[0], 'shine');
+                                graph_evaluate_result.setOption({
+                                    title: {
+                                        text: "评测结果图",
+                                        textStyle: {
+                                            color: "#FFFFFF"
+                                        }
+                                    },
+                                    tooltip : {
+                                        trigger: 'axis',
+                                        axisPointer : {
+                                            type : 'shadow'
+                                        }
+                                    },
+                                    legend: {
+                                        data: name,
+                                        textStyle: {
+                                            color: "#FFFFFF"
+                                        }
+                                    },
+                                    grid: {
+                                        left: '3%',
+                                        right: '10%',
+                                        bottom: '3%',
+                                        containLabel: true
+                                    },
+                                    xAxis:  {
+                                        name: '时间(s)',
+                                        type: 'value',
+                                        nameTextStyle: {
+                                            color: "#FFFFFF"
+                                        },
+                                        axisLine: {
+                                            "show": true,
+                                            "lineStyle": {
+                                                "color": "#FFFFFF"
+                                            }
+                                        },
+                                        axisTick: {
+                                            "show": true,
+                                            "lineStyle": {
+                                                "color": "#FFFFFF"
+                                            }
+                                        },
+                                        axisLabel: {
+                                            "show": true,
+                                            "textStyle": {
+                                                "color": "#FFFFFF"
+                                            }
+                                        },
+                                        splitLine: {
+                                            "show": false,
+                                            "lineStyle": {
+                                                "color": [
+                                                    "#ccc"
+                                                ]
+                                            }
+                                        },
+                                        splitArea: {
+                                            "show": false,
+                                            "areaStyle": {
+                                                "color": [
+                                                    "rgba(250,250,250,0.3)",
+                                                    "rgba(200,200,200,0.3)"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    yAxis: {
+                                        type: 'category',
+                                        data: yAxis,
+                                        nameTextStyle: {
+                                            color: "#FFFFFF"
+                                        },
+                                        axisLine: {
+                                            "show": true,
+                                            "lineStyle": {
+                                                "color": "#FFFFFF"
+                                            }
+                                        },
+                                        axisTick: {
+                                            "show": true,
+                                            "lineStyle": {
+                                                "color": "#FFFFFF"
+                                            }
+                                        },
+                                        axisLabel: {
+                                            "show": true,
+                                            "textStyle": {
+                                                "color": "#FFFFFF"
+                                            }
+                                        },
+                                        splitLine: {
+                                            "show": false,
+                                            "lineStyle": {
+                                                "color": [
+                                                    "#ccc"
+                                                ]
+                                            }
+                                        },
+                                        splitArea: {
+                                            "show": false,
+                                            "areaStyle": {
+                                                "color": [
+                                                    "rgba(250,250,250,0.3)",
+                                                    "rgba(200,200,200,0.3)"
+                                                ]
+                                            }
+                                        }
+                                    },
+                                    series: series
+                                });
+
+                                evaluate_result.qtip("option", "events.visible", function(event, api) {
+                                    $("#qtip-0").width($("#terminal").width());
+                                    $("#qtip-0").height($("#terminal").height()* 1.5);
+                                    graph_evaluate_result.resize();
+                                });
+                                $("#qtip-0").width($("#terminal").width());
+                                $("#qtip-0").height($("#terminal").height()* 1.5);
+                                if(!isOnResize){
+                                    $(window).resize(function () {
+                                        $("#qtip-0").width($("#terminal").width());
+                                        $("#qtip-0").height($("#terminal").height()* 1.5);
+                                        graph_evaluate_result.resize();
+                                        evaluate_result.qtip("option", "position.adjust.x", 12 + evaluate_result.parent().width() / 2 - evaluate_result.position().left - evaluate_result.width() / 2);
+                                        evaluate_result.qtip("option", "style.tip.corner", true);
+                                        evaluate_result.qtip("option", "style.tip.offset", - 12 - evaluate_result.parent().width() / 2 + evaluate_result.position().left + evaluate_result.width() / 2);
+                                    });
+                                    isOnResize = true
+                                }
+                                $(window).resize();
+                            }
                         }
                         else {
                             terminal.eq(0).text(data.msg);     //接超算主机失败! or 上传程序到超算主机失败
@@ -247,7 +444,6 @@
                     }
                 });
             });
-
             $("#check-source-code").click(function () {
                 $.ajax({
                     url: address,
@@ -264,19 +460,16 @@
                 });
             });
         });
-
     </script>
 
     <script>
         var js_material_type = "{{ cur_challenge.material.m_type if cur_challenge.material else "None" }}";
         var js_pdf_src = "{{ url_for('static', filename='js/pdfjs/web/viewer.html') }}?file={{ url_for('static', filename='resource') }}/" + "{{cur_challenge.material.uri}}";
         var js_material_src = "{{ url_for('static', filename='resource') }}/" + "{{cur_challenge.material.uri}}";
-
         $(function () {
             var video_player = '<div id="player" style="height:90%"></div>';
             var pdf_player = '<iframe id="player" class="course-player" frameborder="0" style="overflow:hidden;height:90%;width:100%" allowfullscreen></iframe>';
             var clappr = null;
-
             if (js_material_type == "None") {
                 return;
             }
