@@ -479,7 +479,7 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
         parameter_language = "c.omp"
     else:
         parameter_number = task_number # both are ok
-        parameter_language = "c.mpi"
+        parameter_language = "c.cpp"
         ifEvaluate = '0'
 
     if ifEvaluate == '1':
