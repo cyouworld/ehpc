@@ -478,8 +478,9 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
         parameter_number = cpu_number_per_task
         parameter_language = "c.omp"
     else:
-        parameter_number = 1
-        parameter_language = "c"
+        parameter_number = task_number # both are ok
+        parameter_language = "c.mpi"
+        ifEvaluate = '0'
 
     if ifEvaluate == '1':
         sh_command = "cd %s;./%s %s %s %s" % (

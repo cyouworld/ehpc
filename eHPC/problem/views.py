@@ -171,6 +171,8 @@ def submit(pid):
         elif language == "mpi":
             task_number = cpu_number
             cpu_number_per_task = 1
+        else:
+            task_number = cpu_number_per_task = cpu_number
 
         return submit_code_new(pid=pid, uid=uid, source_code=source_code, task_number=task_number, cpu_number_per_task=cpu_number_per_task, language=language, ifEvaluate=ifEvaluate)
     else:
