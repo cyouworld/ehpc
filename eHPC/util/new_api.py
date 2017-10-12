@@ -493,13 +493,15 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
 
     # print run_out_raw
     result = dict()
+    #print(language)
 
-    if ifEvaluate == '1':
+    if language == "mpi" and ifEvaluate == '1':
         run_out = extract_data(run_out_raw)
         result['run_out'] = run_out['output']
         result['picture_data'] = run_out['picture_data']
     else:
         result['run_out'] = run_out_raw
+        result['picture_data'] = ''
 
     is_success[0] = True
     result['status'] = 'success'
