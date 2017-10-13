@@ -501,7 +501,6 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
         result['picture_data'] = run_out['picture_data']
     else:
         result['run_out'] = run_out_raw
-        result['picture_data'] = ''
 
     is_success[0] = True
     result['status'] = 'success'
