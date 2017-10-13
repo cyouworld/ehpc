@@ -402,6 +402,7 @@ class ehpc_client_new:
 def extract_data(raw_data):
     lines = raw_data.split('\n')
     result = dict()
+    result['picture_data'] = dict()
     count = 0
     thread_num = 0
     flag = True
@@ -411,7 +412,6 @@ def extract_data(raw_data):
     for line in lines:
         if line == "-------------------------------------------------------------------------------":
             if count == 0:
-                result['picture_data'] = dict()
                 count += 1
             elif count == 1:
                 count += 1

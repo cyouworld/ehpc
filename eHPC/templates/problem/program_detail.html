@@ -94,9 +94,9 @@
                 </div>
 
                 <div class="col-md-3 form-group">
-                    <label for="ifEvaluate" style="margin: 0;line-height: 34px">
+                    <label for="ifE" style="margin: 0;line-height: 34px">
                         性能评测
-                        <input name="ifEvaluate" type="checkbox" value="0"/>
+                        <input name="ifE" id="ifEvaluate" type="checkbox" value="0"/>
                     </label>
                 </div>
             </div>
@@ -241,7 +241,7 @@
 
     <script>
         $(function () {
-            $('[name=ifEvaluate]').bootstrapSwitch({
+            $('#ifEvaluate').bootstrapSwitch({
                 state: false,
                 onText: "是",
                 offText: "否",
@@ -341,7 +341,8 @@
             $("input[name=language]").val($("#the_language").find("option:selected").text());
             $("input[name=cpu_number]").val($("#cpu_number").find("option:selected").text());
 
-            var data = $.param({'job_op': '1', 'job_id': 'ERROR',}) + '&' + $("form").serialize();
+            //console.log($("#ifEvaluate").val())
+            var data = $.param({'job_op': '1', 'job_id': 'ERROR', 'ifEvaluate': $("#ifEvaluate").val(), }) + '&' + $("form").serialize();
             $('#result-show').css("display", 'block');
             var loading = "<img src='{{ url_for('static', filename='images/submit.gif') }}' alt='Loading'></div>";
             var $run_result = $("#run-content");
