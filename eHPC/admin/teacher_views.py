@@ -1013,10 +1013,11 @@ def course_homework_correct(course_id, homework_id):
                                         upload_status = 1
                                     else:
                                         upload_status = 0
-                            homework_score = HomeworkScore(user_id=curr_student.id, homework_id=homework_id,
-                                                           score=curr_row[2], comment=curr_row[3], status=upload_status)
-                            db.session.add(homework_score)
-                            db.session.commit()
+                            if curr_row[2] != "" and curr_row[3] != "":
+                                homework_score = HomeworkScore(user_id=curr_student.id, homework_id=homework_id,
+                                                               score=curr_row[2], comment=curr_row[3], status=upload_status)
+                                db.session.add(homework_score)
+                                db.session.commit()
                     else:
                         homework_score.score = curr_row[2]
                         homework_score.comment = curr_row[3]
