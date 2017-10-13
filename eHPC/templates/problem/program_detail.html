@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.css">
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/bootstrap-table.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.1/locale/bootstrap-table-zh-CN.min.js"></script>
+    <link href="{{ url_for('static', filename='css/bootstrap-switch.min.css') }}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -93,11 +94,10 @@
                 </div>
 
                 <div class="col-md-3 form-group">
-                    <label class="" for="ifEvaluate">是否评测</label>
-                    <select class="col-md-6 selectpicker" name="ifEvaluate" id="ifEvaluate">
-                        <option value="0">否</option>
-                        <option value="1">是</option>
-                    </select>
+                    <label for="ifEvaluate" style="margin: 0;line-height: 34px">
+                        性能评测
+                        <input name="ifEvaluate" type="checkbox" value="0"/>
+                    </label>
                 </div>
             </div>
 
@@ -235,8 +235,29 @@
 {% endblock %}
 
 {% block footer_ext %}
+    <script src="{{ url_for('static', filename='js/bootstrap-switch.min.js') }}"></script>
     <script src="{{ url_for('static', filename='js/simplemde.min.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/markdown_latex_support.js') }}"></script>
+
+    <script>
+        $(function () {
+            $('[name=ifEvaluate]').bootstrapSwitch({
+                state: false,
+                onText: "是",
+                offText: "否",
+                onColor: "success",
+                size: "small",
+                onSwitchChange: function(event,state){
+                    if(state===true){
+                        $(this).val("1");
+                    }else{
+                        $(this).val("0");
+                    }
+                }
+            });
+        });
+    </script>
+
     <script>
         $(document).ready(function () {
             var content = $("#program-content");
@@ -319,7 +340,6 @@
 
             $("input[name=language]").val($("#the_language").find("option:selected").text());
             $("input[name=cpu_number]").val($("#cpu_number").find("option:selected").text());
-            $("input[name=ifEvaluate]").val($("#ifEvaluate").find("option:selected").text());
 
             var data = $.param({'job_op': '1', 'job_id': 'ERROR',}) + '&' + $("form").serialize();
             $('#result-show').css("display", 'block');
