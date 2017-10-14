@@ -46,7 +46,7 @@
                 <i class="glyphicon glyphicon-play"></i> 查看答案
             </button>
             <button id="evaluate-result" class="btn btn-primary pull-right" style="margin-right: 10px">
-                <i class="glyphicon glyphicon-play"></i> 评测结果
+                <i class="glyphicon glyphicon-play lab-arrow"></i> 评测结果
             </button>
             <div class="pull-right" style="margin-right: 10px;height: 34px;text-align: center">
                 <label for="ifEvaluate" style="margin: 0;line-height: 34px">
@@ -231,10 +231,16 @@
                     text: '<div id="graph-evaluate-result" style="height: 100%;width: 100%">暂无评测结果</div>'
                 },
                 hide: {
-                    event: 'unfocus'
+                    event: 'unfocus click',
+                    effect: function() {
+                        $(this).slideUp(500);
+                    }
                 },
                 show: {
-                    event: 'click'
+                    event: 'click',
+                    effect: function() {
+                        $(this).slideDown(500);
+                    }
                 },
                 position: {
                     my: "top center",
@@ -242,6 +248,14 @@
                 },
                 style: {
                     classes: "qtip-dark qtip-shadow"
+                },
+                events: {
+                    show: function(event, api) {
+                        $("#evaluate-result").find("i").eq(0).addClass("lab-arrow-rotate-90");
+                    },
+                    hide: function (event, api) {
+                        $("#evaluate-result").find("i").eq(0).removeClass("lab-arrow-rotate-90");
+                    }
                 }
             });
             var graph_evaluate_result, isOnResize = false;
