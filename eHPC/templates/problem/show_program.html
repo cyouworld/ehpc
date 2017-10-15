@@ -6,10 +6,76 @@
     <script src="//cdn.bootcss.com/datatables/1.10.13/js/dataTables.semanticui.min.js"></script>
     <link type="text/css" rel="stylesheet" href="//cdn.bootcss.com/semantic-ui/2.2.7/semantic.min.css">
     <link type="text/css" rel="stylesheet" href="//cdn.bootcss.com/datatables/1.10.13/css/dataTables.semanticui.min.css">
+    <style type="text/css">
+        .tag {
+            display: inline;
+            padding: .2em .6em .3em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            background-color: #26c5f4;
+            border-radius: 1020px;
+        }
+        .easy {
+            display: inline;
+            padding: .2em .6em .3em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            background-color: #5cb85c;
+            border-radius: 1020px;
+        }
+        .medium {
+            display: inline;
+            padding: .2em .6em .3em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            background-color: #f0ad4e;
+            border-radius: 1020px;
+        }
+        .hard {
+            display: inline;
+            padding: .2em .6em .3em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            background-color: #d9534f;
+            border-radius: 1020px;
+        }
+        .very-hard {
+            display: inline;
+            padding: .2em .6em .3em;
+            font-size: 75%;
+            font-weight: 700;
+            line-height: 1;
+            color: #fff;
+            text-align: center;
+            white-space: nowrap;
+            vertical-align: baseline;
+            background-color: #D9008D;
+            border-radius: 1020px;
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
-
     <div id="content-container" class="container">
         <ol class="breadcrumb breadcrumb-o" style="margin-top:-18px">
             <li><a href="/">{{ _('Index') }}</a></li>
@@ -48,14 +114,14 @@
                                 <td><a href="{{ p.id }}">{{ p.title }}</a></td>
                                 <td style="text-align: center">
                                     {% for x in p.tags %}
-                                        <a class="btn-info btn" href="javascript:void" style="width: 50px;">{{ x.name }}</a>
+                                        <span class="tag">{{ x.name }}</span>
                                     {% endfor %}
                                 </td>
                                 <td style="text-align: center">
-                                    {% if p.difficulty == 0 %}<a class="btn-info btn" href="javascript:void">简单</a>{% endif %}
-                                    {% if p.difficulty == 1 %}<a class="btn-primary btn" href="javascript:void">中等</a>{% endif %}
-                                    {% if p.difficulty == 2 %}<a class="btn-warning btn" href="javascript:void">困难</a>{% endif %}
-                                    {% if p.difficulty == 3 %}<a class="btn-danger btn" href="javascript:void">极难</a>{% endif %}
+                                    {% if p.difficulty == 0 %}<span class="easy">简单</span>{% endif %}
+                                    {% if p.difficulty == 1 %}<span class="medium">中等</span>{% endif %}
+                                    {% if p.difficulty == 2 %}<span class="hard">困难</span>{% endif %}
+                                    {% if p.difficulty == 3 %}<span class="very-hard">极难</span>{% endif %}
                                 </td>
                                 {% if p.id in count %}
                                     <td style="text-align: center"><a href="{{ url_for('problem.show_my_submits',pid=p.id,uid=current_user.id) }}">{{ count[p.id] }}</a></td>
