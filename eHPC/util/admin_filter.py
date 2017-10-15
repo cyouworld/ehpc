@@ -52,7 +52,7 @@ def get_apply_status(status):
 
 @filter_blueprint.app_template_filter('get_sc_center')
 def get_sc_center(sc_id):
-    dic = {0: u'国家超级计算广州中心', 1: u'国家超级计算长沙中心', 2: u'中科院级计算中心', 3: u'国家超级计算上海中心'}
+    dic = {0: u'国家超级计算广州中心', 1: u'国家超级计算长沙中心', 2: u'中科院级计算中心', 3: u'上海超级计算中心'}
     return dic[sc_id]
 
 

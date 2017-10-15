@@ -1,5 +1,7 @@
 <p>尊敬的 {{ user.username }}:</p>
-<p>您的超算账户登录信息如下</p>
+<p>您的 {{ account.sc_center | get_sc_center }} 账户登录信息如下</p>
+<p>VPN用户名： {{ account.vpn_username }}</p>
+<p>VPN密码： {{ account.vpn_password }}</p>
 <p>访问地址： {{ account.ip }}</p>
 <p>访问端口： {{ account.port }}</p>
 <p>用户名： {{ account.username }}</p>

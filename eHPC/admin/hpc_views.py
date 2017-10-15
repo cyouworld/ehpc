@@ -134,6 +134,8 @@ def machine_apply_password(apply_id):
         account.port = request.form.get('port')
         account.username = request.form.get('username')
         account.password = request.form.get('password')
+        account.vpn_username = request.form.get('vpn_username')
+        account.vpn_password = request.form.get('vpn_password')
         account.sc_center = curr_apply.sc_center
         db.session.commit()
 
@@ -174,7 +176,7 @@ def machine_apply_edit(apply_id):
         curr_apply.manager_email = request.form.get('manager_email')
         curr_apply.manager_address = request.form.get('manager_address')
         curr_apply.project_name = request.form.get('project_name')
-        sc_map = {u"国家超级计算广州中心": 0, u"国家超级计算长沙中心": 1, u"中科院级计算中心": 2, u"国家超级计算上海中心": 3}
+        sc_map = {u"国家超级计算广州中心": 0, u"国家超级计算长沙中心": 1, u"中科院级计算中心": 2, u"上海超级计算中心": 3}
         curr_apply.sc_center = sc_map[request.form.get('sc_center')]
         curr_apply.cpu_hour = request.form.get('cpu_hour', 0)
         curr_apply.usage = request.form.get('usage')

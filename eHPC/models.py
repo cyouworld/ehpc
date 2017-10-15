@@ -707,6 +707,8 @@ class MachineApply(db.Model):
 class MachineAccount(db.Model):
     __tablename__ = "machine_account"
     id = db.Column(db.Integer, primary_key=True)
+    vpn_username = db.Column(db.String(64), default='')
+    vpn_password = db.Column(db.String(64), default='')
     username = db.Column(db.String(64))
     password = db.Column(db.String(64))
     key = db.Column(db.String(256))

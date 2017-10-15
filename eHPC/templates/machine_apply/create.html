@@ -116,7 +116,7 @@
                                             <option value="0" {% if apply %}{% if apply.sc_center | get_sc_center == "0" %}selected{% endif %}{% elif request.args.get('tag') == "0" %}selected{% endif %}>国家超级计算广州中心</option>
                                             <option value="1" {% if apply %}{% if apply.sc_center | get_sc_center == "1" %}selected{% endif %}{% elif request.args.get('tag') == "1" %}selected{% endif %}>国家超级计算长沙中心</option>
                                             <option value="2" {% if apply %}{% if apply.sc_center | get_sc_center == "2" %}selected{% endif %}{% elif request.args.get('tag') == "2" %}selected{% endif %}>中科院级计算中心</option>
-                                            <option value="3" {% if apply %}{% if apply.sc_center | get_sc_center == "3" %}selected{% endif %}{% elif request.args.get('tag') == "3" %}selected{% endif %}>国家超级计算上海中心</option>
+                                            <option value="3" {% if apply %}{% if apply.sc_center | get_sc_center == "3" %}selected{% endif %}{% elif request.args.get('tag') == "3" %}selected{% endif %}>上海超级计算中心</option>
                                         </select>
                                     </td>
                                 </tr>

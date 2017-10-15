@@ -853,6 +853,8 @@ CREATE TABLE `machine_account` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `username` varchar(64) DEFAULT NULL,
   `password` varchar(64) DEFAULT NULL,
+  `vpn_username` varchar(64) DEFAULT NULL,
+  `vpn_password` varchar(64) DEFAULT NULL,
   `key` varchar(256) DEFAULT NULL,
   `ip` varchar(64) DEFAULT NULL,
   `port` int(11) DEFAULT NULL,
