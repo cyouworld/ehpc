@@ -44,7 +44,7 @@
                             <tbody id="homework-table-body">
                                 {% for u in course.users %}
                                      <form id="student-homework-score">
-                                        <tr data-user_id="{{ u.id }}" data-op="{% if u | get_score(homework.id) %}reset{% else %}set{% endif %}">
+                                        <tr data-user_id="{{ u.id }}" data-op="{% if u | get_score(homework.id) or u | get_score(homework.id) == 0 %}reset{% else %}set{% endif %}">
                                             <td class="text-center">{{ u.student_id }}</td>
                                             <td class="text-center">{{ u.name }}</td>
                                             <td class="text-center">

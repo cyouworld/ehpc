@@ -34,10 +34,11 @@
                     <table class="ui celled table" cellspacing="0" id="program">
                         <thead>
                         <tr>
-                            <th>{{ _('ID') }}</th>
-                            <th>{{ _('Description') }}</th>
-                            <th>{{ _('Difficulty') }}</th>
-                            <th>我的提交次数</th>
+                            <th style="width: 10%">{{ _('ID') }}</th>
+                            <th style="width: 40%">{{ _('Description') }}</th>
+                            <th style="width: 15%; text-align: center">标签</th>
+                            <th style="width: 8%; text-align: center">{{ _('Difficulty') }}</th>
+                            <th style="width: 8%; text-align: center">提交次数</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -45,16 +46,21 @@
                             <tr>
                                 <td><a href="{{ p.id }}">{{ loop.index }}</a></td>
                                 <td><a href="{{ p.id }}">{{ p.title }}</a></td>
-                                <td>
+                                <td style="text-align: center">
+                                    {% for x in p.tags %}
+                                        <a class="btn-info btn" href="javascript:void" style="width: 50px;">{{ x.name }}</a>
+                                    {% endfor %}
+                                </td>
+                                <td style="text-align: center">
                                     {% if p.difficulty == 0 %}<a class="btn-info btn" href="javascript:void">简单</a>{% endif %}
                                     {% if p.difficulty == 1 %}<a class="btn-primary btn" href="javascript:void">中等</a>{% endif %}
                                     {% if p.difficulty == 2 %}<a class="btn-warning btn" href="javascript:void">困难</a>{% endif %}
                                     {% if p.difficulty == 3 %}<a class="btn-danger btn" href="javascript:void">极难</a>{% endif %}
                                 </td>
                                 {% if p.id in count %}
-                                    <td><a href="{{ url_for('problem.show_my_submits',pid=p.id,uid=current_user.id) }}">{{ count[p.id] }}</a></td>
+                                    <td style="text-align: center"><a href="{{ url_for('problem.show_my_submits',pid=p.id,uid=current_user.id) }}">{{ count[p.id] }}</a></td>
                                 {% else %}
-                                    <td>0</td>
+                                    <td style="text-align: center">0</td>
                                 {% endif %}
                             </tr>
                         {% endfor %}
