@@ -79,37 +79,45 @@ $(document).ready(function() {
                error = true;
             });
             this.on("successmultiple", function(file,response) {
-                for (var i=0;i<response.new_upload_id.length;++i) {
-                    var uploadFilehtml;
-                    if(response.is_on_time == "NO") {
-                        uploadFilehtml = ''
-                            + '<div id="my-submit' + response.new_upload_id[i] + '" class="alert alert-danger alert-dismissable" role="alert" data-upload-name="'
-                            + response.new_upload_name[i] + '" data-upload-id="' + response.new_upload_id[i] + '">'
-                            + '<button type="button" class="close" aria-label="Close">'
-                            + '<span class="delete-upload" aria-hidden="true" onclick="delete_upload(this);">&times;</span></button>'
-                            + '<i class="es-icon es-icon-description status-icon pull-left"></i>'
-                            + '<a href="/static/homework/upload/' + response.new_upload_uri[i] + '" download="'
-                            + response.new_upload_name[i] + '" class="col-md-8 col-sm-8">' + response.new_upload_name[i] + '</a>'
-                            + '<span>提交于：' + response.new_upload_submit_time[i]  + '</span>'
-                            + '</div>';
-                    }
-                    else {
-                        uploadFilehtml = ''
-                            + '<div id="my-submit' + response.new_upload_id[i] + '" class="alert alert-success alert-dismissable" role="alert" data-upload-name="'
-                            + response.new_upload_name[i] + '" data-upload-id="' + response.new_upload_id[i] + '">'
-                            + '<button type="button" class="close" aria-label="Close">'
-                            + '<span class="delete-upload" aria-hidden="true" onclick="delete_upload(this);">&times;</span></button>'
-                            + '<i class="es-icon es-icon-description status-icon pull-left"></i>'
-                            + '<a href="/static/homework/upload/' + response.new_upload_uri[i] + '" download="'
-                            + response.new_upload_name[i] + '" class="col-md-8 col-sm-8">' + response.new_upload_name[i] + '</a>'
-                            + '<span>提交于：' + response.new_upload_submit_time[i]  + '</span>'
-                            + '</div>';
-                    }
-                    $("#my-uploads").append(uploadFilehtml);
+                if (response.status == "failed") {
+                    myDropzone.removeAllFiles();
+                    $("#upload-status .dz-complete").remove();
+                    $("#upload-status").modal('hide');
+                    alert_modal("文件上传失败，请刷新后重试！");
                 }
-                myDropzone.removeAllFiles();
-                $("#upload-status .dz-complete").remove();
-                $("#upload-status").modal('hide');
+                else {
+                    for (var i=0;i<response.new_upload_id.length;++i) {
+                        var uploadFilehtml;
+                        if(response.is_on_time == "NO") {
+                            uploadFilehtml = ''
+                                + '<div id="my-submit' + response.new_upload_id[i] + '" class="alert alert-danger alert-dismissable" role="alert" data-upload-name="'
+                                + response.new_upload_name[i] + '" data-upload-id="' + response.new_upload_id[i] + '">'
+                                + '<button type="button" class="close" aria-label="Close">'
+                                + '<span class="delete-upload" aria-hidden="true" onclick="delete_upload(this);">&times;</span></button>'
+                                + '<i class="es-icon es-icon-description status-icon pull-left"></i>'
+                                + '<a href="/static/homework/upload/' + response.new_upload_uri[i] + '" download="'
+                                + response.new_upload_name[i] + '" class="col-md-8 col-sm-8">' + response.new_upload_name[i] + '</a>'
+                                + '<span>提交于：' + response.new_upload_submit_time[i]  + '</span>'
+                                + '</div>';
+                        }
+                        else {
+                            uploadFilehtml = ''
+                                + '<div id="my-submit' + response.new_upload_id[i] + '" class="alert alert-success alert-dismissable" role="alert" data-upload-name="'
+                                + response.new_upload_name[i] + '" data-upload-id="' + response.new_upload_id[i] + '">'
+                                + '<button type="button" class="close" aria-label="Close">'
+                                + '<span class="delete-upload" aria-hidden="true" onclick="delete_upload(this);">&times;</span></button>'
+                                + '<i class="es-icon es-icon-description status-icon pull-left"></i>'
+                                + '<a href="/static/homework/upload/' + response.new_upload_uri[i] + '" download="'
+                                + response.new_upload_name[i] + '" class="col-md-8 col-sm-8">' + response.new_upload_name[i] + '</a>'
+                                + '<span>提交于：' + response.new_upload_submit_time[i]  + '</span>'
+                                + '</div>';
+                        }
+                        $("#my-uploads").append(uploadFilehtml);
+                    }
+                    myDropzone.removeAllFiles();
+                    $("#upload-status .dz-complete").remove();
+                    $("#upload-status").modal('hide');
+                }
             });
             $("#upload-status #dialog-mini-btn").click(function () {
                 $("#upload-status .modal-body").toggle();

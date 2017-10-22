@@ -36,6 +36,13 @@ def create_app(config_name):
     file_handler.setFormatter(logging.Formatter('[%(asctime)s] %(message)s'))
     app.email_logger.addHandler(file_handler)
 
+    app.homework_logger = logging.getLogger('homework')
+    app.homework_logger.setLevel(logging.INFO)
+    homework_file_handler = logging.FileHandler('app_logs/homework.log')
+    homework_file_handler.setLevel(logging.INFO)
+    homework_file_handler.setFormatter(logging.Formatter('[%(asctime)s] %(message)s'))
+    app.homework_logger.addHandler(homework_file_handler)
+
     app.geoip_reader = geoip2.database.Reader('GeoLite2-City.mmdb')
 
     # Register all the filter.

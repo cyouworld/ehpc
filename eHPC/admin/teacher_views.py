@@ -986,6 +986,7 @@ def course_homework_correct(course_id, homework_id):
                                                "course_%d" % curr_course.id, "homework_%d" % curr_homework.id, 'score-upload.xls'), 'utf-8')
             status = upload_file(score_excel, upload_path)
             if status[0]:
+                load_fail = 0
                 wb = open_workbook(upload_path)
                 sheet = wb.sheets()[0]
                 number_of_rows = sheet.nrows
@@ -994,35 +995,42 @@ def course_homework_correct(course_id, homework_id):
                     curr_row = []
                     for col in range(number_of_columns):
                         curr_row.append(sheet.cell(row, col).value)
-                    curr_student = User.query.filter_by(student_id=curr_row[0], name=curr_row[1]).first_or_404()
+                    curr_student = curr_course.users.filter_by(student_id=curr_row[0], name=curr_row[1]).first_or_404()
                     homework_score = HomeworkScore.query.filter_by(user_id=curr_student.id, homework_id=homework_id).first()
                     if not homework_score:
-                        if curr_student in curr_course.users:
-                            upload_status = 2
-                            if curr_homework.h_type == 1:
-                                if homework_uploaded(homework_id, curr_student.id):
-                                    upload_status = 0
-                                else:
-                                    upload_status = 2
+                        upload_status = 2
+                        if curr_homework.h_type == 1:
+                            if homework_uploaded(homework_id, curr_student.id):
+                                upload_status = 0
                             else:
-                                his_upload = HomeworkUpload.query.filter_by(user_id=curr_student.id, homework_id=homework_id).order_by(HomeworkUpload.submit_time.asc()).first()
-                                if not his_upload:
-                                    upload_status = 2
+                                upload_status = 2
+                        else:
+                            his_upload = HomeworkUpload.query.filter_by(user_id=curr_student.id, homework_id=homework_id).order_by(HomeworkUpload.submit_time.asc()).first()
+                            if not his_upload:
+                                upload_status = 2
+                            else:
+                                if his_upload.submit_time > curr_homework.deadline:
+                                    upload_status = 1
                                 else:
-                                    if his_upload.submit_time > curr_homework.deadline:
-                                        upload_status = 1
-                                    else:
-                                        upload_status = 0
-                            if curr_row[2] != "" and curr_row[3] != "":
-                                homework_score = HomeworkScore(user_id=curr_student.id, homework_id=homework_id,
-                                                               score=curr_row[2], comment=curr_row[3], status=upload_status)
-                                db.session.add(homework_score)
-                                db.session.commit()
+                                    upload_status = 0
+                        if curr_row[2] != "":
+                            homework_score = HomeworkScore(user_id=curr_student.id, homework_id=homework_id,
+                                                           score=curr_row[2], comment=curr_row[3], status=upload_status)
+                            db.session.add(homework_score)
+                            db.session.commit()
+                        else:
+                            load_fail = 1
                     else:
-                        homework_score.score = curr_row[2]
-                        homework_score.comment = curr_row[3]
-                        db.session.commit()
-                return jsonify(status="success")
+                        if curr_row[2] != "":
+                            homework_score.score = curr_row[2]
+                            homework_score.comment = curr_row[3]
+                            db.session.commit()
+                        else:
+                            load_fail = 1
+                if load_fail:
+                    return jsonify(status="partially")
+                else:
+                    return jsonify(status="success")
             else:
                 return jsonify(status="fail")
 

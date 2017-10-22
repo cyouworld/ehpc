@@ -85,6 +85,8 @@ def upload_file(file_src, des_path, allowed_type=None):
         file_src.save(des_path)
         unique_uri = os.stat(des_path).st_mtime
         if os.path.exists(des_path):
+            app = current_app._get_current_object()
+            app.homework_logger.info('homework file %s uploaded in upload_file()' % des_path)
             return True, unique_uri
         else:
             message = gettext("Save File Failed!")

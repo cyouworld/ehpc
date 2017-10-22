@@ -97,6 +97,7 @@ $(document).ready(function () {
     });
 
     $("#score-file").change(function () {
+        alert_modal("成绩导入中，请稍后...");
         var p_instance = $('#score-file-form').parsley();
         p_instance.validate();
         if(p_instance.isValid()) {
@@ -110,13 +111,45 @@ $(document).ready(function () {
                 success: function (data) {
                     if(data.status=="success"){
                         alert_modal("成绩导入成功");
-                        setTimeout(function() {$("#modal-alert").modal("hide");}, 1500);
-                        location.reload();
+                        setTimeout(function() {
+                            $("#modal-alert").modal("hide");
+                            location.reload();
+                        }, 1500);
+                    }
+                    else if(data.status=="partially"){
+                        alert_modal("部分学生分数为空导入失败，其余导入成功!");
+                        setTimeout(function() {
+                            $("#modal-alert").modal("hide");
+                            location.reload();
+                        }, 1500);
+                    }
+                    else{
+                        alert_modal("文件上传失败，请刷新后重试！");
+                        setTimeout(function() {
+                            $("#modal-alert").modal("hide");
+                            location.reload();
+                        }, 1500);
                     }
                 },
-                error: function() {
-                    alert_modal("成绩导入失败，请查看文件格式是否正确");
-                    setTimeout(function() {$("#modal-alert").modal("hide");}, 1500);
+                error: function(jqXHR, status, error) {
+                    var msg = '';
+                    if (jqXHR.status === 0) {
+                        msg = 'Not connect.\n Verify Network.';
+                    } else if (jqXHR.status == 404) {
+                        msg = '请求页面找不到了. [404]';
+                    } else if (jqXHR.status == 500) {
+                        msg = '服务器错误 [500].';
+                    } else if (exception === 'parsererror') {
+                        msg = '请求数据转换错误.';
+                    } else if (exception === 'timeout') {
+                        msg = '请求超时.';
+                    } else if (exception === 'abort') {
+                        msg = '请求已放弃.';
+                    } else {
+                        msg = 'Uncaught Error.\n' + jqXHR.responseText;
+                    }
+                    alert_modal(msg);
+                    setTimeout(function() {$("#modal-alert").modal("hide");}, 2000);
                 }
             });
         }

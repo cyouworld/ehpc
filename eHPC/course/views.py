@@ -270,11 +270,18 @@ def homework_upload(hid):
             homework_upload = HomeworkUpload(name=homework_file_name, homework_id=hid, user_id=current_user.id, uri=homework_uri)
             db.session.add(homework_upload)
             cur_homework.uploads.append(homework_upload)
-            db.session.commit()
-            upload_ids.append(homework_upload.id)
-            upload_names.append(homework_upload.name)
-            upload_uris.append(homework_upload.uri)
-            upload_times.append(datetime.strftime(homework_upload.submit_time, '%Y-%m-%d %H:%M'))
+            if os.path.isfile(upload_path):
+                app = current_app._get_current_object()
+                app.homework_logger.info('user %s upload files for course_%s/homework_%d, and database commit()' % (current_user.name, cur_course.title, cur_homework.id))
+                db.session.commit()
+                upload_ids.append(homework_upload.id)
+                upload_names.append(homework_upload.name)
+                upload_uris.append(homework_upload.uri)
+                upload_times.append(datetime.strftime(homework_upload.submit_time, '%Y-%m-%d %H:%M'))
+            else:
+                app = current_app._get_current_object()
+                app.homework_logger.info('user %s upload homework file failed for course_%s/homework_%d' % (current_user.name, cur_course.title, cur_homework.id))
+                return jsonify(status="failed")
 
         cnt = cnt + 1
 

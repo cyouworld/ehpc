@@ -111,14 +111,14 @@ def reg():
             return render_template('user/reg.html', title=gettext('Register Account'),
                                    data=_form, message_captcha=message_captcha)
 
-        email = _form['email']
+        email = _form['email'].strip()
         password = _form['password']
         password2 = _form['password2']
 
-        username = _form['username']
-        name = _form.get('name')
-        phone = _form.get('phone')
-        university = _form.get('university')
+        username = _form['username'].strip()
+        name = _form.get('name').strip()
+        phone = _form.get('phone').strip()
+        university = _form.get('university').strip()
 
         message_e, message_u, message_p = "", "", ""
         # Check username is valid or not.
@@ -158,7 +158,7 @@ def reg():
             # 如果是学生用户
             if _form.get('type') == '0':
                 gender = _form.get('gender', 1)
-                student_id = _form.get('student_id', 0)
+                student_id = _form.get('student_id', 0).strip()
                 student_type = _form.get('student_type', 0)
                 reg_user.gender = gender
                 reg_user.student_id = student_id
