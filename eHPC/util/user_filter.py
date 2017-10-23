@@ -4,6 +4,7 @@ from . import filter_blueprint
 from flask_babel import gettext
 import time
 import hashlib
+from flask import url_for
 
 
 @filter_blueprint.app_template_filter('is_admin_user')
@@ -52,10 +53,13 @@ def show_role(u):
 
 @filter_blueprint.app_template_filter('get_contest_url')
 def get_contest_url(u):
-    timestamp = int(time.time())
-    base_url = 'http://114.67.37.238:8007/JYPT/module/index/index.html'
-    args = 'userName=%s&level=1&timestamp=%s' % (u.username, timestamp)
-    hash_value = hashlib.sha256(args).hexdigest()
-    args += '&hash=%s' % hash_value
-    url = base_url + '?' + args
-    return url
+    if u.is_authenticated:
+        timestamp = int(time.time())
+        base_url = 'http://114.67.37.238:8007/JYPT/module/index/index.html'
+        args = 'userName=%s&level=1&timestamp=%s' % (u.username, timestamp)
+        hash_value = hashlib.sha256(args).hexdigest()
+        args += '&hash=%s' % hash_value
+        url = base_url + '?' + args
+        return url
+    else:
+        return url_for('user.signin')
