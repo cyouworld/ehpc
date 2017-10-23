@@ -128,7 +128,7 @@
                     <p>实时反馈运行结果</p>
                 </div>
                 <div class="col-md-4 col-sm-4">
-                    <a href="{{ url_for('problem.index') }}">
+                    <a href="{{ current_user | get_contest_url }}">
                         <img src="{{ url_for('static', filename='images/practice_bg_3.png') }}" alt="随时随地学习" class="img-responsive"></a>
                     <h4>公平的竞赛</h4>
                     <p>一起来比赛</p>
