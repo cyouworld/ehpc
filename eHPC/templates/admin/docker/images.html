@@ -46,9 +46,9 @@
                                 <span class="divider"> | </span>
                                 <a class="btn" style="padding: 0" name="reset-btn">重置</a>
                                 <span class="divider"> | </span>
-                                <a class="btn {{ "disabled" if i.is_running == 0}}" style="padding: 0" href="javascript:void(0)" name="start-btn">启动</a>
+                                <a class="btn {{ "disabled" if i.is_running == 1}}" style="padding: 0" href="javascript:void(0)" name="start-btn">启动</a>
                                 <span class="divider"> | </span>
-                                <a class="btn {{ "disabled" if i.is_running == 1}}" style="padding: 0" href="javascript:void(0)" name="stop-btn">关闭</a>
+                                <a class="btn {{ "disabled" if i.is_running == 0}}" style="padding: 0" href="javascript:void(0)" name="stop-btn">关闭</a>
                             </td>
                         </tr>
                     {% endfor %}
