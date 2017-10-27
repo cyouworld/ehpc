@@ -52,6 +52,78 @@ $(document).ready(function () {
         }
     });
 
+    var user_id_list = new Array(), scores = new Array(), comments = new Array();
+
+    $("input[name='homework-score']").change(function () {
+        var tmp_tr = $(this).parent().parent();
+        var index = user_id_list.indexOf(tmp_tr.data("user_id"));
+        if (index >= 0) {
+            scores[index] = $(this).val();
+            tmp_tr.find("input[name=homework-comment]").each(function () {
+                comments[index] = $(this).val();
+            });
+        }
+        else {
+            user_id_list.push(tmp_tr.data("user_id"));
+            scores.push($(this).val());
+            tmp_tr.find("input[name=homework-comment]").each(function () {
+                comments.push($(this).val());
+            });
+        }
+    });
+
+    $("input[name='homework-comment']").change(function () {
+        var tmp_tr = $(this).parent().parent();
+        var index = user_id_list.indexOf(tmp_tr.data("user_id"));
+        if (index >= 0) {
+            comments[index] = $(this).val();
+            tmp_tr.find("input[name=homework-score]").each(function () {
+                scores[index] = $(this).val();
+            });
+        }
+        else {
+            user_id_list.push(tmp_tr.data("user_id"));
+            comments.push($(this).val());
+            tmp_tr.find("input[name=homework-score]").each(function () {
+                scores.push($(this).val());
+            });
+        }
+    });
+
+    $("#submit-score-btn").click(function () {
+        if (user_id_list.length > 0) {
+            for (var i=0;i<user_id_list.length;++i) {
+                if (!scores[i]) {
+                    alert_modal("分数不能为空！有些同学有评语但是没有分数，请检查后重新提交！");
+                    return;
+                }
+            }
+            $.ajax({
+                type: "post",
+                url: location.href,
+                data: {
+                    op: "submit-multi",
+                    user_id_list: user_id_list,
+                    scores: scores,
+                    comments: comments
+                },
+                success: function (data) {
+                    if (data["status"] == "success") {
+                        alert_modal("成绩提交成功！");
+                        setTimeout(function() {
+                            $("#modal-alert").modal("hide");
+                            location.reload();
+                        }, 1500);
+                    }
+                    else {
+                        alert_modal("成绩提交失败，请刷新后重试！");
+                        setTimeout(function() {$("#modal-alert").modal("hide");}, 1500);
+                    }
+                }
+            });
+        }
+    });
+
     $("#download-score-btn").click(function () {
         $.ajax({
             type: "post",

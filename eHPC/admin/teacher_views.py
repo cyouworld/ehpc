@@ -975,6 +975,39 @@ def course_homework_correct(course_id, homework_id):
             curr_homework_score.comment = comment
             db.session.commit()
             return jsonify(status="success")
+        elif request.form['op'] == 'submit-multi':
+            scores = request.form.getlist('scores[]')
+            comments = request.form.getlist('comments[]')
+            user_id_list = request.form.getlist('user_id_list[]')
+            for i in range(len(scores)):
+                homework_score = HomeworkScore.query.filter_by(user_id=user_id_list[i], homework_id=homework_id).first()
+                if homework_score:
+                    homework_score.comment = comments[i]
+                    homework_score.score = scores[i]
+                    db.session.commit()
+                else:
+                    upload_status = 2
+                    if curr_homework.h_type == 1:
+                        if homework_uploaded(homework_id, user_id_list[i]):
+                            upload_status = 0
+                        else:
+                            upload_status = 2
+                    else:
+                        his_upload = HomeworkUpload.query.filter_by(user_id=user_id_list[i], homework_id=homework_id).order_by(
+                            HomeworkUpload.submit_time.asc()).first()
+                        if not his_upload:
+                            upload_status = 2
+                        else:
+                            if his_upload.submit_time > curr_homework.deadline:
+                                upload_status = 1
+                            else:
+                                upload_status = 0
+                    curr_homework_score = HomeworkScore(user_id=user_id_list[i], homework_id=homework_id, score=scores[i],
+                                                        comment=comments[i], status=upload_status)
+                    db.session.add(curr_homework_score)
+                    db.session.commit()
+
+            return jsonify(status="success")
         elif request.form['op'] == 'download-score':
             all_users = curr_course.users
             uri = get_score_xlsx(all_users, curr_course.id, curr_homework.id)
