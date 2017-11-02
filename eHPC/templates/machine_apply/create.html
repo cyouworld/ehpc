@@ -72,7 +72,8 @@
                                             <select id="project_name" name="project_name" data-width="100%"
                                                     data-parsley-required-message="请填写项目名称" required
                                                     value="{% if apply %}{{ apply.project_name }}{% endif %}">
-                                                <option value="国家重点研发计划项目-基于国家高性能计算环境的教育实践平台" selected>国家重点研发计划项目-基于国家高性能计算环境的教育实践平台</option>
+                                                {% if apply %}<option value="{{ apply.project_name }}" selected>{{ apply.project_name }}</option>{% endif %}
+                                                <option value="国家重点研发计划项目-基于国家高性能计算环境的教育实践平台" {% if not apply %}selected{% endif %}>国家重点研发计划项目-基于国家高性能计算环境的教育实践平台</option>
                                         </td>
                                     </tr>
                                 </tbody>
@@ -126,10 +127,11 @@
                                         <select id="cpu_hour" name="cpu_hour" data-width="100%"
                                                 data-parsley-required-message="请选择核时" required
                                                 value="{% if apply %}{{ apply.cpu_hour }}{% endif %}">
+                                            {% if apply %}<option value="{{ apply.cpu_hour}}" selected>{{ apply.cpu_hour }}</option>{% endif %}
                                             <option value="1000">1000</option>
                                             <option value="2000">2000</option>
                                             <option value="5000">5000</option>
-                                            <option value="10000" selected>10000</option>
+                                            <option value="10000" {% if not apply %}selected{% endif %}>10000</option>
                                         </select>
                                     </td>
                                 </tr>
