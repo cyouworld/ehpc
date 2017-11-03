@@ -27,38 +27,12 @@ file_handler.setFormatter(logging.Formatter('%(asctime)s %(filename)s[line:%(lin
 th2_logger.addHandler(file_handler)
 
 global g__cookies
-global TH2_MY_PATH, TH2_BASE_URL, TH2_USERNAME, TH2_PASSWORD, TH2_MACHINE_NAME, TH2_LOGIN_DATA
-
-TH2_BASE_URL="http://a002.nscc-gz.cn:10218/api"
-TH2_USERNAME="sysu_hpc_dwu_1"
-TH2_PASSWORD="cecbc7eae5e43ee0"
-TH2_MACHINE_NAME="ln7"
-TH2_MY_PATH="/HOME/sysu_hpc_dwu_1/project/ehpc"
-
-TH2_LOGIN_DATA = {"username": TH2_USERNAME, "password": TH2_PASSWORD}
-
-#TH2_BASE_URL_NEW="http://a002.nscc-gz.cn:10307/api"
-#TH2_USERNAME_NEW="testuser"
-#TH2_PASSWORD_NEW="test123qaz"
-
-TH2_BASE_URL_NEW="http://114.67.37.2:10353/v1"
-TH2_USERNAME_NEW="astaxie"
-TH2_PASSWORD_NEW="11111"
-TH2_MACHINE_NAME_NEW="local"
-TH2_MY_PATH_NEW="/HOME/testuser1/new_api"
-TH2_LOGIN_DATA_NEW = {"username": TH2_USERNAME_NEW, "password": TH2_PASSWORD_NEW}
-
-TH2_LOGIN_URL = "/auth"
-TH2_ASYNC_URL = "/async"
-TH2_ASYNC_FIRST_WAIT_TIME = 1
-TH2_ASYNC_WAIT_TIME = 5
-TH2_DEBUG_ASYNC = True
-TH2_MAX_NODE_NUMBER=60
+global TH2_MY_PATH_NEW, TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_LOGIN_DATA_NEW
 
 # 完成天河2号接口的功能的客户端
 class ehpc_client_new:
     def __init__(self, base_url=TH2_BASE_URL_NEW, headers={}, login_cookie=None, login_data=TH2_LOGIN_DATA_NEW):
-        global TH2_MY_PATH, TH2_BASE_URL, TH2_USERNAME, TH2_PASSWORD, TH2_MACHINE_NAME, TH2_LOGIN_DATA
+        global TH2_MY_PATH_NEW, TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_LOGIN_DATA_NEW
 
         self.headers = headers
         self.base_url = base_url
@@ -281,7 +255,7 @@ class ehpc_client_new:
     # 暂时没有使用
     # GET /api/file/<machine>/<path>列目录
     def get_directory(self, myPath):
-        tmpdata = self.open("/file/" + TH2_MACHINE_NAME + myPath + '/')
+        tmpdata = self.open("/file/" + TH2_MACHINE_NAME_NEW + myPath + '/')
         return tmpdata
 
     # GET /api/file/<machine>/<path>?download=True
@@ -296,7 +270,7 @@ class ehpc_client_new:
         """
         if isjob:
             filename = "slurm-%s.out" % filename
-        tmpdata = self.open("/file/" + TH2_MACHINE_NAME + myPath + '/' + filename + "?download=true")
+        tmpdata = self.open("/file/" + TH2_MACHINE_NAME_NEW + myPath + '/' + filename + "?download=true")
 
         # print tmpdata
         if isSmallApiServer:
@@ -304,7 +278,7 @@ class ehpc_client_new:
         else:
             async_id = tmpdata["output"]
             # print async_id
-            tmpdata = self.open("/file/" + TH2_MACHINE_NAME + "/%s?download=true" % async_id)
+            tmpdata = self.open("/file/" + TH2_MACHINE_NAME_NEW + "/%s?download=true" % async_id)
         # tmpdata = tmpdata if isinstance(tmpdata, str) else tmpdata.decode('utf-8')
 
         th2_logger.debug("Download returned data: %s" % tmpdata)
@@ -320,7 +294,7 @@ class ehpc_client_new:
         返回值为是否成功（布尔型）
         """
         mheaders = {'Content-Type': "application/json"}
-        tmpdata = self.open("/file/" + TH2_MACHINE_NAME + myPath + '/' + filename + '?overwrite=true', method="PUT",
+        tmpdata = self.open("/file/" + TH2_MACHINE_NAME_NEW + myPath + '/' + filename + '?overwrite=true', method="PUT",
                             data=data, headers=mheaders)
 
         th2_logger.debug("Upload returned data: %s" % tmpdata)
@@ -340,7 +314,7 @@ class ehpc_client_new:
             3)请求出错，返回字符串
         """
         is_success[0] = False
-        tmpdata = self.open("/command/" + TH2_MACHINE_NAME, data={"command": command})
+        tmpdata = self.open("/command/" + TH2_MACHINE_NAME_NEW, data={"command": command})
         th2_logger.debug("run command return: %s", tmpdata)
 
         print type(tmpdata)
@@ -473,6 +447,62 @@ def extract_data(raw_data):
 
     return result
 
+def submit_code_TH2(pid, uid, source_code, cpu_number, language, ifEvaluate='0'):
+
+    global TH2_MY_PATH_NEW, TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_LOGIN_DATA_NEW
+    TH2_MY_PATH_NEW = TH2_MY_PATH
+    TH2_BASE_URL_NEW = TH2_BASE_URL
+    TH2_USERNAME_NEW = TH2_USERNAME
+    TH2_PASSWORD_NEW = TH2_PASSWORD
+    TH2_MACHINE_NAME_NEW = TH2_MACHINE_NAME
+    TH2_LOGIN_DATA_NEW = TH2_LOGIN_DATA
+
+    input_filename = "%s_%s.c" % (str(pid), str(uid))
+
+    mc = ehpc_client_new()
+
+    if not mc.upload(TH2_MY_PATH_NEW, input_filename, source_code):
+        print "Upload fail."
+        pass
+
+    if language == "mpi":
+#        parameter_number = task_number
+        parameter_language = "c.mpi"
+    elif language == "openmp":
+#        parameter_number = cpu_number_per_task
+        parameter_language = "c.omp"
+    else:
+#        parameter_number = task_number # both are ok
+        parameter_language = "c.cpp"
+        ifEvaluate = '0'
+
+    if ifEvaluate == '1':
+        sh_command = "cd %s;./%s %s %s %s" % (
+            TH2_MY_PATH_NEW, "comprun_tau_TH2.sh", input_filename, parameter_language, cpu_number)
+    else:
+        sh_command = "cd %s;./%s %s %s %s" % (
+            TH2_MY_PATH_NEW, "comprun_with_no_evaluate.sh", input_filename, parameter_language, cpu_number)
+
+    run_out_raw = mc.run_command(sh_command)
+
+    # print run_out_raw
+    result = dict()
+    #print(language)
+
+    if language == "mpi" and ifEvaluate == '1':
+        run_out = extract_data(run_out_raw)
+        result['run_out'] = run_out['output']
+        result['picture_data'] = run_out['picture_data']
+    else:
+        result['run_out'] = run_out_raw
+
+    result['status'] = 'success'
+    result['problem_id'] = pid
+
+    # print(result['picture_data'])
+
+    return jsonify(**result)
+
 
 def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, language, ifEvaluate='0',
                     is_success=[False]):
@@ -535,6 +565,7 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
     # print(result['picture_data'])
 
     return jsonify(**result)
+
 
 
 def init_evaluate_program(problem_id, input_filenames=[], input_data=[], output_filenames=[]):
