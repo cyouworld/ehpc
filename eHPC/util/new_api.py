@@ -14,14 +14,13 @@ from six.moves.urllib.error import HTTPError, URLError
 
 from flask import jsonify
 
-# from config import TH2_MAX_NODE_NUMBER, TH2_BASE_URL, TH2_ASYNC_WAIT_TIME, TH2_LOGIN_DATA, TH2_MACHINE_NAME, \
-#     TH2_DEBUG_ASYNC, TH2_MY_PATH, TH2_ASYNC_FIRST_WAIT_TIME, TH2_ASYNC_URL, TH2_LOGIN_URL, \
-#     TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_MY_PATH_NEW, TH2_LOGIN_DATA_NEW
+from config import TH2_MAX_NODE_NUMBER, TH2_BASE_URL, TH2_ASYNC_WAIT_TIME, TH2_LOGIN_DATA, TH2_MACHINE_NAME, \
+    TH2_DEBUG_ASYNC, TH2_MY_PATH, TH2_ASYNC_FIRST_WAIT_TIME, TH2_ASYNC_URL, TH2_LOGIN_URL, \
+    TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_MY_PATH_NEW, TH2_LOGIN_DATA_NEW
 
 th2_logger = logging.getLogger('th2')
 th2_logger.setLevel(logging.DEBUG)
 file_handler = logging.FileHandler('app_logs/TH2.log')
-# file_handler = logging.FileHandler('../../app_logs/TH2.log')
 file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(logging.Formatter('%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s'))
 th2_logger.addHandler(file_handler)
@@ -29,9 +28,12 @@ th2_logger.addHandler(file_handler)
 global g__cookies
 global TH2_MY_PATH_NEW, TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_LOGIN_DATA_NEW
 
+
 # 完成天河2号接口的功能的客户端
 class ehpc_client_new:
-    def __init__(self, base_url=TH2_BASE_URL_NEW, headers={}, login_cookie=None, login_data=TH2_LOGIN_DATA_NEW):
+    def __init__(self, base_url=TH2_BASE_URL_NEW, headers=None, login_cookie=None, login_data=TH2_LOGIN_DATA_NEW):
+        if headers is None:
+            headers = {}
         global TH2_MY_PATH_NEW, TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_LOGIN_DATA_NEW
 
         self.headers = headers
@@ -447,8 +449,8 @@ def extract_data(raw_data):
 
     return result
 
-def submit_code_TH2(pid, uid, source_code, cpu_number, language, ifEvaluate='0'):
 
+def submit_code_TH2(pid, uid, source_code, cpu_number, language, ifEvaluate='0'):
     global TH2_MY_PATH_NEW, TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_LOGIN_DATA_NEW
     TH2_MY_PATH_NEW = TH2_MY_PATH
     TH2_BASE_URL_NEW = TH2_BASE_URL
@@ -466,13 +468,13 @@ def submit_code_TH2(pid, uid, source_code, cpu_number, language, ifEvaluate='0')
         pass
 
     if language == "mpi":
-#        parameter_number = task_number
+        #        parameter_number = task_number
         parameter_language = "c.mpi"
     elif language == "openmp":
-#        parameter_number = cpu_number_per_task
+        #        parameter_number = cpu_number_per_task
         parameter_language = "c.omp"
     else:
-#        parameter_number = task_number # both are ok
+        #        parameter_number = task_number # both are ok
         parameter_language = "c.cpp"
         ifEvaluate = '0'
 
@@ -487,7 +489,7 @@ def submit_code_TH2(pid, uid, source_code, cpu_number, language, ifEvaluate='0')
 
     # print run_out_raw
     result = dict()
-    #print(language)
+    # print(language)
 
     if language == "mpi" and ifEvaluate == '1':
         run_out = extract_data(run_out_raw)
@@ -534,22 +536,22 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
         parameter_number = cpu_number_per_task
         parameter_language = "c.omp"
     else:
-        parameter_number = task_number # both are ok
+        parameter_number = task_number  # both are ok
         parameter_language = "c.cpp"
         ifEvaluate = '0'
 
     if ifEvaluate == '1':
         sh_command = "cd %s;./%s %s %s %s" % (
-        TH2_MY_PATH_NEW, "comprun_tau.sh", input_filename, parameter_language, parameter_number)
+            TH2_MY_PATH_NEW, "comprun_tau.sh", input_filename, parameter_language, parameter_number)
     else:
         sh_command = "cd %s;./%s %s %s %s" % (
-        TH2_MY_PATH_NEW, "comprun_with_no_evaluate.sh", input_filename, parameter_language, parameter_number)
+            TH2_MY_PATH_NEW, "comprun_with_no_evaluate.sh", input_filename, parameter_language, parameter_number)
 
     run_out_raw = mc.run_command(sh_command)
 
     # print run_out_raw
     result = dict()
-    #print(language)
+    # print(language)
 
     if language == "mpi" and ifEvaluate == '1':
         run_out = extract_data(run_out_raw)
@@ -565,7 +567,6 @@ def submit_code_new(pid, uid, source_code, task_number, cpu_number_per_task, lan
     # print(result['picture_data'])
 
     return jsonify(**result)
-
 
 
 def init_evaluate_program(problem_id, input_filenames=[], input_data=[], output_filenames=[]):
