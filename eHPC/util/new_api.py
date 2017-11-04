@@ -14,9 +14,11 @@ from six.moves.urllib.error import HTTPError, URLError
 
 from flask import jsonify
 
+
 from config import TH2_MAX_NODE_NUMBER, TH2_BASE_URL, TH2_ASYNC_WAIT_TIME, TH2_LOGIN_DATA, TH2_MACHINE_NAME, \
-    TH2_DEBUG_ASYNC, TH2_MY_PATH, TH2_ASYNC_FIRST_WAIT_TIME, TH2_ASYNC_URL, TH2_LOGIN_URL, \
-    TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_MY_PATH_NEW, TH2_LOGIN_DATA_NEW
+     TH2_DEBUG_ASYNC, TH2_MY_PATH, TH2_ASYNC_FIRST_WAIT_TIME, TH2_ASYNC_URL, TH2_LOGIN_URL, TH2_USERNAME, TH2_PASSWORD,\
+     TH2_BASE_URL_NEW, TH2_USERNAME_NEW, TH2_PASSWORD_NEW, TH2_MACHINE_NAME_NEW, TH2_MY_PATH_NEW, TH2_LOGIN_DATA_NEW
+
 
 th2_logger = logging.getLogger('th2')
 th2_logger.setLevel(logging.DEBUG)
@@ -57,7 +59,8 @@ class ehpc_client_new:
     # 登录，返回值为是否成功（布尔型）
     # POST /api/auth
     def login(self):
-        # print self.login_data
+        #print(TH2_BASE_URL_NEW)
+        #print(TH2_LOGIN_DATA_NEW)
         tmpdata = self.open(TH2_LOGIN_URL, data=self.login_data, login=False)
         self.login_cookie = self.resp.headers['Set-Cookie']
         self.username = self.login_data['username']
@@ -82,7 +85,7 @@ class ehpc_client_new:
         返回值为一个字典，即api接口返回的数据。
         """
 
-        url = self.base_url + url
+        url = TH2_BASE_URL_NEW + url
 
         # 请求数据中带有查询字典或者form表单时，将其封装为 application/x-www-form-urlencoded string类型。
         # 如果请求数据为 unicode类型（上传的代码），则将其编码为 utf-8, 转为 str 类型。
@@ -459,6 +462,8 @@ def submit_code_TH2(pid, uid, source_code, cpu_number, language, ifEvaluate='0')
     TH2_MACHINE_NAME_NEW = TH2_MACHINE_NAME
     TH2_LOGIN_DATA_NEW = TH2_LOGIN_DATA
 
+    #print(TH2_BASE_URL_NEW)
+    #print(TH2_LOGIN_DATA_NEW)
     input_filename = "%s_%s.c" % (str(pid), str(uid))
 
     mc = ehpc_client_new()
