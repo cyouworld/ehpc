@@ -204,11 +204,29 @@
             $("#course-submenu").css("display", "none");
             $("#problem-submenu").css("display", "block");
             $("#lab-submenu").css("display", "none");
+            $("#knowledge-submenu").css("display", "none");
+            $("#case-submenu").css("display", "none");
         }
         else if(tag2_val.indexOf('lab') >= 0) {
             $("#course-submenu").css("display", "none");
             $("#problem-submenu").css("display", "none");
             $("#lab-submenu").css("display", "block");
+            $("#knowledge-submenu").css("display", "none");
+            $("#case-submenu").css("display", "none");
+        }
+        else if(tag2_val.indexOf('case') >= 0) {
+            $("#course-submenu").css("display", "none");
+            $("#problem-submenu").css("display", "none");
+            $("#lab-submenu").css("display", "none");
+            $("#knowledge-submenu").css("display", "none");
+            $("#case-submenu").css("display", "block");
+        }
+        else if(tag2_val.indexOf('knowledge') >= 0) {
+            $("#course-submenu").css("display", "none");
+            $("#problem-submenu").css("display", "none");
+            $("#lab-submenu").css("display", "none");
+            $("#knowledge-submenu").css("display", "block");
+            $("#case-submenu").css("display", "none");
         }
         $("#{{ request.args.get('tag2') }}").addClass("active");
     {% endif %}
@@ -223,10 +241,14 @@
             $("#course-submenu").css("display", "none");
             $("#problem-submenu").css("display", "block");
             $("#lab-submenu").css("display", "none");
+            $("#knowledge-submenu").css("display", "none");
+            $("#case-submenu").css("display", "none");
         }
         else if(tag2_val.indexOf('lab') >= 0) {
             $("#course-submenu").css("display", "none");
             $("#problem-submenu").css("display", "none");
+            $("#knowledge-submenu").css("display", "none");
+            $("#case-submenu").css("display", "none");
             $("#lab-submenu").css("display", "block");
         }
         $("#{{ tag2 }}").addClass("active");

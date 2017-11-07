@@ -68,6 +68,10 @@ def course():
                 db.session.delete(p)
             for c in curr_course.comments:
                 db.session.delete(c)
+            for t in curr_course.group.topics:
+                for p in t.posts:
+                    db.session.delete(p)
+                db.session.delete(t)
             if curr_course.qrcode:
                 db.session.delete(curr_course.qrcode)
 
